@@ -39,7 +39,7 @@ const older = currentIndex >= 0 && currentIndex < seriesPosts.length - 1 ? serie
 const tags = normalizeList(post.data.tags);
 const categories = normalizeList(post.data.categories);
 const description = getExcerpt(post, 160);
-const editUrl = `https://github.com/lcha-reln/signal-grid-blog/edit/main/src/content/posts/${post.id}`;
+const editUrl = `https://github.com/lcha-reln/signal-grid-blog/edit/main/src/content/posts/${post.id}.md`;
 const seriesPath = series.key === "meta" ? sitePath("about/") : sitePath(`series/${series.key}/`);
 ---
 
