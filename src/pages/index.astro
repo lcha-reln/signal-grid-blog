@@ -4,16 +4,19 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import SignalHero from "../components/SignalHero.astro";
 import SeriesCard from "../components/SeriesCard.astro";
 import PostCard from "../components/PostCard.astro";
-import { SERIES, sitePath } from "../config";
+import { PRIMARY_SERIES_KEY, SERIES, sitePath } from "../config";
 import { getPostsInSeries, sortPosts } from "../lib/content";
 
 const posts = sortPosts(await getCollection("posts", ({ data }) => !data.draft));
-const featured = posts.filter((post) => post.data.featured);
-const latest = (featured.length >= 3 ? featured : posts).slice(0, 6);
+const recommended = getPostsInSeries(posts, PRIMARY_SERIES_KEY).slice(0, 6);
+const activeSeries = SERIES.map((series) => ({
+  series,
+  posts: getPostsInSeries(posts, series.key),
+})).filter(({ posts }) => posts.length > 0);
 ---
 
 <BaseLayout>
-  <SignalHero postCount={posts.length} seriesCount={SERIES.length} />
+  <SignalHero postCount={posts.length} seriesCount={activeSeries.length} />
 
   <section class="section" aria-labelledby="series-heading">
     <div class="section-head">
@@ -26,9 +29,9 @@ const latest = (featured.length >= 3 ? featured : posts).slice(0, 6);
       </div>
       <a href={sitePath("series/")}>查看全部专题 →</a>
     </div>
-    <div class="series-grid">
-      {SERIES.map((series) => (
-        <SeriesCard series={series} count={getPostsInSeries(posts, series.key).length} />
+    <div class="series-grid active-series-grid">
+      {activeSeries.map(({ series, posts: seriesPosts }) => (
+        <SeriesCard series={series} count={seriesPosts.length} />
       ))}
     </div>
   </section>
@@ -38,14 +41,16 @@ const latest = (featured.length >= 3 ? featured : posts).slice(0, 6);
       <div class="section-heading">
         <span class="section-index">02</span>
         <div>
-          <span class="eyebrow">LATEST TRANSMISSIONS</span>
-          <h2 id="latest-heading">最新发布</h2>
+          <span class="eyebrow">START HERE</span>
+          <h2 id="latest-heading">推荐阅读顺序</h2>
         </div>
       </div>
       <a href={sitePath("posts/")}>浏览全部文章 →</a>
     </div>
     <div class="post-grid">
-      {latest.map((post, index) => <PostCard post={post} index={index} />)}
+      {recommended.length > 0
+        ? recommended.map((post, index) => <PostCard post={post} index={index} />)
+        : <div class="empty-state">首条学习路径正在构建中。</div>}
     </div>
   </section>
 </BaseLayout>

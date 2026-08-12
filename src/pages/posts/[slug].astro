@@ -34,8 +34,8 @@ const { Content, headings } = await render(post);
 const series = getSeries(post);
 const seriesPosts = getPostsInSeries(allPosts, series.key);
 const currentIndex = seriesPosts.findIndex((entry) => entry.id === post.id);
-const newer = currentIndex > 0 ? seriesPosts[currentIndex - 1] : undefined;
-const older = currentIndex >= 0 && currentIndex < seriesPosts.length - 1 ? seriesPosts[currentIndex + 1] : undefined;
+const previous = currentIndex > 0 ? seriesPosts[currentIndex - 1] : undefined;
+const next = currentIndex >= 0 && currentIndex < seriesPosts.length - 1 ? seriesPosts[currentIndex + 1] : undefined;
 const tags = normalizeList(post.data.tags);
 const categories = normalizeList(post.data.categories);
 const description = getExcerpt(post, 160);
@@ -50,7 +50,7 @@ const seriesPath = series.key === "meta" ? sitePath("about/") : sitePath(`series
     <div class="article-crumbs">
       <a href={seriesPath}>{series.title}</a>
       <span>/</span>
-      <span>{series.eyebrow}</span>
+      <span>{currentIndex >= 0 ? `CHAPTER ${String(currentIndex + 1).padStart(2, "0")} OF ${String(seriesPosts.length).padStart(2, "0")}` : series.eyebrow}</span>
     </div>
     <h1>{post.data.title}</h1>
     <p class="article-lead">{description}</p>
@@ -72,6 +72,7 @@ const seriesPath = series.key === "meta" ? sitePath("about/") : sitePath(`series
     <aside class="article-aside" aria-label="文章信息">
       <dl>
         <div><dt>SERIES</dt><dd>{series.title}</dd></div>
+        {currentIndex >= 0 && <div><dt>CHAPTER</dt><dd>{String(currentIndex + 1).padStart(2, "0")} / {String(seriesPosts.length).padStart(2, "0")}</dd></div>}
         <div><dt>ROUTE</dt><dd>/{getPostSlug(post)}</dd></div>
         {categories.length > 0 && <div><dt>CATEGORY</dt><dd>{categories.join(" / ")}</dd></div>}
         <div><dt>SOURCE</dt><dd><a href={editUrl} target="_blank" rel="noreferrer">EDIT ON GITHUB ↗</a></dd></div>
@@ -84,13 +85,13 @@ const seriesPath = series.key === "meta" ? sitePath("about/") : sitePath(`series
           {tags.map((tag) => <span>#{tag}</span>)}
         </div>
       )}
-      {(newer || older) && (
+      {(previous || next) && (
         <nav class="article-nav" aria-label="同专题上一篇与下一篇">
-          {older ? (
-            <a href={getPostPath(older)}><small>← PREVIOUS</small><strong>{older.data.title}</strong></a>
+          {previous ? (
+            <a class="previous" href={getPostPath(previous)}><small>← PREVIOUS CHAPTER</small><strong>{previous.data.title}</strong></a>
           ) : <span></span>}
-          {newer && (
-            <a href={getPostPath(newer)}><small>NEXT →</small><strong>{newer.data.title}</strong></a>
+          {next && (
+            <a class="next" href={getPostPath(next)}><small>NEXT CHAPTER →</small><strong>{next.data.title}</strong></a>
           )}
         </nav>
       )}

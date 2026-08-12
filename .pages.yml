@@ -17,9 +17,9 @@ content:
       template: "{year}-{month}-{day}-{primary}.md"
       field: create
     view:
-      fields: [title, date, categories, tags, draft]
+      fields: [title, series, seriesOrder, date, draft]
       primary: title
-      sort: [date, title]
+      sort: [series, seriesOrder, date, title]
       default:
         sort: date
         order: desc
@@ -53,6 +53,27 @@ content:
         label: 标签
         type: string
         list: true
+      - name: series
+        label: 学习路径
+        type: select
+        required: true
+        options:
+          values:
+            - { name: aeron, label: Aeron }
+            - { name: etcd, label: etcd }
+            - { name: zookeeper, label: ZooKeeper }
+            - { name: trading, label: 交易系统 }
+            - { name: availability, label: 高可用架构 }
+            - { name: performance, label: 高性能组件 }
+            - { name: meta, label: 站点指南 }
+        description: 决定文章进入哪一条正式学习路径；不要依赖标签自动推断。
+      - name: seriesOrder
+        label: 路径排序
+        type: number
+        required: true
+        options:
+          min: 1
+        description: 数值越小越靠前；页面会按顺序自动显示连续章节号。
       - name: permalink
         label: 文章地址
         type: string

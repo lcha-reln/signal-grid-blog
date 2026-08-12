@@ -60,22 +60,7 @@ export function formatDate(date: Date): string {
 }
 
 export function getSeriesKey(post: Post): SeriesKey {
-  const text = [
-    post.data.title,
-    ...normalizeList(post.data.tags),
-    ...normalizeList(post.data.categories),
-    post.id,
-  ]
-    .join(" ")
-    .toLowerCase();
-
-  if (text.includes("signal grid") || text.includes("站点指南")) return "meta";
-  if (text.includes("aeron")) return "aeron";
-  if (text.includes("etcd")) return "etcd";
-  if (text.includes("zookeeper")) return "zookeeper";
-  if (text.includes("金融") || text.includes("交易") || text.includes("合约")) return "trading";
-  if (text.includes("高可用") || text.includes("序列号")) return "availability";
-  return "performance";
+  return post.data.series;
 }
 
 export function getSeries(post: Post) {
@@ -85,5 +70,12 @@ export function getSeries(post: Post) {
 }
 
 export function getPostsInSeries(posts: Post[], key: SeriesKey): Post[] {
-  return sortPosts(posts.filter((post) => getSeriesKey(post) === key));
+  return posts
+    .filter((post) => getSeriesKey(post) === key)
+    .sort((a, b) => {
+      const aOrder = a.data.seriesOrder ?? Number.POSITIVE_INFINITY;
+      const bOrder = b.data.seriesOrder ?? Number.POSITIVE_INFINITY;
+      if (aOrder !== bOrder) return aOrder - bOrder;
+      return a.data.date.valueOf() - b.data.date.valueOf();
+    });
 }

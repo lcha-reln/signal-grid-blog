@@ -20,7 +20,7 @@ const { series, count } = Astro.props;
   <a href={sitePath(`series/${series.key}/`)}>
     <div class="series-card-head">
       <span>{series.index}</span>
-      <span class="series-pulse"><i></i>{count} POSTS</span>
+      <span class="series-pulse"><i></i>{count > 0 ? `${String(count).padStart(2, "0")} CHAPTERS` : "PLANNED"}</span>
     </div>
     <div>
       <span class="eyebrow">{series.eyebrow}</span>

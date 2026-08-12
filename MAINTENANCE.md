@@ -90,7 +90,7 @@ git push -u origin feature/short-description
 2. 确认仓库选择 `lcha-reln/signal-grid-blog`，分支选择 `main`。
 3. 进入“文章”，创建或编辑内容。
 4. 新文章先主动打开“草稿”开关；当前 CMS 默认值为 `false`，不要在半成品状态下误发布。
-5. 完成后填写摘要、分类和标签，将 `draft` 改为 `false` 并保存。
+5. 完成后填写摘要、分类和标签，选择“学习路径”并设置“路径排序”，再将 `draft` 改为 `false` 保存。
 
 Pages CMS 保存后会直接创建 Git commit，并触发 GitHub Pages 部署。它不是一个独立数据库，正文始终保存在仓库的 `src/content/posts/` 中。
 
@@ -123,6 +123,8 @@ tags:
   - Aeron
   - Cluster
 permalink: aeron-cluster-basics
+series: aeron
+seriesOrder: 1
 featured: false
 draft: true
 ---
@@ -166,18 +168,19 @@ flowchart LR
 
 Mermaid 只在实际存在图表的页面加载。语法问题不一定让 Astro 构建失败，因此发布前要在浏览器中检查图表，并分别看一次深色和浅色主题。
 
-### 专题归类
+### 学习路径归类
 
-当前专题由 `src/lib/content.ts#getSeriesKey()` 根据标题、标签、分类和文件 ID 推断：
+`series` 与 `seriesOrder` 是正式学习路径的唯一依据。`series` 可选：
 
-- `Aeron` → Aeron
-- `etcd` → etcd
-- `zookeeper` → ZooKeeper
-- “金融 / 交易 / 合约” → 交易系统
-- “高可用 / 序列号” → 高可用架构
-- 其他内容 → 高性能组件
+- `aeron`
+- `etcd`
+- `zookeeper`
+- `trading`
+- `availability`
+- `performance`
+- `meta`
 
-写文章时至少在标题、标签或分类中放入目标专题关键词。若增加新专题，需要同时修改站点配置、归类逻辑和专题页面。
+`seriesOrder` 只负责排序：数值越小越靠前，页面会自动显示连续的 Chapter 编号。通常从 1 递增；若预计会频繁插入章节，也可以使用 10、20、30 这样的间隔值。同一路径内不要重复。标签只用于搜索与文章说明，不决定专题归属。若增加新专题，需要同时修改站点配置、内容 schema、Pages CMS 选项和专题页面。
 
 ## 6. 构建、预览与验收
 

@@ -9,8 +9,10 @@ tags:
 categories:
   - 站点指南
 permalink: welcome-to-signal-grid
-featured: true
-draft: false
+series: meta
+seriesOrder: 1
+featured: false
+draft: true
 ---
 
 这是一篇**主题演示文章**。它不迁移旧博客内容，只负责确认新框架的阅读体验是否完整。正式开始写作后，可以直接在 Pages CMS 中删除或改写它。

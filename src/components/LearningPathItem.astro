@@ -1,0 +1,31 @@
+---
+import type { Post } from "../lib/content";
+import { getExcerpt, getPostPath, normalizeList, readingMinutes } from "../lib/content";
+
+interface Props {
+  post: Post;
+  index: number;
+  total: number;
+}
+
+const { post, index, total } = Astro.props;
+const tags = normalizeList(post.data.tags).slice(0, 3);
+const chapter = String(index + 1).padStart(2, "0");
+const chapterCount = String(total).padStart(2, "0");
+---
+
+<article class="path-step">
+  <div class="path-marker" aria-hidden="true"><span>{chapter}</span></div>
+  <a class="path-step-card" href={getPostPath(post)}>
+    <div class="path-step-meta">
+      <span>CHAPTER {chapter} / {chapterCount}</span>
+      <span>≈ {readingMinutes(post)} MIN</span>
+    </div>
+    <h2>{post.data.title}</h2>
+    <p>{getExcerpt(post, 180)}</p>
+    <div class="path-step-footer">
+      <span>{tags.map((tag) => `#${tag}`).join("  ")}</span>
+      <strong>开始本章 →</strong>
+    </div>
+  </a>
+</article>

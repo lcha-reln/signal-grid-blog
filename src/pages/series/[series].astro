@@ -1,7 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import PostCard from "../../components/PostCard.astro";
+import LearningPathItem from "../../components/LearningPathItem.astro";
 import { SERIES } from "../../config";
 import { getPostsInSeries, readingMinutes } from "../../lib/content";
 
@@ -23,19 +23,30 @@ const totalMinutes = posts.reduce((sum, post) => sum + readingMinutes(post), 0);
     <h1>{series.title}</h1>
     <p>{series.description}</p>
     <div class="page-hero-meta">
-      <span>{String(posts.length).padStart(2, "0")} ARTICLES</span>
-      <span>≈ {totalMinutes} MIN TOTAL</span>
-      <span>CURATED PATH</span>
+      <span>{String(posts.length).padStart(2, "0")} CHAPTERS</span>
+      <span>{posts.length > 0 ? `≈ ${totalMinutes} MIN TOTAL` : "READING TIME TBD"}</span>
+      <span>{posts.length > 0 ? "CURATED PATH" : "PLANNED"}</span>
     </div>
   </header>
 
-  <section class="section">
+  <section class:list={["section", `accent-${series.color}`]}>
     {posts.length > 0 ? (
-      <div class="post-grid">
-        {posts.map((post, index) => <PostCard post={post} index={index} />)}
-      </div>
+      <>
+        <div class="path-brief" aria-label="学习路径说明">
+          <div><span>PREREQUISITE</span><p>{series.prerequisite}</p></div>
+          <div><span>OUTCOME</span><p>{series.outcome}</p></div>
+          <div><span>ORDER</span><p>建议按章节顺序阅读；每一章都建立在前一章的模型之上。</p></div>
+        </div>
+        <div class="path-section-head">
+          <span class="eyebrow">READING ROUTE / 从基础到实战</span>
+          <p>{String(posts.length).padStart(2, "0")} 个章节 · 约 {totalMinutes} 分钟</p>
+        </div>
+        <div class="learning-path">
+          {posts.map((post, index) => <LearningPathItem post={post} index={index} total={posts.length} />)}
+        </div>
+      </>
     ) : (
-      <div class="empty-state">这个专题正在构建中。</div>
+      <div class="empty-state">这条学习路径已经规划，首篇内容正在构建中。</div>
     )}
   </section>
 </BaseLayout>
