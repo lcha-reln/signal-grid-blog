@@ -1,0 +1,24 @@
+{
+  "name": "signal-grid-blog",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.30.3",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro check && astro build && pagefind --site dist",
+    "preview": "astro preview",
+    "check": "astro check"
+  },
+  "dependencies": {
+    "@astrojs/rss": "^4.0.19",
+    "@astrojs/sitemap": "^3.7.3",
+    "astro": "^7.2.1",
+    "mermaid": "^11.16.1"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.6",
+    "pagefind": "^1.5.2",
+    "typescript": "^5.9.3"
+  }
+}
