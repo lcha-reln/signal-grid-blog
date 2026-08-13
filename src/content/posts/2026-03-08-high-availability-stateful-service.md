@@ -2,7 +2,7 @@
 title: "有状态服务的高可用架构：热备复制、选主与快照恢复"
 description: "以 Kafka 分区日志和双节点热备为主线，拆解确定性执行、Leader 选举与 fencing、状态校验、快照恢复和输出持久化，并明确 RTO、RPO 与一致性边界。"
 date: 2026-03-08T14:43:51+08:00
-updated: 2026-08-13T12:30:00+08:00
+updated: 2026-08-13T20:25:00+08:00
 categories:
   - 高可用架构
 tags:
@@ -66,7 +66,7 @@ flowchart TB
   F --> REC
 ```
 
-Kafka 在同一个 consumer group 内会把一个 partition 同时分配给一个 consumer。若 Leader 和 Follower 都要读取该 partition 的完整日志，它们必须使用不同的 group，或者采用明确的手动 assignment，并分别维护自己的位置。Kafka offset 也只在某个 `topic-partition` 内有意义，不能把单个 `long` 当成整个系统的全局版本。
+Kafka 在同一个 consumer group 内会把一个 partition 同时分配给一个 consumer。若 Leader 和 Follower 都要读取该 partition 的完整日志，它们必须使用不同的 group，或者采用明确的手动 assignment，并分别维护自己的位置。Kafka offset 也只在某个 `topic-partition` 内有意义，不能把单个 `long` 当成整个系统的全局版本。分区日志、ISR、KRaft、消费位置与事务的完整边界见 [Kafka 4.3 深度指南](/signal-grid-blog/posts/kafka-distributed-log-kraft-consumers-and-transactions/)。
 
 ### Shard、partition 与状态所有权
 

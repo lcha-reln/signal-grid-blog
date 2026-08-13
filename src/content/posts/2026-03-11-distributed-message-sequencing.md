@@ -2,7 +2,7 @@
 title: 分布式消息序列号：Gap 检测、乱序处理与 Aeron 实战
 description: 从序列域、接收窗口和故障恢复出发，讲清消息 Gap、重复与乱序的检测边界，并给出 Aeron 中可落地的发送、接收、持久化与监控方案。
 date: 2026-03-11T12:00:00+08:00
-updated: 2026-08-13T19:30:00+08:00
+updated: 2026-08-13T20:25:00+08:00
 categories:
   - 高可用架构
 tags:
@@ -13,14 +13,14 @@ tags:
   - Aeron
 permalink: distributed-message-sequencing
 series: availability
-seriesOrder: 30
+seriesOrder: 40
 featured: true
 draft: false
 ---
 
 在有状态服务中，消息顺序并不是一个孤立的传输问题。主节点切换、进程重启、发送重试和并行消费，都可能让接收端遇到重复、缺口或来自旧任期的消息。
 
-本文是“有状态系统可靠性”学习路径的 Chapter 03。建议先阅读 [Chapter 01：有状态服务的高可用架构](/signal-grid-blog/posts/high-availability-stateful-service/) 建立复制与恢复全景，再通过 [Chapter 02：ZooKeeper 协调、一致性与工程配方](/signal-grid-blog/posts/zookeeper-coordination-consistency-and-recipes/) 理解选主、Session 与 fencing，最后进入数据平面的序列号协议。
+本文是“有状态系统可靠性”学习路径的 Chapter 04。建议先阅读 [Chapter 01：有状态服务的高可用架构](/signal-grid-blog/posts/high-availability-stateful-service/) 建立复制与恢复全景，再通过 [Chapter 02：ZooKeeper 协调、一致性与工程配方](/signal-grid-blog/posts/zookeeper-coordination-consistency-and-recipes/) 理解选主、Session 与 fencing，并由 [Chapter 03：Kafka 分区日志、KRaft、消费与事务](/signal-grid-blog/posts/kafka-distributed-log-kraft-consumers-and-transactions/) 建立 offset、复制和恢复位置的准确语义，最后进入应用级序列号协议。
 
 序列号能以很低的成本暴露消息流的不连续，但它不会自动提供可靠投递、恢复、幂等或 exactly-once。生产系统真正需要设计的是：**序列号属于哪个域、由哪个任期的生产者生成、发现缺口后如何恢复，以及业务状态和消费位置如何一起提交。**
 
@@ -324,7 +324,7 @@ flowchart TB
 
 ## 6. Kafka offset 也不是全局业务序列
 
-在 [Chapter 01](/signal-grid-blog/posts/high-availability-stateful-service/) 的消息驱动架构里，Kafka offset 可以作为恢复锚点，但完整身份至少是 `(topic, partition, offset)`：
+在 [Chapter 01](/signal-grid-blog/posts/high-availability-stateful-service/) 的消息驱动架构里，Kafka offset 可以作为恢复锚点；[Chapter 03](/signal-grid-blog/posts/kafka-distributed-log-kraft-consumers-and-transactions/) 已从日志压缩、事务和消费恢复的角度展开其边界。完整身份至少是 `(topic, partition, offset)`：
 
 - offset 只在一个 partition 内标识位置，不能跨 partition 直接比较。
 - Kafka 官方客户端文档明确说明 offset 不保证连续，例如日志压缩和事务控制记录都可能让 consumer position 跳跃。

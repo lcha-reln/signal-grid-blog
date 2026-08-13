@@ -60,9 +60,10 @@
 | ---: | ---: | --- | --- |
 | 01 | 10 | 有状态服务的高可用架构：热备复制、选主与快照恢复 | `high-availability-stateful-service` |
 | 02 | 20 | ZooKeeper 3.9：从 znode、Watch 到 ZAB、一致性与工程配方 | `zookeeper-coordination-consistency-and-recipes` |
-| 03 | 30 | 分布式消息序列号：Gap 检测、乱序处理与 Aeron 实战 | `distributed-message-sequencing` |
+| 03 | 30 | Kafka 4.3：从分区日志、ISR 与 KRaft 到消费语义、事务和生产运维 | `kafka-distributed-log-kraft-consumers-and-transactions` |
+| 04 | 40 | 分布式消息序列号：Gap 检测、乱序处理与 Aeron 实战 | `distributed-message-sequencing` |
 
-本路径先建立单写者有状态服务的复制与恢复全景，再下探 ZooKeeper 协调平面的 Session、Watch、选主和 fencing，最后进入数据平面的序列号、Gap 检测与恢复协议。Kafka、Aeron、ZooKeeper 是实现示例和标签，不单独占据顶层专题。
+本路径先建立单写者有状态服务的复制与恢复全景，再下探 ZooKeeper 协调平面的 Session、Watch、选主和 fencing；随后用 Kafka 串起分区日志、数据复制、消费位置与事务边界，最后进入应用级序列号、Gap 检测和恢复协议。Kafka、Aeron、ZooKeeper 是实现示例和标签，不单独占据顶层专题；现代 Kafka 使用 KRaft，Chapter 02 只是控制面概念前置，并非 Kafka 4.x 的部署依赖。
 
 ## Java 低延迟工程
 
