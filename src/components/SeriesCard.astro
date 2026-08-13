@@ -11,20 +11,22 @@ interface Props {
     index: string;
   };
   count: number;
+  headingLevel?: 2 | 3;
 }
 
-const { series, count } = Astro.props;
+const { series, count, headingLevel = 3 } = Astro.props;
+const chapterLabel = count === 1 ? "01 CHAPTER" : `${String(count).padStart(2, "0")} CHAPTERS`;
 ---
 
 <article class:list={["series-card", `accent-${series.color}`]}>
   <a href={sitePath(`series/${series.key}/`)}>
     <div class="series-card-head">
       <span>{series.index}</span>
-      <span class="series-pulse"><i></i>{count > 0 ? `${String(count).padStart(2, "0")} CHAPTERS` : "PLANNED"}</span>
+      <span class="series-pulse"><i aria-hidden="true"></i>{count > 0 ? chapterLabel : "PLANNED"}</span>
     </div>
     <div>
       <span class="eyebrow">{series.eyebrow}</span>
-      <h3>{series.title}</h3>
+      {headingLevel === 2 ? <h2>{series.title}</h2> : <h3>{series.title}</h3>}
       <p>{series.description}</p>
     </div>
     <span class="series-action">进入专题 <i aria-hidden="true">→</i></span>

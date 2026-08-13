@@ -1,5 +1,26 @@
 import { defineConfig } from "astro/config";
 import sitemap from "@astrojs/sitemap";
+import { satteri } from "@astrojs/markdown-satteri";
+
+const tableScrollPlugin = {
+  name: "table-scroll-wrapper",
+  element: {
+    filter: ["table"],
+    visit(node, context) {
+      context.wrapNode(node, {
+        type: "element",
+        tagName: "div",
+        properties: {
+          className: ["table-scroll"],
+          tabIndex: 0,
+          role: "region",
+          ariaLabel: "可横向滚动的数据表格",
+        },
+        children: [],
+      });
+    },
+  },
+};
 
 export default defineConfig({
   site: "https://lcha-reln.github.io",
@@ -18,6 +39,7 @@ export default defineConfig({
   },
   integrations: [sitemap()],
   markdown: {
+    processor: satteri({ hastPlugins: [tableScrollPlugin] }),
     syntaxHighlight: {
       type: "shiki",
       excludeLangs: ["mermaid", "math"],

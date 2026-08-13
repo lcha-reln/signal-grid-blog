@@ -45,10 +45,6 @@ content:
         options:
           time: true
           format: "yyyy-MM-dd'T'HH:mm:ssXXX"
-      - name: categories
-        label: 分类
-        type: string
-        list: true
       - name: tags
         label: 标签
         type: string
@@ -59,14 +55,11 @@ content:
         required: true
         options:
           values:
-            - { name: aeron, label: Aeron }
-            - { name: etcd, label: etcd }
-            - { name: zookeeper, label: ZooKeeper }
             - { name: trading, label: 交易系统 }
-            - { name: availability, label: 高可用架构 }
-            - { name: performance, label: 高性能组件 }
+            - { name: availability, label: 有状态系统可靠性 }
+            - { name: performance, label: Java 低延迟工程 }
             - { name: meta, label: 站点指南 }
-        description: 决定文章进入哪一条正式学习路径；不要依赖标签自动推断。
+        description: 选择文章所属的顶层知识主线；Aeron、etcd、ZooKeeper 等具体产品使用标签表示。
       - name: seriesOrder
         label: 路径排序
         type: number
@@ -80,7 +73,7 @@ content:
         required: true
         pattern:
           regex: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
-          message: 请使用小写英文、数字和连字符，例如 aeron-basics。
+          message: 请使用小写英文、数字和连字符，例如 matching-engine-basics。
         description: 决定 /signal-grid-blog/posts/文章地址/，发布后尽量不要修改。
       - name: featured
         label: 首页精选

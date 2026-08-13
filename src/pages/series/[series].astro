@@ -2,14 +2,13 @@
 import { getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import LearningPathItem from "../../components/LearningPathItem.astro";
-import { SERIES } from "../../config";
-import { getPostsInSeries, readingMinutes } from "../../lib/content";
+import { getActiveSeries, readingMinutes } from "../../lib/content";
 
 export async function getStaticPaths() {
   const posts = await getCollection("posts", ({ data }) => !data.draft);
-  return SERIES.map((series) => ({
+  return getActiveSeries(posts).map(({ series, posts: seriesPosts }) => ({
     params: { series: series.key },
-    props: { series, posts: getPostsInSeries(posts, series.key) },
+    props: { series, posts: seriesPosts },
   }));
 }
 
@@ -75,7 +74,12 @@ if (ungroupedPosts.length > 0) {
                 </header>
                 <div class="learning-path">
                   {stagePosts.map((post) => (
-                    <LearningPathItem post={post} index={globalIndexes.get(post.id) ?? 0} total={posts.length} />
+                    <LearningPathItem
+                      post={post}
+                      index={globalIndexes.get(post.id) ?? 0}
+                      total={posts.length}
+                      headingLevel={3}
+                    />
                   ))}
                 </div>
               </section>

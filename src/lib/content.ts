@@ -66,7 +66,11 @@ export function getSeriesKey(post: Post): SeriesKey {
 export function getSeries(post: Post) {
   const key = getSeriesKey(post);
   if (key === "meta") return META_SERIES;
-  return SERIES.find((series) => series.key === key) ?? SERIES[5];
+  const series = SERIES.find((candidate) => candidate.key === key);
+  if (!series) {
+    throw new Error(`Unknown series "${key}" for ${post.id}`);
+  }
+  return series;
 }
 
 export function getPostsInSeries(posts: Post[], key: SeriesKey): Post[] {
@@ -89,4 +93,11 @@ export function getPostsInSeries(posts: Post[], key: SeriesKey): Post[] {
     if (aOrder !== bOrder) return aOrder - bOrder;
     return a.data.date.valueOf() - b.data.date.valueOf();
   });
+}
+
+export function getActiveSeries(posts: Post[]) {
+  return SERIES.map((series) => ({
+    series,
+    posts: getPostsInSeries(posts, series.key),
+  })).filter(({ posts: seriesPosts }) => seriesPosts.length > 0);
 }

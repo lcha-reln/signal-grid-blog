@@ -2,7 +2,7 @@
 title: 分布式消息序列号：Gap 检测、乱序处理与 Aeron 实战
 description: 从序列域、接收窗口和故障恢复出发，讲清消息 Gap、重复与乱序的检测边界，并给出 Aeron 中可落地的发送、接收、持久化与监控方案。
 date: 2026-03-11T12:00:00+08:00
-updated: 2026-08-12T18:00:00+08:00
+updated: 2026-08-13T12:30:00+08:00
 categories:
   - 高可用架构
 tags:
@@ -13,14 +13,14 @@ tags:
   - Aeron
 permalink: distributed-message-sequencing
 series: availability
-seriesOrder: 2
+seriesOrder: 20
 featured: true
 draft: false
 ---
 
 在有状态服务中，消息顺序并不是一个孤立的传输问题。主节点切换、进程重启、发送重试和并行消费，都可能让接收端遇到重复、缺口或来自旧任期的消息。
 
-本文是高可用架构学习路径的 Chapter 02。建议先阅读 [Chapter 01：有状态服务的高可用架构](/signal-grid-blog/posts/high-availability-stateful-service/)，理解热备复制、选主、快照与重放的整体关系，再深入序列号协议。
+本文是“有状态系统可靠性”学习路径的 Chapter 02。建议先阅读 [Chapter 01：有状态服务的高可用架构](/signal-grid-blog/posts/high-availability-stateful-service/)，理解热备复制、选主、快照与重放的整体关系，再深入序列号协议。
 
 序列号能以很低的成本暴露消息流的不连续，但它不会自动提供可靠投递、恢复、幂等或 exactly-once。生产系统真正需要设计的是：**序列号属于哪个域、由哪个任期的生产者生成、发现缺口后如何恢复，以及业务状态和消费位置如何一起提交。**
 
@@ -378,7 +378,7 @@ flowchart TB
 - 发送端从持久化日志或安全号段分配序列，所有重试复用原编号。
 - 接收游标必须和业务状态处于同一提交边界。
 
-回到 [高可用架构总览](/signal-grid-blog/posts/high-availability-stateful-service/) 看，这套协议正好连接了主从切换、快照、重放、幂等和 fencing：只有这些环节共同闭环，“发现 Gap”才会真正变成“恢复正确状态”。
+回到 [有状态系统可靠性总览](/signal-grid-blog/posts/high-availability-stateful-service/) 看，这套协议正好连接了主从切换、快照、重放、幂等和 fencing：只有这些环节共同闭环，“发现 Gap”才会真正变成“恢复正确状态”。
 
 ## 官方参考
 

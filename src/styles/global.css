@@ -851,6 +851,7 @@ a {
   color: rgb(var(--accent-rgb));
 }
 
+.series-card h2,
 .series-card h3 {
   margin: 8px 0 8px;
   color: var(--text-strong);
@@ -1066,6 +1067,7 @@ a {
 
 .page-hero-meta {
   display: flex;
+  flex-wrap: wrap;
   gap: 28px;
   margin-top: 34px;
   color: var(--faint);
@@ -1226,7 +1228,8 @@ a {
   gap: 16px;
 }
 
-.path-step-card h2 {
+.path-step-card h2,
+.path-step-card h3 {
   margin: 20px 0 10px;
   color: var(--text-strong);
   font-size: clamp(1.35rem, 3vw, 2rem);

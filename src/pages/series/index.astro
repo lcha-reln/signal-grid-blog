@@ -2,21 +2,23 @@
 import { getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import SeriesCard from "../../components/SeriesCard.astro";
-import { SERIES } from "../../config";
-import { getPostsInSeries } from "../../lib/content";
+import { getActiveSeries } from "../../lib/content";
 
 const posts = await getCollection("posts", ({ data }) => !data.draft);
+const activeSeries = getActiveSeries(posts);
 ---
 
-<BaseLayout title="技术专题" description="按知识路径组织的实时消息、分布式系统、交易系统和高性能组件文章。">
+<BaseLayout title="技术专题" description="围绕交易系统、有状态系统可靠性与 Java 低延迟工程组织的学习路径。">
   <header class="page-hero">
-    <span class="eyebrow">STRUCTURED KNOWLEDGE / {String(SERIES.length).padStart(2, "0")}</span>
+    <span class="eyebrow">STRUCTURED KNOWLEDGE / {String(activeSeries.length).padStart(2, "0")}</span>
     <h1>技术专题</h1>
-    <p>专题不是标签堆积，而是一条有上下文的学习路径。选择一个系统，从概念地图一路读到实现与运维。</p>
+    <p>专题是一条有先修条件、阅读顺序和学习目标的知识主线；具体产品与技术名词则作为标签出现。</p>
   </header>
-  <section class="section">
-    <div class="series-grid">
-      {SERIES.map((series) => <SeriesCard series={series} count={getPostsInSeries(posts, series.key).length} />)}
+  <section class="section" aria-label="当前可读专题">
+    <div class="series-grid active-series-grid">
+      {activeSeries.map(({ series, posts: seriesPosts }) => (
+        <SeriesCard series={series} count={seriesPosts.length} headingLevel={2} />
+      ))}
     </div>
   </section>
 </BaseLayout>

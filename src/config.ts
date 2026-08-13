@@ -9,7 +9,7 @@ export function sitePath(path = ""): string {
 export const SITE = {
   title: "RE-LN / Signal Grid",
   shortTitle: "RE/LN",
-  description: "把实时消息、分布式一致性与交易系统讲清楚。",
+  description: "把交易系统、有状态系统可靠性与 Java 低延迟工程讲清楚。",
   author: "lcha-reln",
   locale: "zh-CN",
   url: "https://lcha-reln.github.io/signal-grid-blog/",
@@ -18,9 +18,6 @@ export const SITE = {
 };
 
 export type SeriesKey =
-  | "aeron"
-  | "etcd"
-  | "zookeeper"
   | "trading"
   | "availability"
   | "performance"
@@ -61,57 +58,27 @@ export const META_SERIES: SeriesDefinition = {
 
 export const SERIES: readonly SeriesDefinition[] = [
   {
-    key: "aeron",
-    title: "Aeron",
-    eyebrow: "REAL-TIME TRANSPORT",
-    description: "从 Media Driver 到 Cluster，拆开低延迟消息系统的每一层。",
-    prerequisite: "Java NIO、线程模型与基础网络知识",
-    outcome: "建立从传输、归档到集群容错的完整心智模型。",
-    color: "cyan",
-    index: "01",
-  },
-  {
-    key: "etcd",
-    title: "etcd",
-    eyebrow: "DISTRIBUTED STATE",
-    description: "理解 Raft、MVCC、Watch，以及生产集群的安全与运维。",
-    prerequisite: "分布式系统基础与 HTTP/gRPC 入门",
-    outcome: "能够设计、部署并排查生产级 etcd 集群。",
-    color: "violet",
-    index: "02",
-  },
-  {
-    key: "zookeeper",
-    title: "ZooKeeper",
-    eyebrow: "COORDINATION",
-    description: "从数据模型、Watch 到 ACL 和运维的完整协调系统路线。",
-    prerequisite: "Java 基础与分布式协调概念",
-    outcome: "理解会话、临时节点、Watch 与常见协调配方。",
-    color: "lime",
-    index: "03",
-  },
-  {
     key: "trading",
     title: "交易系统",
-    eyebrow: "MARKET MECHANICS",
-    description: "从 CEX 产品地图、订单与撮合，到仓位、资金费率、保证金、强平和做市，串起交易业务规则与核心系统边界。",
-    prerequisite: "基础现货交易概念、百分比与盈亏计算；技术章节建议了解事件驱动架构。",
-    outcome: "能够沿下单、撮合、持仓、风控与结算链路解释关键规则，并把规则转化为可测试、可审计的系统模型。",
+    eyebrow: "EXCHANGE SYSTEMS",
+    description: "围绕中心化交易所，从产品与订单语义一路走到撮合、仓位、保证金、清算和账本，建立业务规则与系统状态机之间的映射。",
+    prerequisite: "理解基础现货交易和百分比、盈亏计算；了解事件驱动架构更佳。",
+    outcome: "能够解释订单从受理、撮合到清算入账的完整生命周期，并把产品规则转成可测试、可审计的状态与账务约束。",
     color: "amber",
-    index: "04",
+    index: "01",
     stages: [
       {
         index: "01",
         eyebrow: "MARKET MAP",
-        title: "市场地图",
-        description: "先建立产品、参与者和系统边界。",
+        title: "市场与产品",
+        description: "先建立产品、参与者、现金流和系统边界。",
         fromOrder: 10,
       },
       {
         index: "02",
         eyebrow: "ORDER FLOW",
         title: "订单与撮合",
-        description: "从订单输入追到订单簿、成交与自成交保护。",
+        description: "从订单契约追到订单簿、撮合、成交与自成交保护。",
         fromOrder: 30,
       },
       {
@@ -124,38 +91,38 @@ export const SERIES: readonly SeriesDefinition[] = [
       {
         index: "04",
         eyebrow: "RISK & CAPITAL",
-        title: "风险与资本",
-        description: "比较保证金模式、清算机制与组合风控。",
+        title: "保证金与清算",
+        description: "比较保证金模式、清算机制、账户组织与组合风控。",
         fromOrder: 90,
       },
       {
         index: "05",
         eyebrow: "SYNTHESIS",
-        title: "综合应用",
-        description: "用做市串联流动性、库存、对冲与合规边界。",
+        title: "系统综合",
+        description: "用做市串联流动性、库存、对冲和交易基础设施。",
         fromOrder: 120,
       },
     ],
   },
   {
     key: "availability",
-    title: "高可用架构",
-    eyebrow: "RESILIENCE",
-    description: "从单写者热备、选主与一致性校验，到序列号、Gap 检测和故障恢复，建立可验证、可切换、可恢复的系统链路。",
-    prerequisite: "Kafka 消费模型、ZooKeeper 临时节点与 Java 并发基础",
-    outcome: "能够为有状态服务定义故障边界、切换协议与可验证恢复流程。",
+    title: "有状态系统可靠性",
+    eyebrow: "STATEFUL RESILIENCE",
+    description: "围绕单写者有状态服务，拆解复制、任期与 fencing、消息连续性、快照重放和故障切换，明确一致性、可用性与恢复的边界。",
+    prerequisite: "理解分布式系统、事件驱动和日志或消费位点基础；Kafka、Aeron、ZooKeeper 经验不是前提。",
+    outcome: "能够定义故障模型与 RTO/RPO，并设计可证明唯一写者、可检测缺口、可重放和可演练的恢复协议。",
     color: "coral",
-    index: "05",
+    index: "02",
   },
   {
     key: "performance",
-    title: "高性能组件",
-    eyebrow: "MECHANICAL SYMPATHY",
-    description: "从 Disruptor 与 Agrona 出发，理解预分配、序列协调、批处理、背压和低分配设计的工程取舍。",
-    prerequisite: "Java 内存模型、缓存一致性、线程调度与基础并发编程",
-    outcome: "能够解释内存布局、序列协调与线程拓扑如何影响尾延迟，并用基准和剖析数据验证设计取舍。",
+    title: "Java 低延迟工程",
+    eyebrow: "LOW-LATENCY ENGINEERING",
+    description: "以 Disruptor、Agrona 等工具为切口，理解内存布局、序列协调、线程拓扑、批处理、背压与低分配设计，并用测量验证取舍。",
+    prerequisite: "熟悉 Java 并发、线程模型和基本数据结构；了解 Java 内存模型更佳。",
+    outcome: "能够从内存访问和线程协作解释吞吐与尾延迟，并用基准、剖析和生产指标判断优化是否成立。",
     color: "blue",
-    index: "06",
+    index: "03",
   },
 ] as const;
 

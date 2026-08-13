@@ -280,19 +280,31 @@
   tab-size: 2;
 }
 
-.article-body table {
-  display: block;
+.article-body .table-scroll {
   width: min(960px, calc(100vw - 48px));
   max-width: none;
   margin: 1.8em 50%;
   overflow-x: auto;
   border: 1px solid var(--border);
-  border-collapse: separate;
-  border-spacing: 0;
   border-radius: 12px;
   background: var(--surface);
   transform: translateX(-50%);
   scrollbar-width: thin;
+}
+
+.article-body .table-scroll:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 3px;
+}
+
+.article-body table {
+  display: table;
+  width: 100%;
+  min-width: 100%;
+  margin: 0;
+  border: 0;
+  border-collapse: separate;
+  border-spacing: 0;
 }
 
 .article-body thead {
@@ -441,7 +453,7 @@
   .article-body h1 { font-size: 1.85rem; }
   .article-body h2 { font-size: 1.52rem; }
   .article-body pre,
-  .article-body table,
+  .article-body .table-scroll,
   .article-body .mermaid { width: calc(100vw - 16px); border-radius: 9px; }
   .article-body pre { padding: 18px 17px; }
   .article-body .mermaid { padding: 16px; }

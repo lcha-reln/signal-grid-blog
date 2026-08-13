@@ -5,16 +5,13 @@ import SignalHero from "../components/SignalHero.astro";
 import SeriesCard from "../components/SeriesCard.astro";
 import PostCard from "../components/PostCard.astro";
 import { PRIMARY_SERIES_KEY, SERIES, sitePath } from "../config";
-import { getPostsInSeries, sortPosts } from "../lib/content";
+import { getActiveSeries, getPostsInSeries, sortPosts } from "../lib/content";
 
 const posts = sortPosts(await getCollection("posts", ({ data }) => !data.draft));
 const primaryPosts = getPostsInSeries(posts, PRIMARY_SERIES_KEY);
 const recommended = primaryPosts.slice(0, 6);
 const primarySeries = SERIES.find((series) => series.key === PRIMARY_SERIES_KEY);
-const activeSeries = SERIES.map((series) => ({
-  series,
-  posts: getPostsInSeries(posts, series.key),
-})).filter(({ posts }) => posts.length > 0);
+const activeSeries = getActiveSeries(posts);
 ---
 
 <BaseLayout>

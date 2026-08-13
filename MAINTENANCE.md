@@ -90,13 +90,13 @@ git push -u origin feature/short-description
 2. 确认仓库选择 `lcha-reln/signal-grid-blog`，分支选择 `main`。
 3. 进入“文章”，创建或编辑内容。
 4. 新文章先主动打开“草稿”开关；当前 CMS 默认值为 `false`，不要在半成品状态下误发布。
-5. 完成后填写摘要、分类和标签，选择“学习路径”并设置“路径排序”，再将 `draft` 改为 `false` 保存。
+5. 完成后填写摘要和标签，选择“学习路径”并设置“路径排序”，再将 `draft` 改为 `false` 保存。
 
 Pages CMS 保存后会直接创建 Git commit，并触发 GitHub Pages 部署。它不是一个独立数据库，正文始终保存在仓库的 `src/content/posts/` 中。
 
 写作时要遵守：
 
-- `permalink` 是文章公开地址，只允许小写英文、数字和连字符，例如 `aeron-cluster-basics`。
+- `permalink` 是文章公开地址，只允许小写英文、数字和连字符，例如 `disruptor-sequencing-basics`。
 - `permalink` 必须全站唯一，发布后尽量不要修改。
 - 修改已发布文章时补充 `updated`。
 - 日期使用带时区的 ISO 格式，例如 `2026-08-12T16:00:00+08:00`。
@@ -117,14 +117,12 @@ title: 文章标题
 description: 用于首页、搜索和分享卡片的摘要
 date: 2026-08-12T16:00:00+08:00
 updated: 2026-08-12T16:00:00+08:00
-categories:
-  - Aeron
 tags:
-  - Aeron
-  - Cluster
-permalink: aeron-cluster-basics
-series: aeron
-seriesOrder: 1
+  - Disruptor
+  - Java 并发
+permalink: disruptor-sequencing-basics
+series: performance
+seriesOrder: 10
 featured: false
 draft: true
 ---
@@ -141,7 +139,7 @@ draft: true
 - 推荐使用压缩过的 WebP；图片需写有意义的替代文字。
 
 ```markdown
-![Aeron Cluster 拓扑](/signal-grid-blog/images/posts/aeron-cluster.webp)
+![Disruptor 消费拓扑](/signal-grid-blog/images/posts/disruptor-topology.webp)
 ```
 
 不要写 `/images/posts/...`，否则生产环境会绕过项目 base 路径并返回 404。
@@ -170,17 +168,16 @@ Mermaid 只在实际存在图表的页面加载。语法问题不一定让 Astro
 
 ### 学习路径归类
 
-`series` 与 `seriesOrder` 是正式学习路径的唯一依据。`series` 可选：
+`series` 与 `seriesOrder` 是正式学习路径的唯一依据。公开主线只有：
 
-- `aeron`
-- `etcd`
-- `zookeeper`
-- `trading`
-- `availability`
-- `performance`
-- `meta`
+- `trading`：交易系统
+- `availability`：有状态系统可靠性
+- `performance`：Java 低延迟工程
+- `meta`：站点指南，仅用于站点说明类内容
 
-`seriesOrder` 只负责排序：数值越小越靠前，页面会自动显示连续的 Chapter 编号。通常从 1 递增；若预计会频繁插入章节，也可以使用 10、20、30 这样的间隔值。同一路径内不要重复。标签只用于搜索与文章说明，不决定专题归属。若增加新专题，需要同时修改站点配置、内容 schema、Pages CMS 选项和专题页面。
+`seriesOrder` 只负责排序：数值越小越靠前，页面会自动显示连续的 Chapter 编号。使用 10、20、30 这样的间隔值，便于中途插入章节；同一路径内不要重复。
+
+标签描述具体产品、组件与概念，例如 Aeron、Kafka、ZooKeeper、Disruptor、STP；标签不决定专题归属。`categories` 仅为兼容早期 Markdown 保留，不在 Pages CMS 或前台导航中展示，新文章不要再填写。若增加新的顶层主线，需要同时修改站点配置、内容 schema、Pages CMS 选项和专题页面。
 
 首页“推荐阅读顺序”由 `src/config.ts` 中的 `PRIMARY_SERIES_KEY` 指定。较长专题可在同一文件的专题配置中维护 `stages`，用 `fromOrder` 将文章分成若干阅读阶段；文章本身仍只填写 `series` 和 `seriesOrder`，不要在 frontmatter 重复阶段名称。
 

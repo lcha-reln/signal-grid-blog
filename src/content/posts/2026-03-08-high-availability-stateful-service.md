@@ -2,7 +2,7 @@
 title: "有状态服务的高可用架构：热备复制、选主与快照恢复"
 description: "以 Kafka 分区日志和双节点热备为主线，拆解确定性执行、Leader 选举与 fencing、状态校验、快照恢复和输出持久化，并明确 RTO、RPO 与一致性边界。"
 date: 2026-03-08T14:43:51+08:00
-updated: 2026-08-12T18:00:00+08:00
+updated: 2026-08-13T12:30:00+08:00
 categories:
   - 高可用架构
 tags:
@@ -14,7 +14,7 @@ tags:
   - 故障转移
   - 快照恢复
 series: availability
-seriesOrder: 1
+seriesOrder: 10
 permalink: high-availability-stateful-service
 featured: true
 draft: false

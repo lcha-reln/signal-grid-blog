@@ -21,7 +21,7 @@ draft: false
 
 仓位不是“提交开仓订单”后凭空出现的一行数据，而是成交事件按产品规则累积出的状态。订单可以没有成交、部分成交或分多笔成交；只有 fill 才会改变数量、平均入场价和已实现盈亏。
 
-这一点也解释了为什么“卖出”不总是“做空”，反向订单也不总是“平仓”。行为取决于产品类型、当前仓位、持仓模式和 Reduce-Only 等约束。建议先阅读 [Chapter 05：交易订单语义](/signal-grid-blog/posts/order-types-and-execution-strategies/)，再进入仓位层。
+这一点也解释了为什么“卖出”不总是“做空”，反向订单也不总是“平仓”。行为取决于产品类型、当前仓位、持仓模式和 Reduce-Only 等约束。建议先阅读 [Chapter 03：交易订单语义](/signal-grid-blog/posts/order-types-and-execution-strategies/)，再进入仓位层。
 
 > 本文讨论合约与系统记账语义，不构成交易建议。公式必须与具体合约的 multiplier、quantity unit、quote currency、settlement currency 和账户模式一起使用。
 

@@ -13,7 +13,7 @@ tags:
   - 订单状态机
 permalink: matching-engine-and-auctions
 series: trading
-seriesOrder: 30
+seriesOrder: 50
 featured: false
 draft: false
 ---
@@ -163,7 +163,7 @@ CLOSED → AUCTION_COLLECT → AUCTION_MATCH → CONTINUOUS → HALTED
 - 集合竞价只产生一个清算价，并在平局时执行版本化的 venue 规则；
 - 回放测试覆盖部分成交、撤单竞争、深度耗尽、拍卖平局和故障切换。
 
-下一章将继续拆解[订单簿队列与自成交保护](/signal-grid-blog/posts/order-book-and-self-trade-prevention/)。
+撮合算法依赖的订单簿结构与自成交边界，可回看[订单簿队列与自成交保护](/signal-grid-blog/posts/order-book-and-self-trade-prevention/)。
 
 ## 官方参考
 
