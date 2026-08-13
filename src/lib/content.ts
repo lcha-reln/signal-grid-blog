@@ -70,12 +70,23 @@ export function getSeries(post: Post) {
 }
 
 export function getPostsInSeries(posts: Post[], key: SeriesKey): Post[] {
-  return posts
-    .filter((post) => getSeriesKey(post) === key)
-    .sort((a, b) => {
-      const aOrder = a.data.seriesOrder ?? Number.POSITIVE_INFINITY;
-      const bOrder = b.data.seriesOrder ?? Number.POSITIVE_INFINITY;
-      if (aOrder !== bOrder) return aOrder - bOrder;
-      return a.data.date.valueOf() - b.data.date.valueOf();
-    });
+  const seriesPosts = posts.filter((post) => getSeriesKey(post) === key);
+  const orders = new Map<number, string>();
+
+  for (const post of seriesPosts) {
+    const existing = orders.get(post.data.seriesOrder);
+    if (existing) {
+      throw new Error(
+        `Duplicate seriesOrder ${post.data.seriesOrder} in ${key}: ${existing} and ${post.id}`,
+      );
+    }
+    orders.set(post.data.seriesOrder, post.id);
+  }
+
+  return seriesPosts.sort((a, b) => {
+    const aOrder = a.data.seriesOrder;
+    const bOrder = b.data.seriesOrder;
+    if (aOrder !== bOrder) return aOrder - bOrder;
+    return a.data.date.valueOf() - b.data.date.valueOf();
+  });
 }

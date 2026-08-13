@@ -26,9 +26,29 @@ export type SeriesKey =
   | "performance"
   | "meta";
 
-export const PRIMARY_SERIES_KEY: Exclude<SeriesKey, "meta"> = "availability";
+export interface SeriesStage {
+  index: string;
+  eyebrow: string;
+  title: string;
+  description: string;
+  fromOrder: number;
+}
 
-export const META_SERIES = {
+export interface SeriesDefinition {
+  key: SeriesKey;
+  title: string;
+  eyebrow: string;
+  description: string;
+  prerequisite: string;
+  outcome: string;
+  color: string;
+  index: string;
+  stages?: readonly SeriesStage[];
+}
+
+export const PRIMARY_SERIES_KEY: Exclude<SeriesKey, "meta"> = "trading";
+
+export const META_SERIES: SeriesDefinition = {
   key: "meta",
   title: "站点指南",
   eyebrow: "SIGNAL GRID",
@@ -37,9 +57,9 @@ export const META_SERIES = {
   outcome: "了解站点的内容结构、写作方式与发布流程。",
   color: "cyan",
   index: "00",
-} as const;
+};
 
-export const SERIES = [
+export const SERIES: readonly SeriesDefinition[] = [
   {
     key: "aeron",
     title: "Aeron",
@@ -74,11 +94,48 @@ export const SERIES = [
     key: "trading",
     title: "交易系统",
     eyebrow: "MARKET MECHANICS",
-    description: "订单簿、保证金、强平与衍生品机制的业务和技术视角。",
-    prerequisite: "基础市场知识与事件驱动系统概念",
-    outcome: "把交易业务规则映射到可实现、可审计的系统模型。",
+    description: "从 CEX 产品地图、订单与撮合，到仓位、资金费率、保证金、强平和做市，串起交易业务规则与核心系统边界。",
+    prerequisite: "基础现货交易概念、百分比与盈亏计算；技术章节建议了解事件驱动架构。",
+    outcome: "能够沿下单、撮合、持仓、风控与结算链路解释关键规则，并把规则转化为可测试、可审计的系统模型。",
     color: "amber",
     index: "04",
+    stages: [
+      {
+        index: "01",
+        eyebrow: "MARKET MAP",
+        title: "市场地图",
+        description: "先建立产品、参与者和系统边界。",
+        fromOrder: 10,
+      },
+      {
+        index: "02",
+        eyebrow: "ORDER FLOW",
+        title: "订单与撮合",
+        description: "从订单输入追到订单簿、成交与自成交保护。",
+        fromOrder: 30,
+      },
+      {
+        index: "03",
+        eyebrow: "POSITION & PRICING",
+        title: "仓位与定价",
+        description: "理解持仓现金流、资金费率与标记价格。",
+        fromOrder: 60,
+      },
+      {
+        index: "04",
+        eyebrow: "RISK & CAPITAL",
+        title: "风险与资本",
+        description: "比较保证金模式、清算机制与组合风控。",
+        fromOrder: 90,
+      },
+      {
+        index: "05",
+        eyebrow: "SYNTHESIS",
+        title: "综合应用",
+        description: "用做市串联流动性、库存、对冲与合规边界。",
+        fromOrder: 120,
+      },
+    ],
   },
   {
     key: "availability",
@@ -102,4 +159,4 @@ export const SERIES = [
   },
 ] as const;
 
-export type Series = (typeof SERIES)[number];
+export type Series = SeriesDefinition;

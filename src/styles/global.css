@@ -752,18 +752,23 @@ a {
 
 .active-series-grid .series-card,
 .active-series-grid .series-card:nth-child(n) {
+  grid-column: span 6;
+  min-height: 260px;
+}
+
+.active-series-grid .series-card:only-child {
   grid-column: span 12;
   min-height: 220px;
 }
 
-.active-series-grid .series-card > a {
+.active-series-grid .series-card:only-child > a {
   display: grid;
   grid-template-columns: minmax(100px, 0.35fr) minmax(0, 1.65fr) minmax(150px, 0.45fr);
   align-items: center;
   gap: clamp(24px, 5vw, 72px);
 }
 
-.active-series-grid .series-action {
+.active-series-grid .series-card:only-child .series-action {
   margin-top: 0;
 }
 
@@ -1107,6 +1112,43 @@ a {
   max-width: 1040px;
 }
 
+.path-stages {
+  display: grid;
+  gap: 72px;
+}
+
+.path-stage-head {
+  display: grid;
+  grid-template-columns: 48px minmax(180px, 0.6fr) minmax(260px, 1fr);
+  align-items: end;
+  gap: 22px;
+  max-width: 1040px;
+  margin-bottom: 22px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+}
+
+.path-stage-index {
+  color: rgb(var(--accent-rgb));
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+}
+
+.path-stage-head h2 {
+  margin: 7px 0 0;
+  color: var(--text-strong);
+  font-size: clamp(1.45rem, 2.5vw, 2rem);
+  letter-spacing: -0.035em;
+}
+
+.path-stage-head p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.65;
+}
+
 .path-step {
   display: grid;
   grid-template-columns: 62px minmax(0, 1fr);
@@ -1396,6 +1438,8 @@ a {
   .page-hero { padding-top: 72px; }
   .path-brief { grid-template-columns: 1fr; }
   .path-brief > div { min-height: auto; }
+  .path-stage-head { grid-template-columns: 40px minmax(0, 1fr); align-items: start; }
+  .path-stage-head > p { grid-column: 2; }
   .footer-grid,
   .footer-line { align-items: start; flex-direction: column; }
   .footer-line { gap: 7px; }
@@ -1422,7 +1466,10 @@ a {
   .post-grid { grid-template-columns: 1fr; }
   .series-card,
   .series-card:nth-child(n) { grid-column: auto; min-height: 235px; }
-  .active-series-grid .series-card > a { display: flex; gap: 0; }
+  .active-series-grid .series-card,
+  .active-series-grid .series-card:nth-child(n) { grid-column: auto; min-height: 235px; }
+  .active-series-grid .series-card:only-child > a { display: flex; gap: 0; }
+  .path-stages { gap: 56px; }
   .path-section-head { align-items: start; flex-direction: column; }
   .path-step { grid-template-columns: 42px minmax(0, 1fr); gap: 10px; }
   .path-marker { padding-top: 20px; }

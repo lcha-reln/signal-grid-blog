@@ -15,6 +15,26 @@ export async function getStaticPaths() {
 
 const { series, posts } = Astro.props;
 const totalMinutes = posts.reduce((sum, post) => sum + readingMinutes(post), 0);
+const globalIndexes = new Map(posts.map((post, index) => [post.id, index]));
+const stages = series.stages ?? [];
+for (let index = 0; index < stages.length; index += 1) {
+  const previous = stages[index - 1];
+  if (previous && stages[index].fromOrder <= previous.fromOrder) {
+    throw new Error(`Stages for ${series.key} must use strictly increasing fromOrder values.`);
+  }
+}
+const stageGroups = stages.map((stage, index) => {
+  const nextOrder = stages[index + 1]?.fromOrder ?? Number.POSITIVE_INFINITY;
+  return {
+    stage,
+    posts: posts.filter((post) => post.data.seriesOrder >= stage.fromOrder && post.data.seriesOrder < nextOrder),
+  };
+});
+const stagedPostIds = new Set(stageGroups.flatMap((group) => group.posts.map((post) => post.id)));
+const ungroupedPosts = stages.length > 0 ? posts.filter((post) => !stagedPostIds.has(post.id)) : [];
+if (ungroupedPosts.length > 0) {
+  throw new Error(`Posts outside configured stages for ${series.key}: ${ungroupedPosts.map((post) => post.id).join(", ")}`);
+}
 ---
 
 <BaseLayout title={series.title} description={series.description}>
@@ -41,9 +61,31 @@ const totalMinutes = posts.reduce((sum, post) => sum + readingMinutes(post), 0);
           <span class="eyebrow">READING ROUTE / 从基础到实战</span>
           <p>{String(posts.length).padStart(2, "0")} 个章节 · 约 {totalMinutes} 分钟</p>
         </div>
-        <div class="learning-path">
-          {posts.map((post, index) => <LearningPathItem post={post} index={index} total={posts.length} />)}
-        </div>
+        {stages.length > 0 ? (
+          <div class="path-stages">
+            {stageGroups.map(({ stage, posts: stagePosts }) => (
+              <section class="path-stage" aria-labelledby={`stage-${stage.index}`}>
+                <header class="path-stage-head">
+                  <span class="path-stage-index">{stage.index}</span>
+                  <div>
+                    <span class="eyebrow">{stage.eyebrow}</span>
+                    <h2 id={`stage-${stage.index}`}>{stage.title}</h2>
+                  </div>
+                  <p>{stage.description}</p>
+                </header>
+                <div class="learning-path">
+                  {stagePosts.map((post) => (
+                    <LearningPathItem post={post} index={globalIndexes.get(post.id) ?? 0} total={posts.length} />
+                  ))}
+                </div>
+              </section>
+            ))}
+          </div>
+        ) : (
+          <div class="learning-path">
+            {posts.map((post, index) => <LearningPathItem post={post} index={index} total={posts.length} />)}
+          </div>
+        )}
       </>
     ) : (
       <div class="empty-state">这条学习路径已经规划，首篇内容正在构建中。</div>
