@@ -26,3 +26,11 @@
 - 文章前后导航与本表一致；
 - 首页只展示主路径前六章，完整路径仍在专题页；
 - 新链接包含 `/signal-grid-blog/` base。
+
+## 高性能组件
+
+| Chapter | `seriesOrder` | 标题 | `permalink` |
+| ---: | ---: | --- | --- |
+| 01 | 10 | LMAX Disruptor 4：Ring Buffer、消费拓扑与 Batch Rewind | `lmax-disruptor-ring-buffer-and-sequencing` |
+
+本路径从进程内事件管线开始，后续再补充 Agrona、内存布局、基准方法与低分配组件。新增章节时保持 `seriesOrder` 以 10 为间隔，并用真实依赖关系决定顺序，不按发布日期倒排。
