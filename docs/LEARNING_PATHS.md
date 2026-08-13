@@ -43,5 +43,6 @@
 | Chapter | `seriesOrder` | 标题 | `permalink` |
 | ---: | ---: | --- | --- |
 | 01 | 10 | LMAX Disruptor 4：Ring Buffer、消费拓扑与 Batch Rewind | `lmax-disruptor-ring-buffer-and-sequencing` |
+| 02 | 20 | Agrona 2：DirectBuffer、并发队列与 Agent 执行模型 | `agrona-direct-buffer-queues-and-agents` |
 
-本路径从进程内事件管线开始，后续再补充 Agrona、内存布局、基准方法与低分配组件。新增章节时保持 `seriesOrder` 以 10 为间隔，并用真实依赖关系决定顺序，不按发布日期倒排。
+本路径先用 Disruptor 建立事件管线、序列与背压模型，再用 Agrona 下探 Buffer、内存顺序、并发容器与执行循环；后续补充内存布局和基准方法。新增章节时保持 `seriesOrder` 以 10 为间隔，并用真实依赖关系决定顺序，不按发布日期倒排。
