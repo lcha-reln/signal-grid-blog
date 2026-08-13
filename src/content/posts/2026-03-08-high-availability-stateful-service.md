@@ -2,7 +2,7 @@
 title: "有状态服务的高可用架构：热备复制、选主与快照恢复"
 description: "以 Kafka 分区日志和双节点热备为主线，拆解确定性执行、Leader 选举与 fencing、状态校验、快照恢复和输出持久化，并明确 RTO、RPO 与一致性边界。"
 date: 2026-03-08T14:43:51+08:00
-updated: 2026-08-13T20:25:00+08:00
+updated: 2026-08-13T22:30:00+08:00
 categories:
   - 高可用架构
 tags:
@@ -25,6 +25,8 @@ draft: false
 本文给出一种可落地的参考模型：**Kafka 分区日志 + 单写者状态机 + 热备 Follower + ZooKeeper 选主 + durable snapshot**。它偏向一致性；当节点无法证明自己仍是合法 Leader 时，正确行为是停止写入，而不是带着不确定性继续服务。
 
 > 这不是仅靠几项中间件配置就能获得的“强一致方案”。一致性来自完整协议：确定性执行、按分区记录的恢复位点、Leader epoch、下游 fencing、原子快照，以及可重复验证的故障切换流程。
+
+本文是学习路径的架构总览。下一章 [《Raft 论文精读》](/signal-grid-blog/posts/raft-consensus-leader-election-log-replication-and-safety/) 会从多数派、任期、复制日志与安全性证明出发，解释一套共识协议如何把“已有副本”推进成“未来 Leader 也不能推翻的已提交前缀”；本文的双节点热备参考模型本身不是 Raft 集群。
 
 ## 先定义故障边界和目标
 

@@ -2,7 +2,7 @@
 title: "ZooKeeper 3.9：从 znode、Watch 到 ZAB、一致性与工程配方"
 description: "以 Apache ZooKeeper 3.9.5 为基线，从数据模型、Session、Watch 和 ZAB 写入链路出发，讲清读写一致性、版本事务、选主与锁、fencing、安全、部署和故障排查。"
 date: 2026-08-13T19:30:00+08:00
-updated: 2026-08-13T19:30:00+08:00
+updated: 2026-08-13T22:30:00+08:00
 tags:
   - ZooKeeper
   - ZAB
@@ -23,6 +23,8 @@ draft: false
 本文以 **Apache ZooKeeper 3.9.5 current release** 为行为基线，同时注明官方仍将 **3.8.6** 标记为 latest stable release。3.9.5 和 3.8.6 都修复了 2026 年披露的敏感配置日志泄露问题；生产选型不能只看功能，也要确认所用维护线和安全补丁。[官方 Releases](https://zookeeper.apache.org/releases/) · [3.9.5 Release Notes](https://zookeeper.apache.org/doc/r3.9.5/releasenotes.html) · [Security](https://zookeeper.apache.org/security/)
 
 文章会使用原生 API 解释语义，再用 **Apache Curator 5.9.0** 展示工程写法。ZooKeeper 3.9 的源码仍维持 Java 8 字节码兼容基线；为让示例更清晰，本文代码采用 Java 17 的语法表达，生产环境应选择仍受维护的 LTS JDK。Curator 能替我们处理连接、重试和成熟 recipe，但它不能替业务定义 fencing、幂等、结果未知和降级策略。
+
+本文是“有状态系统可靠性”学习路径的 Chapter 03。前一章 [《Raft 论文精读》](/signal-grid-blog/posts/raft-consensus-leader-election-log-replication-and-safety/) 建立了多数派、任期、复制日志和安全性证明的通用分析框架；本章转向 ZooKeeper 实际暴露的 znode、Session、Watch、ACL 与 recipe。二者可以互相帮助理解，但 ZAB 与 Raft 不是同一个协议。
 
 ## 1. ZooKeeper 解决的不是“存数据”，而是“协调决定”
 
@@ -164,7 +166,7 @@ Leader 激活时，集群先选出包含权威历史的候选者，再让 follow
 
 `zxid` 是 64 位值，高 32 位表示 epoch，低 32 位表示该 epoch 内的计数。Leader 更换会进入新 epoch。它提供 ZooKeeper 事务的全序，不应直接当业务 fencing token 使用：外部数据库未必理解 zxid，应用也可能需要按资源或 shard 分配自己的 epoch。
 
-ZAB、Raft 都使用 Leader、日志顺序和多数派交集保证安全，但二者的协议接口、术语、恢复细节和对应用暴露的模型不同。工程上应基于 ZooKeeper 的真实 API 和保证设计，而不是把某个 Raft 结论直接套上来。[ZooKeeper Internals](https://zookeeper.apache.org/doc/current/zookeeperInternals.html)
+ZAB 与 [Raft](/signal-grid-blog/posts/raft-consensus-leader-election-log-replication-and-safety/) 都使用 Leader、日志顺序和多数派交集保证安全，但二者的协议接口、术语、恢复细节和对应用暴露的模型不同。工程上应基于 ZooKeeper 的真实 API 和保证设计，而不是把某个 Raft 结论直接套上来。[ZooKeeper Internals](https://zookeeper.apache.org/doc/current/zookeeperInternals.html)
 
 ## 4. 一致性：写线性化，普通读可能旧
 
