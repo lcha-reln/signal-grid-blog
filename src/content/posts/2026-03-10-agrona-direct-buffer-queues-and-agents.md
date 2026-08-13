@@ -2,7 +2,7 @@
 title: Agrona 2：DirectBuffer、并发队列与 Agent 执行模型
 description: 基于 Agrona 2.5.0，围绕 Buffer 与内存顺序、SPSC/MPSC 队列、Agent/IdleStrategy 和低分配集合，解释所有权、背压与生命周期，并纠正“零 GC、零拷贝、无锁就一定更快”的常见误区。
 date: 2026-03-10T11:15:21+08:00
-updated: 2026-08-13T14:14:43+08:00
+updated: 2026-08-13T18:00:00+08:00
 tags:
   - Agrona
   - Java 并发
@@ -47,6 +47,16 @@ flowchart TB
 | 执行循环 | `Agent`、`AgentRunner`、`IdleStrategy` | 把非阻塞工作与空闲策略组合起来 | 自动隔离阻塞、合理的 CPU 预算 |
 | 低分配结构 | primitive map/set/list、缓存、timer wheel | 避免部分装箱和短命对象 | “完全零分配”、线程安全 |
 | 运维原语 | counters、`MarkFile`、`DistinctErrorLog` | 进度、存活与重复错误观测 | 业务账本、事务、灾难恢复 |
+
+### 1.1 它与 Aeron 学习路径怎样衔接
+
+Aeron 1.52.2 使用 Agrona 2.5.0，但这是一条**实现依赖**，不是要求读者先背完整个 Agrona API 的课程依赖。进入 [Aeron Transport 第一章](/signal-grid-blog/posts/aeron-transport-channel-stream-session-image/) 前，只需要先掌握三件事：
+
+1. `DirectBuffer` 是回调期内的字节视图，不代表数据所有权；
+2. Agent 的 `doWork → idle(workCount)` 是 Media Driver 与客户端执行循环的基础形态；
+3. release/acquire、队列容量与背压都是协议的一部分，不是“性能开关”。
+
+后续遇到 `UnsafeBuffer`、`IdleStrategy`、counters 或 mark file 时，可以回到本文相应章节查底层语义；Aeron 专题只讲这些原语如何参与 Transport、Archive 和 Cluster，不会重复整篇 Agrona。反过来，本文提到的跨进程可靠传输、流录制和复制状态机，也会分别在 Aeron 的三个阶段中展开。
 
 依赖很简单：
 
@@ -530,3 +540,5 @@ Agrona 真正教会我们的，不是“Unsafe 更快”，而是低延迟系统
 - [Agent 与 AgentRunner 生命周期](https://github.com/aeron-io/agrona/tree/2.5.0/agrona/src/main/java/org/agrona/concurrent)
 - [BroadcastReceiver 丢失语义](https://github.com/aeron-io/agrona/blob/2.5.0/agrona/src/main/java/org/agrona/concurrent/broadcast/BroadcastReceiver.java)
 - [DeadlineTimerWheel 约束](https://github.com/aeron-io/agrona/blob/2.5.0/agrona/src/main/java/org/agrona/DeadlineTimerWheel.java)
+- [Aeron 1.52.2 Release](https://github.com/aeron-io/aeron/releases/tag/1.52.2)
+- [Aeron 官方文档入口](https://aeron.io/docs/)

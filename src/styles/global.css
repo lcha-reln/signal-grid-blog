@@ -1234,6 +1234,7 @@ a {
   color: var(--text-strong);
   font-size: clamp(1.35rem, 3vw, 2rem);
   letter-spacing: -0.03em;
+  overflow-wrap: anywhere;
 }
 
 .path-step-card > p {
@@ -1242,6 +1243,7 @@ a {
   color: var(--muted);
   font-size: 14px;
   line-height: 1.75;
+  overflow-wrap: anywhere;
 }
 
 .path-step-footer {
@@ -1252,6 +1254,7 @@ a {
   font-family: var(--font-mono);
   font-size: 9px;
   letter-spacing: 0.06em;
+  overflow-wrap: anywhere;
 }
 
 .path-step-footer strong {

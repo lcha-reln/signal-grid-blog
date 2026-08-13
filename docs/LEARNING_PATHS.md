@@ -2,7 +2,32 @@
 
 这份文件记录专题的 canonical 阅读顺序。页面中的连续 Chapter 编号由 `seriesOrder` 排序后生成；修改标题或文件名时，不应同时改变已经发布的 `permalink`。
 
-顶层专题只表达稳定的知识主线：`trading`、`availability`、`performance`。Aeron、Disruptor、Kafka、ZooKeeper 等产品或组件名使用 `tags` 表示；`categories` 仅为兼容早期文章保留，不参与前台导航。
+顶层专题只表达已经形成系统课程的稳定知识主线：`aeron`、`trading`、`availability`、`performance`。普通产品或组件名仍使用 `tags` 表示；Aeron 因同时覆盖 Transport、Archive 与 Cluster 的完整系统栈，单独形成顶层学习路径。`categories` 仅为兼容早期文章保留，不参与前台导航。
+
+## Aeron 系统工程
+
+| 阶段 | Chapter | `seriesOrder` | 标题 | `permalink` |
+| --- | ---: | ---: | --- | --- |
+| Aeron Transport | 01 | 5 | Aeron 全栈导读：Transport、Archive、Cluster 与 Agrona 的边界 | `aeron-stack-transport-archive-cluster-overview` |
+| Aeron Transport | 02 | 10 | Aeron Transport：Channel、Stream、Session 与 Image 的身份模型 | `aeron-transport-channel-stream-session-image` |
+| Aeron Transport | 03 | 20 | Aeron Transport：Publication、Log Buffer 与发送热路径 | `aeron-transport-publication-log-buffer-offer-try-claim` |
+| Aeron Transport | 04 | 30 | Aeron Transport：Subscription、poll 与消息重组 | `aeron-transport-subscription-poll-fragmentation` |
+| Aeron Transport | 05 | 40 | Aeron Transport：可靠 UDP、流控、拥塞控制与丢包恢复 | `aeron-transport-reliable-udp-flow-congestion-loss` |
+| Aeron Transport | 06 | 50 | Aeron Transport：多目标、Spy 与双向通信模式 | `aeron-transport-mdc-mds-spy-response-channels` |
+| Aeron Transport | 07 | 60 | Aeron Transport：Media Driver 生产配置、监控与故障诊断 | `aeron-transport-media-driver-operations-diagnostics` |
+| Aeron Archive | 08 | 70 | Aeron Archive：架构、控制会话与录制生命周期 | `aeron-archive-recording-lifecycle` |
+| Aeron Archive | 09 | 80 | Aeron Archive：Catalog、Segment、持久性与录制续接 | `aeron-archive-storage-and-retention` |
+| Aeron Archive | 10 | 90 | Aeron Archive：Replay、Bounded Replay 与历史追实时 | `aeron-archive-replay-and-live-merge` |
+| Aeron Archive | 11 | 100 | Aeron Archive：跨主机复制、Live Merge 与灾备恢复 | `aeron-archive-replication-and-recovery` |
+| Aeron Archive | 12 | 110 | Aeron Archive：校验、修复、迁移、监控与容量治理 | `aeron-archive-operations-and-repair` |
+| Aeron Cluster | 13 | 120 | Aeron Cluster：架构、组件与一条消息的提交之旅 | `aeron-cluster-architecture-and-log-commit` |
+| Aeron Cluster | 14 | 130 | Aeron Cluster：确定性业务内核、会话、协议与网关 | `aeron-cluster-deterministic-services-and-clients` |
+| Aeron Cluster | 15 | 140 | Aeron Cluster：Timers、Snapshots 与 Replay | `aeron-cluster-timers-snapshots-and-recovery` |
+| Aeron Cluster | 16 | 150 | Aeron Cluster：选举、Catch-up、Leader 切换与一致性边界 | `aeron-cluster-elections-catchup-and-consistency` |
+| Aeron Cluster | 17 | 160 | Aeron Cluster：生产部署、安全边界与 Cluster Backup | `aeron-cluster-deployment-security-and-backup` |
+| Aeron Cluster | 18 | 170 | Aeron Cluster：Counters、ClusterTool、性能与排障 Runbook | `aeron-cluster-operations-performance-and-troubleshooting` |
+
+本路径以 Aeron 1.52.2 和对应官方文档、源码及 Javadoc 为版本基线。在线 Cookbook 用于补充实战问题，不替代核心概念与 API 事实。Transport 是 Archive 与 Cluster 的共同前提；Archive 负责可定位的持久化流，Cluster 在 Transport 与 Archive 之上建立确定性复制状态机。Agrona 不重复放入本路径，阅读 Buffer、Agent 与 IdleStrategy 时可回到 [Java 低延迟工程 Chapter 02](../src/content/posts/2026-03-10-agrona-direct-buffer-queues-and-agents.md)。
 
 ## 交易系统
 

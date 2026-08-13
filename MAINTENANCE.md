@@ -168,8 +168,9 @@ Mermaid 只在实际存在图表的页面加载。语法问题不一定让 Astro
 
 ### 学习路径归类
 
-`series` 与 `seriesOrder` 是正式学习路径的唯一依据。公开主线只有：
+`series` 与 `seriesOrder` 是正式学习路径的唯一依据。公开主线包括：
 
+- `aeron`：Aeron 系统工程
 - `trading`：交易系统
 - `availability`：有状态系统可靠性
 - `performance`：Java 低延迟工程
@@ -177,7 +178,7 @@ Mermaid 只在实际存在图表的页面加载。语法问题不一定让 Astro
 
 `seriesOrder` 只负责排序：数值越小越靠前，页面会自动显示连续的 Chapter 编号。使用 10、20、30 这样的间隔值，便于中途插入章节；同一路径内不要重复。
 
-标签描述具体产品、组件与概念，例如 Aeron、Kafka、ZooKeeper、Disruptor、STP；标签不决定专题归属。`categories` 仅为兼容早期 Markdown 保留，不在 Pages CMS 或前台导航中展示，新文章不要再填写。若增加新的顶层主线，需要同时修改站点配置、内容 schema、Pages CMS 选项和专题页面。
+标签描述具体产品、组件与概念，例如 Media Driver、Replay、Raft、Kafka、ZooKeeper、Disruptor、STP；标签不决定专题归属。`categories` 仅为兼容早期 Markdown 保留，不在 Pages CMS 或前台导航中展示，新文章不要再填写。若增加新的顶层主线，需要同时修改站点配置、内容 schema、Pages CMS 选项和专题页面。
 
 首页“推荐阅读顺序”由 `src/config.ts` 中的 `PRIMARY_SERIES_KEY` 指定。较长专题可在同一文件的专题配置中维护 `stages`，用 `fromOrder` 将文章分成若干阅读阶段；文章本身仍只填写 `series` 和 `seriesOrder`，不要在 frontmatter 重复阶段名称。
 

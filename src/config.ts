@@ -9,7 +9,7 @@ export function sitePath(path = ""): string {
 export const SITE = {
   title: "RE-LN / Signal Grid",
   shortTitle: "RE/LN",
-  description: "把交易系统、有状态系统可靠性与 Java 低延迟工程讲清楚。",
+  description: "从 Aeron Transport、Archive 与 Cluster，到交易系统、有状态系统可靠性和 Java 低延迟工程。",
   author: "lcha-reln",
   locale: "zh-CN",
   url: "https://lcha-reln.github.io/signal-grid-blog/",
@@ -18,6 +18,7 @@ export const SITE = {
 };
 
 export type SeriesKey =
+  | "aeron"
   | "trading"
   | "availability"
   | "performance"
@@ -43,7 +44,7 @@ export interface SeriesDefinition {
   stages?: readonly SeriesStage[];
 }
 
-export const PRIMARY_SERIES_KEY: Exclude<SeriesKey, "meta"> = "trading";
+export const PRIMARY_SERIES_KEY: Exclude<SeriesKey, "meta"> = "aeron";
 
 export const META_SERIES: SeriesDefinition = {
   key: "meta",
@@ -58,6 +59,39 @@ export const META_SERIES: SeriesDefinition = {
 
 export const SERIES: readonly SeriesDefinition[] = [
   {
+    key: "aeron",
+    title: "Aeron 系统工程",
+    eyebrow: "AERON SYSTEMS",
+    description: "从 Transport 的可靠低延迟传输，到 Archive 的录制、回放与复制，再到 Cluster 的确定性状态机、选举恢复和生产运维，建立完整而可验证的 Aeron 心智模型。",
+    prerequisite: "熟悉 Java 17、线程与网络基础；建议先了解 UDP、背压和二进制 Buffer。Agrona 章节可作为底层原语补充阅读。",
+    outcome: "能够正确选择并组合 Transport、Archive 与 Cluster，解释位置、流控、持久化和一致性边界，并设计可观测、可恢复的生产部署。",
+    color: "cyan",
+    index: "01",
+    stages: [
+      {
+        index: "01",
+        eyebrow: "AERON TRANSPORT",
+        title: "可靠低延迟传输",
+        description: "从身份与位置模型进入发送、接收、可靠 UDP、拓扑和 Media Driver 运维。",
+        fromOrder: 5,
+      },
+      {
+        index: "02",
+        eyebrow: "AERON ARCHIVE",
+        title: "录制、回放与复制",
+        description: "理解录制目录、持久性边界、历史追赶、跨主机复制与磁盘治理。",
+        fromOrder: 70,
+      },
+      {
+        index: "03",
+        eyebrow: "AERON CLUSTER",
+        title: "确定性集群与恢复",
+        description: "把共识日志、业务状态机、客户端语义、选举、灾备和运行手册连成闭环。",
+        fromOrder: 120,
+      },
+    ],
+  },
+  {
     key: "trading",
     title: "交易系统",
     eyebrow: "EXCHANGE SYSTEMS",
@@ -65,7 +99,7 @@ export const SERIES: readonly SeriesDefinition[] = [
     prerequisite: "理解基础现货交易和百分比、盈亏计算；了解事件驱动架构更佳。",
     outcome: "能够解释订单从受理、撮合到清算入账的完整生命周期，并把产品规则转成可测试、可审计的状态与账务约束。",
     color: "amber",
-    index: "01",
+    index: "02",
     stages: [
       {
         index: "01",
@@ -112,7 +146,7 @@ export const SERIES: readonly SeriesDefinition[] = [
     prerequisite: "理解分布式系统、事件驱动和日志或消费位点基础；Kafka、Aeron、ZooKeeper 经验不是前提。",
     outcome: "能够定义故障模型与 RTO/RPO，并设计可证明唯一写者、可检测缺口、可重放和可演练的恢复协议。",
     color: "coral",
-    index: "02",
+    index: "03",
   },
   {
     key: "performance",
@@ -122,7 +156,7 @@ export const SERIES: readonly SeriesDefinition[] = [
     prerequisite: "熟悉 Java 并发、线程模型和基本数据结构；了解 Java 内存模型更佳。",
     outcome: "能够从内存访问和线程协作解释吞吐与尾延迟，并用基准、剖析和生产指标判断优化是否成立。",
     color: "blue",
-    index: "03",
+    index: "04",
   },
 ] as const;
 

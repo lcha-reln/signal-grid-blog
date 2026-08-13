@@ -214,6 +214,19 @@
   margin: 1.05em 0;
 }
 
+.article-hero h1,
+.article-lead,
+.article-body h1,
+.article-body h2,
+.article-body h3,
+.article-body h4,
+.article-body p,
+.article-body li,
+.article-body a,
+.article-body :not(pre) > code {
+  overflow-wrap: anywhere;
+}
+
 .article-body li + li {
   margin-top: 0.35em;
 }
