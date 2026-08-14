@@ -27,7 +27,7 @@
 | Aeron Cluster | 17 | 160 | Aeron Cluster：生产部署、安全边界与 Cluster Backup | `aeron-cluster-deployment-security-and-backup` |
 | Aeron Cluster | 18 | 170 | Aeron Cluster：Counters、ClusterTool、性能与排障 Runbook | `aeron-cluster-operations-performance-and-troubleshooting` |
 
-本路径以 Aeron 1.52.2 和对应官方文档、源码及 Javadoc 为版本基线。在线 Cookbook 用于补充实战问题，不替代核心概念与 API 事实。Transport 是 Archive 与 Cluster 的共同前提；Archive 负责可定位的持久化流，Cluster 在 Transport 与 Archive 之上建立确定性复制状态机。Agrona 不重复放入本路径，阅读 Buffer、Agent 与 IdleStrategy 时可回到 [Java 低延迟工程 Chapter 02](../src/content/posts/2026-03-10-agrona-direct-buffer-queues-and-agents.md)。
+本路径以 Aeron 1.52.2 和对应官方文档、源码及 Javadoc 为版本基线。在线 Cookbook 用于补充实战问题，不替代核心概念与 API 事实。Transport 是 Archive 与 Cluster 的共同前提；Archive 负责可定位的持久化流，Cluster 在 Transport 与 Archive 之上建立确定性复制状态机。Agrona 不重复放入本路径，阅读 Buffer、Agent 与 IdleStrategy 时可回到 [Java 低延迟工程 Chapter 03](../src/content/posts/2026-03-10-agrona-direct-buffer-queues-and-agents.md)。
 
 ## 交易系统
 
@@ -70,7 +70,8 @@
 
 | Chapter | `seriesOrder` | 标题 | `permalink` |
 | ---: | ---: | --- | --- |
-| 01 | 10 | LMAX Disruptor 4：Ring Buffer、消费拓扑与 Batch Rewind | `lmax-disruptor-ring-buffer-and-sequencing` |
-| 02 | 20 | Agrona 2：DirectBuffer、并发队列与 Agent 执行模型 | `agrona-direct-buffer-queues-and-agents` |
+| 01 | 10 | Java Memory Model 与 VarHandle：happens-before、内存顺序与安全发布 | `java-memory-model-varhandle-memory-ordering` |
+| 02 | 20 | LMAX Disruptor 4：Ring Buffer、消费拓扑与 Batch Rewind | `lmax-disruptor-ring-buffer-and-sequencing` |
+| 03 | 30 | Agrona 2：DirectBuffer、并发队列与 Agent 执行模型 | `agrona-direct-buffer-queues-and-agents` |
 
-本路径先用 Disruptor 建立事件管线、序列与背压模型，再用 Agrona 下探 Buffer、内存顺序、并发容器与执行循环；后续补充内存布局和基准方法。新增章节时保持 `seriesOrder` 以 10 为间隔，并用真实依赖关系决定顺序，不按发布日期倒排。
+本路径先从 JMM 与 VarHandle 建立数据竞争、happens-before、内存顺序和安全发布的证明方法，再用 Disruptor 把它落到事件管线、序列与背压协议，最后由 Agrona 下探 Buffer、并发容器与 Agent 执行循环；后续补充缓存布局、JVM 运行时和基准方法。新增章节时保持 `seriesOrder` 以 10 为间隔，并用真实依赖关系决定顺序，不按发布日期倒排。

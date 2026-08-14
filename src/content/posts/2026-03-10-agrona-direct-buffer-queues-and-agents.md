@@ -2,7 +2,7 @@
 title: Agrona 2：DirectBuffer、并发队列与 Agent 执行模型
 description: 基于 Agrona 2.5.0，围绕 Buffer 与内存顺序、SPSC/MPSC 队列、Agent/IdleStrategy 和低分配集合，解释所有权、背压与生命周期，并纠正“零 GC、零拷贝、无锁就一定更快”的常见误区。
 date: 2026-03-10T11:15:21+08:00
-updated: 2026-08-13T18:00:00+08:00
+updated: 2026-08-14T15:00:00+08:00
 tags:
   - Agrona
   - Java 并发
@@ -13,7 +13,7 @@ tags:
   - 低分配
 permalink: agrona-direct-buffer-queues-and-agents
 series: performance
-seriesOrder: 20
+seriesOrder: 30
 featured: false
 draft: false
 ---
@@ -137,6 +137,8 @@ int quantity = buffer.getInt(8, LITTLE_ENDIAN);
 ### 3.2 内存顺序是协议的一部分
 
 `AtomicBuffer` 2.1 起把不同访问强度明确到方法名。选择它们不是“越弱越快”的猜谜，而是要建立可证明的发布协议。
+
+这里直接应用了 [Java Memory Model 与 VarHandle](/signal-grid-blog/posts/java-memory-model-varhandle-memory-ordering/) 的结论：plain 访问需要外部所有权，opaque 只约束同一位置，release/acquire 用于单向发布，volatile 则提供更强的同步顺序。`AtomicBuffer` 把这些语义映射到 Buffer 索引，并不意味着整块 Buffer 或多字段业务状态自动成为原子事务。
 
 ```mermaid
 sequenceDiagram

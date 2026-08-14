@@ -2,7 +2,7 @@
 title: LMAX Disruptor 4：Ring Buffer、消费拓扑与 Batch Rewind
 description: 基于 Disruptor 4.0.0，从发布协议、序列协调、消费依赖和背压讲到 WaitStrategy、批处理与 Batch Rewind，并说明它何时适合替代队列、何时并不适合。
 date: 2026-03-07T10:43:08+08:00
-updated: 2026-08-13T10:57:21+08:00
+updated: 2026-08-14T15:00:00+08:00
 categories:
   - 高性能组件
 tags:
@@ -14,7 +14,7 @@ tags:
   - 背压
 permalink: lmax-disruptor-ring-buffer-and-sequencing
 series: performance
-seriesOrder: 10
+seriesOrder: 20
 featured: false
 draft: false
 ---
@@ -139,6 +139,8 @@ sequenceDiagram
 ```
 
 消费者只有在 sequence 被 publish 后才能读取槽位。这个 publish/等待边界建立了跨线程的内存可见性；不能把“写进数组”本身当成发布完成。
+
+这条边界背后的证明来自 Java Memory Model，而不是“Ring Buffer 位于同一块内存”这一事实：生产者的 payload 写入必须先于发布状态的 release，消费者也必须通过匹配的 acquire 观察发布完成，随后才可读取槽位。若还不熟悉这套推理，先阅读 [Java Memory Model 与 VarHandle：happens-before、内存顺序与安全发布](/signal-grid-blog/posts/java-memory-model-varhandle-memory-ordering/)。
 
 官方更推荐 `publishEvent` 与 `EventTranslator`：
 
