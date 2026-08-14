@@ -2,7 +2,7 @@
 title: Agrona 2：DirectBuffer、并发队列与 Agent 执行模型
 description: 基于 Agrona 2.5.0，围绕 Buffer 与内存顺序、SPSC/MPSC 队列、Agent/IdleStrategy 和低分配集合，解释所有权、背压与生命周期，并纠正“零 GC、零拷贝、无锁就一定更快”的常见误区。
 date: 2026-03-10T11:15:21+08:00
-updated: 2026-08-14T15:00:00+08:00
+updated: 2026-08-14T18:35:00+08:00
 tags:
   - Agrona
   - Java 并发
@@ -13,7 +13,7 @@ tags:
   - 低分配
 permalink: agrona-direct-buffer-queues-and-agents
 series: performance
-seriesOrder: 30
+seriesOrder: 40
 featured: false
 draft: false
 ---
@@ -467,6 +467,8 @@ java \
 ## 9. 不再引用“200M ops/s”
 
 没有硬件、JDK、GC、线程基数、消息大小、满载策略和分位数定义的性能数字，几乎没有迁移价值。比较 Agrona 与 JDK/Disruptor 时，至少要保证语义相同：SPSC 不能拿来代表 MPMC，多播事件管线不能和竞争消费队列只比一个平均吞吐量。
+
+完整的测量证据链放在 [Java 低延迟到底应该怎么测](/signal-grid-blog/posts/java-low-latency-measurement/)：JMH 只承担局部机制验证，开放端到端负载负责容量与尾延迟，JFR、async-profiler 和 perf 用于解释原因。下面只列 Agrona 特有的变量与指标。
 
 微基准建议使用 JMH，并明确：
 

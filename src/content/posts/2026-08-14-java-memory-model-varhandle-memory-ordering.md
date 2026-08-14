@@ -2,7 +2,7 @@
 title: Java Memory Model 与 VarHandle：happens-before、内存顺序与安全发布
 description: 从数据竞争和 happens-before 出发，系统解释 volatile、锁与 final 字段语义，再用 VarHandle 的 plain、opaque、acquire-release、volatile、CAS 与 fence 构造可证明的线程间协议。
 date: 2026-08-14T15:00:00+08:00
-updated: 2026-08-14T15:00:00+08:00
+updated: 2026-08-14T18:35:00+08:00
 tags:
   - Java Memory Model
   - VarHandle
@@ -28,7 +28,7 @@ Java Memory Model（JMM）解决的正是这个问题：**给定一段程序和�
 
 本文以 **Java SE 25 / JLS 25** 为规范基线，示例主体保持 Java 17 可运行。VarHandle 从 JDK 9 起就是标准 API；JDK 23 已将 `sun.misc.Unsafe` 的内存访问方法标记为待移除，JDK 24 起默认在运行期告警，因此新代码应优先使用 VarHandle、并发工具类或 Foreign Function & Memory API。[JLS 25 第 17 章](https://docs.oracle.com/javase/specs/jls/se25/html/jls-17.html) · [VarHandle JDK 25](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/invoke/VarHandle.html) · [JEP 193](https://openjdk.org/jeps/193) · [JEP 471](https://openjdk.org/jeps/471)
 
-这是“Java 低延迟工程”的 Chapter 01。读完本文后，再进入 [Disruptor 的发布协议与消费拓扑](/signal-grid-blog/posts/lmax-disruptor-ring-buffer-and-sequencing/) 和 [Agrona 的 Buffer、队列与 Agent](/signal-grid-blog/posts/agrona-direct-buffer-queues-and-agents/)，就能解释 release/acquire 为什么成立，而不只是记住方法名。
+这是“Java 低延迟工程”的 Chapter 01。读完本文后，先进入 [Java 低延迟到底应该怎么测](/signal-grid-blog/posts/java-low-latency-measurement/)，学会为吞吐、尾延迟与生产收益建立可信证据；再进入 [Disruptor 的发布协议与消费拓扑](/signal-grid-blog/posts/lmax-disruptor-ring-buffer-and-sequencing/) 和 [Agrona 的 Buffer、队列与 Agent](/signal-grid-blog/posts/agrona-direct-buffer-queues-and-agents/)，就能同时解释 release/acquire 为什么成立、优化是否真的值得。
 
 ## 1. 先看一个“偶尔正常”的错误程序
 
@@ -842,6 +842,8 @@ JMH 用于构建和运行 JVM 微基准。它能帮助控制 warmup、fork、mea
 
 同一个模式在 x86 上“更快”，不代表它在 ARM 上同样生成代码，也不代表削弱内存顺序后的维护成本值得。[OpenJDK JMH](https://openjdk.org/projects/code-tools/jmh/)
 
+完整的实验方法——包括开放负载、协调遗漏、HdrHistogram、JIT/GC 稳态和生产灰度——放在 [下一章：Java 低延迟到底应该怎么测](/signal-grid-blog/posts/java-low-latency-measurement/)。
+
 ### 16.3 评审时要求一张证明表
 
 | 项目 | 必须回答 |
@@ -868,7 +870,7 @@ JMH 用于构建和运行 JVM 微基准。它能帮助控制 warmup、fork、mea
 | Aeron Publication | 填 log buffer → frame length 发布 | 以发布字段使完整 frame 对 Media Driver 可见 |
 | Aeron counters | plain / opaque / release / volatile 位置读写 | 监控快照与控制协议需要不同强度，不能混用 |
 
-因此：[下一章 Disruptor](/signal-grid-blog/posts/lmax-disruptor-ring-buffer-and-sequencing/) 不再只是“Ring Buffer 很快”，而是一套领取、填充、release 发布、acquire 观察与 gating 防覆盖的协议；[Agrona 章节](/signal-grid-blog/posts/agrona-direct-buffer-queues-and-agents/) 则把这些语义扩展到 Buffer、队列、Agent 和跨进程共享内存的底层积木。
+因此：[后续的 Disruptor 章节](/signal-grid-blog/posts/lmax-disruptor-ring-buffer-and-sequencing/) 不再只是“Ring Buffer 很快”，而是一套领取、填充、release 发布、acquire 观察与 gating 防覆盖的协议；[Agrona 章节](/signal-grid-blog/posts/agrona-direct-buffer-queues-and-agents/) 则把这些语义扩展到 Buffer、队列、Agent 和跨进程共享内存的底层积木。进入它们之前，[下一章](/signal-grid-blog/posts/java-low-latency-measurement/) 会先建立判断“快”是否可信的测量方法。
 
 ## 18. 选型检查表
 
