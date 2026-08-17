@@ -28,7 +28,7 @@ const stageGroups = stages.map((stage, index) => {
     stage,
     posts: posts.filter((post) => post.data.seriesOrder >= stage.fromOrder && post.data.seriesOrder < nextOrder),
   };
-});
+}).filter(({ posts: stagePosts }) => stagePosts.length > 0);
 const stagedPostIds = new Set(stageGroups.flatMap((group) => group.posts.map((post) => post.id)));
 const ungroupedPosts = stages.length > 0 ? posts.filter((post) => !stagedPostIds.has(post.id)) : [];
 if (ungroupedPosts.length > 0) {

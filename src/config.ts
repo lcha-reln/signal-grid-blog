@@ -9,7 +9,7 @@ export function sitePath(path = ""): string {
 export const SITE = {
   title: "RE-LN / Signal Grid",
   shortTitle: "RE/LN",
-  description: "从 Aeron Transport、Archive 与 Cluster，到交易系统、有状态系统可靠性和 Java 低延迟工程。",
+  description: "从 Aeron、交易系统与有状态服务，到 Java 低延迟和生产级 AI Agent 后端工程。",
   author: "lcha-reln",
   locale: "zh-CN",
   url: "https://lcha-reln.github.io/signal-grid-blog/",
@@ -22,6 +22,7 @@ export type SeriesKey =
   | "trading"
   | "availability"
   | "performance"
+  | "agent"
   | "meta";
 
 export interface SeriesStage {
@@ -180,6 +181,74 @@ export const SERIES: readonly SeriesDefinition[] = [
     outcome: "能够用 happens-before 与内存顺序证明线程间协议，从内存访问和线程协作解释吞吐与尾延迟，并用基准、剖析和生产指标判断优化是否成立。",
     color: "blue",
     index: "04",
+  },
+  {
+    key: "agent",
+    title: "AI Agent 后端工程",
+    eyebrow: "AGENT SYSTEMS",
+    description: "从概率模型与确定性系统的边界出发，逐步进入模型契约、工具运行时、RAG、持久化编排、评测、安全、可观测与生产治理。",
+    prerequisite: "具备一门后端语言、HTTP、数据库和异步编程基础；Python 可随前几章补齐。",
+    outcome: "能够设计可回放、可评测、可审计、可审批，并能安全执行受限副作用的生产级 Agent 后端。",
+    color: "violet",
+    index: "05",
+    stages: [
+      {
+        index: "01",
+        eyebrow: "ENGINEERING FOUNDATIONS",
+        title: "系统边界与后端基础",
+        description: "先建立概率模型进入确定性系统时必须守住的边界，再补齐类型、并发与长任务接口。",
+        fromOrder: 100,
+      },
+      {
+        index: "02",
+        eyebrow: "MODEL CONTRACTS",
+        title: "模型接口与结构化契约",
+        description: "理解 Token、上下文和不确定性，并把模型接入收敛为可替换、可校验的接口。",
+        fromOrder: 200,
+      },
+      {
+        index: "03",
+        eyebrow: "TOOL RUNTIME",
+        title: "工具调用与权限边界",
+        description: "从原生 Tool Loop 进入工具契约、权限、审批、重试和结果未知。",
+        fromOrder: 300,
+      },
+      {
+        index: "04",
+        eyebrow: "RETRIEVAL & GROUNDING",
+        title: "RAG 与知识治理",
+        description: "建立可版本化、可评测、有权限和带引用的企业知识检索系统。",
+        fromOrder: 400,
+      },
+      {
+        index: "05",
+        eyebrow: "ORCHESTRATION & DURABILITY",
+        title: "编排、状态与持久化",
+        description: "把 Agent Loop 提升为可暂停、可恢复、可迁移且能安全处理副作用的运行时。",
+        fromOrder: 500,
+      },
+      {
+        index: "06",
+        eyebrow: "EVALUATION",
+        title: "Agent Eval 与回归判断",
+        description: "用确定性断言、Judge 校准、关键切片和版本血缘判断系统是否真的改善。",
+        fromOrder: 600,
+      },
+      {
+        index: "07",
+        eyebrow: "SECURITY & INTEROPERABILITY",
+        title: "安全、Policy 与 MCP",
+        description: "从威胁模型和 Prompt Injection 进入确定性策略控制与安全互操作边界。",
+        fromOrder: 700,
+      },
+      {
+        index: "08",
+        eyebrow: "PRODUCTION SYSTEMS",
+        title: "可观测、可靠性与平台化",
+        description: "建立 Trace、SLO、容量、发布、隔离和事故恢复能力，并抽取稳定的平台边界。",
+        fromOrder: 800,
+      },
+    ],
   },
 ] as const;
 

@@ -2,7 +2,7 @@
 
 这份文件记录专题的 canonical 阅读顺序。页面中的连续 Chapter 编号由 `seriesOrder` 排序后生成；修改标题或文件名时，不应同时改变已经发布的 `permalink`。
 
-顶层专题只表达已经形成系统课程的稳定知识主线：`aeron`、`trading`、`availability`、`performance`。普通产品或组件名仍使用 `tags` 表示；Aeron 因同时覆盖 Transport、Archive 与 Cluster 的完整系统栈，单独形成顶层学习路径。`categories` 仅为兼容早期文章保留，不参与前台导航。
+顶层专题只表达已经形成系统课程的稳定知识主线：`aeron`、`trading`、`availability`、`performance`、`agent`。普通产品或组件名仍使用 `tags` 表示；Aeron 因同时覆盖 Transport、Archive 与 Cluster 的完整系统栈，单独形成顶层学习路径。`categories` 仅为兼容早期文章保留，不参与前台导航。
 
 ## Aeron 系统工程
 
@@ -80,3 +80,11 @@
 | 04 | 40 | Agrona 2：DirectBuffer、并发队列与 Agent 执行模型 | `agrona-direct-buffer-queues-and-agents` |
 
 本路径先从 JMM 与 VarHandle 建立数据竞争、happens-before、内存顺序和安全发布的证明方法；接着用 JMH、开放负载、尾延迟直方图与生产灰度建立可信的性能证据链；再用 Disruptor 把正确性与测量方法落到事件管线、序列和背压协议，最后由 Agrona 下探 Buffer、并发容器与 Agent 执行循环。后续可补充缓存布局与更完整的 JVM 运行时。新增章节时保持 `seriesOrder` 以 10 为间隔，并用真实依赖关系决定顺序，不按发布日期倒排。
+
+## AI Agent 后端工程
+
+| 阶段 | Chapter | `seriesOrder` | 标题 | `permalink` |
+| --- | ---: | ---: | --- | --- |
+| 系统边界与后端基础 | 01 | 100 | AI Agent 后端工程地图：概率模型与确定性系统的边界 | `ai-agent-backend-engineering-map` |
+
+这条路径研究的不是怎样把更多 Prompt 和工具堆进循环，而是怎样把概率模型放进一个状态明确、权限受控、可以恢复、能够评测并且便于审计的后端系统。Chapter 01 先划清模型、Workflow、Agent Runtime、Tool Gateway、领域系统和生产治理的职责；后续章节会沿模型契约、工具运行时、RAG、持久化编排、Eval、安全与平台化逐层展开。完整的 42 篇 canonical 规划记录在 [AI Agent 后端工程博客系列规划](./AI_AGENT_BACKEND_SERIES_PLAN.md)。
