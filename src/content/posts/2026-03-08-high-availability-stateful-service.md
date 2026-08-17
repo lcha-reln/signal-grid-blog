@@ -2,7 +2,7 @@
 title: "有状态服务的高可用架构：热备复制、选主与快照恢复"
 description: "以 Kafka 分区日志和双节点热备为主线，拆解确定性执行、Leader 选举与 fencing、状态校验、快照恢复和输出持久化，并明确 RTO、RPO 与一致性边界。"
 date: 2026-03-08T14:43:51+08:00
-updated: 2026-08-13T22:30:00+08:00
+updated: 2026-08-17T10:30:00+08:00
 categories:
   - 高可用架构
 tags:
@@ -26,7 +26,7 @@ draft: false
 
 > 这不是仅靠几项中间件配置就能获得的“强一致方案”。一致性来自完整协议：确定性执行、按分区记录的恢复位点、Leader epoch、下游 fencing、原子快照，以及可重复验证的故障切换流程。
 
-本文是学习路径的架构总览。下一章 [《Raft 论文精读》](/signal-grid-blog/posts/raft-consensus-leader-election-log-replication-and-safety/) 会从多数派、任期、复制日志与安全性证明出发，解释一套共识协议如何把“已有副本”推进成“未来 Leader 也不能推翻的已提交前缀”；本文的双节点热备参考模型本身不是 Raft 集群。
+本文是学习路径的架构总览。下一章 [《WAL 到底保证什么》](/signal-grid-blog/posts/write-ahead-log-durability-and-crash-recovery/) 会先解释单机怎样用日志、持久化屏障和恢复算法建立可恢复前缀；随后 Chapter 03 的 [Raft 论文精读](/signal-grid-blog/posts/raft-consensus-leader-election-log-replication-and-safety/) 才把本地日志扩展为多数副本共同认可的提交前缀。本文的双节点热备参考模型本身不是 Raft 集群。
 
 ## 先定义故障边界和目标
 
@@ -232,7 +232,7 @@ flowchart TB
 
 - 短暂停顿简单，代价是暂停时间与状态规模相关；
 - COW 降低停顿，但需要额外内存，并要控制快照期间的修改放大；
-- 文件先写临时路径，校验并 `fsync` 后再原子改名；
+- 文件先写临时路径，校验并 `fsync` 后再原子改名；文件内容、rename 与父目录持久化的精确边界见 [WAL 与崩溃恢复章节](/signal-grid-blog/posts/write-ahead-log-durability-and-crash-recovery/)；
 - 只有对象上传和元数据提交都完成，状态才可标记为 `COMPLETED`。
 
 CRC32 可以发现常见的意外损坏，但不是防篡改机制。快照还应记录格式版本、长度、创建节点、epoch、code/config version 和 checksum。

@@ -2,7 +2,7 @@
 title: 分布式消息序列号：Gap 检测、乱序处理与 Aeron 实战
 description: 从序列域、接收窗口和故障恢复出发，讲清消息 Gap、重复与乱序的检测边界，并给出 Aeron 中可落地的发送、接收、持久化与监控方案。
 date: 2026-03-11T12:00:00+08:00
-updated: 2026-08-13T22:30:00+08:00
+updated: 2026-08-17T10:30:00+08:00
 categories:
   - 高可用架构
 tags:
@@ -13,14 +13,14 @@ tags:
   - Aeron
 permalink: distributed-message-sequencing
 series: availability
-seriesOrder: 40
+seriesOrder: 60
 featured: true
 draft: false
 ---
 
 在有状态服务中，消息顺序并不是一个孤立的传输问题。主节点切换、进程重启、发送重试和并行消费，都可能让接收端遇到重复、缺口或来自旧任期的消息。
 
-本文是“有状态系统可靠性”学习路径的 Chapter 05。建议先阅读 [Chapter 01：有状态服务的高可用架构](/signal-grid-blog/posts/high-availability-stateful-service/) 建立复制与恢复全景，通过 [Chapter 02：Raft 论文精读](/signal-grid-blog/posts/raft-consensus-leader-election-log-replication-and-safety/) 理解任期、提交与结果未知，再由 [Chapter 03：ZooKeeper 协调、一致性与工程配方](/signal-grid-blog/posts/zookeeper-coordination-consistency-and-recipes/) 建立 Session、选主和 fencing 的控制面边界，并通过 [Chapter 04：Kafka 分区日志、KRaft、消费与事务](/signal-grid-blog/posts/kafka-distributed-log-kraft-consumers-and-transactions/) 理解 offset、复制和恢复位置，最后进入应用级序列号协议。
+本文是“有状态系统可靠性”学习路径的 Chapter 06。建议先阅读 [Chapter 01：有状态服务的高可用架构](/signal-grid-blog/posts/high-availability-stateful-service/) 建立全景，由 [Chapter 02：WAL](/signal-grid-blog/posts/write-ahead-log-durability-and-crash-recovery/) 理解本地持久前缀，通过 [Chapter 03：Raft](/signal-grid-blog/posts/raft-consensus-leader-election-log-replication-and-safety/) 理解任期、提交与结果未知，再由 [Chapter 04：ZooKeeper](/signal-grid-blog/posts/zookeeper-coordination-consistency-and-recipes/) 建立 Session、选主和 fencing 边界，并通过 [Chapter 05：Kafka](/signal-grid-blog/posts/kafka-distributed-log-kraft-consumers-and-transactions/) 理解 offset、复制和恢复位置，最后进入应用级序列号协议。
 
 序列号能以很低的成本暴露消息流的不连续，但它不会自动提供可靠投递、恢复、幂等或 exactly-once。生产系统真正需要设计的是：**序列号属于哪个域、由哪个任期的生产者生成、发现缺口后如何恢复，以及业务状态和消费位置如何一起提交。**
 
@@ -250,7 +250,7 @@ Aeron 的负返回值也不能被静默忽略：
 
 ### 4.1 生产发送骨架
 
-一个安全的方向是先把事件追加到持久化 outbox/WAL，由它原子分配 `sequence`；此后所有 offer 重试和进程恢复都复用同一个 envelope。这样即使 offer 成功后、`markOffered` 前发生崩溃，重放也只是产生可被 `eventId` 和 `sequence` 识别的重复，而不会生成新编号。
+一个安全的方向是先把事件追加到持久化 outbox/WAL，由它原子分配 `sequence`；[Chapter 02](/signal-grid-blog/posts/write-ahead-log-durability-and-crash-recovery/) 解释了这里的 append、force、ACK、坏尾恢复和 outbox 幂等边界。此后所有 offer 重试和进程恢复都复用同一个 envelope。这样即使 offer 成功后、`markOffered` 前发生崩溃，重放也只是产生可被 `eventId` 和 `sequence` 识别的重复，而不会生成新编号。
 
 ```java
 final class SequencedPublisher {
@@ -318,13 +318,13 @@ flowchart TB
 2. **持久化预留号段**：先原子持久化高水位，例如预留 `[1001, 2000]`，再在内存分配；崩溃后从 2001 开始。它允许留下未使用的洞，但不会复用已经发出的编号。
 3. **epoch + sequence**：每次合法主节点任期分配更大的 epoch，任期内 sequence 从约定值开始。接收端拒绝旧 epoch，切换新 epoch 时通过控制面和恢复点校准状态。
 
-普通的 write-then-rename 只解决“看到旧文件还是新文件”的原子替换问题，不自动保证掉电持久性。文件实现还要处理 `FileChannel.force(...)`、目录元数据、`ATOMIC_MOVE` 不受支持以及跨文件系统等情况。对关键业务，优先使用已经具备 WAL 和事务语义的存储，而不是自行拼装一个 checkpoint 文件。
+普通的 write-then-rename 只解决“看到旧文件还是新文件”的原子替换问题，不自动保证掉电持久性。[WAL 章节](/signal-grid-blog/posts/write-ahead-log-durability-and-crash-recovery/) 已展开 `FileChannel.force(...)`、目录元数据、`ATOMIC_MOVE`、坏尾和断电测试。对关键业务，优先使用已经具备 WAL 和事务语义的存储，而不是自行拼装一个 checkpoint 文件。
 
 64 位序列号虽然很难在系统寿命内耗尽，但协议仍应声明回绕策略。要允许回绕，就必须采用明确定义的序列空间算法，而不是普通的有符号 `<` 和 `>` 比较。
 
 ## 6. Kafka offset 也不是全局业务序列
 
-在 [Chapter 01](/signal-grid-blog/posts/high-availability-stateful-service/) 的消息驱动架构里，Kafka offset 可以作为恢复锚点；[Chapter 04](/signal-grid-blog/posts/kafka-distributed-log-kraft-consumers-and-transactions/) 已从日志压缩、事务和消费恢复的角度展开其边界。完整身份至少是 `(topic, partition, offset)`：
+在 [Chapter 01](/signal-grid-blog/posts/high-availability-stateful-service/) 的消息驱动架构里，Kafka offset 可以作为恢复锚点；[Chapter 05](/signal-grid-blog/posts/kafka-distributed-log-kraft-consumers-and-transactions/) 已从日志压缩、事务和消费恢复的角度展开其边界。完整身份至少是 `(topic, partition, offset)`：
 
 - offset 只在一个 partition 内标识位置，不能跨 partition 直接比较。
 - Kafka 官方客户端文档明确说明 offset 不保证连续，例如日志压缩和事务控制记录都可能让 consumer position 跳跃。

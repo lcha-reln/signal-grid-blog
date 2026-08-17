@@ -2,7 +2,7 @@
 title: "ZooKeeper 3.9：从 znode、Watch 到 ZAB、一致性与工程配方"
 description: "以 Apache ZooKeeper 3.9.5 为基线，从数据模型、Session、Watch 和 ZAB 写入链路出发，讲清读写一致性、版本事务、选主与锁、fencing、安全、部署和故障排查。"
 date: 2026-08-13T19:30:00+08:00
-updated: 2026-08-13T22:30:00+08:00
+updated: 2026-08-17T10:30:00+08:00
 tags:
   - ZooKeeper
   - ZAB
@@ -13,7 +13,7 @@ tags:
   - Apache Curator
 permalink: zookeeper-coordination-consistency-and-recipes
 series: availability
-seriesOrder: 20
+seriesOrder: 40
 featured: false
 draft: false
 ---
@@ -24,7 +24,7 @@ draft: false
 
 文章会使用原生 API 解释语义，再用 **Apache Curator 5.9.0** 展示工程写法。ZooKeeper 3.9 的源码仍维持 Java 8 字节码兼容基线；为让示例更清晰，本文代码采用 Java 17 的语法表达，生产环境应选择仍受维护的 LTS JDK。Curator 能替我们处理连接、重试和成熟 recipe，但它不能替业务定义 fencing、幂等、结果未知和降级策略。
 
-本文是“有状态系统可靠性”学习路径的 Chapter 03。前一章 [《Raft 论文精读》](/signal-grid-blog/posts/raft-consensus-leader-election-log-replication-and-safety/) 建立了多数派、任期、复制日志和安全性证明的通用分析框架；本章转向 ZooKeeper 实际暴露的 znode、Session、Watch、ACL 与 recipe。二者可以互相帮助理解，但 ZAB 与 Raft 不是同一个协议。
+本文是“有状态系统可靠性”学习路径的 Chapter 04。前两章先由 [WAL](/signal-grid-blog/posts/write-ahead-log-durability-and-crash-recovery/) 建立本地持久前缀，再由 [Chapter 03：Raft 论文精读](/signal-grid-blog/posts/raft-consensus-leader-election-log-replication-and-safety/) 建立多数派、任期、复制日志和安全性证明的通用框架；本章转向 ZooKeeper 实际暴露的 znode、Session、Watch、ACL 与 recipe。ZAB 与 Raft 不是同一个协议。
 
 ## 1. ZooKeeper 解决的不是“存数据”，而是“协调决定”
 
@@ -621,7 +621,7 @@ flowchart LR
 
 ## 14. 持久化、快照与灾难恢复
 
-每个 server 维护内存数据树、事务日志和周期快照。快照不是“某一时刻之后不需要日志”的单文件备份；恢复通常要加载快照，再重放后续 WAL。
+每个 server 维护内存数据树、事务日志和周期快照。快照不是“某一时刻之后不需要日志”的单文件备份；恢复通常要加载快照，再重放后续 WAL。[Chapter 02](/signal-grid-blog/posts/write-ahead-log-durability-and-crash-recovery/) 已解释 checkpoint、snapshot、日志安全截断与 `forceSync` 背后的通用持久化边界。
 
 ```mermaid
 flowchart LR
