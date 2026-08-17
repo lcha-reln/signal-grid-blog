@@ -117,9 +117,9 @@ export const SERIES: readonly SeriesDefinition[] = [
       },
       {
         index: "03",
-        eyebrow: "POSITION & PRICING",
-        title: "仓位与定价",
-        description: "理解持仓现金流、资金费率与标记价格。",
+        eyebrow: "POSITION, LEDGER & PRICING",
+        title: "仓位、账本与定价",
+        description: "连接持仓现金流、资金费率、双重记账、余额不变量与标记价格。",
         fromOrder: 60,
       },
       {

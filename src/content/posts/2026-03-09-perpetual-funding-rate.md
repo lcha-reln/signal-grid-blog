@@ -2,7 +2,7 @@
 title: "永续合约资金费率：溢价、结算与基差交易"
 description: "从指数价格、盘口冲击价和溢价采样解释资金费率，区分不同平台的公式与结算窗口，并拆解基差交易中的资金、执行和清算风险。"
 date: 2026-03-09T21:00:00+08:00
-updated: 2026-08-13T11:00:00+08:00
+updated: 2026-08-17T12:20:00+08:00
 categories:
   - 交易系统
 tags:
@@ -221,7 +221,7 @@ netResult
 - 频率、cap/floor 和 interest 变更是否无需发版即可生效；
 - funding 后的账户状态是否立即进入风险重算与告警。
 
-下一章将把这些现金流接入 [保证金风险引擎](/signal-grid-blog/posts/margin-metrics-and-mark-price/)，区分 equity、margin balance、available balance 和 maintenance margin。
+下一章先进入 [交易账本与双重记账](/signal-grid-blog/posts/trading-ledger-double-entry-accounting-and-reconciliation/)，把 funding、手续费和已实现 PnL 变成可幂等重放、可冲正、可对账的分录；随后再由保证金风险引擎区分 equity、margin balance、available balance 和 maintenance margin。
 
 ## 官方参考
 
