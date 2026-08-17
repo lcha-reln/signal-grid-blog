@@ -2,7 +2,7 @@
 title: Java Memory Model 与 VarHandle：happens-before、内存顺序与安全发布
 description: 从数据竞争和 happens-before 出发，系统解释 volatile、锁与 final 字段语义，再用 VarHandle 的 plain、opaque、acquire-release、volatile、CAS 与 fence 构造可证明的线程间协议。
 date: 2026-08-14T15:00:00+08:00
-updated: 2026-08-17T17:45:00+08:00
+updated: 2026-08-17T21:00:00+08:00
 tags:
   - Java Memory Model
   - VarHandle
@@ -28,7 +28,7 @@ Java Memory Model（JMM）解决的正是这个问题：**给定一段程序和�
 
 本文以 **Java SE 25 / JLS 25** 为规范基线，示例主体保持 Java 17 可运行。VarHandle 从 JDK 9 起就是标准 API；JDK 23 已将 `sun.misc.Unsafe` 的内存访问方法标记为待移除，JDK 24 起默认在运行期告警，因此新代码应优先使用 VarHandle、并发工具类或 Foreign Function & Memory API。[JLS 25 第 17 章](https://docs.oracle.com/javase/specs/jls/se25/html/jls-17.html) · [VarHandle JDK 25](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/invoke/VarHandle.html) · [JEP 193](https://openjdk.org/jeps/193) · [JEP 471](https://openjdk.org/jeps/471)
 
-这是“Java 低延迟工程”的 Chapter 01。读完本文后，先进入 [Java 低延迟到底应该怎么测](/signal-grid-blog/posts/java-low-latency-measurement/)，学会为吞吐、尾延迟与生产收益建立可信证据；再通过 [Cache、局部性、伪共享与 NUMA](/signal-grid-blog/posts/java-low-latency-machine-model-cache-locality-false-sharing-numa/) 建立真实机器模型。之后进入 [Disruptor 的发布协议与消费拓扑](/signal-grid-blog/posts/lmax-disruptor-ring-buffer-and-sequencing/) 和 [Agrona 的 Buffer、队列与 Agent](/signal-grid-blog/posts/agrona-direct-buffer-queues-and-agents/)，才能同时解释 release/acquire 为什么成立、共享数据为什么变慢、优化是否真的值得。
+这是“Java 低延迟工程”的 Chapter 01。读完本文后，先进入 [Java 低延迟到底应该怎么测](/signal-grid-blog/posts/java-low-latency-measurement/)，学会为吞吐、尾延迟与生产收益建立可信证据；再通过 [Cache、局部性、伪共享与 NUMA](/signal-grid-blog/posts/java-low-latency-machine-model-cache-locality-false-sharing-numa/) 建立真实机器模型。随后依次追踪 [HotSpot 如何执行代码](/signal-grid-blog/posts/hotspot-execution-tlab-escape-analysis-jit-deoptimization-safepoint/)、[GC 如何消耗分配预算](/signal-grid-blog/posts/java-low-latency-gc-allocation-live-set-g1-zgc-shenandoah/) 与 [Linux 如何调度 CPU、内存和网卡队列](/signal-grid-blog/posts/linux-low-latency-runtime-cpu-affinity-numa-irq-rss-rps-xps-busy-poll/)，最后进入 [Disruptor](/signal-grid-blog/posts/lmax-disruptor-ring-buffer-and-sequencing/) 和 [Agrona](/signal-grid-blog/posts/agrona-direct-buffer-queues-and-agents/) 的具体数据通路。
 
 ## 1. 先看一个“偶尔正常”的错误程序
 
@@ -893,7 +893,7 @@ flowchart TB
 | Aeron Publication | 填 log buffer → frame length 发布 | 以发布字段使完整 frame 对 Media Driver 可见 |
 | Aeron counters | plain / opaque / release / volatile 位置读写 | 监控快照与控制协议需要不同强度，不能混用 |
 
-因此：[后续的 Disruptor 章节](/signal-grid-blog/posts/lmax-disruptor-ring-buffer-and-sequencing/) 不再只是“Ring Buffer 很快”，而是一套领取、填充、release 发布、acquire 观察与 gating 防覆盖的协议；[Agrona 章节](/signal-grid-blog/posts/agrona-direct-buffer-queues-and-agents/) 则把这些语义扩展到 Buffer、队列、Agent 和跨进程共享内存的底层积木。进入它们之前，[下一章](/signal-grid-blog/posts/java-low-latency-measurement/) 会先建立判断“快”是否可信的测量方法，再由 [机器模型章节](/signal-grid-blog/posts/java-low-latency-machine-model-cache-locality-false-sharing-numa/) 解释缓存与硬件拓扑怎样塑造结果。
+因此：[后续的 Disruptor 章节](/signal-grid-blog/posts/lmax-disruptor-ring-buffer-and-sequencing/) 不再只是“Ring Buffer 很快”，而是一套领取、填充、release 发布、acquire 观察与 gating 防覆盖的协议；[Agrona 章节](/signal-grid-blog/posts/agrona-direct-buffer-queues-and-agents/) 则把这些语义扩展到 Buffer、队列、Agent 和跨进程共享内存的底层积木。进入它们之前，[下一章](/signal-grid-blog/posts/java-low-latency-measurement/) 会先建立判断“快”是否可信的测量方法，[机器模型](/signal-grid-blog/posts/java-low-latency-machine-model-cache-locality-false-sharing-numa/)、[HotSpot](/signal-grid-blog/posts/hotspot-execution-tlab-escape-analysis-jit-deoptimization-safepoint/)、[GC](/signal-grid-blog/posts/java-low-latency-gc-allocation-live-set-g1-zgc-shenandoah/) 与 [Linux 运行时](/signal-grid-blog/posts/linux-low-latency-runtime-cpu-affinity-numa-irq-rss-rps-xps-busy-poll/) 再逐层解释结果由何而来。
 
 ## 官方资料
 

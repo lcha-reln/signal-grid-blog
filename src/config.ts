@@ -176,9 +176,9 @@ export const SERIES: readonly SeriesDefinition[] = [
     key: "performance",
     title: "Java 低延迟工程",
     eyebrow: "LOW-LATENCY ENGINEERING",
-    description: "从 Java Memory Model 与 VarHandle 出发，用可信测量建立证据，再下探 Cache Line、局部性、伪共享与 NUMA，最后以 Disruptor、Agrona 等工具理解序列协调、线程拓扑、背压与低分配设计。",
+    description: "从 Java Memory Model 与 VarHandle 出发，用可信测量建立证据，再下探机器模型、HotSpot 执行、垃圾回收与 Linux 数据路径，最后以 Disruptor、Agrona 等工具理解序列协调、线程拓扑、背压与低分配设计。",
     prerequisite: "熟悉 Java 语法、线程与基本数据结构；不要求预先掌握 Java 内存模型。",
-    outcome: "能够用 happens-before 证明线程间协议，用缓存、局部性与 NUMA 解释吞吐和尾延迟，并通过基准、硬件计数器、剖析和生产指标判断优化是否成立。",
+    outcome: "能够用 happens-before 证明线程间协议，解释 Cache、JIT、分配、GC、CPU 与网络队列如何共同塑造尾延迟，并通过基准、运行时事件、硬件计数器和生产指标判断优化是否成立。",
     color: "blue",
     index: "04",
     stages: [
@@ -191,9 +191,9 @@ export const SERIES: readonly SeriesDefinition[] = [
       },
       {
         index: "02",
-        eyebrow: "MACHINE MODEL",
-        title: "缓存、局部性与硬件拓扑",
-        description: "把 Java 热路径放回 Cache、TLB、分支、SMT 与 NUMA 机器模型中解释。",
+        eyebrow: "JVM & LINUX RUNTIME",
+        title: "机器、JVM 与 Linux 运行时",
+        description: "沿 Cache、JIT、分配、GC、调度与网卡队列追踪 Java 热路径的真实执行成本。",
         fromOrder: 30,
       },
       {

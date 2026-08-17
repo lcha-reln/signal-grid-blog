@@ -2,7 +2,7 @@
 title: LMAX Disruptor 4：Ring Buffer、消费拓扑与 Batch Rewind
 description: 基于 Disruptor 4.0.0，从发布协议、序列协调、消费依赖和背压讲到 WaitStrategy、批处理与 Batch Rewind，并说明它何时适合替代队列、何时并不适合。
 date: 2026-03-07T10:43:08+08:00
-updated: 2026-08-17T17:45:00+08:00
+updated: 2026-08-17T21:00:00+08:00
 categories:
   - 高性能组件
 tags:
@@ -460,7 +460,7 @@ disruptor.handleEventsWith(
 
 这组数据说明 Disruptor 在对应微基准中有优势，也同时说明：多生产者竞争、版本与消费拓扑会改变结果，甚至旧版某个拓扑会落后于 `ArrayBlockingQueue`。它不是你的业务 SLA。[官方 Performance Testing](https://lmax-exchange.github.io/disruptor/disruptor.html#_throughput_performance_testing)
 
-本节只保留 Disruptor 特有的实验矩阵。通用测量合同见 [Java 低延迟到底应该怎么测](/signal-grid-blog/posts/java-low-latency-measurement/)；它的前一章 [Java 低延迟的机器模型](/signal-grid-blog/posts/java-low-latency-machine-model-cache-locality-false-sharing-numa/) 则解释 Cache Line、伪共享、预取和 NUMA 为什么会改变 Ring Buffer 的真实结果。
+本节只保留 Disruptor 特有的实验矩阵。通用测量合同见 [Java 低延迟到底应该怎么测](/signal-grid-blog/posts/java-low-latency-measurement/)；前置的 [机器模型](/signal-grid-blog/posts/java-low-latency-machine-model-cache-locality-false-sharing-numa/)、[HotSpot](/signal-grid-blog/posts/hotspot-execution-tlab-escape-analysis-jit-deoptimization-safepoint/)、[GC](/signal-grid-blog/posts/java-low-latency-gc-allocation-live-set-g1-zgc-shenandoah/) 与 [Linux 运行时](/signal-grid-blog/posts/linux-low-latency-runtime-cpu-affinity-numa-irq-rss-rps-xps-busy-poll/) 则分别解释缓存拓扑、编译状态、回收压力和线程/网卡布置为什么会改变 Ring Buffer 的真实结果。
 
 可信的评估至少要包含：
 

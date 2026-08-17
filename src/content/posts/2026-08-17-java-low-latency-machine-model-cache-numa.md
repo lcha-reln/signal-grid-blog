@@ -2,7 +2,7 @@
 title: Java 低延迟的机器模型：Cache Line、局部性、伪共享与 NUMA
 description: 从缓存层次、Cache Line 与一致性协议出发，讲清 store buffer、局部性、伪共享、AoS/SoA、预取、分支、TLB、Huge Page、NUMA、SMT，以及如何用 JMH、perf stat 与 perf c2c 建立可复现的 Java 低延迟证据链。
 date: 2026-08-17T16:55:00+08:00
-updated: 2026-08-17T17:45:00+08:00
+updated: 2026-08-17T21:00:00+08:00
 tags:
   - Java 性能
   - CPU Cache
@@ -868,7 +868,8 @@ padding、分片和预触页后的内存上界必须可计算。 大页、`membi
 6. **JMM 与 ISA 顺序是否满足正确性？**
 7. **哪组实验和硬件计数器能够推翻当前假设？**
 
-性能优化不是把每个字段都垫到 128 字节，也不是把每个线程都绑到 CPU 0。 它是尽量减少不必要的数据移动，让共享与业务所有权一致，并用可重复实验区分：容量、延迟、带宽、分支、翻译、争用、调度和 NUMA。 下一章 [LMAX Disruptor 4：Ring Buffer、消费拓扑与 Batch Rewind](/signal-grid-blog/posts/lmax-disruptor-ring-buffer-and-sequencing/) 会把这些原则落到 Sequence、gating、single writer 与消费者拓扑上。 后续的 [Agrona 2：DirectBuffer、并发队列与 Agent 执行模型](/signal-grid-blog/posts/agrona-direct-buffer-queues-and-agents/) 则会继续讨论紧凑 buffer、不同并发语义的队列与 Agent 所有权模型。 理解这些组件之前先理解机器模型，才能解释它们**为什么**在某些负载上快、在哪些拓扑上会退化，以及如何证明收益没有来自错误的测试边界。
+性能优化不是把每个字段都垫到 128 字节，也不是把每个线程都绑到 CPU 0。它是尽量减少不必要的数据移动，让共享与业务所有权一致，并用可重复实验区分：容量、延迟、带宽、分支、翻译、争用、调度和 NUMA。下一章 [HotSpot 如何执行你的代码](/signal-grid-blog/posts/hotspot-execution-tlab-escape-analysis-jit-deoptimization-safepoint/) 会把这套机器模型接到对象分配、分层编译、推测优化、去优化与 Safepoint；后续的 GC 与 Linux 运行时章节再分别解释回收预算和操作系统数据路径。完成这些基础后，[Disruptor](/signal-grid-blog/posts/lmax-disruptor-ring-buffer-and-sequencing/) 与 [Agrona](/signal-grid-blog/posts/agrona-direct-buffer-queues-and-agents/) 才会把原则落到 Sequence、gating、紧凑 Buffer、并发队列与 Agent 所有权模型。
+
 ## 参考资料
 - [Intel 64 and IA-32 Architectures Optimization Reference Manual](https://www.intel.com/content/www/us/en/developer/articles/technical/intel64-and-ia32-architectures-optimization.html)
 - [Intel 64 and IA-32 Architectures Software Developer’s Manuals](https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html)
