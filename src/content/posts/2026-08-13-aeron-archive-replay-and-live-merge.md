@@ -2,7 +2,7 @@
 title: Aeron Archive：从历史追到实时——Replay、Bounded Replay、ReplayMerge 与 PersistentSubscription
 description: 基于 Aeron 1.52.2，系统讲清 replay 的 position/length 边界、动态有界重放、ReplayMerge 切流算法，以及 1.51 起 PersistentSubscription 的断线回放模型。
 date: 2026-08-13T10:20:00+08:00
-updated: 2026-08-13T10:20:00+08:00
+updated: 2026-08-17T17:45:00+08:00
 tags:
   - Aeron
   - Aeron Archive
@@ -22,7 +22,9 @@ Archive 的 replay 不是“打开文件并回调每条消息”。它让 Archiv
 
 本文以 **Aeron 1.52.2** 为基线，依次讨论有限重放、follow、动态边界、ReplayMerge，以及 1.51.0 新增的 `PersistentSubscription`。
 
-## 1. Replay 是一条新 Aeron stream
+## 普通 Replay 的位置与完成合同
+
+### Replay 是一条新 Aeron stream
 
 ```mermaid
 flowchart LR
@@ -46,7 +48,7 @@ flowchart LR
 
 远端 replay 必须用可达的 UDP channel。只有目标进程与 Archive 共用同一个 Media Driver 时，`aeron:ipc` 才能成立。
 
-## 2. Position 的合法范围
+### Position 的合法范围
 
 `AeronArchive.NULL_POSITION` 是 `-1`，作为 replay 起点表示“从 recording 当前 start position 开始”。显式 position 则必须满足：
 
@@ -70,7 +72,7 @@ flowchart LR
 
 分片消息需要更谨慎：若业务只在完整 assembled message 后提交 checkpoint，就要使用与 assembler 语义一致的 header position；如果直接消费 fragments，则 checkpoint 和副作用也必须按 fragment 模型设计。
 
-## 3. Length 的三种模式
+### Length 的三种模式
 
 Replay 的 `length` 单位也是 Aeron position-space 字节，不是消息条数。
 
@@ -96,7 +98,7 @@ timeline
 
 follow replay 不会因为“暂时追到头”自动结束。必须由 recording 停止、显式长度到达、连接故障或客户端 `stopReplay` 结束。
 
-## 4. 正确建立一个普通 replay
+### 正确建立一个普通 replay
 
 低层 `startReplay` 返回 64-bit replay session ID：
 
@@ -122,11 +124,11 @@ try (Subscription subscription = aeron.addSubscription(replayChannel, replayStre
 
 `archive.replay(...)` 便捷方法可以创建并返回 Subscription。无论哪种方式，Replay Publication 都需要等目标 Subscription 连接；目标永远不出现时，Archive 会在超时后报告错误。
 
-### 4.1 不要把 live 和 replay 随意塞进一个拥塞域
+#### 不要把 live 和 replay 随意塞进一个拥塞域
 
 若不是专门做 merge，建议 replay 使用独立 channel / stream。历史追赶会以尽可能快的速度发送，和低延迟 live 共用 endpoint、receiver window 或消费循环，可能让补历史影响实时流。
 
-## 5. ReplayParams：把高级参数集中起来
+### ReplayParams：把高级参数集中起来
 
 `ReplayParams` 可表达：
 
@@ -154,7 +156,7 @@ final long replaySessionId = archive.startReplay(
 
 `fileIoMaxLength` 只是一次 replay 文件读取工作的最大块；它不能突破 Archive Context 上限，也不改变 recording segment 布局。
 
-## 6. Bounded Replay：上界随 counter 移动
+### Bounded Replay：上界随 counter 移动
 
 普通 explicit length 是静态范围。Bounded Replay 则把可发送上界绑定到一个 Aeron counter：
 
@@ -181,7 +183,7 @@ flowchart LR
 
 这不是“启动时复制 counter 值”的有限 replay。要管理 counter 的所有权和关闭顺序；边界 counter 被关闭时，ReplaySession 会按实现终止/收尾，不能假设它仍永久停在最后观测值。
 
-## 7. Replay 的异步终态
+### Replay 的异步终态
 
 `startReplay` 的同步返回表示 Archive 接受并创建了 replay session，不表示：
 
@@ -207,7 +209,9 @@ sequenceDiagram
 
 有限 replay 的业务完成，应由消费者观察 Image EOS / position 到达预期 limit，并完成自己的 handler drain 与 checkpoint；不能以 control response 为准。
 
-## 8. 从 replay 追到 live 为什么难
+## 历史切换到实时为什么需要状态机
+
+### 从 replay 追到 live 为什么难
 
 最粗糙做法是：先 replay 到某个 position，关闭它，再订阅 live。切换窗口中 live 仍增长，于是可能丢数据；先订阅 live 再 replay，又会收到重叠区间，需要去重、缓存与排序。
 
@@ -223,7 +227,7 @@ flowchart LR
 
 Aeron 提供两套解决思路：传统 `ReplayMerge` 在一个 manual MDC Subscription 内切换 destination；新 `PersistentSubscription` 把“live 离开就 replay、追上再回 live”封装成持久订阅状态机。
 
-## 9. ReplayMerge：同一个 Subscription 内换数据源
+### ReplayMerge：同一个 Subscription 内换数据源
 
 ReplayMerge 要求 UDP Subscription 使用 `control-mode=manual`。它先把 replay destination 加入 Subscription，让 replay Image 追赶；接近 live 时加入 live destination；确认已经追上且存在两个 active transports 后，停止并移除 replay destination，保留 live。
 
@@ -244,7 +248,7 @@ stateDiagram-v2
 
 Replay URI 会使用 `linger=0`、`eos=false` 等适合切换的参数。merge 完成后关闭 `ReplayMerge`，它会清理 replay destination，但故意保留 live destination；随后继续 poll 原 Subscription / Image。
 
-### 9.1 ReplayMerge 的硬约束
+#### ReplayMerge 的硬约束
 
 - **只支持 UDP，不支持 IPC**；
 - Subscription 必须 manual MDC；
@@ -255,7 +259,9 @@ Replay URI 会使用 `linger=0`、`eos=false` 等适合切换的参数。merge �
 
 这不是“两条 stream 在应用层 dedupe”。merge 的关键价值，是让 replay 与 live 进入同一个 Subscription / Image position space 后完成 destination 切换。
 
-## 10. PersistentSubscription：历史与实时的长期状态机
+## 长期断线恢复怎样推进
+
+### PersistentSubscription：历史与实时的长期状态机
 
 `PersistentSubscription` 在 **Aeron 1.51.0** 引入。它面向“live Publication 同时被 Archive 录制，订阅者希望有序无缺口消费；live 中断时自动从 recording 补齐，恢复后再回 live”的场景。
 
@@ -272,7 +278,7 @@ Replay URI 会使用 `linger=0`、`eos=false` 等适合切换的参数。merge �
 
 新项目需要持续断线恢复时，通常优先评估 PersistentSubscription；已有稳定 ReplayMerge 系统无需仅为“新”而盲目替换。
 
-## 11. 创建 PersistentSubscription
+### 创建 PersistentSubscription
 
 ```java
 final PersistentSubscription.Context ctx = new PersistentSubscription.Context()
@@ -309,11 +315,11 @@ try (PersistentSubscription subscription = PersistentSubscription.create(ctx))
 
 对象不是线程安全的，必须由一个 duty-cycle owner 持续 `poll` 或 `controlledPoll`。它内部也用异步 Archive 控制状态机；不 poll 就不会建连、replay 或切流。
 
-### 11.1 不要再包 FragmentAssembler
+#### 不要再包 FragmentAssembler
 
 PersistentSubscription 内部已经重组 fragments，handler 收到的是完整 assembled message。再套 `FragmentAssembler` 会重复处理协议边界。`controlledPoll` 返回的 `Action` 也作用于完整消息，而不是原始 fragment。
 
-## 12. PersistentSubscription 的运行状态
+### PersistentSubscription 的运行状态
 
 它会：等待 Archive 连接、查询 descriptor、发 replay、建立 replay Image、追赶、尝试 live、在 live 与 replay 间切换。瞬时网络问题可被状态机重试；终态错误则进入 failed，需要调用方关闭并重新初始化。
 
@@ -339,7 +345,9 @@ stateDiagram-v2
 
 “暂时 replaying”不是故障；“hasFailed=true”才是需要重建的终态。listener 的 error 也不应只打印一次后继续假装健康。
 
-## 13. 有序无缺口不等于业务 exactly-once
+## 传输连续性与业务提交的边界
+
+### 有序无缺口不等于业务 exactly-once
 
 PersistentSubscription 的目标是 transport / recording position 上有序无缺口地交付。当业务 handler 成功后进程崩溃、但 checkpoint 尚未持久化，重启仍可能重放最后消息；若先写 checkpoint 再做不可回滚副作用，则可能跳过副作用。
 
@@ -354,7 +362,7 @@ flowchart LR
 
 可选策略包括幂等业务键、状态与 checkpoint 同事务、outbox / inbox、或由单写状态机按 position 去重。Archive 提供确定的恢复坐标，不替应用提交跨系统事务。
 
-## 14. 怎样选择四种读取方式
+### 怎样选择四种读取方式
 
 | 需求 | 建议 |
 | --- | --- |
@@ -365,32 +373,11 @@ flowchart LR
 | 一次从历史平滑切入 UDP live | ReplayMerge |
 | 长期消费，live 断线自动回放补齐 | PersistentSubscription |
 
+无论选择哪一种，读取协议都要固定 start position 的来源、有限 replay 的业务终态、Subscription 与 Archive client 的线程 owner，以及 checkpoint 与副作用的提交边界。运行时还要把 live-left、replaying、terminal failure 和 retention floor 变成状态指标；否则模式选对了，恢复证据仍可能在下一次重启时消失。
+
 不要因为 PersistentSubscription 能 fallback，就把 replay 和 live channel 配成同一个未隔离的拥塞域；也不要在只需离线导出的场景引入复杂 merge 状态机。
 
-## 15. 上线前的 Replay 审查表
-
-### 边界
-
-- start position 是否来自可靠的 header / descriptor / checkpoint？
-- length 是字节范围、snapshot-and-stop 还是 follow？
-- consumer 如何判断有限 replay 业务完成？
-- replaySessionId 是否完整保留为 long？
-
-### 连接与线程
-
-- replay channel 对目标主机可达吗？
-- 谁创建匹配 Subscription，谁处理连接超时？
-- duty cycle 在 idle 时仍会持续推进吗？
-- ReplayMerge 是否独占自己的 Archive client？
-
-### 恢复
-
-- PersistentSubscription terminal failure 如何重建？
-- checkpoint 与业务副作用怎样原子化或幂等？
-- recording retention 是否可能删除最慢消费者所需历史？
-- live left / replaying 是否进入指标与告警？
-
-## 16. 本章结论
+## 结论：Replay 只提供连续位置，业务提交仍需独立协议
 
 Replay 的本质是“把历史重新发布成 Aeron stream”。正确使用它，需要同时守住 position 边界、length 语义、控制终态和消费 checkpoint。
 

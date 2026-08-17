@@ -2,7 +2,7 @@
 title: Aeron Transport：Publication、Log Buffer 与发送热路径
 description: 以 Aeron 1.52.2 源码为准，拆解 ConcurrentPublication、ExclusivePublication、三段 term log、position、offer 返回码、tryClaim 所有权与发送侧背压。
 date: 2026-08-13T09:20:00+08:00
-updated: 2026-08-17T16:55:00+08:00
+updated: 2026-08-17T17:45:00+08:00
 tags:
   - Aeron
   - Aeron Transport
@@ -451,39 +451,7 @@ Aeron 还提供异步注册模式：先 `asyncAddPublication` 获得 registratio
 - 关闭最后一个 registration 后资源才逐步清理；
 - 重复创建/泄漏 publication 会消耗 counters、文件映射和 driver 状态。
 
-## 10. 发送热路径的生产清单
-
-### 10.1 所有权
-
-- 明确是多线程 `ConcurrentPublication`，还是单线程 `ExclusivePublication`；
-- 编码 buffer 不得在 `offer` 期间并发修改；
-- BufferClaim 生命周期限制在当前发送调用；
-- Publication close 由一个明确组件负责。
-
-### 10.2 背压
-
-- 每个负返回值分别计数；
-- `CLOSED` 与 `MAX_POSITION_EXCEEDED` 不能重试；
-- `ADMIN_ACTION` 只应短暂出现，持续出现要排障；
-- `NOT_CONNECTED` 和 `BACK_PRESSURED` 有业务 SLA；
-- 上游队列必须有界，满载策略明确。
-
-### 10.3 容量
-
-- 从实例查询 max payload/message/term；
-- 以峰值突发、receiver window、内存预算共同选择 term；
-- MTU 经真实路径验证，不制造 IP fragmentation；
-- 估算每个 Publication/Image 的三段 term 映射；
-- 监控 sparse 与 page fault 的实际代价。
-
-### 10.4 语义
-
-- `offer > 0` 只记为 local-log accepted；
-- 业务成功由独立 ACK/commit 定义；
-- 跨 session 顺序由业务协议定义；
-- 重启续接由 Archive/epoch/initial position 协议定义。
-
-## 11. 小结
+## 10. 小结
 
 Publication 的性能不是靠“一个特别快的 send 方法”得到的，而是靠清晰分离：应用只竞争有界本地日志，Sender 独立负责网络，position 把每层进度连起来，背压则在覆盖旧数据前阻止继续推进。
 

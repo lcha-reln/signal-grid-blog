@@ -2,7 +2,7 @@
 title: "Aeron Cluster：从 Raft 到 Aeron——架构、组件与一条消息的提交之旅"
 description: "以 Aeron 1.52.2 为基线，从 Media Driver、Archive、Consensus Module 与 Clustered Service 的协作出发，逐步追踪客户端命令如何复制、提交和执行，并厘清它与 Raft 相同及不同的部分。"
 date: 2026-08-13T11:00:00+08:00
-updated: 2026-08-13T11:00:00+08:00
+updated: 2026-08-17T17:45:00+08:00
 tags:
   - Aeron Cluster
   - Raft
@@ -23,7 +23,9 @@ Aeron Cluster 不是“给 Aeron 加一个 Leader”这么简单，也不是把 
 
 本文以开源 **Aeron 1.52.2** 的官方文档和对应 tag 源码为基线。早期教程中的部分图只描述旧版本；本文在概念上借用 Raft，但涉及状态名、计数器和执行路径时，以 1.52.2 为准。
 
-## 1. 先回答：Cluster 到底保证什么
+## 先把 Cluster 的保证落实到组件与边界
+
+### 先回答：Cluster 到底保证什么
 
 Aeron Cluster 的核心目标是：只要仍有足够成员可以形成多数派，就让多个节点对同一条已提交日志按相同顺序执行，从而维护同一份应用状态。
 
@@ -48,7 +50,7 @@ Aeron Cluster 的核心目标是：只要仍有足够成员可以形成多数派
 
 因此，“强一致”必须说明边界。Cluster 能对 **进入其复制日志并由 Clustered Service 管理的状态转换**提供一致顺序；它不会自动把任意数据库、HTTP 调用或客户端缓存纳入同一个原子提交。
 
-## 2. 一台成员节点里有什么
+### 一台成员节点里有什么
 
 一个典型成员由四类组件组成：
 
@@ -73,7 +75,7 @@ flowchart TB
 
 这些组件可以在同一 JVM 中用不同 Agent 运行，也可以拆成进程。逻辑关系不变：节点内通常用 IPC 通道连接，节点间通过 UDP 通道复制。
 
-### 2.1 为什么 Archive 不是旁路备份
+#### 为什么 Archive 不是旁路备份
 
 Archive 在 Cluster 中不是“偶尔拷贝一下日志”的运维附件。它位于正常提交与恢复路径上：
 
@@ -86,7 +88,7 @@ Archive 在 Cluster 中不是“偶尔拷贝一下日志”的运维附件。它
 
 但要避免另一种误解：**Archive 录制的是 Aeron stream，不是任意 Java 队列或对象图的通用 WAL。** 业务状态仍需由服务快照保存，业务事件仍需有可演进的二进制协议。
 
-### 2.2 Consensus Module 不运行你的业务规则
+#### Consensus Module 不运行你的业务规则
 
 Consensus Module 决定哪些输入可以进入权威顺序，并维护 Cluster 层元数据；业务状态由 Clustered Service 持有。这样可以把两个问题分开：
 
@@ -95,7 +97,7 @@ Consensus Module 决定哪些输入可以进入权威顺序，并维护 Cluster 
 
 这种分层也解释了为什么 Cluster Snapshot 是一组快照，而不是单个业务文件：Consensus Module 和每个服务都必须在同一 log position 上保存各自状态。
 
-## 3. 客户端看到的入口和出口
+### 客户端看到的入口和出口
 
 Java 客户端通常通过 `AeronCluster` 连接。它内部持有：
 
@@ -116,7 +118,9 @@ flowchart TB
 
 这里的 stream id 是默认值，不是协议常量：Cluster Log 默认 100，ingress 默认 101，egress 默认 102。生产系统应把 channel、stream id 和 endpoint 当作显式部署配置管理，而不是散落在业务代码中。
 
-## 4. 一条命令怎样成为已提交输入
+## 一条命令怎样从入口推进到提交与执行
+
+### 一条命令怎样成为已提交输入
 
 下面从稳定 Leader 期间的一条普通 session message 开始。
 
@@ -141,7 +145,7 @@ sequenceDiagram
 
 实际实现中，入口由 `IngressAdapter` 轮询，`ConsensusModuleAgent` 校验当前角色和会话后，由 `LogPublisher` 把消息写入 Cluster Log。日志经 Aeron stream 传输，Leader 和 Follower 的 Archive 各自录制。
 
-### 4.1 Append Position 是字节位置
+#### Append Position 是字节位置
 
 Follower 周期性向 Leader 报告本地 Archive 已记录到的 **append position**。这里的位置是 Aeron recording/log 的字节位置，而不是 Raft 论文里抽象的“第 N 条 entry index”。
 
@@ -152,7 +156,7 @@ Follower 周期性向 Leader 报告本地 Archive 已记录到的 **append posit
 - 不同业务消息长度不同，不能用 position 差直接换算消息数；
 - position 必须结合 recording、term 和日志语义解释。
 
-### 4.2 多数派怎样计算
+#### 多数派怎样计算
 
 成员数为 `n` 时，多数派阈值是：
 
@@ -187,7 +191,7 @@ flowchart TB
 
 图中只是说明排序思想；实际位置推进还要遵守 leadership term、日志边界和 Leader 本地录制进度等约束。
 
-### 4.3 Commit Position 是服务的执行上界
+#### Commit Position 是服务的执行上界
 
 Leader 形成新的 commit position 后，把它传播给 Follower。每个 Service Container 通过本地 spy subscription 读取同一条日志 Image，并由 `BoundedLogAdapter` 以共享的 Commit Position counter 为上界轮询。
 
@@ -205,7 +209,7 @@ Leader 形成新的 commit position 后，把它传播给 Follower。每个 Serv
 
 当“服务没有响应”时，只盯 Commit Position 不够。服务线程被长任务、GC 或无限 egress 重试阻塞时，提交仍可能继续，但 service position 会落后。
 
-## 5. 提交以后谁来执行、谁来响应
+### 提交以后谁来执行、谁来响应
 
 所有健康成员上的服务都按相同顺序执行已提交输入。这样 Follower 才能保持可接管状态。角色差异主要体现在外部输出：
 
@@ -218,7 +222,9 @@ Leader 形成新的 commit position 后，把它传播给 Follower。每个 Serv
 
 若配置多个 Clustered Service，它们都消费同一条 Cluster Log，框架会把每条 session message 按相同顺序交给每个 Service Container；它**不会**根据 service id 自动路由或过滤客户端 payload。应用若只希望某个服务处理一类消息，必须把目标、来源或消息类型编码进业务协议，再由各服务确定地处理或忽略。service-originated message 到达其他服务时没有对应的 `ClientSession`，回调的 session 参数为 `null`，来源/目标同样要由 payload 协议表达。1.52.2 源码限制最多 10 个服务，service id 必须从 0 连续编号。多个服务都保留响应能力时还可能产生重复 egress，所以只应让真正负责响应的服务开启 response channel。
 
-## 6. 与 Raft 相同的地方
+## Raft 类比在哪些位置成立或失效
+
+### 与 Raft 相同的地方
 
 Aeron Cluster 官方材料把其共识描述为受 Raft 启发的实现。可以安全类比的部分包括：
 
@@ -237,7 +243,7 @@ Aeron Cluster 官方材料把其共识描述为受 Raft 启发的实现。可以
 3. 何时允许服务越过某个位置执行？
 4. 客户端在 Leader 切换时如何处理结果未知？
 
-## 7. 不能直接照搬 Raft 论文的地方
+### 不能直接照搬 Raft 论文的地方
 
 把 Aeron Cluster 说成“标准 Raft Java 库”会掩盖关键实现事实。
 
@@ -255,7 +261,7 @@ Aeron Cluster 官方材料把其共识描述为受 Raft 启发的实现。可以
 
 特别要注意：Aeron 的 position 是字节位置，状态推进依靠 counters 和录制位置；不要在代码、监控和文档中随意把它改名成 `commitIndex`，否则会把 entry 边界、byte position 和业务序号混在一起。
 
-## 8. “已录制”不自动等于“断电不丢”
+### “已录制”不自动等于“断电不丢”
 
 共识与介质落盘策略是两层问题。Aeron Archive 的 `aeron.archive.file.sync.level` 默认值为 0；普通文件写入可能仍停留在操作系统页缓存。多数成员报告 recording position，说明各自 Archive 已经写到对应位置，并不自动证明每块磁盘都执行了满足你要求的 `fsync`。
 
@@ -277,7 +283,7 @@ flowchart TB
 
 不能只写“3 副本强一致”便跳过这些问题。业务确认语义必须与实际 durability policy 对齐，并通过断电级别的故障演练验证。
 
-## 9. 三类顺序不要混为一谈
+### 三类顺序不要混为一谈
 
 Cluster 系统中至少存在三种序列：
 
@@ -297,7 +303,9 @@ commandType + schemaVersion
 
 这样可以在重连、重试、归档重放和跨系统对账时维持稳定语义。
 
-## 10. 背压会沿提交链传播
+## 背压与部署怎样守住提交链
+
+### 背压会沿提交链传播
 
 Aeron 的 `offer` 返回负值不是异常细节，而是容量协议。可能的压力来源包括：
 
@@ -321,7 +329,7 @@ flowchart TB
 
 应用不能在 Clustered Service 的关键回调里无限自旋等待 egress。那会阻止整个复制状态机继续消费，包括其他会话和 timer。应事先选择有界策略：小次数重试、断开慢客户端、丢弃可重建通知、将大结果放入独立查询通道，或对入口施加背压。
 
-## 11. 最小部署拓扑
+### 最小部署拓扑
 
 一个三成员拓扑至少包含：
 
@@ -348,7 +356,7 @@ memberId,ingress,consensus,log,catchup,archive
 
 本地 Consensus Module 通常通过 IPC 控制同节点 Archive。`replicationChannel` 则是本地 Archive 接收其他节点复制数据的网络入口，生产配置不能偷懒写成只有本机可达的 `localhost`。
 
-### 11.1 启动成功不等于业务 Ready
+#### 启动成功不等于业务 Ready
 
 节点从进程启动到可参与稳定服务，可能经历：
 
@@ -376,22 +384,9 @@ Media Driver ready
 
 Readiness 是协议状态，不是进程状态。这个原则在 Kubernetes probe、服务发现和发布脚本中同样适用。
 
-## 12. 设计审查清单
+由此可以把 Cluster 设计压缩成一份可验证合同：成员数由故障域和多数派推导；Archive sync policy 与业务确认语义一致；权威状态只由 Cluster Log 驱动；外部副作用拥有独立幂等和对账协议；`offer`、append、commit、apply、egress 分别可观察；慢 Follower、慢服务和慢客户端各有有界背压策略。业务 ID、request id 与 cluster session id 必须分离，Snapshot、Backup、RPO/RTO 和选举期间的入口策略则共同说明这条提交链在故障后如何恢复。
 
-在写第一个 `ClusteredService` 之前，至少应能回答：
-
-- 为什么选择 3 或 5 个投票成员？故障域如何分布？
-- Archive 的 sync level 与业务确认语义是什么？
-- 哪些状态完全由 Cluster Log 驱动？
-- 哪些副作用在 Cluster 外，怎样去重和对账？
-- 客户端 `offer` 成功、日志提交、服务执行、收到响应分别如何观测？
-- 慢 Follower、慢服务和慢客户端分别采用什么背压策略？
-- 业务 ID、request id 与 cluster session id 是否明确分离？
-- 需要怎样的 Snapshot、Backup、RPO 与 RTO？
-- 选举期间入口怎样暂停、重试和重定向？
-- 监控是否同时覆盖 role、election state、append、commit 和 service position？
-
-## 13. 本章结论
+## 结论：Cluster 的一致性来自可观察的多数派提交链
 
 Aeron Cluster 的一致性不是由某个“Raft 开关”产生的，而是由一条可观察的提交链产生：Leader 编排日志，Archive 在各节点录制，Follower 报告 append position，多数派决定 commit position，服务以该位置为硬上界按序执行。
 

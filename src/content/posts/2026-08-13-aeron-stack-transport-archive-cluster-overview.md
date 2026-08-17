@@ -2,7 +2,7 @@
 title: Aeron 全栈导读：Transport、Archive、Cluster 与 Agrona 的边界
 description: 以 Aeron 1.52.2 为基线，先建立 Transport、SBE、Archive、Cluster 与 Agrona 的完整心智模型，澄清协议、流、Image、Position、持久化、全序和 exactly-once 的真实边界，再进入后续 18 个深挖章节。
 date: 2026-08-13T18:05:00+08:00
-updated: 2026-08-17T16:55:00+08:00
+updated: 2026-08-17T17:45:00+08:00
 tags:
   - Aeron
   - Aeron Transport
@@ -311,18 +311,6 @@ aeron:udp?endpoint=10.20.0.12:40123
 先沿一条 ingress 消息走过复制与 commit，再把确定性服务、timer、snapshot、election、catch-up、部署安全、Cluster Backup 和 ClusterTool 串起来。完成后，应能说明 leader 在任意时刻死亡时：哪些输入已提交、哪些结果未知、状态从哪里恢复、客户端该如何重试。
 
 Cookbook 中的端口、fragment、timeout、Wireshark、慢客户端、startup task 与 Kubernetes 等问题，会放进对应原理章节，不另做一组脱离上下文的“问答摘抄”。
-
-## 12. 开始之前的检查表
-
-- [ ] 使用 JDK 17 或更高版本，并让本地、CI 与生产 JVM 参数一致；
-- [ ] 固定 Aeron/Agrona 版本，不把 master Javadoc 当成已部署 API；
-- [ ] 为每条 stream 写明 channel、stream id、session 策略与消息协议版本；
-- [ ] 为每个 Publication/Subscription/AeronArchive client 标出线程所有权；
-- [ ] 为每个 `offer`、控制请求和 poll loop 写出背压、关闭与超时路径；
-- [ ] 业务消息拥有独立幂等键，不依赖 position 充当业务 ID；
-- [ ] 先定义 RTO/RPO、保留期和故障模型，再决定是否增加 Archive/Cluster；
-- [ ] 将 counters、errors、loss report、磁盘容量和 duty-cycle 延迟纳入上线指标；
-- [ ] 在与生产一致的网络、CPU、文件系统和容器限制下做故障演练。
 
 有了这张地图，后面每个 API 就不再是孤立技巧：Channel 决定匹配与拓扑，Image 给出顺序作用域，Position 连接 live log 与 recording，Archive 连接历史与实时，Cluster 则只把**已经提交的总序事件**交给确定性状态机。Aeron 的价值不只在“快”，更在于它把容量、位置、线程和恢复边界暴露成可以测量和推理的协议。
 

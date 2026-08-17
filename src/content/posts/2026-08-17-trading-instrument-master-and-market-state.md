@@ -2,7 +2,7 @@
 title: "交易品种主数据与市场状态：合约规格、交易日、停牌、价格带与规则版本"
 description: "从资产、品种与上市实例的身份边界出发，讲清现货、期货、永续与期权规格，交易日历、市场状态、价格带、Security Definition 分发、双时间版本、原子切换与故障恢复。"
 date: 2026-08-17T16:55:00+08:00
-updated: 2026-08-17T16:55:00+08:00
+updated: 2026-08-17T17:45:00+08:00
 tags:
   - 交易系统
   - 产品主数据
@@ -27,7 +27,7 @@ draft: false
 
 > 本文讨论系统设计，不构成交易或投资建议。文中模型用于解释不变量，不是任何交易所的通用规则。本文以 2026-08-17 可查的一手协议与规则为基线；合约参数、交易时间、停牌流程和价格保护都会变化，生产实现必须以目标场所当期发布的规则和机器可读数据为准。
 
-## 1. 主数据不是后台表格，而是交易控制平面
+## 主数据不是后台表格，而是交易控制平面
 
 不少系统最初会有一张 `symbol_config` 表：运营人员填写名称、价格小数位、数量小数位和启停开关，各服务每隔几十秒刷新缓存。
 
@@ -74,7 +74,9 @@ flowchart TB
 = 相同的校验、排序、成交与业务事件
 ```
 
-## 2. 先区分 Asset、Instrument 与 Listing
+## 产品身份、类型与数值单位必须一起建模
+
+### 先区分 Asset、Instrument 与 Listing
 
 交易系统常把“资产”“产品”“合约”“交易对”和“代码”混用。为了避免身份污染，可以先采用三层模型。
 
@@ -98,7 +100,7 @@ flowchart LR
   L3 --> S3["expiry + settlement + price limits"]
 ```
 
-### 2.1 Asset 不是字符串币种
+#### Asset 不是字符串币种
 
 资产记录至少要包含稳定内部 ID，标准名、显示名与历史别名，资产类型，记账和展示单位；若可托管，还要保存链、合约地址、发行方等命名空间，并独立表达充值、提现、借贷与抵押能力。
 
@@ -106,19 +108,19 @@ flowchart LR
 
 资产 ID 不应从显示符号生成，更不能在改名时更换。显示符号是属性，稳定 ID 才是引用键。
 
-### 2.2 Instrument 描述经济契约
+#### Instrument 描述经济契约
 
 Instrument 把资产组合成可交易权利义务。它要描述产品类型，标的、报价、结算和保证金币种，数量与价格单位，合约乘数和线性/反向/quanto 结构，到期、行权、交割或资金费用规则，所引用指数、定盘价与结算过程，以及规则版本与生命周期。
 
 两个 venue 可以列出经济上近似的合约，但如果指数、结算价、到期时刻、乘数或违约处理不同，就不能因为显示名称相似而合并成同一个 instrument。
 
-### 2.3 Listing 描述在哪里、怎样交易
+#### Listing 描述在哪里、怎样交易
 
 Listing 负责场所特有事实：`venueId`、market/segment/channel、原始 `securityId` 与符号、tick/lot/订单量边界、交易日历与 session template、撮合和订单能力、价格保护、上市与退市状态，以及行情、订单入口和清算映射。
 
 CME MDP 3.0 的 Security Definition 消息就是一种机器可读 listing 定义：它标识 instrument，并携带到期、执行价等属性。Nasdaq TotalView-ITCH 的 Stock Directory 则携带日内 locate code、股票代码、市场类别、金融状态和 round-lot 等目录数据。两者字段形态不同，证明 canonical model 应保留场所语义，而不是强迫所有 venue 填一张“最小公分母”表。
 
-### 2.4 身份必须带命名空间和生命周期
+#### 身份必须带命名空间和生命周期
 
 一个实用的复合身份可以写成：
 
@@ -131,7 +133,7 @@ ListingIdentity = (venue, marketSegment,
 
 因此不要把一个裸整数 `48` 放进全局 Map，也不要用 symbol 作为订单、成交和账本的永久外键。内部 `listingId` 应稳定且不重用，并保存 venue identity 的有效区间。
 
-### 2.5 符号映射不是一次性 ETL
+#### 符号映射不是一次性 ETL
 
 对接系统通常需要同时保存：
 
@@ -145,7 +147,7 @@ marketDataChannel, orderEntryRoute, effectiveFrom / effectiveTo
 
 FIX Orchestra 也强调 `SecurityID(48)` 的含义由 `SecurityIDSource(22)` 判别；ID 值与来源字段共同构成语义。这个原则比记住某个 FIX tag 更重要：任何外部标识都必须带命名空间。
 
-## 3. 用判别联合建模产品，而不是一百个 nullable 字段
+### 用判别联合建模产品，而不是一百个 nullable 字段
 
 四类常见产品共享一些字段，但经济语义不同。一个 canonical definition 可以先分成公共头与产品载荷：
 
@@ -179,7 +181,7 @@ flowchart TB
 2. `type=SPOT` 时，不会误读上一版遗留的 `fundingInterval`；
 3. 新增产品类型时，需要显式扩展所有消费者，而不是悄悄忽略字段。
 
-### 3.1 所有产品都应有的公共字段
+#### 所有产品都应有的公共字段
 
 | 字段组 | 最低要求 | 常见错误 |
 | --- | --- | --- |
@@ -193,7 +195,7 @@ flowchart TB
 
 `pricePrecision=2` 只说明最多展示两位小数，不说明合法价格步长一定是 `0.01`。合法步长可以是 `0.05`、`0.25`，甚至按价格区间变化。
 
-### 3.2 现货字段
+#### 现货字段
 
 现货至少需要：
 
@@ -215,7 +217,7 @@ lotRule, minNotional?, feeScheduleRef
 
 这些是不同能力，不应该被一个 `enabled` 布尔值控制。
 
-### 3.3 到期期货字段
+#### 到期期货字段
 
 期货需要在公共字段之外保存：
 
@@ -235,7 +237,7 @@ notional = contracts × contractMultiplier × price
 
 到期也不是一个时间字段能表达完：最后交易、停止开仓、到期、最终结算价确定、现金入账或实物交割可能发生在不同时间。
 
-### 3.4 永续合约字段
+#### 永续合约字段
 
 永续没有固定 maturity，但比期货少一个字段不代表模型更简单。至少需要：
 
@@ -250,7 +252,7 @@ fundingInterval / nextFundingTime source, positionModeCapabilities
 
 OKX 当前公开 instruments API 就把 `SPOT`、`SWAP`、`FUTURES` 和 `OPTION` 分开，并返回 `tickSz`、`lotSz`、`minSz`、合约价值、线性/反向类型、状态及 upcoming parameter changes。这是一个很好的工程提示：**产品规格既有快照，也会有未来生效的变化。**
 
-### 3.5 期权字段
+#### 期权字段
 
 期权至少需要：
 
@@ -272,7 +274,7 @@ FIX/CME Security Definition 会为 outright options 使用 `PutOrCall(201)`、`S
 
 不要从类似 `BTC-20261225-50000-C` 的字符串拆字段后就认为定义完整。symbol 语法可能变化，也无法表达所有结算和行权规则。
 
-## 4. Tick、Lot、Multiplier 与 Scale 是四件事
+### Tick、Lot、Multiplier 与 Scale 是四件事
 
 这四个词经常被错误地合并为“小数位”。
 
@@ -293,7 +295,7 @@ flowchart LR
   ECON --> RISK["Risk + Clearing"]
 ```
 
-### 4.1 用整数格点校验，不要用二进制浮点取模
+#### 用整数格点校验，不要用二进制浮点取模
 
 若 tick 恒定为 `0.05`，合法价格满足：
 
@@ -313,7 +315,7 @@ valid      = (priceUnits - originUnits) % tickUnits == 0
 
 也不要默认替客户舍入。将非法 `100.03` 悄悄改成 `100.05` 会改变订单经济含义和 maker/taker 结果。除非协议明确规定规范化方向，否则应拒绝并返回当前 rule version、合法 tick 和原始输入。
 
-### 4.2 Tick 可以按价格区间变化
+#### Tick 可以按价格区间变化
 
 某些 instrument 使用 variable tick table：不同价格区间有不同增量。CME MDP 文档明确区分标准 tick 和 Variable Tick Table；标准 tick 可从 `MinPriceIncrement(969)` 获取，VTT instrument 则要按 tick rule 查表。
 
@@ -326,7 +328,7 @@ TickBand {
 
 不能把所有区间硬编码成左闭右开：venue 规则可能同时使用 `≤`、`<`、`>` 等不同关系。需要明确每个切点的边界归属。例如从 `5.00` 开始 tick 从 `0.01` 变成 `0.05` 时，`5.00` 属于哪一档？跨档 amend 怎样校验？旧订单留在原价格还是被取消？这些都必须来自场所规则，不能由通用数学函数猜。
 
-### 4.3 Lot、最小数量与最小名义价值不同
+#### Lot、最小数量与最小名义价值不同
 
 一张订单可以满足数量步长，却仍低于最小下单量或最小名义价值：
 
@@ -339,7 +341,7 @@ qty <= maxOrderQty
 
 `minNotional` 又可能以 quote、settlement 或风险折算币种计算。市价单在没有确定成交价时，需要使用 venue 指定的保护价或本地保守参考，而不能拿最后成交价假装结果已知。
 
-### 4.4 DisplayFactor 不是合约乘数，必须先完成单位转换
+#### DisplayFactor 不是合约乘数，必须先完成单位转换
 
 CME 的部分 Security Definition 使用 `DisplayFactor` 将 Globex wire price 转换为惯例展示价格；非分数报价应按协议应用该转换，分数报价则走场所规定的专门转换，不能机械套用同一因子。它与 contract multiplier 不是一回事：必须先把 wire price 归一化为约定的经济价格单位，再与 quantity、multiplier 等计算名义价值和损益。风控与清算必须明确 wire price、display price、economic price 的类型与转换链，不能把显示缩放当作可忽略的 UI 装饰，也不能把它重复乘进经济金额。
 
@@ -357,7 +359,9 @@ QuoteAmount
 
 即使底层都用 `long`，也不要允许它们在没有转换函数时相加或相乘。
 
-## 5. 交易时间不是每天两个 UTC 时刻
+## 时间、市场状态与价格边界共同决定交易权限
+
+### 交易时间不是每天两个 UTC 时刻
 
 交易日历至少由四层组成：
 
@@ -368,7 +372,7 @@ QuoteAmount
 
 CME 公布的 2026 Globex 日历明确提醒 holiday hours 可能调整，通常临近节日才最终确认；Nasdaq 2026 日历也单列全天休市和 13:00 提前收盘日。这说明“把全年开闭市时间编译进代码”不是可靠方案。
 
-### 5.1 Event time、wall date 与 trade date 必须分开
+#### Event time、wall date 与 trade date 必须分开
 
 一个夜盘事件可能在自然日 Sunday 发生，却属于 Monday trade date。连续交易市场也可能在维护窗前后保持同一个或切换到下一个业务日。
 
@@ -392,7 +396,7 @@ sessionPhase, calendarVersion
 
 UTC instant 负责跨系统定位；单调时钟负责本进程耗时；venue local time 与 trade date 负责业务解释。三者不能互相替代。
 
-### 5.2 时区必须保存 Zone ID，而不是固定 offset
+#### 时区必须保存 Zone ID，而不是固定 offset
 
 `America/Chicago` 与 `UTC-06:00` 不是一回事。前者包含 DST 和历史规则，后者永远固定偏移。
 
@@ -408,7 +412,7 @@ UTC instant 负责跨系统定位；单调时钟负责本进程耗时；venue lo
 
 不能只在应用启动时计算“今天开盘 UTC”。长期运行进程会跨越 DST、holiday exception 和紧急公告。
 
-### 5.3 Session 是状态机，不只是 open/close
+#### Session 是状态机，不只是 open/close
 
 一个场所可能有：
 
@@ -440,13 +444,13 @@ stateDiagram-v2
 
 这张图只是参考拓扑。真实 venue 可能没有某些阶段，也可能允许从任何阶段进入 halt。实现时应读取 per-market transition table，不要把图写死成全局 enum 顺序。
 
-### 5.4 Calendar 变更也是版本化规则
+#### Calendar 变更也是版本化规则
 
 日历变更可能来自年度 holiday schedule、临时提前收盘、重大事件导致的延迟开盘、新产品改为 24/7、维护窗取消或延长，以及 venue 对此前公告的修正。
 
 每次变更都要保存 source notice、recordedAt、effectiveAt 和受影响的 session 范围。若公告在事件发生后才被系统录入，回溯查询必须能区分“当时系统知道的日历”和“后来确认的真实日历”。
 
-## 6. 市场状态应表达权限矩阵
+### 市场状态应表达权限矩阵
 
 `TRADING`、`HALTED` 只是标签。真正影响交易的是当前允许哪些动作：
 
@@ -475,7 +479,7 @@ TradingPermissions {
 
 这样 OMS 不需要散落 `if (status == HALT)`，也不会漏掉 `NO_CANCEL`、`POST_ONLY` 或 `CLOSE_ONLY` 的特殊组合。
 
-### 6.1 Venue state、instrument state 与 account restriction 要分层
+#### Venue state、instrument state 与 account restriction 要分层
 
 最终权限通常是多层约束的交集：
 
@@ -492,9 +496,9 @@ effectivePermissions =
 
 不要把账户限制反写为 instrument `HALTED`，否则公共行情会错误宣称全市场停牌。每层状态都要有独立 source、scope、reason 与 version。
 
-## 7. Auction、Halt 与 Close-Only 不是同一种“不能正常下单”
+### Auction、Halt 与 Close-Only 不是同一种“不能正常下单”
 
-### 7.1 Auction 需要单独的价格形成规则
+#### Auction 需要单独的价格形成规则
 
 集合竞价阶段通常接收一批订单，再按规则选择单一成交价。此时公开信息可能包括 indicative price、paired quantity 和 imbalance，而不是连续交易的 BBO。
 
@@ -521,7 +525,7 @@ flowchart LR
 
 “没有连续成交”不代表订单入口关闭。Nasdaq 的 quotation-only 状态就是恢复交易前可以报价、但尚未恢复正常交易的例子。
 
-### 7.2 Halt 必须带 scope 与 reason
+#### Halt 必须带 scope 与 reason
 
 停牌至少可能是：
 
@@ -542,7 +546,7 @@ source, sourceSequence, effectiveAt, receivedAt, stateVersion
 
 reason 不能只写给 UI。恢复 Runbook、合规报告和自动动作可能依赖“scheduled”“surveillance”“market event”“recovery in process”等差异。
 
-### 7.3 Close-Only 是风险策略，不一定是 venue phase
+#### Close-Only 是风险策略，不一定是 venue phase
 
 `CLOSE_ONLY` 的语义应是“允许减少指定风险，不允许增加风险”，而不是简单允许 `SELL`：
 
@@ -556,7 +560,7 @@ reason 不能只写给 UI。恢复 Runbook、合规报告和自动动作可能�
 
 状态切换到 close-only 时，还要定义已有订单：保留全部、取消风险增加订单、缩量，还是只阻止新命令。默认“留着不管”会让切换前挂入的开仓单在切换后继续成交。
 
-## 8. Price Grid、Price Band、Daily Limit 与 Circuit Breaker 要分开
+### Price Grid、Price Band、Daily Limit 与 Circuit Breaker 要分开
 
 价格约束至少有四层：
 
@@ -579,7 +583,7 @@ flowchart TB
   V -->|否| T["Continue trading"]
 ```
 
-### 8.1 静态边界与动态边界
+#### 静态边界与动态边界
 
 静态边界通常由前结算、参考价或规则表在一个业务区间内计算；动态边界则随 last、BBO、指数、理论价值或时间窗口变化。
 
@@ -595,13 +599,13 @@ effectiveFrom, bandVersion
 
 CME 对 futures 与 options 采用不同的 price banding 机制，并说明参考可以来自 last trade、best bid/offer、settlement 或理论值；明显越界的价格型订单会被拒绝。它同时还有 daily price limits、Velocity Logic 和 dynamic circuit breakers。它们都是保护机制，却不是同一个开关。
 
-### 8.2 LULD 说明价格带本身也是状态输入
+#### LULD 说明价格带本身也是状态输入
 
 美国股票的 Limit Up-Limit Down Plan 使用过去五分钟 eligible trades 的参考价格计算上下 band，并由 SIP 发布。价格不能简单被理解成 `last ± 固定百分比`；tier、时间段、低价股规则、参考更新与舍入都属于计划的一部分。
 
 当报价触及或越过 band 时，Limit State、Straddle State、Trading Pause 与 reopening 又会影响订单是否可执行。SEC 2026 Rule 605 FAQ 也明确指出，位于 LULD bands 之外的 NBBO 没有执行机会。对 OMS 来说，这意味着 band 不是 UI 提示，而是可执行性合同的一部分。
 
-### 8.3 边界计算必须指定取整方向
+#### 边界计算必须指定取整方向
 
 假设理论上界是 `100.037`，tick 为 `0.05`，究竟发布 `100.00` 还是 `100.05`？若系统各自 `round()`，买卖两侧可能得到不同结论。
 
@@ -614,7 +618,7 @@ lower = smallestLegalPriceAtOrAbove(rawLower, activePriceGrid)
 
 这里的 `activePriceGrid` 已包含每个 tick band 的显式边界关系，因此不会先在切点选择错误的 tick，再做一次看似正确的 floor/ceil。这仍只是常见的保守模板，不是跨 venue 标准。实际方向、价格区间 tick 与 reference freeze 必须来自目标规则。最重要的是让所有服务调用同一个版本化算法，并用 golden vectors 验证每个切点和上下各一个 tick。
 
-### 8.4 参考源失效时不能沿用陈旧 band 假装安全
+#### 参考源失效时不能沿用陈旧 band 假装安全
 
 如果 band 依赖指数、BBO 或理论期权价格，参考源有 freshness contract。超过阈值后应进入明确状态：
 
@@ -625,7 +629,9 @@ lower = smallestLegalPriceAtOrAbove(rawLower, activePriceGrid)
 
 “继续使用最后一个值”只有在规则明确允许且有最大时限时才是策略。否则它只是把行情故障隐藏成价格保护。
 
-## 9. Security Definition 要有全量基线，也要有有序增量
+## 规则必须有序分发并在命令序列上原子生效
+
+### Security Definition 要有全量基线，也要有有序增量
 
 成熟场所不会要求每个客户手工维护全部合约。FIX 提供 Security Definition、Security Status 和 Security Definition Update Report 等语义；具体 venue 再选择 FIX tag-value、SBE、ITCH 或自定义编码。
 
@@ -651,13 +657,13 @@ sequenceDiagram
   C->>R: publish CatalogVersion N+1
 ```
 
-### 9.1 完整性不能靠“等几秒应该收齐了”
+#### 完整性不能靠“等几秒应该收齐了”
 
 全量结束条件必须来自协议：总报告数、end marker、snapshot token、文件 checksum 或经签名 manifest。超时只能触发失败或重试，不能把部分集合标成 READY。
 
 构建阶段至少验证 ID/symbol 不冲突，underlying、currency、calendar 和 tick table 引用存在，产品判别字段完整，add/modify/delete 合法，生命周期时间有序，decimal 可无损表示，而且 source cursor 连续且未跨错误 epoch。
 
-### 9.2 Definition 与 Status 是两条相关但不同的流
+#### Definition 与 Status 是两条相关但不同的流
 
 Definition 回答“是什么”，Status 回答“现在能做什么”。CME 的建议流程也是先处理 Security Definition 获得 instrument 信息，再按 Security Status 处理 market、instrument 和 implied matching 状态。
 
@@ -671,7 +677,7 @@ InstrumentView =
 
 这个 view 可以缓存，但组成版本必须可见。
 
-### 9.3 Snapshot 与 incremental 的切点必须可证明
+#### Snapshot 与 incremental 的切点必须可证明
 
 若协议没有给 snapshot anchor，就不能安全地把任意快照和任意实时更新拼接。可能的安全方案包括：
 
@@ -682,7 +688,7 @@ InstrumentView =
 
 CME MDP 的市场快照使用 `LastMsgSeqNumProcessed(369)` 与实时 feed 对齐，是“快照必须声明切点”的具体例子。Instrument Replay 的协议细节不同，不能把 book recovery 字段机械套在 definition feed 上；通用的是**切点要由源协议证明**。
 
-## 10. Version 不只是 `updated_at`
+### Version 不只是 `updated_at`
 
 至少要区分四类版本：
 
@@ -695,7 +701,7 @@ CME MDP 的市场快照使用 `LastMsgSeqNumProcessed(369)` 与实时 feed 对�
 
 单个 instrument 的 `version=12` 与全局 catalog `version=12` 没有可比性。事件要带 scope 和 generation。
 
-### 10.1 effectiveAt 与 recordedAt 解决两个不同问题
+#### effectiveAt 与 recordedAt 解决两个不同问题
 
 - `effectiveAt`：规则在业务世界何时生效；
 - `recordedAt`：本系统何时得知并记录这条事实。
@@ -719,7 +725,7 @@ timeline
 
 通常不应原地修改 version 42，而应发布 correction version 43，并明确其有效区间与补救动作。已发生的成交是否调整是业务与规则决定，不能靠数据库 update 偷偷改历史。
 
-### 10.2 未来生效规则要进入调度表，不要靠 cron 改行
+#### 未来生效规则要进入调度表，不要靠 cron 改行
 
 一条 upcoming change 应是不可变对象：
 
@@ -732,13 +738,13 @@ RuleChange {
 
 OKX instruments API 当前会返回 `upcChg`，其中包括即将变化的参数、新值和生效时间。这类数据应进入预演、冲突检查和激活流程，而不是到时间直接覆盖缓存。
 
-## 11. 规则切换必须在命令序列上原子化
+### 规则切换必须在命令序列上原子化
 
 即使所有服务最终都收到 version 42，也可能出现危险窗口：Gateway 已按新 tick 接单，Risk 仍按旧 multiplier 计算，Matching 仍按旧 price grid 排队。
 
 “配置最终一致”不适合决定一笔订单是否合法。
 
-### 11.1 Prepare、Activate、Fence、Observe
+#### Prepare、Activate、Fence、Observe
 
 ```mermaid
 sequenceDiagram
@@ -774,7 +780,7 @@ sequenceDiagram
 
 如果架构没有中央 sequencer，也要使用等价机制，例如按 partition epoch、Raft log position 或 venue source sequence 激活。纯 `effectiveAt` 只有在系统证明时钟误差、延迟和迟到命令处理语义后才足够。
 
-### 11.2 每条命令和结果都携带使用的版本
+#### 每条命令和结果都携带使用的版本
 
 建议至少记录：
 
@@ -796,7 +802,7 @@ LedgerEntry.productVersion
 - replace 是原订单修改还是新订单，由 venue 语义决定；
 - fill 的经济解释必须能追溯到成交时产品版本。
 
-### 11.3 Tick 或 lot 改变时，先决定旧订单命运
+#### Tick 或 lot 改变时，先决定旧订单命运
 
 假设 tick 从 `0.01` 改为 `0.05`，簿上已有价格 `100.03`。激活方案至少有：
 
@@ -807,13 +813,15 @@ LedgerEntry.productVersion
 
 不能让各 shard 自选。迁移策略属于 RuleChange，需在 shadow book 上预演：会取消多少订单、释放多少余额、改变多少 BBO，以及客户端收到哪些回报。
 
-### 11.4 未就绪时 fail closed
+#### 未就绪时 fail closed
 
 只要 Gateway、Risk、Matching 中任一关键消费者没有准备好同一 payload hash，就不应激活 risk-increasing trading。安全动作可以是延迟切换、暂停新单或 close-only；不能让超时节点“先用旧版本顶着”。
 
 Market Data 也不是旁观者。若撮合已切换 tick，而行情仍宣称旧定义，客户端会把合法价格判为非法或构造不合法订单。
 
-## 12. 缓存、重放与恢复：版本优先于 TTL
+## 恢复与演进都必须保留历史语义
+
+### 缓存、重放与恢复：版本优先于 TTL
 
 主数据读取频繁，当然需要缓存。但缓存正确性不能建立在“60 秒后大家会一致”。
 
@@ -843,7 +851,7 @@ flowchart TB
   CKPT --> LOAD
 ```
 
-### 12.1 恢复必须从权威记录重建
+#### 恢复必须从权威记录重建
 
 权威记录可以是 venue raw feed、内部 canonical event log 或两者组合。至少保留：
 
@@ -857,13 +865,13 @@ flowchart TB
 
 只保存最终数据库行，无法证明某次 tick 变化的到达、审批和激活顺序。
 
-### 12.2 删除使用 tombstone，不要立即遗忘身份
+#### 删除使用 tombstone，不要立即遗忘身份
 
 Instrument delist/delete 后仍会出现在历史订单、成交、账本和监管报告中。增量 `DELETE` 应关闭有效区间并产生 tombstone，而不是从所有映射中物理删除。
 
 旧 symbol 的反查要按 event time/version 工作；新订单则必须拒绝引用已终止 listing。两者使用不同查询 API，避免“为了查历史而意外允许新交易”。
 
-### 12.3 缓存落后要可观测、可阻断
+#### 缓存落后要可观测、可阻断
 
 每个关键消费者报告：
 
@@ -874,7 +882,7 @@ lastStateSequence, payloadHash, freshnessAge, readiness
 
 负载均衡器不能只看 HTTP 200。节点若 active version 落后，应退出订单流量；查询服务可以继续提供带 stale marker 的结果，但不能把旧定义无标记地返回给交易客户端。
 
-## 13. Schema 演进要允许新字段，也要拒绝未知危险语义
+### Schema 演进要允许新字段，也要拒绝未知危险语义
 
 SchemaVersion 解决“怎么解码”，DefinitionVersion 解决“这份业务规则是什么”。两者不能共用一个整数。
 
@@ -901,9 +909,11 @@ switch (state) {
 
 最危险的兼容方式是 `unknown => OPEN`。
 
-## 14. 测试重点是边界、版本和重放
+## 怎样验证和运营规则变更
 
-### 14.1 Golden、Property 与状态模型
+### 测试重点是边界、版本和重放
+
+#### Golden、Property 与状态模型
 
 为每个 venue 保存经许可的官方样本或自行构造的最小消息，覆盖四类产品、add/modify/delete、标准与 variable tick、全部 market state/reason、holiday/early close/DST、band 舍入边界、新字段与未知 enum。断言不能止于“能 parse”，还要检查 canonical 输出、单位、hash、version 和最终 permissions。
 
@@ -934,11 +944,11 @@ flowchart LR
 
 重点检查 cancel 与 halt 并发、切换 fence 前后、旧订单迁移、状态重复投递和迟到旧 epoch 事件。
 
-### 14.2 Crash/recovery 与切换测试
+#### Crash/recovery 与切换测试
 
 分别在 snapshot 下载一半、全量完成但未 publish、RuleChange prepare 一半、activation 已落日志但部分服务未 ack、catalog 已切换但 checkpoint 未写、tombstone 已处理但 alias index 未切换时注入崩溃。重启必须得到同一个 catalog hash 与 active fence，不能在“数据库最新行”和权威日志冲突时随便选一个。
 
-## 15. 监控：不要只报“配置同步成功”
+### 监控：不要只报“配置同步成功”
 
 完整性指标至少包括 `catalog_active_version{service,shard}`、payload hash mismatch、source cursor lag、definition/state Gap、unresolved reference、unknown state code、calendar exception age 和 activation ack lag。
 
@@ -946,9 +956,9 @@ flowchart LR
 
 最新状态消息刚到不代表之前没有丢包；序列连续也不代表 reference 已新鲜。仪表盘必须把 continuity、completeness、freshness、activation 和 cross-service payload hash 分开显示。
 
-## 16. Runbook：变更与故障都要能安全收束
+### Runbook：变更与故障都要能安全收束
 
-### 16.1 Tick/Lot 计划变更
+#### Tick/Lot 计划变更
 
 1. 核对 notice、machine-readable update、受影响 listing、source hash 与 effectiveAt；
 2. 生成 next definition，扫描 resting orders，并在 shadow 环境重放；
@@ -956,7 +966,7 @@ flowchart LR
 4. 写入 activation fence，观察 version、拒单、BBO 与撤单；
 5. 回滚使用 correction version，并保存公告、审批、hash、fence 与报告。
 
-### 16.2 市场状态 Gap 或未知状态码
+#### 市场状态 Gap 或未知状态码
 
 1. 立即停止受影响 scope 的 risk-increasing command；
 2. 保留 raw messages、connection epoch 和 source cursor；
@@ -964,7 +974,7 @@ flowchart LR
 4. 获取 fresh baseline，验证 sequence、trade date、session 与 identity；
 5. 以新 state epoch 原子发布 discontinuity，检查 resting order 与账户 restriction 后恢复。
 
-### 16.3 日历错误或 DST 错位
+#### 日历错误或 DST 错位
 
 1. 冻结自动 session transition；
 2. 对照 notice、calendar/tzdb version、计划 UTC interval 与实际 status；
@@ -972,7 +982,7 @@ flowchart LR
 4. 用 correction version 修正未来 interval，回查错位窗口内的订单；
 5. 验证 trade date、结算批次和报表没有串日。
 
-### 16.4 错误版本已经部分激活
+#### 错误版本已经部分激活
 
 1. 不要直接把数据库行改回去；
 2. 确定 activation fence 与已处理命令范围并停止扩大影响；
@@ -980,7 +990,7 @@ flowchart LR
 4. 识别需要撤单、冲正、通知或人工审查的事件；
 5. 证明所有服务收敛到同一 payload hash 后再恢复。
 
-## 17. 把主数据当成交易事实，后续章节才有可靠地基
+## 结论：主数据是可重放的交易事实
 
 交易品种主数据并不是“给前端展示名称”的字典。它决定订单价格是否落在合法网格、数量代表多少经济敞口、哪一天属于哪个 trade date、当前能否撤改单、价格保护使用什么参考，以及成交和账本该按哪一版规则解释。
 

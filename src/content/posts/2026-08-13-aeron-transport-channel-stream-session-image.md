@@ -2,7 +2,7 @@
 title: Aeron Transport：Channel、Stream、Session 与 Image 的身份模型
 description: 以 Aeron 1.52.2 为基线，从复制日志而非消息队列的视角，讲清 Media Driver、Channel URI、Stream、Session、Image、连接生命周期与传输保证。
 date: 2026-08-13T09:10:00+08:00
-updated: 2026-08-17T16:55:00+08:00
+updated: 2026-08-17T17:45:00+08:00
 tags:
   - Aeron
   - Aeron Transport
@@ -434,20 +434,16 @@ Session 会随 Publication 生命周期变化，也可能显式配置或共享�
 
 Image 可以因发送端关闭、超时、重建或 destination 变化而消失。它是传输资源生命周期事件。业务层是否切主、补历史或拒绝请求，要结合生产者 epoch、Archive position 和控制面状态判断。
 
-## 9. 一套可验证的最小设计清单
+## 9. 从身份模型推导可验证的路由合同
 
-在写第一行 Aeron API 前，先把这些答案写进设计文档：
+身份模型只有写成系统合同，才能在重启、扩容和故障切换时继续成立。合同至少覆盖四类声明：
 
-1. 使用 IPC、unicast、multicast、MDC，还是组合拓扑？
-2. 谁负责分配 channel/stream，如何防止冲突？
-3. 一个业务顺序域对应一个 Publication session，还是多个？
-4. 多 Image 到达时是否需要全局排序？
-5. 接收端晚加入或重启时，从哪里恢复历史？
-6. `offer` 成功后，业务究竟把哪个阶段称为成功？
-7. 谁返回端到端 ACK，怎样关联和去重？
-8. 哪些 URI 参数必须双方一致，如何做启动校验？
-9. Image available/unavailable 时创建和释放哪些状态？
-10. 监控标签是否同时包含 channel、stream、session 和 position？
+- **拓扑与分配**：明确使用 IPC、unicast、multicast、MDC 还是组合拓扑，并指定 channel、stream 和 session 策略的权威分配者；
+- **顺序与合并**：说明一个业务顺序域对应哪个 Publication session，以及多 Image 到达时采用分片、拒绝还是业务合并；
+- **确认与恢复**：分别定义 local-log accepted、传输到达、业务处理和持久化确认，并说明晚加入或重启从哪个 Archive position、snapshot 或业务 checkpoint 恢复；
+- **生命周期与证据**：写明 URI 启动校验、Image available/unavailable 时的资源动作，以及同时包含 channel、stream、session、source identity 和 position 的观测标签。
+
+端到端 ACK 必须携带稳定业务请求 ID，并与传输 position 分离；否则即使连接坐标完全正确，应用仍无法证明重试是在恢复同一请求还是制造第二次副作用。
 
 ```mermaid
 flowchart TD

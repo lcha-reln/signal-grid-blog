@@ -2,7 +2,7 @@
 title: Aeron Archive：生产运维手册——校验和、修复、迁移、监控与容量治理
 description: 基于 Aeron 1.52.2，说明 recording/replay checksum 的帧改写、ArchiveTool 各命令风险、格式迁移步骤，以及 counters、线程和磁盘告警的生产基线。
 date: 2026-08-13T10:40:00+08:00
-updated: 2026-08-13T10:40:00+08:00
+updated: 2026-08-17T17:45:00+08:00
 tags:
   - Aeron
   - Aeron Archive
@@ -22,7 +22,9 @@ Archive 上线后，最危险的时刻往往不是正常录制，而是磁盘告
 
 本文以 **Aeron 1.52.2** 为基线，给出一份可执行的监控与离线工具手册。
 
-## 1. 先建立运维安全分级
+## 先定义不可逆操作的安全边界
+
+### 运维动作必须先分级
 
 ```mermaid
 flowchart LR
@@ -43,7 +45,7 @@ flowchart LR
 
 不要仅按命令名判断风险。`verify` 会打开 Catalog 读写，坏项会被标记 INVALID；遇到 page-straddling 尾部还可能询问是否截断。因此对故障现场，第一步永远是保全副本。
 
-## 2. Checksum 改变了持久 frame 格式
+### Checksum 改变了持久 frame 格式
 
 Archive 支持 recording checksum 与 replay checksum：
 
@@ -74,19 +76,21 @@ PAD frame 只保存 header，不计算同样的数据 checksum。Catalog descrip
 
 这有一个很实际的后果：自研离线 `.rec` reader 若不知道 checksum 配置，会把 CRC 数值误读为 source sessionId。正确 source 身份来自 Catalog，frame 校验和算法来自部署配置/descriptor 约定。
 
-### 2.1 record 与 replay 必须一致
+#### record 与 replay 必须一致
 
 录制时计算 checksum，replay 时只有配置了匹配的 `replayChecksum` 才会验证，再把 replay Publication 的 sessionId / streamId 写回 outgoing frame。`replayChecksum == null` 会**跳过校验**，即使录制文件里保存了 checksum；这不是“自动识别”。只开 record 却未启用 replay 校验、配置了错误算法，或算法更换后不记录代际，都会让恢复验证失去预期语义。
 
 自定义 `Checksum` 实现应是无状态或线程安全的，因为 Archive agents 会长期复用；更重要的是把实现 class、版本与恢复镜像一起保存。
 
-### 2.2 Checksum 不是 durability
+#### Checksum 不是 durability
 
 CRC 能发现某些位翻转或错误内容，不能让未 `force` 的页缓存跨断电，也不能抵抗恶意篡改。它还有可测的 CPU / copy 成本：Recorder 先复制到 checksum buffer，再计算并写盘；Replay 也要校验。
 
 应在真实 MTU、消息大小、sync level、并发 recordings / replays 下测吞吐与尾延迟，而不是只跑内存 microbenchmark。
 
-## 3. ArchiveTool 命令地图
+## 离线工具怎样改变持久状态
+
+### ArchiveTool 命令地图
 
 入口形式：
 
@@ -128,7 +132,7 @@ flowchart TD
   MUTATE --> REVERIFY["verify + replay business fixtures"]
 ```
 
-## 4. verify：默认只查最后一个 segment
+### verify：默认只查最后一个 segment
 
 ```text
 verify
@@ -153,7 +157,7 @@ verify 会检查 descriptor、文件存在、frame 长度 / alignment / term 结
 
 不要在仍运行的 production Archive 目录上把 verify 当 Prometheus health check。
 
-## 5. checksum：给旧历史就地加 CRC
+### checksum：给旧历史就地加 CRC
 
 ```text
 checksum io.aeron.archive.checksum.Crc32c
@@ -180,7 +184,7 @@ sequenceDiagram
 
 不能一边让 Archive 写 segment，一边离线改同一文件的 checksum。算法变更也不是普通配置 reload，而是数据格式迁移项目。
 
-## 6. compact 与 orphan deletion
+### compact 与 orphan deletion
 
 `compact` 创建临时 compact Catalog，仅复制 VALID descriptors，替换原 Catalog，并删除所有非 VALID recording 对应 segment。官方工具警告它是 non-recoverable operation。
 
@@ -198,7 +202,7 @@ flowchart LR
 
 compact / orphan delete 前最低要求：Archive 停止、两份独立备份、恢复测试、变更窗口、明确的 recordingId 清单和空间回收预估。
 
-## 7. mark-valid / mark-invalid 不是修复内容
+### mark-valid / mark-invalid 不是修复内容
 
 把 descriptor 标 INVALID 可以隔离坏 recording；把它重新标 VALID 只改变 Catalog state，**不会修复缺失 segment、错误 frame 或 checksum mismatch**。
 
@@ -206,7 +210,7 @@ compact / orphan delete 前最低要求：Archive 停止、两份独立备份、
 
 同样，purge 在 1.52.2 实现里把 descriptor 置 DELETED；不要用 mark-valid 试图把已经删除 segment 的 recording“复活”。
 
-## 8. 格式迁移：二进制升级不等于目录可直接启动
+### 格式迁移：二进制升级不等于目录可直接启动
 
 1.52.2 的 Archive stored format 是 **3.1.0**。Major 改变要求迁移；当前 source 提供 0→1、1→2、2→3 的逐步迁移计划。
 
@@ -235,7 +239,9 @@ flowchart LR
 
 工具本身也会警告：确认 Archive 未运行并已备份。Major 不匹配时 mark file 校验会拒绝启动；不要绕过 version check。
 
-## 9. Archive 线程模式
+## 运行态怎样证明 Archive 健康
+
+### Archive 线程模式
 
 ```mermaid
 flowchart TB
@@ -255,7 +261,7 @@ flowchart TB
 
 线程模式不是单纯性能开关。SHARED 下一个慢 `force` 会放大控制延迟；INVOKER 下调用频率成为协议 liveness 的一部分。
 
-## 10. 1.52.2 Archive counters 全表
+### 版本化运行信号：1.52.2 Counters、阈值与告警
 
 | Type ID | Counter | 应怎样使用 |
 | ---: | --- | --- |
@@ -282,7 +288,7 @@ flowchart TB
 
 Type 103 / 104 也不是“每个 Archive 各一条”的全局标量。DEDICATED 模式下 conductor、recorder、replayer 会分别分配同 type ID 的 counter；采集器必须按 label 中的 `archiveId` 与 agent role 分组，不能按 type ID 覆盖成一个值。
 
-### 10.1 指标是采样，不是状态数据库
+#### 指标是采样，不是状态数据库
 
 RecordingPos 只在 recording 活跃时存在；counter ID 也可能被回收。持久历史要查 Catalog。监控标签至少包含 archiveId、recordingId、sessionId 与 source identity，不能用“当前唯一 type 100”这种假设。
 
@@ -295,7 +301,7 @@ averageWriteCost   = delta(totalWriteTime) / delta(writeOperationsOrBytes)
 
 只有 bytes 与 total time 时，可算单位字节成本，但不要伪造不存在的 operation count。max counter 负责尾部，threshold exceeded count 负责频率。
 
-## 11. 默认容量与阈值
+#### 默认容量与阈值
 
 1.52.2 常见默认：
 
@@ -324,9 +330,9 @@ flowchart LR
 
 low storage threshold 是拒绝新 recording 的安全边界。监控要在阈值之上再留出告警提前量，至少覆盖突发写入、一个或多个预分配 segment、detach 冷却与 operator 响应时间。
 
-## 12. 推荐告警集合
+#### 推荐告警集合
 
-### P0 / 立即处理
+**P0 / 立即处理**
 
 - Archive error count 增长且错误为存储、Catalog、checksum、control failure；
 - 磁盘 free space 接近 low-storage threshold；
@@ -335,7 +341,7 @@ low storage threshold 是拒绝新 recording 的安全边界。监控要在阈�
 - mark file heartbeat 过期、进程与 PID 不一致；
 - verify / startup 报 page-straddling 或 missing segment。
 
-### P1 / 容量或退化
+**P1 / 容量或退化**
 
 - recording / replay sessions 接近 20 或自定义上限；
 - cycle threshold exceeded 在短窗持续增长；
@@ -346,7 +352,7 @@ low storage threshold 是拒绝新 recording 的安全边界。监控要在阈�
 
 告警必须带 runbook 链接和 archiveId。单独看到一个 `rec-pos` 数字，operator 无法判断是哪条业务流。
 
-## 13. 官方观测工具怎样组合
+#### 官方观测工具怎样组合
 
 - `AeronStat`：查看 counters 与 labels；
 - `BacklogStat`：观察 publisher / sender / receiver / subscriber 的 position 差；
@@ -359,7 +365,9 @@ low storage threshold 是拒绝新 recording 的安全边界。监控要在阈�
 
 1.52.2 使用独立 `-javaagent:aeron-agent-...jar` 方式启用 Aeron Agent；Archive 事件通过 `aeron.event.archive.log` 选择。`all` 会非常详细，应限制时间、文件与事件集合。1.52.0 已增加 event log 文件长度 / rotation 支持，仍要防止故障时日志反过来打满磁盘。
 
-## 14. 事故处置：从“不要继续写”开始
+## 事故与升级怎样收敛为可验证结果
+
+### 事故 Runbook：从“不要继续写”到恢复证据
 
 ```mermaid
 sequenceDiagram
@@ -385,9 +393,9 @@ sequenceDiagram
 4. mark-invalid 用于隔离，mark-valid 必须有内容修复证据；
 5. compact 永远放在恢复确认之后，不在事故取证阶段执行。
 
-## 15. 发布升级审查表
+### 发布升级的进入条件与退出证据
 
-### 变更前
+#### 进入条件
 
 - Aeron binary 与 stored format 版本是否记录？
 - release notes 是否涉及 Archive protocol、Catalog、checksum、truncate 或 counters？
@@ -395,7 +403,7 @@ sequenceDiagram
 - migration 是否在生产数据副本跑通？
 - rollback 是恢复旧目录，不是让旧进程打开新格式吗？
 
-### 变更后
+#### 退出证据
 
 - mark heartbeat、Archive errors、control sessions 正常吗？
 - 每条关键 recording 的 position 是否前进？
@@ -403,7 +411,9 @@ sequenceDiagram
 - replication signals 与 lag 是否恢复？
 - PersistentSubscription 是否能 live → replay → live 演练？
 
-## 16. 本章结论
+任一进入条件没有证据时不得开始原地迁移；任一退出证据失败时停止继续清理旧目录，并以整代备份恢复或回到隔离诊断。升级完成的定义是历史可验证、关键 replay 可解释且复制链重新达到预算，不是新进程成功打印启动日志。
+
+## 结论：Archive 运维必须先保全、再验证、最后删除
 
 Archive 运维的核心纪律是：**先保全整代目录，再验证；先理解命令是否写状态，再执行；先用 replay 证明业务可读，再删除历史。**
 

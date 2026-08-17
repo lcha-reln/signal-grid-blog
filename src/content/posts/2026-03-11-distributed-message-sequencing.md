@@ -2,7 +2,7 @@
 title: 分布式消息序列号：Gap 检测、乱序处理与 Aeron 实战
 description: 从序列域、接收窗口和故障恢复出发，讲清消息 Gap、重复与乱序的检测边界，并给出 Aeron 中可落地的发送、接收、持久化与监控方案。
 date: 2026-03-11T12:00:00+08:00
-updated: 2026-08-17T16:55:00+08:00
+updated: 2026-08-17T17:45:00+08:00
 categories:
   - 高可用架构
 tags:
@@ -298,7 +298,9 @@ final class SequencedPublisher {
 
 这仍然只是生产实现骨架：真实系统还要定义取消、超时后的所有权、Publication 重建、进程退出、磁盘满、WAL 截断，以及 payload buffer 的生命周期。低延迟实现可以复用预分配 buffer 或评估 `tryClaim`，但不能以减少一次复制为由牺牲失败语义。
 
-## 5. 崩溃安全的序号分配
+## 5. 崩溃安全的序号与日志位置
+
+### 崩溃安全的序号分配
 
 仅每秒把“当前最大序列号”写入文件并不安全。假设已经发出 1000，但磁盘 checkpoint 仍是 990；进程崩溃后从 990 恢复，会复用 991–1000。
 
@@ -322,7 +324,7 @@ flowchart TB
 
 64 位序列号虽然很难在系统寿命内耗尽，但协议仍应声明回绕策略。要允许回绕，就必须采用明确定义的序列空间算法，而不是普通的有符号 `<` 和 `>` 比较。
 
-## 6. Kafka offset 也不是全局业务序列
+### Kafka offset 也不是全局业务序列
 
 在 [Chapter 01](/signal-grid-blog/posts/high-availability-stateful-service/) 的消息驱动架构里，Kafka offset 可以作为恢复锚点；[Chapter 07](/signal-grid-blog/posts/kafka-distributed-log-kraft-consumers-and-transactions/) 已从日志压缩、事务和消费恢复的角度展开其边界。完整身份至少是 `(topic, partition, offset)`：
 
@@ -332,7 +334,7 @@ flowchart TB
 
 如果业务需要跨 partition 的总顺序，应建立独立的 sequencer、确定性合并协议或共识日志，而不是把多个 partition 的 offset 拼成一个伪全局序列。
 
-## 7. 监控应该围绕恢复闭环
+## 6. 监控应该围绕恢复闭环
 
 不要直接套用一个“通用丢失率阈值”。应先按序列域和业务 SLO 观察：
 
@@ -350,7 +352,7 @@ flowchart TB
 
 告警条件应同时包含持续时间、流量基线、序列域重要性和自动恢复结果。例如，行情快照流允许短暂 Gap，而账户扣款流的任意未恢复 Gap 都可能需要停止该 shard。
 
-## 8. 发布前测试清单
+## 7. 用故障注入证明恢复闭环
 
 至少覆盖以下故障注入：
 
@@ -367,7 +369,9 @@ flowchart TB
 11. sequence 接近回绕边界。
 12. Kafka 多 partition 和非连续 offset。
 
-## 9. 结论
+这组注入只有和通过判据一起运行才有意义：每次故障后都要断言业务状态等价于某个合法已提交前缀，接收 checkpoint 与业务状态位于同一提交边界，旧 epoch 不再产生副作用，并且恢复后的 `nextExpected` 能从持久位置继续推进。只看到进程重新变绿，不能证明 Gap 已经闭合。
+
+## 8. 从 Gap 检测回到可恢复状态
 
 序列号机制最有价值的地方，不是那一次整数比较，而是把消息流的隐性错误变成可定位、可恢复、可审计的状态：
 

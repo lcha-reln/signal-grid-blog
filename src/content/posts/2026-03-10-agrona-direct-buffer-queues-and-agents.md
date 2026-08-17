@@ -2,7 +2,7 @@
 title: Agrona 2：DirectBuffer、并发队列与 Agent 执行模型
 description: 基于 Agrona 2.5.0，围绕 Buffer 与内存顺序、SPSC/MPSC 队列、Agent/IdleStrategy 和低分配集合，解释所有权、背压与生命周期，并纠正“零 GC、零拷贝、无锁就一定更快”的常见误区。
 date: 2026-03-10T11:15:21+08:00
-updated: 2026-08-17T16:55:00+08:00
+updated: 2026-08-17T17:45:00+08:00
 tags:
   - Agrona
   - Java 并发
@@ -48,7 +48,7 @@ flowchart TB
 | 低分配结构 | primitive map/set/list、缓存、timer wheel | 避免部分装箱和短命对象 | “完全零分配”、线程安全 |
 | 运维原语 | counters、`MarkFile`、`DistinctErrorLog` | 进度、存活与重复错误观测 | 业务账本、事务、灾难恢复 |
 
-### 1.1 它与 Aeron 学习路径怎样衔接
+### 它与 Aeron 学习路径怎样衔接
 
 Aeron 1.52.2 使用 Agrona 2.5.0，但这是一条**实现依赖**，不是要求读者先背完整个 Agrona API 的课程依赖。进入 [Aeron Transport 第一章](/signal-grid-blog/posts/aeron-transport-channel-stream-session-image/) 前，只需要先掌握三件事：
 
@@ -113,7 +113,7 @@ Agrona 的 Buffer 层次可以这样理解：
 
 `UnsafeBuffer` 成功 wrap 后可以被多个线程访问，但这只说明视图本身不再变化；普通读写仍必须遵守应用的并发协议。`wrap(...)` 会改变视图指向，本身不是线程安全操作，不能和读写并发发生。
 
-### 3.1 字节序必须写进协议
+### 字节序必须写进协议
 
 Agrona 不会采用被包装 `ByteBuffer` 的 `order()`。不带 `ByteOrder` 参数的多字节访问使用本机字节序。因此，只要数据会落盘、过 IPC 或被另一种实现读取，就应显式指定协议字节序：
 
@@ -134,7 +134,7 @@ int quantity = buffer.getInt(8, LITTLE_ENDIAN);
 
 另一个常见误会是 `wrap(ByteBuffer)`：它默认包装 `0..capacity`，而不是 `position..limit`。只想包装剩余区间时，应写成 `wrap(byteBuffer, byteBuffer.position(), byteBuffer.remaining())`；被包装 `ByteBuffer` 自己设置的字节序同样不会被继承。
 
-### 3.2 内存顺序是协议的一部分
+### 内存顺序是协议的一部分
 
 `AtomicBuffer` 2.1 起把不同访问强度明确到方法名。选择它们不是“越弱越快”的猜谜，而是要建立可证明的发布协议。
 
@@ -163,7 +163,7 @@ sequenceDiagram
 
 原子访问还要求自然对齐：`int` 索引按 4 字节对齐，`long` 按 8 字节对齐。x86 对部分未对齐访问比较宽容，不代表 ARM 同样安全；当前 Javadoc 明确警告未对齐原子访问可能性能恶化，甚至在某些架构触发 JVM 崩溃。构造共享 `AtomicBuffer` 后调用 `verifyAlignment()`；测试阶段还可用与 core 同版本的独立 `org.agrona:agrona-agent` 构件，通过 `-javaagent:/path/agrona-agent-2.5.0.jar` 捕获未对齐索引。agent 有显著开销，只用于测试或诊断。[AtomicBuffer 2.5.0](https://javadoc.io/doc/org.agrona/agrona/2.5.0/org/agrona/concurrent/AtomicBuffer.html)
 
-### 3.3 “零拷贝”要说明边界
+### “零拷贝”要说明边界
 
 `RingBuffer.write(...)` 会把消息从源 Buffer 复制进环；`tryClaim(...)` 允许生产者直接写入环中已领取的 payload 区域，因此可以省掉这一次中间复制。但它不表示整条业务链路零拷贝：网卡、协议解码、日志、跨进程传输和下游客户端仍可能复制。
 
@@ -195,13 +195,13 @@ requiredCapacity ≥ initialBacklog
 
 若持续到达速率大于可持续消费速率，任何有限容量最终都会满。更大的环只能推迟故障，不能修复不稳定系统。
 
-### 4.1 Array Queue：对象所有权仍然重要
+### Array Queue：对象所有权仍然重要
 
 Queue 只传递对象引用，并不会复制或冻结对象。生产者 `offer(order)` 成功后继续修改 `order`，会制造数据竞争。可靠的约束通常是“成功发布即移交所有权，生产者不再触碰”；若对象会被池化复用，则必须在消费者明确归还后才能重用。
 
 `ManyToManyConcurrentArrayQueue` 还特意采用 relaxed 语义：当某个 offer 正进行到一半时，`poll()` 可以暂时返回 `null`，即使 `size()` 看起来大于 0。判断空队列应使用 `isEmpty()`，不能把 `size() == 0` 当成并发一致快照。[ManyToManyConcurrentArrayQueue Javadoc](https://javadoc.io/doc/org.agrona/agrona/2.5.0/org/agrona/concurrent/ManyToManyConcurrentArrayQueue.html)
 
-### 4.2 Ring Buffer：claim 必须结束
+### Ring Buffer：claim 必须结束
 
 `tryClaim` 成功后，生产者直接写入 `ringBuffer.buffer()`，最后只能二选一：
 
@@ -214,7 +214,7 @@ Queue 只传递对象引用，并不会复制或冻结对象。生产者 `offer(
 
 回调拿到的 `buffer/index/length` 只在该次处理协议内有效。消费位置推进后，槽位就可被后续记录复用；`ManyToOneRingBuffer` 还会清零已扫描字节，而 `OneToOneRingBuffer` 主要推进 head。无论哪种实现，都不要把这段视图交给异步线程长期持有。
 
-### 4.3 Broadcast：允许丢失才叫广播
+### Broadcast：允许丢失才叫广播
 
 Broadcast Buffer 是单发送者、多接收者。每个接收者独立跟踪位置，发送者不会被最慢接收者背压；慢接收者被绕一圈时，旧记录会被覆盖，**丢失不是传输错误，而是这个结构的设计语义**。
 
@@ -249,7 +249,7 @@ flowchart LR
 2. 没有工作时愿意用多少 CPU 换响应时间；
 3. 阻塞、异常和关闭分别如何传播。
 
-### 5.1 IdleStrategy 是预算，不是排名
+### IdleStrategy 是预算，不是排名
 
 | 策略 | 空闲行为 | 适合场景 | 主要代价 |
 | --- | --- | --- | --- |
@@ -260,7 +260,7 @@ flowchart LR
 
 IdleStrategy 可能有内部状态。`BackoffIdleStrategy` 等带可变退避状态的实例不能并发共享；官方提供 `INSTANCE` 的 `BusySpinIdleStrategy`、`NoOpIdleStrategy` 和 `YieldingIdleStrategy` 是无状态例外。`BusySpin` 也不是“最快”的同义词：如果线程没有独立 CPU、容器 quota 很紧或同核还有关键线程，持续自旋反而会放大尾延迟。应在目标 CPU、内核参数、容器配额和真实负载下测量。
 
-### 5.2 `doWork()` 必须能返回
+### `doWork()` 必须能返回
 
 Agent 的核心假设是短小、非阻塞的 duty cycle。数据库调用、无超时 socket read、等待锁或一次处理无限 backlog，都会同时破坏空闲策略、关闭流程和同线程上的其他 Agent。
 
@@ -415,9 +415,9 @@ java \
 
 真实订单系统还应在进入内存环之前完成鉴权、请求幂等键与可恢复日志，或在单写者内以明确顺序落 WAL。否则进程在“调用者收到成功”和“状态真正持久化”之间崩溃时，无法仅靠 Ring Buffer 判定命令是否生效。
 
-## 7. 低分配集合与工具类的边界
+## 7. 工具类的共同边界：少分配不等于改变语义
 
-### 7.1 Primitive collection 只消除一部分装箱
+### Primitive collection 只消除一部分装箱
 
 `Int2ObjectHashMap<V>` 用原始 `int` 保存 key，避免 `Integer` key 装箱，并通过开放寻址与线性探测改善局部性。但它仍然保存对象 value，扩容仍会分配新数组，用户的 lambda、value 和业务字符串也可能分配。
 
@@ -430,41 +430,22 @@ java \
 
 如果需要普通 Java Collection 语义、嵌套迭代或调试器友好性，可以把 `shouldAvoidAllocation` 设为 `false`。正确性优先于少创建几个 iterator。
 
-### 7.2 Timer wheel 不会自己“按时触发”
+### Timer wheel 不会自己“按时触发”
 
 `DeadlineTimerWheel` 是非线程安全、数组支持的 deadline 索引。取消是 O(1)，同一 tick 内的 timer 没有排序保证，timer 只保证在 deadline **或之后**过期；真正何时回调，取决于拥有它的 Agent 何时调用 `poll(now, handler, limit)`。
 
 因此它适合单写者 event loop 中的大量超时，不适合作为墙上时钟精确定时器。`tickResolution`、每轮 `poll` 上限与 Agent 最坏 duty-cycle 时间共同决定延迟。
 
-### 7.3 Snowflake、Counters 和 MarkFile 不是业务真相
+### Snowflake、Counters 和 MarkFile 不是业务真相
 
 - `SnowflakeIdGenerator` 依赖 node id 不冲突、epoch 配置一致与时钟约束；它提供唯一 ID 的一种实现，不自动提供跨节点业务顺序。
 - off-heap counters 适合进度、位置和遥测；读到的并发值仍可能只是瞬时观测，不是多字段一致快照。
 - `MarkFile` 可记录进程活动时间、版本和状态，但不是锁服务或事务日志。2.3.1/2.3.2 专门修复了并发激活竞争，并提醒激活失败时要重置 sentinel。
 - `DistinctErrorLog` 合并重复错误以避免日志洪泛；它不应替代原始错误计数、告警和关键故障上下文。
 
-## 8. 从 1.21.1 升级到 2.5.0
+## 8. 怎样选择组件并证明收益
 
-旧项目不能只改 Maven 版本。至少逐项检查：
-
-| 版本 | 关键变化 | 迁移动作 |
-| --- | --- | --- |
-| 1.23.0 | 编译和运行最低 JDK 17；移除 `MappedResizeableBuffer`、`RecordBuffer` 与旧 NIO selector hack | 升级运行时，替换已删除类型 |
-| 2.0.0 | 移除 `UnsafeAccess`、`MemoryAccess`、`SigIntBarrier`；新增 CRC32/CRC32C | 改用 `UnsafeApi` / `VarHandle` / `ShutdownSignalBarrier`，配置 `--add-opens` |
-| 2.1.0 | `AtomicBuffer`、Counter、Position 增加 plain / opaque / acquire-release；新增 compare-and-exchange | 用成对内存序表达协议，清理旧 ordered 命名 |
-| 2.3.0 | `ShutdownSignalBarrier` 改用 shutdown hook，并要求显式 close | 使用 try-with-resources；避免残留 hook 阻止 JVM 退出 |
-| 2.4.0 | 删除 `SigInt`；修复 timer、Buffer、MarkFile 与 BroadcastReceiver 细节 | 删除 JVM signal hack，回归共享内存与计时路径 |
-| 2.5.0 | `AgentRunner.close()` 不再可中断地提前返回 | 保证 `doWork()` 有界、可响应关闭，并给卡死线程留诊断动作 |
-
-最值得借升级重构的，不是类名，而是协议：
-
-1. 找出所有共享 Buffer 字段，给每一对 writer / reader 标注 plain、release-acquire 或 volatile 的理由；
-2. 找出所有 `offer=false`、`write=false` 和 `INSUFFICIENT_CAPACITY`，确认没有忽略返回值；
-3. 找出所有 Agent 内的阻塞调用和无限批处理；
-4. 找出持有回调 Buffer、复用 iterator entry 或发布后继续修改对象的代码；
-5. 在 ARM64 与生产 JDK 上运行并发测试，而不是只依赖 x86 开发机。
-
-## 9. 不再引用“200M ops/s”
+### 不再引用“200M ops/s”
 
 没有硬件、JDK、GC、线程基数、消息大小、满载策略和分位数定义的性能数字，几乎没有迁移价值。比较 Agrona 与 JDK/Disruptor 时，至少要保证语义相同：SPSC 不能拿来代表 MPMC，多播事件管线不能和竞争消费队列只比一个平均吞吐量。
 
@@ -494,7 +475,7 @@ java \
 
 最后在同一机器、同一启动参数和接近生产的流量分布下做 A/B。若优化只提高空环平均吞吐，却让满载拒绝率或 p99.9 变差，它不是成功的低延迟优化。
 
-## 10. Agrona、Disruptor 和 JDK 怎么选
+### Agrona、Disruptor 和 JDK 怎么选
 
 上一章的 [LMAX Disruptor 4](/signal-grid-blog/posts/lmax-disruptor-ring-buffer-and-sequencing/) 聚焦预分配对象事件、多播消费者与依赖图；Agrona 的 Array Queue 和 Ring Buffer 更接近有界交接通道，Agent 则提供 duty-cycle 执行模型。它们不是同一 API 的快慢版本。
 
@@ -518,21 +499,28 @@ java \
 
 尤其不要把 `-Dagrona.disable.bounds.checks=true` 当通用优化开关。它把越界错误从可诊断异常变成数据破坏甚至进程崩溃风险。只有在协议和索引经过充分验证、基准确认检查确为瓶颈，并且生产具备内存破坏隔离手段时才值得单独评估。
 
-## 11. 上线前检查表
-
-- [ ] 生产者和消费者基数与所选容器一致，未来扩容不会偷偷破坏约束；
-- [ ] 发布成功后对象/Buffer 所有权明确，不跨回调持有可复用视图；
-- [ ] 每个满载返回值都进入可观测的重试、拒绝、降级或背压分支；
-- [ ] 每个 `tryClaim` 都保证 `commit` 或 `abort`；
-- [ ] 共享字段的内存序成对出现，并有并发测试覆盖；
-- [ ] 原子字段自然对齐，目标 ARM64/JDK 版本已验证；
-- [ ] Agent 单轮工作有上限，不包含无超时阻塞；
-- [ ] IdleStrategy 每个 Runner 独享，并按 CPU 预算选择；
-- [ ] 关闭流程在空闲、满载、异常和线程中断下均能结束；
-- [ ] 可恢复性不依赖内存环，WAL/响应/幂等边界写清楚；
-- [ ] JMH 与生产指标同时证明吞吐、尾延迟和分配率改善。
-
 Agrona 真正教会我们的，不是“Unsafe 更快”，而是低延迟系统必须把**所有权、容量、内存可见性和执行预算**写成显式协议。库可以提供锋利的工具，正确性与可恢复性仍然属于系统设计。
+
+## 附录：从 1.21.1 升级到 2.5.0
+
+旧项目不能只改 Maven 版本。至少逐项检查：
+
+| 版本 | 关键变化 | 迁移动作 |
+| --- | --- | --- |
+| 1.23.0 | 编译和运行最低 JDK 17；移除 `MappedResizeableBuffer`、`RecordBuffer` 与旧 NIO selector hack | 升级运行时，替换已删除类型 |
+| 2.0.0 | 移除 `UnsafeAccess`、`MemoryAccess`、`SigIntBarrier`；新增 CRC32/CRC32C | 改用 `UnsafeApi` / `VarHandle` / `ShutdownSignalBarrier`，配置 `--add-opens` |
+| 2.1.0 | `AtomicBuffer`、Counter、Position 增加 plain / opaque / acquire-release；新增 compare-and-exchange | 用成对内存序表达协议，清理旧 ordered 命名 |
+| 2.3.0 | `ShutdownSignalBarrier` 改用 shutdown hook，并要求显式 close | 使用 try-with-resources；避免残留 hook 阻止 JVM 退出 |
+| 2.4.0 | 删除 `SigInt`；修复 timer、Buffer、MarkFile 与 BroadcastReceiver 细节 | 删除 JVM signal hack，回归共享内存与计时路径 |
+| 2.5.0 | `AgentRunner.close()` 不再可中断地提前返回 | 保证 `doWork()` 有界、可响应关闭，并给卡死线程留诊断动作 |
+
+最值得借升级重构的，不是类名，而是协议：
+
+1. 找出所有共享 Buffer 字段，给每一对 writer / reader 标注 plain、release-acquire 或 volatile 的理由；
+2. 找出所有 `offer=false`、`write=false` 和 `INSUFFICIENT_CAPACITY`，确认没有忽略返回值；
+3. 找出所有 Agent 内的阻塞调用和无限批处理；
+4. 找出持有回调 Buffer、复用 iterator entry 或发布后继续修改对象的代码；
+5. 在 ARM64 与生产 JDK 上运行并发测试，而不是只依赖 x86 开发机。
 
 ## 参考资料
 

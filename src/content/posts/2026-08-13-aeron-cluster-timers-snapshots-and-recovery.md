@@ -2,7 +2,7 @@
 title: "Aeron Cluster：可靠时间与可恢复状态——Timers、Snapshots 与 Replay"
 description: "深入解释 Aeron Cluster Timer 为什么必须进入复制日志、Snapshot 集如何覆盖 Consensus Module 与业务服务、恢复怎样组合快照和日志，以及 schema、appVersion 与回滚策略如何设计。"
 date: 2026-08-13T11:20:00+08:00
-updated: 2026-08-13T11:20:00+08:00
+updated: 2026-08-17T17:45:00+08:00
 tags:
   - Aeron Cluster
   - Timer
@@ -23,7 +23,9 @@ Aeron Cluster 的解决方案不是让所有机器“时钟绝对相同”，而
 
 本章把 Timer、Snapshot、Replay 和版本演进放在一起，因为它们共同回答一个问题：节点在任意时间崩溃后，如何重新得到与其他成员一致、且能继续演进的状态。
 
-## 1. Cluster 时间不等于墙钟
+## 第一阶段：把时间变成可排序、可重放的输入
+
+### Cluster 时间不等于墙钟
 
 服务在已排序回调中会收到 `timestamp`。它代表 Cluster 为该事件确定的时间，单位由配置的 `clusterTimeUnit` 决定。业务过期、超时、租约等状态转换应使用该时间，而不是节点本地墙钟。
 
@@ -37,7 +39,7 @@ Aeron Cluster 的解决方案不是让所有机器“时钟绝对相同”，而
 
 Cluster 时间仍可能跳跃、停顿或晚于真实世界。它提供的是 **所有副本观察到同一已排序时间语义**，不是高精度计时器或全球原子钟。
 
-## 2. Timer 的真实提交路径
+### Timer 的真实提交路径
 
 服务在一个已排序回调中调用 `cluster.scheduleTimer(correlationId, deadline)` 时，各副本会执行相同调用，并经 IPC 把请求交给**各自本地** Consensus Module；因此每个成员都维护可恢复的 timer 状态。区别在于：只有 Leader 轮询自己的 TimerService、判断到期并把 `TimerEvent` 追加进 Cluster Log。
 
@@ -63,7 +65,7 @@ sequenceDiagram
 1. timer callback 是至少在 deadline 之后发生，不保证准点；
 2. callback 的全序由 Cluster Log 决定，不由节点线程调度决定。
 
-### 2.1 Deadline 是“不得早于”，不是预约 CPU
+#### Deadline 是“不得早于”，不是预约 CPU
 
 Timer 可能因为以下原因晚触发：
 
@@ -84,13 +86,13 @@ flowchart LR
   D -. "callback never before" .-> H
 ```
 
-## 3. Schedule、Cancel 与重试协议
+### Schedule、Cancel 与重试协议
 
 `scheduleTimer` 和 `cancelTimer` 都可能因 Cluster 内部 publication 背压而返回 `false`。官方契约要求调用者在允许发送 Cluster 消息的已排序回调中循环，直到成功，并在重试之间调用 `cluster.idleStrategy().idle()`，以便容器关闭能够推进。不能在某个副本上看到 `false` 后静默退出，否则副本间 timer 状态会分叉；若业务确实需要等待上限，超预算必须 fail / terminate，而不能当作已经成功。
 
 同一个 `correlationId` 再次 schedule 会替换/重调该 timer。这个特性适合延长 deadline，但也带来竞态：旧 timer 可能已到期并进入日志，而 cancel 或 reschedule 仍在途。
 
-### 3.1 Cancel 不能撤销已经排序的到期事件
+#### Cancel 不能撤销已经排序的到期事件
 
 考虑下列顺序：
 
@@ -115,7 +117,7 @@ timerCorrelationId → {aggregateId, generation, expectedState, deadline}
 
 `onTimerEvent` 收到 id 后重新检查：聚合是否仍存在、generation 是否匹配、状态是否仍等待超时。若任务已完成或被新一代 timer 替代，就把旧到期事件当作 no-op。
 
-### 3.2 ID 必须确定且可命名空间化
+#### ID 必须确定且可命名空间化
 
 Timer correlation id 由应用管理。推荐：
 
@@ -127,7 +129,7 @@ Timer correlation id 由应用管理。推荐：
 
 若 correlation id 用本地随机数生成，各节点会分叉；若只保存 id 而不保存对应业务 generation，恢复后可能把旧 timer 作用到新对象。
 
-## 4. WheelTimer 与 PriorityHeapTimer 的选择
+### WheelTimer 与 PriorityHeapTimer 的选择
 
 1.52.2 默认使用 `WheelTimerService`。它用时间轮取得较低调度成本，但有一个必须写入业务设计的顺序语义：
 
@@ -139,7 +141,7 @@ Timer correlation id 由应用管理。推荐：
 
 最稳妥的协议是：**不要让正确性依赖同 deadline timer 的相对顺序。** 若必须排序，在一个 TimerEvent 到来后，由状态机按稳定业务键批量检查待办项。
 
-### 4.1 避免零延迟自我饥饿
+#### 避免零延迟自我饥饿
 
 一个 handler 反复把 timer 调度到当前时间，可能让 Cluster 持续生成 timer 日志，挤压外部 ingress。官方文档建议至少给出约 1ms 的间隔，或用 service message 表达“下一轮继续处理”。
 
@@ -154,7 +156,22 @@ onTimerEvent:
 
 Timer 是公平调度工具，不是绕过单线程执行预算的递归调用。
 
-## 5. Snapshot 为什么是一组录制
+## 第二阶段：只有进入复制状态的事实才能被恢复
+
+### 启动任务不能偷偷成为业务事件
+
+Cookbook 的 startup task 场景提醒了一个边界：`onStart` 用于初始化资源和从 snapshot 恢复，不应在每个节点各自执行“如果启动就发一笔业务命令”。
+
+需要确定性的一次性启动动作，可以选择：
+
+- 由受认证的 admin client 发送显式命令；
+- 在首个会话事件中检查一个已 snapshot 的 `initialized` 标志；
+- 发送确定的 service message；
+- 调度一个 Cluster Timer，并把任务 generation 存入状态。
+
+无论哪种方式，都要让“是否执行过”成为复制状态，而不是本地 marker file。否则重启某一个 Follower 可能重复运行任务，或者新 Leader 从未运行。
+
+### Snapshot 为什么是一组录制
 
 一次 Cluster snapshot 至少包含：
 
@@ -177,7 +194,7 @@ Consensus Module snapshot 会保存 Cluster 自己管理的状态，包括 sessi
 
 只备份业务 Map、不保存 CM snapshot，会丢失会话和 timer 语义；只保存 CM snapshot、不保存去重表和订单状态，也无法恢复业务。
 
-## 6. `onTakeSnapshot` 的职责
+### `onTakeSnapshot` 的职责
 
 `onTakeSnapshot(ExclusivePublication)` 收到的是一个会被 Archive 录制的 Aeron publication。应用需要把当前完整恢复状态编码为消息。
 
@@ -194,7 +211,7 @@ Consensus Module snapshot 会保存 Cluster 自己管理的状态，包括 sessi
 
 不必保存可由上述权威数据确定重建的临时 cache；但恢复时的重建算法也必须确定，并计入 RTO。
 
-### 6.1 快照需要自己的记录协议
+#### 快照需要自己的记录协议
 
 教程常把小状态编码成一个 fragment，这只适合演示。真实 snapshot 可能超过单条 Aeron 消息，需要分块并能检测不完整录制。
 
@@ -219,13 +236,13 @@ SnapshotEnd { recordCount, aggregateChecksum }
 
 发现截断或损坏应让恢复失败，并由运维选择前一个 snapshot；不能悄悄加载一半状态继续服务。
 
-### 6.2 确定的序列化顺序
+#### 确定的序列化顺序
 
 若状态保存在 `HashMap` 中，直接遍历写 snapshot 可能让不同节点生成字节顺序不同的录制。虽然每个节点加载自己的快照仍可能得到相同逻辑状态，但这会妨碍 byte-level digest、备份比对和问题诊断。
 
 建议按稳定业务 key 排序，或使用本身具有稳定顺序的结构。序列化还应显式指定字节序、单位、字符串编码和枚举值，避免依赖 Java 默认行为。
 
-## 7. 恢复 = Snapshot + 后续已提交日志
+### 恢复 = Snapshot + 后续已提交日志
 
 节点恢复不是“加载最新 snapshot 就结束”。完整过程是：
 
@@ -251,7 +268,7 @@ flowchart TB
 
 不要采用“每小时一次”这种无上下文规则。应按事件速率、snapshot 大小、实测 replay throughput、目标 RTO 和保留策略反推周期。
 
-## 8. Snapshot 不会自动物理删除旧日志
+### Snapshot 不会自动物理删除旧日志
 
 常见资料把 snapshot 描述为“拍完就截断 Cluster Log”。在 1.52.2 的核心路径中，拍摄 snapshot 会建立新的恢复点并记录到 `recording.log`，**不会自动把 Archive 中的旧 log recording 物理删除或截短**。
 
@@ -265,7 +282,7 @@ flowchart TB
 
 磁盘容量规划必须同时考虑 live log、历史 term、多个 snapshot、备份复制和故障期间的额外保留。
 
-## 9. 版本演进有三条轴
+### 版本演进有三条轴
 
 至少要分别管理：
 
@@ -275,13 +292,13 @@ flowchart TB
 
 把三者压成一个 `version=2` 会让升级和回滚含义模糊。
 
-### 9.1 appVersion 与时间单位
+#### appVersion 与时间单位
 
 Consensus Module 会把 `appVersion` 和 Cluster time unit 编码进 snapshot/leadership 元数据并在恢复时验证。默认 `AppVersionValidator` 检查 major version 兼容性。
 
 这不是自动 schema migration。即使 major appVersion 被视为兼容，服务仍必须能读取旧 snapshot 和旧日志消息。反过来，某次只增加可选字段的协议升级，也未必需要改变所有状态结构。
 
-### 9.2 推荐的兼容策略
+#### 推荐的兼容策略
 
 - 新 reader 至少能读取一个明确支持窗口内的旧 snapshot；
 - 旧 reader 是否能读取新 snapshot 必须明确，不能默认；
@@ -291,7 +308,7 @@ Consensus Module 会把 `appVersion` 和 Cluster time unit 编码进 snapshot/le
 - 升级前在复制的生产 snapshot 与日志上做离线恢复演练；
 - 滚动升级是否受支持，以当前版本官方说明和实际兼容测试为准。
 
-## 10. 失败快照与回退工具
+### 失败快照与回退工具
 
 `ClusterTool` 提供与恢复相关的诊断/控制命令：
 
@@ -316,7 +333,7 @@ flowchart TB
 
 这些命令直接改变恢复行为，不应在运行中的生产目录上试错。先复制 Archive/cluster 目录，记录原始 recording ids 和 position，在隔离环境验证 recovery plan，再执行受审计的生产操作。
 
-### 10.1 触发 Snapshot 也有协议状态
+#### 触发 Snapshot 也有协议状态
 
 Snapshot 请求不会把每个组件在任意瞬间各拍一份文件。Consensus Module 先把 Cluster 带入 snapshot 状态，在确定的 log position 上协调 CM 与所有 service 输出录制，完成后再把这一组条目写入 Recording Log。
 
@@ -331,20 +348,9 @@ Snapshot 请求不会把每个组件在任意瞬间各拍一份文件。Consensu
 
 多服务配置中，只要一个 service snapshot 缺失或失败，这就不是可用的完整恢复点。不要把“service 0 文件存在”当成 Cluster snapshot 成功。
 
-## 11. 启动任务不能偷偷成为业务事件
+## 第三阶段：恢复正确性必须由矩阵和运行证据证明
 
-Cookbook 的 startup task 场景提醒了一个边界：`onStart` 用于初始化资源和从 snapshot 恢复，不应在每个节点各自执行“如果启动就发一笔业务命令”。
-
-需要确定性的一次性启动动作，可以选择：
-
-- 由受认证的 admin client 发送显式命令；
-- 在首个会话事件中检查一个已 snapshot 的 `initialized` 标志；
-- 发送确定的 service message；
-- 调度一个 Cluster Timer，并把任务 generation 存入状态。
-
-无论哪种方式，都要让“是否执行过”成为复制状态，而不是本地 marker file。否则重启某一个 Follower 可能重复运行任务，或者新 Leader 从未运行。
-
-## 12. 恢复测试矩阵
+### 恢复测试矩阵
 
 至少覆盖：
 
@@ -363,7 +369,7 @@ Cookbook 的 startup task 场景提醒了一个边界：`onStart` 用于初始�
 
 每次升级都应使用真实大小的数据，而不是十条示例消息。记录 snapshot duration、字节数、加载时间、replay rate、追到 live 的总 RTO 和恢复后的摘要。
 
-## 13. 运维指标
+#### 运行中的恢复证据
 
 围绕 Timer 与 Snapshot 建议观察：
 
@@ -379,7 +385,7 @@ Cookbook 的 startup task 场景提醒了一个边界：`onStart` 用于初始�
 
 Timer “晚了”时不要只调 tick resolution。先分解检测、追加、提交和服务执行各段延迟，再判断是 duty cycle、复制、磁盘还是业务回调阻塞。
 
-## 14. 本章结论
+## 结论：Timer 靠日志排序，Snapshot 靠共同恢复位置
 
 Aeron Cluster Timer 的可靠性来自排序，而不是来自本地计时器精度：只有 Leader 判断到期，到期事件先进入日志，提交后所有服务才执行。Schedule/cancel 是异步协议，handler 必须用业务状态和 generation 防御竞态。
 

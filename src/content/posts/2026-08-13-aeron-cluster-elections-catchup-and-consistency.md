@@ -2,7 +2,7 @@
 title: "Aeron Cluster：故障时发生了什么——选举、Catch-up 与一致性边界"
 description: "基于 Aeron 1.52.2 的 18 个 Election State，拆解故障检测、canvass、投票、日志复制、replay、catch-up 与就绪过程，并分析网络分区、客户端结果未知和恢复时间。"
 date: 2026-08-13T11:30:00+08:00
-updated: 2026-08-13T11:30:00+08:00
+updated: 2026-08-17T17:45:00+08:00
 tags:
   - Aeron Cluster
   - Leader 选举
@@ -23,7 +23,9 @@ Aeron 1.52.2 用 **18 个 Election State** 把这段过程暴露为 counter。�
 
 官方 `Election State` 页面中的完整状态图明确标注只对 1.37.0 正确。本文不复用那张旧图，而以 1.52.2 `ElectionState` enum 和 `Election` 实现为准。
 
-## 1. 选举同时解决三个问题
+## 选举先发现故障并比较权威日志
+
+### 选举同时解决三个问题
 
 一次 Election 不只是“数票”：
 
@@ -43,7 +45,7 @@ flowchart TB
 
 如果只看 `CANDIDATE_BALLOT → Leader`，会错误估计 RTO，也会忽略磁盘、Archive 和服务 replay 对恢复的影响。
 
-## 2. 故障是怎样被发现的
+### 故障是怎样被发现的
 
 稳定 Leader 周期性发送心跳，Follower 观察最后一次有效 Leader 活动。1.52.2 的默认值是：
 
@@ -78,7 +80,7 @@ sequenceDiagram
   Note over E: log replication and replay still follow
 ```
 
-## 3. 18 个状态的完整导航
+### 18 个状态的完整导航
 
 `ElectionState.code()` 与 enum ordinal 相同，并存入 Election State counter。
 
@@ -105,7 +107,7 @@ sequenceDiagram
 
 这些状态不是每次都机械地走完所有分支。节点角色、本地日志新旧、是否需要 catch-up、启动还是稳定期故障，会决定具体路径。
 
-## 4. 三条主要状态路径
+### 三条主要状态路径
 
 为了避免一张横向巨图挤进文章侧栏，可以把状态机拆成三条纵向路径。
 
@@ -137,7 +139,7 @@ flowchart TB
 
 第一张强调候选者成为 Leader 后仍要复制、replay 和等待就绪；第二张强调 Follower 从投票到 live 状态的完整链路。
 
-## 5. Canvass：先比较日志，再决定谁能竞选
+### Canvass：先比较日志，再决定谁能竞选
 
 `CANVASS` 让成员交换 leadership term、log term 与 position 等信息。目标不是简单发现“谁在线”，而是判断哪一个成员拥有足够新的日志，可以安全发起 leadership attempt。
 
@@ -154,7 +156,7 @@ flowchart TB
 
 排障时应同时查看所有成员的 role、Election State、leadership term、append/commit position 和 error log，而不是只重启“看起来卡住”的节点。
 
-## 6. 投票：多数派与日志新旧共同约束
+### 投票：多数派与日志新旧共同约束
 
 候选者在 `NOMINATE` 后进入 `CANDIDATE_BALLOT`，其他成员进入 `FOLLOWER_BALLOT`。获得多数票是必要条件，但不是唯一条件；成员还会依据日志信息拒绝不合格候选者。
 
@@ -169,13 +171,15 @@ flowchart TB
 
 所谓“多数派保证一致性”必须与日志约束一起理解。若投票只按“先到先得”，较旧节点就可能覆盖已经提交的历史；Raft 风格的选举安全性正是要阻止这种情况。
 
-## 7. 为什么选出票还不能服务
+## 新 Leader 必须先完成追赶才能服务
+
+### 为什么选出票还不能服务
 
 潜在 Leader 进入 `LEADER_LOG_REPLICATION`，等待 Follower 复制必要的缺失记录以跟踪 commit position。随后在 `LEADER_REPLAY` 中重放本地日志，让 Consensus Module 和业务服务恢复到新 term 所需状态。
 
 只有完成 `LEADER_INIT` 并进入 `LEADER_READY`，它才发布新 leadership term 和 commit position，并等待 Follower 报告 ready。
 
-### 7.1 未提交尾部不是业务事实
+#### 未提交尾部不是业务事实
 
 旧 Leader 在故障前可能发布了超过 Commit Position 的日志尾部。Follower Archive 甚至可能已经录制其中一部分，但只要它没有形成多数派提交，Service Container 就不能把它当作权威业务状态。
 
@@ -192,7 +196,7 @@ flowchart TB
 
 这也是为什么客户端在切换后不能仅凭旧 Leader 的本地发送记录判断成功：权威结果来自新集群可证明的已提交状态和去重表。
 
-### 7.2 新 term 事件不是普通业务命令
+#### 新 term 事件不是普通业务命令
 
 服务会收到 `onNewLeadershipTermEvent(...)`，其中包含 leadership term id、当前 log position、term base position、Leader member id、log session id、time unit 和 app version。这个事件由 `BoundedLogAdapter` 从日志中按序交付；`Cluster.offer` 的顶层契约把它列为可以发送 Cluster 消息的生命周期例外。不要据此在该回调中调度或取消 timer：`scheduleTimer` / `cancelTimer` 的方法级契约只保证 `onSessionMessage`、`onTimerEvent`、`onSessionOpen` 和 `onSessionClose`。
 
@@ -212,7 +216,7 @@ failure detection
 
 因此压低 heartbeat timeout 只优化第一项，却可能增加误选举；如果 snapshot 很旧、日志很长或磁盘很慢，总 RTO 仍可能很大。
 
-## 8. Follower 的三种“追赶”
+### Follower 的三种“追赶”
 
 文档中经常都叫 catch-up，但实际上可区分：
 
@@ -238,7 +242,9 @@ sequenceDiagram
 
 磁盘空间不足会卡在复制；业务 snapshot 解码错误会卡在 replay；网络 endpoint 配错会卡在 catch-up await 或 log await。Election State 是第一层定位，随后要看对应 Archive recording 和 channel 状态。
 
-## 9. 网络分区：安全优先于两边都能写
+## 分区、暂停与客户端未知结果如何处理
+
+### 网络分区：安全优先于两边都能写
 
 三节点集群被切成 2+1 时，包含两名成员的一侧可以形成多数派并继续提交；孤立成员不能形成多数派，必须停止权威写入。
 
@@ -258,7 +264,7 @@ flowchart TB
 
 两节点配置的分区是 1+1，两边都没有 2 票，因此都不能继续提交。它不会自动变成“任一台活着就服务”。
 
-## 10. 长暂停与进程崩溃看起来可能相同
+### 长暂停与进程崩溃看起来可能相同
 
 Follower 无法从网络上直接区分：
 
@@ -272,7 +278,7 @@ Follower 无法从网络上直接区分：
 
 业务外部系统仍需自己的 fencing/幂等协议。Cluster 能阻止旧 Leader继续在 Cluster Log 中形成多数派提交，却无法回收已经发往一个不校验 epoch/request id 的外部 HTTP 请求。
 
-## 11. 客户端在切换期间看到什么
+### 客户端在切换期间看到什么
 
 客户端可能收到 new leader event，更新 ingress endpoint 并重连；也可能先经历 back pressure、not connected、timeout 或 session close。
 
@@ -302,7 +308,9 @@ sequenceDiagram
   end
 ```
 
-## 12. 调 timeout 之前先定义故障预算
+## 用故障预算与 Runbook 证明恢复完成
+
+### 调 timeout 之前先定义故障预算
 
 更短的 leader heartbeat timeout 可以更快发现故障，也更容易把瞬时 GC、CPU starvation 或网络抖动判成 Leader 丢失，造成 election churn。更长 timeout 降低误判，却增加真正崩溃后的写入停顿。
 
@@ -317,7 +325,7 @@ sequenceDiagram
 
 然后明确 SLO：允许多快故障转移、允许多高误选举率、切换期间客户端如何重试。不能从示例默认值直接推导生产参数。
 
-### 12.1 故障检测时间与业务超时要分开
+#### 故障检测时间与业务超时要分开
 
 客户端业务 timeout 往往比 Leader heartbeat timeout 更短。客户端在 2 秒没有响应时可以停止等待，但不能据此断言 Leader 已被集群判死；它应保留 request id 并进入结果未知流程。相反，Cluster 完成 10 秒级故障检测后选出新 Leader，也不保证所有客户端的 DNS、连接和 pending 请求已经收敛。
 
@@ -333,9 +341,9 @@ ambiguous-request reconciliation time
 
 把它们压成一个“failover timeout”会让 SLO 无法验证，也容易引发过早重试风暴。
 
-## 13. Election 排障 Runbook
+### Election Runbook：冻结证据、按状态分类、验证退出
 
-### 13.1 先冻结证据
+#### 先冻结证据
 
 在反复重启前收集每个节点：
 
@@ -347,7 +355,7 @@ ambiguous-request reconciliation time
 - GC log、线程 dump、CPU、磁盘、UDP 错误和短发送；
 - `recording-log` 与 `recovery-plan`。
 
-### 13.2 按状态分类
+#### 按状态分类
 
 | 长期停留状态 | 优先检查 |
 | --- | --- |
@@ -360,33 +368,11 @@ ambiguous-request reconciliation time
 
 状态在快速循环而不是停住时，优先怀疑持续网络问题、长暂停、超时过紧或节点配置不一致。单次 Election 是容错行为；持续 churn 才是系统性故障信号。
 
-## 14. 常见误解纠正
+#### Runbook 的退出证据
 
-**误解：Leader 有最新的本地日志，就可以单独确认。**
+Election State 回到 `CLOSED` 只是第一项。退出排障还要证明系统存在唯一 Leader，多数派成员 term/recording 元数据一致，Follower append 与 service position 追到预算，Snapshot/replay 没有隐藏错误，Gateway 已重连，并且所有结果未知的 request id 已进入查询或对账。外部 sink 仍需自己的 epoch、幂等或单写者 fencing；集群恢复不会替外部世界撤销旧副作用。
 
-事实：正常多成员配置仍需多数派位置推进 Commit Position。
-
-**误解：投票结束即恢复业务。**
-
-事实：日志复制、replay、catch-up 和 ready 仍可能占据主要 RTO。
-
-**误解：把 election timeout 调到 100ms 就能 100ms 切换。**
-
-事实：Leader failure detection 使用 heartbeat timeout，完整恢复还有多段工作。
-
-**误解：Follower 不执行业务，所以接管时才加载状态。**
-
-事实：健康 Follower 持续执行已提交日志；落后或重启时才通过 snapshot/replay/catch-up 恢复。
-
-**误解：没有响应代表命令没有提交。**
-
-事实：命令可能已提交并执行，只是 egress 丢失，必须用 request id 去重与查询。
-
-**误解：Cluster 选举能 fence 所有外部副作用。**
-
-事实：Cluster 内日志受 term/多数派保护，外部 sink 仍需幂等键、epoch 或单写者 gateway。
-
-## 15. 本章结论
+## 结论：选出票不是恢复，追赶、提交与客户端对账共同定义可服务
 
 Aeron Election 是“选择 Leader + 对齐日志 + 恢复执行 + 加入 live log”的完整协议。1.52.2 的 18 个状态正是对这条链路的可观察拆分，而不是内部无关细节。
 

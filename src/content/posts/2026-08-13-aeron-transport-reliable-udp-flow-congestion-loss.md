@@ -2,7 +2,7 @@
 title: Aeron Transport：可靠 UDP、流控、拥塞控制与丢包恢复
 description: 从 Aeron 1.52.2 线路协议出发，解释 SETUP、Status Message、DATA、NAK、连续位置、三层窗口、receiver group、max/min/tagged 流控、CUBIC 与 unreliable/untethered 边界。
 date: 2026-08-13T09:40:00+08:00
-updated: 2026-08-17T16:55:00+08:00
+updated: 2026-08-17T17:45:00+08:00
 tags:
   - Aeron
   - Aeron Transport
@@ -28,7 +28,9 @@ draft: false
 
 本章以 **Aeron 1.52.2** 为基线，把这些层次分开。理解前提是 [发送端 position](/signal-grid-blog/posts/aeron-transport-publication-log-buffer-offer-try-claim/) 与 [接收端 Image position](/signal-grid-blog/posts/aeron-transport-subscription-poll-fragmentation/)。
 
-## 1. Aeron UDP stream 是单向的
+## 可靠传输先把 UDP 还原成连续 Image
+
+### Aeron UDP stream 是单向的
 
 一个 Publication → Subscription 数据流只有一个方向。控制 frame 会反向返回，但那不等于业务双向通道。
 
@@ -41,7 +43,7 @@ flowchart LR
 
 若要请求/响应，必须建立第二条 Publication/Subscription 方向，并定义 correlation、超时与幂等。第六篇会展开 Response Channels。
 
-### 1.1 协议 frame 类型
+#### 协议 frame 类型
 
 当前 Transport Protocol Specification 定义的主要 frame：
 
@@ -60,7 +62,7 @@ flowchart LR
 
 这张表聚焦开源基础数据路径；Premium ATS 还定义 ATS DATA / SM / SETUP 类型。DATA header 是 32 字节，frame 在 term 中按 32 字节对齐。frame length 不把对齐 padding 算进线路 payload，但 position 会跨过对齐后的区域。
 
-## 2. 建链不是 TCP handshake，而是状态互相发现
+### 建链不是 TCP handshake，而是状态互相发现
 
 标准单播初始化可画成：
 
@@ -84,15 +86,15 @@ sequenceDiagram
 
 Receiver 也可发送带 setup-eliciting flag 的 SM，请 Sender 重发 SETUP。这对 multicast 和动态拓扑尤其重要。
 
-### 2.1 zero-length DATA 是 heartbeat，不是空业务消息
+#### zero-length DATA 是 heartbeat，不是空业务消息
 
 DATA frame 只有 header、payload 长度为 0 时可作为 heartbeat，用来维持活性与暴露发送 position。应用不会把它当普通零长度业务消息交付。设计协议时不要依赖“发送一个零字节 payload”表达业务事件。
 
-### 2.2 `isConnected` 是随时间变化的判断
+#### `isConnected` 是随时间变化的判断
 
 Publication 只有在收到满足当前 flow-control/connectivity 条件的接收反馈后才连接。SM 超时、receiver group 低于最小规模或 Image 离开都会改变连接状态；业务要持续观察，而不是启动时检查一次。
 
-## 3. Receiver 怎样把乱序 UDP 还原成连续 Image
+### Receiver 怎样把乱序 UDP 还原成连续 Image
 
 UDP datagram 可能丢失、重复或乱序。Aeron Receiver 不是“收到一个就立刻交一个”，而是按 frame 中的 term 坐标写入 Image log。
 
@@ -114,7 +116,7 @@ flowchart LR
 
 此时 `rcv-hwm - rcv-pos > 0`。后面的 frame 已在 buffer，但 Subscription 看不到，因为暴露它们会破坏单 Image 顺序。缺失区间修复后 rebuild position 才能跨过去。
 
-### 3.1 NAK 与重传
+#### NAK 与重传
 
 Loss Detector 扫描 `rcv-pos` 到 `rcv-hwm` 之间的 term，发现 gap 后调度 NAK，携带 term ID、offset 和长度。Sender 仍保留对应 dirty term 时就重发。
 
@@ -127,7 +129,7 @@ Loss Detector 扫描 `rcv-pos` 到 `rcv-hwm` 之间的 term，发现 gap 后调�
 
 如果 Sender 已轮转并清理所需数据，Transport 无法凭空恢复历史。这再次说明可靠性只覆盖活跃的有界窗口。
 
-### 3.2 可靠模式的边界
+#### 可靠模式的边界
 
 默认 UDP Subscription 使用可靠模式：对 active Image 检测缺口并 NAK，向应用保持 session 内有序连续交付。
 
@@ -140,7 +142,9 @@ Loss Detector 扫描 `rcv-pos` 到 `rcv-hwm` 之间的 term，发现 gap 后调�
 
 可靠性陈述必须带上“active session、可重传窗口、Transport position”这些限定。
 
-## 4. 三层窗口：背压不是一根线
+## 三层窗口怎样形成端到端背压
+
+### 三层窗口：背压不是一根线
 
 最容易混淆的地方，是把所有限制都叫“receiver window”。完整数据路径至少有三段：
 
@@ -156,13 +160,13 @@ flowchart LR
   L3["sub-pos"] -.-> RCV
 ```
 
-### 4.1 应用生产者 → Sender：publication term window
+#### 应用生产者 → Sender：publication term window
 
 Publication limit 控制应用能领先 Sender/消费者多远。默认窗口为 term length 的一半；若配置显式值，也会被 cap 到半个 term。
 
 当 `pub-pos` 接近 `pub-lmt`，`offer` 返回 BACK_PRESSURED。这个本地窗口确保应用不会覆盖 Sender 仍需读取或重传的数据。
 
-### 4.2 Sender → Receiver：Status Message 窗口
+#### Sender → Receiver：Status Message 窗口
 
 Receiver 发送的 SM 包含 consumption position 与 receiver window length。单个 Receiver 对 Sender 表达：
 
@@ -172,17 +176,17 @@ receiverLimit = consumptionPosition + advertisedReceiverWindow
 
 Sender 的 flow-control strategy 再把一个或多个 Receiver limit 合成为 `snd-lmt`。`snd-pos` 不能越过它。
 
-### 4.3 Receiver → 本机 Subscription：local flow control
+#### Receiver → 本机 Subscription：local flow control
 
 同一 Image 下可能有多个本机 subscriber position。tethered 模式通常取最慢的 position 作为 consumption point，再加 receiver window 反馈给 Sender。
 
 默认 initial receiver window 为 128 KiB，并被 cap 到半个 term。它既要容纳在途数据，又要与 OS receive buffer 协调。
 
-### 4.4 总领先量不是一个窗口
+#### 总领先量不是一个窗口
 
 发送应用可能先领先 Sender 一个 publication term window，Sender 又能领先 Receiver consumption 一个 advertised window。因此估算端到端未消费数据时，至少考虑两段之和，以及多 destination、socket buffer 与 term 映射。
 
-## 5. Status Message 为什么会不断发送
+### Status Message 为什么会不断发送
 
 SM 不是一次性的 ACK。1.52.2 Receiver 会在这些情况下调度更新：
 
@@ -194,7 +198,7 @@ SM 不是一次性的 ACK。1.52.2 Receiver 会在这些情况下调度更新：
 
 默认 status-message timeout 是 200 ms，但生产环境不应把当前默认硬编码成协议。调得过长会让 Sender 不能及时获得新窗口；调得过短会增加控制流量与 CPU。
 
-## 6. Receiver Group 与 Subscriber Group 不是一回事
+### Receiver Group 与 Subscriber Group 不是一回事
 
 官方 Flow and Congestion Control 文档区分两个群体：
 
@@ -216,11 +220,13 @@ flowchart TB
 
 在同一个 driver 上再加十个本地 Subscription，不会让网络 flow control 认为有十个 receivers；它们先在本地合成 consumption position，再由 driver 发一份 SM。
 
-## 7. multicast/MDC 的三种 flow-control strategy
+## 多接收者流控与网络拥塞如何分工
+
+### multicast/MDC 的三种 flow-control strategy
 
 IP multicast 和 Multi-Destination-Cast 都可能有多个 Receiver，因此 Publication URI 可用 `fc` 选择谁来定速。
 
-### 7.1 `max`：最快 Receiver 定速
+#### `max`：最快 Receiver 定速
 
 ```text
 aeron:udp?endpoint=239.10.10.10:40123|fc=max
@@ -230,7 +236,7 @@ Sender 采用 receivers 中最大的 limit，最快者可以持续前进。慢 r
 
 适合：低延迟分发、允许个别消费者脱队并从其他来源恢复。
 
-### 7.2 `min`：最慢 Receiver 定速
+#### `min`：最慢 Receiver 定速
 
 ```text
 aeron:udp?endpoint=239.10.10.10:40123|fc=min,t:5s,g:/3
@@ -240,7 +246,7 @@ Sender 使用被跟踪 receivers 中最小 limit。任何一个参与者慢都�
 
 适合：所有成员都必须在线接收，且最慢成员拖慢整体是可接受产品语义。
 
-### 7.3 `tagged`：只有指定 group tag 的 Receiver 定速
+#### `tagged`：只有指定 group tag 的 Receiver 定速
 
 Publication：
 
@@ -258,7 +264,7 @@ aeron:udp?endpoint=239.10.10.10:40123|gtag=1001
 
 适合：两个核心副本必须完整跟随，旁路监控/分析允许掉队。
 
-### 7.4 `max` 默认值不是“所有接收者可靠”
+#### `max` 默认值不是“所有接收者可靠”
 
 当前 multicast 默认 strategy 是 `max`。它让主数据流不被最慢 receiver 拖住，也意味着“默认 reliable=true”只对每个仍在窗口内的 active Image成立，不能推导出所有 multicast receivers 永远无丢失。
 
@@ -268,7 +274,7 @@ aeron:udp?endpoint=239.10.10.10:40123|gtag=1001
 | `min` | 最慢被跟踪 receiver | 是 | 全组背压 |
 | `tagged` | 最慢匹配 tag receiver | 是 | 非 tag 观察者可掉队 |
 
-## 8. Flow control 与 congestion control 的职责不同
+### Flow control 与 congestion control 的职责不同
 
 **Flow control** 在 Sender 侧回答：“多个 Receiver 给出的 limit，应该采信谁？”
 
@@ -283,7 +289,7 @@ flowchart RL
   SNDLMT --> DATA["DATA send pace"]
 ```
 
-### 8.1 默认 `static` 并不会自适应网络拥塞
+#### 默认 `static` 并不会自适应网络拥塞
 
 1.52.2 默认 `StaticWindowCongestionControl` 取：
 
@@ -293,7 +299,7 @@ min(configured initial receiver window, termLength / 2)
 
 它始终广告固定窗口，等价于没有基于 RTT/丢包动态收缩增长。名称里有 congestion control interface，不代表默认已经像 TCP 那样自适应。
 
-### 8.2 `cc=cubic` 是可选算法
+#### `cc=cubic` 是可选算法
 
 Subscription URI 可以请求：
 
@@ -310,7 +316,7 @@ CUBIC 实现在 driver `ext` 包中，利用 RTT 与 loss 调整 receiver window
 
 不要把 `fc=min` 与 `cc=cubic` 当二选一：一个选择 receivers，一个计算每个 receiver 的 window。
 
-## 9. Bandwidth-delay product 决定窗口下限
+### Bandwidth-delay product 决定窗口下限
 
 一条链路若带宽为 `B bytes/s`、往返延迟为 `RTT seconds`，在途数据量近似：
 
@@ -330,7 +336,9 @@ receiver window 明显小于 BDP 时，Sender 会在反馈回来前耗尽窗口�
 
 官方 Best Practices 给出的数 MiB socket buffer 只能作为常见起点。正确流程是测 RTT/目标吞吐、计算 BDP、核对 OS 上限，再用 LossStat 和 counters 验证。
 
-## 10. `reliable=false`：用 padding 跨过缺口
+## 放弃可靠性或慢消费者意味着什么
+
+### `reliable=false`：用 padding 跨过缺口
 
 对允许丢失的 UDP Subscription，可配置：
 
@@ -348,13 +356,13 @@ Receiver 发现 gap 后不要求把它永久补齐，而会在适当时机以 pa
 
 不适合：订单、账务、复制状态机等每条变更都不可缺的日志。
 
-### 10.1 IPC 与 spy 始终可靠
+#### IPC 与 spy 始终可靠
 
 `reliable=false` 是网络 Image 的丢包策略。IPC 与 local spy 共享本地日志，不用这套 NAK/gap-fill 语义，按可靠方式处理。
 
 同一 driver 内，针对同一 channel/stream 建立相互冲突的 reliable 配置会被拒绝；不能指望同一底层 Image 同时给一个 Subscription 可靠、另一个不可靠的视图。
 
-## 11. `tether=false`：允许本地慢 Subscription 暂时脱队
+### `tether=false`：允许本地慢 Subscription 暂时脱队
 
 默认 tethered Subscription 会参与本机最慢位置计算。若某个观察者允许丢数据，可配置：
 
@@ -385,9 +393,11 @@ untethered 的后果必须被应用接受：
 
 Spy 也参与本地 tether/backpressure 规则，即使它不作为远端 Receiver 进入网络 max/min/tagged 计算。
 
-## 12. MTU、socket 与 term 的联合调优
+## 参数与 counters 怎样证明故障位置
 
-### 12.1 MTU
+### MTU、socket 与 term 的联合调优
+
+#### MTU
 
 默认 Aeron MTU 1408 bytes，默认 max payload 1376 bytes。增大后：
 
@@ -398,11 +408,11 @@ Spy 也参与本地 tether/backpressure 规则，即使它不作为远端 Receiv
 
 必须在真实 VLAN、隧道、云网络和跨区路径验证。两端 MTU 参数不一致也会导致 Image 拒绝或异常。
 
-### 12.2 OS socket buffers
+#### OS socket buffers
 
 至少保证接收 socket buffer 能容纳计划的 receiver window 和突发。Linux 还可能把应用请求值加倍显示，并受 `net.core.rmem_max/wmem_max` 限制；容器 namespace 也可能有不同上限。Aeron 配置成功不代表 kernel 实际给到了请求容量，应从启动日志/系统工具核验。
 
-### 12.3 term length
+#### term length
 
 更大 term：
 
@@ -413,7 +423,7 @@ Spy 也参与本地 tether/backpressure 规则，即使它不作为远端 Receiv
 
 它不是网络拥塞算法，也不是慢消费者修复器。
 
-## 13. 用 counters 区分丢包、拥塞和应用慢
+### 用 counters 区分丢包、拥塞和应用慢
 
 ```mermaid
 flowchart TD
@@ -441,7 +451,7 @@ flowchart TD
 
 MDC 下 retransmitted bytes 可能只是下界：同一重传数据要发向多个 destination。采样 counters 也不是原子事务快照，应看趋势与相互关系。
 
-## 14. 设计选择表
+### 设计选择表
 
 | 需求 | 建议起点 | 必须接受的边界 |
 | --- | --- | --- |
@@ -453,7 +463,7 @@ MDC 下 retransmitted bytes 可能只是下界：同一重传数据要发向多�
 | 长 RTT 高吞吐 | receiver window ≥ 经验证的 BDP | socket/term/内存一起扩大 |
 | 动态网络拥塞 | 基准验证 `cc=cubic` | 算法不是容量与应用慢的替代品 |
 
-## 15. 小结
+## 结论：可靠 UDP 来自可观察的反馈闭环，而不是一个开关
 
 Aeron 的“可靠 UDP”不是一个神秘开关，而是一条可观察的闭环：
 

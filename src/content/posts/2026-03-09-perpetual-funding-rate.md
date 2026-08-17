@@ -2,7 +2,7 @@
 title: "永续合约资金费率：溢价、结算与基差交易"
 description: "从指数价格、盘口冲击价和溢价采样解释资金费率，区分不同平台的公式与结算窗口，并拆解基差交易中的资金、执行和清算风险。"
 date: 2026-03-09T21:00:00+08:00
-updated: 2026-08-17T16:55:00+08:00
+updated: 2026-08-17T17:45:00+08:00
 categories:
   - 交易系统
 tags:
@@ -80,7 +80,7 @@ premium =
   / index
 ```
 
-Impact price 不是买一或卖一。它表示按平台定义的 impact notional 穿过若干档位后的平均执行价格，因此同时反映价差和一定深度。Impact notional、指数成分、异常源剔除和采样权重仍由产品规则决定。
+Impact price 不是买一或卖一。它表示按平台定义的 impact notional 穿过若干档位后的平均执行价格，因此同时反映价差和一定深度。Impact notional、指数成分、异常源剔除和采样权重仍由产品规则决定。采样管线还必须显式处理缺失样本、异常来源和时钟漂移，不能用一条静默补值把数据质量问题藏进最终费率。
 
 ## 没有跨平台统一的固定公式
 
@@ -113,6 +113,8 @@ fundingRate =
 - cap、floor、interest 与 impact notional；
 - 规则生效时间和产品标识；
 - 计算精度、舍入方向与结算币种。
+
+结算完成后应保存带 `productId`、规则版本和生效区间的最终费率，而不是日后拿“当前公式”重算历史。面向用户的实时 estimate 也必须与最终 settled rate 分开命名和记录；频率、cap/floor、interest 等规则变化应通过版本化配置生效，而不是散落在代码常量中。
 
 ## 结算时点不是“每 8 小时一次”的行业常量
 
@@ -148,7 +150,9 @@ sequenceDiagram
 - 费率版本、仓位快照和账本分录之间的因果关联；
 - 资金不足后是先扣款再触发风险流程，还是采用其他顺序。
 
-## Funding Fee 取决于仓位价值，不直接取决于杠杆
+## 从仓位价值到账本与风险
+
+### Funding Fee 取决于仓位价值，不直接取决于杠杆
 
 定义带符号仓位价值 `V`：long 为正、short 为负；定义正费率表示 long 支付。则可以用一个统一方向表达式：
 
@@ -170,7 +174,7 @@ positionValue = contracts × contractSize × multiplier / markPrice
 
 对于**相同名义仓位**，把杠杆从 5x 调到 10x 不会直接把 funding fee 翻倍。杠杆降低了所需初始保证金，所以同一笔 funding 相对于 margin 的比例和账户风险会变大；如果交易者因更高杠杆而建立了更大名义仓位，绝对 fee 才随 position value 增加。
 
-## Funding 会改变风险状态
+### Funding 会改变风险状态
 
 资金费用不是只在“平仓时结算”的备注。它在每次评估后形成独立账本分录，并可能改变：
 
@@ -180,7 +184,7 @@ positionValue = contracts × contractSize × multiplier / markPrice
 - available balance；
 - maintenance-margin buffer。
 
-OKX 当前说明中，isolated 模式从该仓位的 margin balance 收取；特定跨保证金模式从相应账户权益收取。若扣款后保证金不足，可能随后发生部分或全部清算。系统设计必须让 funding ledger entry 进入风险引擎的权威输入，而不是由前端临时从显示 PnL 中相减。
+OKX 当前说明中，isolated 模式从该仓位的 margin balance 收取；特定跨保证金模式从相应账户权益收取。若扣款后保证金不足，可能随后发生部分或全部清算。系统设计必须让带稳定幂等键的 funding ledger entry 进入风险引擎的权威输入，并让结算后的账户状态立即参与风险重算与告警，而不是由前端临时从显示 PnL 中相减。
 
 ## 基差交易不是无风险收益
 
@@ -209,17 +213,11 @@ netResult
 
 把某一次 `0.05%` 费率直接线性年化，也只能得到“若未来每一期完全相同”的情景数值，不能表示可实现收益。历史费率不是未来现金流承诺。
 
-## 生产实现检查清单
+## 结论：Funding 是版本化现金流，不是固定利率收益
 
-- 每个 funding rule 是否带 `productId`、版本和生效区间；
-- 是否保存最终费率，而不是事后用当前公式重算历史；
-- premium samples 是否有缺失、异常源和时钟漂移处理；
-- position snapshot 与最终费率是否形成可审计的结算批次；
-- funding 分录是否具有稳定幂等键；
-- linear/inverse 的 position value 与 settlement currency 是否由 instrument metadata 驱动；
-- UI estimate 与最终 settled rate 是否明确区分；
-- 频率、cap/floor 和 interest 变更是否无需发版即可生效；
-- funding 后的账户状态是否立即进入风险重算与告警。
+资金费率从行情样本、产品规则和评估窗口得到最终结算率，再与同一边界上的仓位快照结合，形成可幂等入账的现金流。公式、频率、仓位价值和扣款范围中的任何一项变化，都会改变结算与风险结果，因此都必须绑定明确版本并保留最终事实。
+
+它能够对永续价格施加回归激励，却不保证价格必然收敛，更不承诺历史费率可以持续。交易和系统实现都应围绕可审计的结算批次推理，而不是围绕一个界面上的年化数字推理。
 
 下一章先进入 [交易账本与双重记账](/signal-grid-blog/posts/trading-ledger-double-entry-accounting-and-reconciliation/)，把 funding、手续费和已实现 PnL 变成可幂等重放、可冲正、可对账的分录；随后再由保证金风险引擎区分 equity、margin balance、available balance 和 maintenance margin。
 

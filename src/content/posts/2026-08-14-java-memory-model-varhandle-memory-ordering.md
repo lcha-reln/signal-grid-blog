@@ -2,7 +2,7 @@
 title: Java Memory Model 与 VarHandle：happens-before、内存顺序与安全发布
 description: 从数据竞争和 happens-before 出发，系统解释 volatile、锁与 final 字段语义，再用 VarHandle 的 plain、opaque、acquire-release、volatile、CAS 与 fence 构造可证明的线程间协议。
 date: 2026-08-14T15:00:00+08:00
-updated: 2026-08-17T16:55:00+08:00
+updated: 2026-08-17T17:45:00+08:00
 tags:
   - Java Memory Model
   - VarHandle
@@ -114,7 +114,7 @@ flowchart TB
 1. 反直觉结果既可能来自 CPU，也可能来自编译器优化、寄存器复用、循环外提或读消除；
 2. Java 正确性应由规范关系证明，而不是靠猜测某代 x86 或 ARM CPU 会不会“碰巧工作”。
 
-### 2.1 哪些变量属于共享内存
+### 哪些变量属于共享内存
 
 JLS 中的共享变量包括：
 
@@ -124,7 +124,7 @@ JLS 中的共享变量包括：
 
 局部变量、方法参数和异常参数本身不会被其他线程直接访问，因此不属于 JMM 的共享变量；但局部变量里的引用完全可以指向共享对象。不同数组元素是不同变量，所以一个线程写 `array[0]`、另一个线程写 `array[1]`，不是同一变量上的 data race——它们仍可能因为 false sharing 产生性能竞争，稍后会区分。
 
-### 2.2 跨线程动作（Inter-thread action）
+### 跨线程动作（Inter-thread action）
 
 JMM 关心能够被其他线程检测或影响的动作：
 
@@ -137,7 +137,7 @@ JMM 关心能够被其他线程检测或影响的动作：
 
 每次读到底能看见哪个写，不是由墙上时间单独决定，而要满足执行良构、happens-before 一致性与因果性等规则。
 
-## 3. 原子性、可见性、有序性是三类问题
+### 原子性、可见性、有序性是三类问题
 
 “线程安全”经常被简化成三个词，但它们不是三档开关：
 
@@ -167,13 +167,13 @@ public void increment() {
 
 同样，CAS 只能原子地改变一个变量；它不会自动把余额、冻结额和订单状态组成多字段事务。正确方案可能是锁、不可变快照、单写者状态机，或者把多个字段编码进一个可原子替换的状态对象。
 
-## 4. 三种“顺序”不要混为一谈
+### 三种“顺序”不要混为一谈
 
-### 4.1 程序顺序（Program order）
+#### 程序顺序（Program order）
 
 每个线程都有自己的 program order：线程内 inter-thread actions 的全序，符合 Java 单线程语义。它不等于处理器真实发射指令的时间线，只要求单线程观察不到不合法的差异。
 
-### 4.2 顺序一致性（Sequential consistency）
+#### 顺序一致性（Sequential consistency）
 
 一次 sequentially consistent（SC）执行可以把所有线程的动作排成一个全序：
 
@@ -182,7 +182,7 @@ public void increment() {
 
 可以把它想象成所有线程的操作交错写入同一卷轴。它很适合推理，但仍不意味着多条操作自动成为事务。
 
-### 4.3 同步顺序（Synchronization order）
+#### 同步顺序（Synchronization order）
 
 每次执行还存在覆盖全部 synchronization actions 的概念性全序，并与各线程内程序顺序一致。同步动作包括 volatile 访问、monitor lock/unlock、线程启动和终止检测等。
 
@@ -197,7 +197,7 @@ public void increment() {
 
 同步边的起点称为 release，终点称为 acquire。这套术语也解释了 VarHandle 为什么提供单独的 Release 写和 Acquire 读。[JLS 25 §17.4.4](https://docs.oracle.com/javase/specs/jls/se25/html/jls-17.html#jls-17.4.4)
 
-## 5. 先行发生（happens-before）是一张证明图
+### 先行发生（happens-before）是一张证明图
 
 happens-before（HB）可以概括为：
 
@@ -226,7 +226,7 @@ flowchart TB
 3. volatile 读在消费者程序顺序中先于读取 `payload`；
 4. HB 可传递，所以 `payload` 写 HB `payload` 读。
 
-### 5.1 常用 HB 规则
+#### 常用 HB 规则
 
 | 规则 | 可以证明什么 | 常见误用 |
 | --- | --- | --- |
@@ -239,13 +239,13 @@ flowchart TB
 
 `Thread.join(Duration)` 返回 `false`，或者带超时的 `join` 仍然发现线程存活时，不能使用“线程终止 → join 方”的 HB 保证。
 
-### 5.2 HB 不是完整 JMM
+#### HB 不是完整 JMM
 
 Happens-before consistency 仍不是全部规则。JLS 还用 causality requirements 排除循环自证的“凭空造值”执行：不能让两个读取先凭空得到某个值，再以这些读取为理由证明产生该值的写入应该发生。
 
 工程代码通常不直接推导完整因果性规则；更实际的做法是消除 data race，并用规范同步原语建立明确的 HB 图。但文章不能把 JMM 简化为“只有 happens-before 一条规则”。[JLS 25 §17.4.8](https://docs.oracle.com/javase/specs/jls/se25/html/jls-17.html#jls-17.4.8)
 
-## 6. 数据竞争、竞态条件与 DRF-SC
+### 数据竞争、竞态条件与 DRF-SC
 
 两个访问如果：
 
@@ -256,7 +256,7 @@ Happens-before consistency 仍不是全部规则。JLS 还用 causality requirem
 
 Java 的 data race 不等于 C/C++ 里一句“完全 undefined behavior”。类型安全、每次读允许观察的写和因果性仍受到 Java 规范约束；但反直觉结果足以让程序失去工程可用性。
 
-### 6.1 DRF-SC 的精确定义
+#### DRF-SC 的精确定义
 
 JLS 所说的 correctly synchronized program，是指：**该程序所有 sequentially consistent executions 都没有 data race。** 满足这个前提后，规范保证程序的全部执行都表现得像某个 SC 执行。
 
@@ -285,7 +285,7 @@ synchronized void reserve() {
 
 如果调用方把检查与扣减分成两次独立加锁，中间就可能插入另一个线程。互斥边界必须覆盖整个不变量转换。
 
-## 7. `final` 字段：冻结构造状态，不是万能发布器
+### `final` 字段：冻结构造状态，不是万能发布器
 
 JMM 给 final 字段特殊语义。构造器退出时——无论正常返回还是异常退出——都会发生与 final 字段有关的 freeze action；真正可供其他线程使用的对象仍必须满足“正确构造且没有在构造完成前逃逸”。在这个前提下，即使另一个线程通过存在数据竞争的引用拿到它，一旦看见对象，final 字段仍有特殊可见性保证。
 
@@ -320,7 +320,7 @@ flowchart TB
 
 典型的 `this` 逃逸包括：构造器里注册监听器、把 `this` 放进全局集合、启动捕获 `this` 的线程；构造器调用可覆盖方法本身并不必然逃逸，但如果子类实现把尚未完成构造的 `this` 发布出去，同样会破坏正确构造前提。
 
-## 8. `volatile`、锁和原子类各自解决什么
+### `volatile`、锁和原子类各自解决什么
 
 | 工具 | 核心能力 | 适合 | 不适合 |
 | --- | --- | --- | --- |
@@ -334,7 +334,9 @@ flowchart TB
 
 “lock-free”也不等于 wait-free、公平或永远更快：CAS 循环可能持续失败，缓存行会在核心间来回迁移，高争用时锁的阻塞策略反而可能更稳定。
 
-## 9. VarHandle 到底是什么
+## 3. VarHandle：把访问模式写进线程间协议
+
+### VarHandle 到底是什么
 
 VarHandle 是一个**动态强类型、不可变的变量引用能力**。它描述：
 
@@ -353,7 +355,7 @@ flowchart TB
   V --> M["访问模式<br/>plain · opaque · acquire · release · volatile · RMW"]
 ```
 
-### 9.1 实例字段句柄
+### 实例字段句柄
 
 ```java
 import java.lang.invoke.MethodHandles;
@@ -379,7 +381,7 @@ public final class StateHolder {
 
 VarHandle 的方法在源码中看起来是 `Object...`，实际属于 signature-polymorphic 调用。JVM 会按调用点类型检查并生成相应描述符，原始类型不会因此必然装箱或打包成数组。默认句柄使用 invoke behavior，允许 Javadoc 规定的部分引用转换、装箱/拆箱和 primitive widening；调用 `withInvokeExactBehavior()` 后，参数与返回类型必须和 access mode type 精确匹配。参数形状错误可能在运行时抛 `WrongMethodTypeException` 或 `ClassCastException`。
 
-### 9.2 创建时完成权限检查
+### 创建时完成权限检查
 
 `MethodHandles.Lookup` 在创建句柄时执行字段访问检查。拿到非 public 字段句柄的代码之后可以直接使用它，因此这种句柄本身是一项 capability，不应泄漏给不可信代码。
 
@@ -397,11 +399,11 @@ VarHandle element = MethodHandles.arrayElementVarHandle(long[].class);
 
 静态字段句柄没有 receiver 坐标；数组句柄的坐标是 `(long[], int)`。
 
-### 9.3 `final` 字段句柄是只读能力
+### `final` 字段句柄是只读能力
 
 VarHandle 遵守字段完整性。即使 Lookup 有权限创建 final 字段的句柄，写访问模式仍不受支持并抛 `UnsupportedOperationException`。VarHandle 不是绕过 Java 类型和 final 规则的后门。
 
-### 9.4 访问模式覆盖字段声明
+### 访问模式覆盖字段声明
 
 这是最容易被忽略的陷阱：**VarHandle access mode 会覆盖字段声明处的内存语义。**
 
@@ -413,7 +415,7 @@ private volatile int state;
 
 通过 `STATE.get(this)` 仍然是 plain read；要得到 volatile 语义，必须调用 `getVolatile(this)`。混用直接字段访问和不同 VarHandle 模式时，应逐条画出协议，而不是假设 `volatile` 修饰符会自动兜底。
 
-## 10. 四级访问模式
+### 四级访问模式
 
 VarHandle 的内存访问强度可以按下面理解：
 
@@ -428,7 +430,7 @@ flowchart TB
 
 这不是“越往下就永远越好”的性能排行榜，而是协议约束越来越强。
 
-### 10.1 普通访问（Plain）：只有普通字段语义
+#### 普通访问（Plain）：只有普通字段语义
 
 `get` / `set` 类似访问非 volatile、非 final 普通字段，对其他线程没有可观察排序保证。VarHandle 类级契约给出的最低保证覆盖引用和不超过 32 位的 primitive；对于本文使用的标准字段、数组句柄，如果具体工厂没有进一步削弱，plain `get` / `set` 对所有类型提供原子访问，例外是 32 位平台上的 `long` / `double`。这条 API 保证不要和 JLS 对普通 non-volatile `long` / `double` 仍允许撕裂的语言级规则混为一谈；跨实现协议仍应使用明确的同步模式。
 
@@ -440,7 +442,7 @@ flowchart TB
 
 Plain 不是“性能版 volatile”，而是要求外部已经存在正确同步。
 
-### 10.2 不透明访问（Opaque）：只管同一变量，不发布旁边的数据
+#### 不透明访问（Opaque）：只管同一变量，不发布旁边的数据
 
 `getOpaque` / `setOpaque` 提供位级原子访问，并对同一变量保持 coherent ordering；它不保证把其他普通字段一起发布。
 
@@ -454,7 +456,7 @@ long observed = (long) PROGRESS.getOpaque(this);
 
 Opaque 没有线程调度或“多久一定看见”的进度保证，不能靠它实现超时、租约或安全切换。
 
-### 10.3 获取 / 释放（Acquire / Release）：方向性发布
+#### 获取 / 释放（Acquire / Release）：方向性发布
 
 `setRelease` 保证它之前的 load/store 不会越过发布写跑到后面；`getAcquire` 保证它之后的 load/store 不会越过观察读跑到前面。
 
@@ -478,13 +480,13 @@ sequenceDiagram
 - 消费者必须真的观察到对应发布状态，才能使用这条通信保证；
 - 两端仅仅各调用一次带相应名字的方法，不会自动建立业务关联。
 
-### 10.4 易变访问（Volatile）：更强且更容易推理
+#### 易变访问（Volatile）：更强且更容易推理
 
 `getVolatile` / `setVolatile` 等价于对 volatile 字段的访问：在 acquire/release 属性之外，volatile 操作之间还处于同步全序。
 
 当协议没有充分证据证明弱模式必要，优先选择 volatile、锁或更高层工具。把所有访问削弱成 acquire/release，可能没有可测收益，却增加了证明和维护成本。
 
-## 11. 用释放 / 获取语义写一个安全发布协议
+## 4. 用释放 / 获取语义写一个安全发布协议
 
 下面是一个一次性 mailbox。生产者先写 payload，再发布 ready；消费者先观察 ready，再读取 payload：
 
@@ -547,9 +549,9 @@ flowchart TB
 
 这个示例故意是**一次性、单 payload、一个消费者**。若要循环复用槽位，需要定义 EMPTY / WRITING / READY / CONSUMING 等代际状态，防止生产者覆盖未消费数据和消费者把下一轮状态误认成上一轮；如果有多个生产者，还要增加原子 claim。不能因为一次性示例正确，就直接扩成通用 Ring Buffer。
 
-## 12. CAS 与 compare-and-exchange
+## 5. CAS 与 compare-and-exchange
 
-### 12.1 `compareAndSet` 与见证值（witness）
+### `compareAndSet` 与见证值（witness）
 
 `compareAndSet(expected, update)` 返回 boolean；`compareAndExchange(expected, update)` 返回操作时实际看到的 witness value。witness 等于 expected 才表示交换成功。
 
@@ -591,7 +593,7 @@ public final class CompareExchangeCounter {
 
 失败时直接把 witness 作为下一轮 expected，可以省掉一次独立读取。但若只是整数加一，应先考虑 `getAndAdd`；手写 CAS 循环更容易在副作用、退避和溢出上犯错。
 
-### 12.2 弱 CAS 可以伪失败
+### 弱 CAS 可以伪失败
 
 `weakCompareAndSet*` 即使当前值等于 expected，也允许伪失败，因此只能用于算法允许重试的地方：
 
@@ -609,7 +611,7 @@ public int incrementWeak() {
 
 失败既可能来自真实竞争，也可能是允许的伪失败，不能把一次 `false` 直接解释成“别的线程一定改过”。
 
-### 12.3 获取 / 释放 RMW 是非对称的
+### 获取 / 释放 RMW 是非对称的
 
 下面是常用 RMW 模式的完整语义家族；Acquire / Release 后缀只强化相应一侧，并不会自动把另一侧也升级为 volatile：
 
@@ -628,7 +630,7 @@ public int incrementWeak() {
 
 失败的 Release CAS 没有发生 release write，因此不能声称“发布已经完成”。选择弱化模式前，必须分别证明成功路径和失败路径。
 
-### 12.4 CAS 状态机与副作用
+### CAS 状态机与副作用
 
 ```mermaid
 stateDiagram-v2
@@ -648,7 +650,7 @@ stateDiagram-v2
 
 把数据库写、网络发送或计费放进 CAS 重试函数里非常危险：函数可能执行多次。应先通过 CAS 取得状态所有权，再执行允许的副作用；若进程崩溃会留下“状态已变、副作用未完成”的窗口，还需要日志、幂等键或恢复协议。
 
-### 12.5 ABA 没有被 CAS 自动解决
+### ABA 没有被 CAS 自动解决
 
 CAS 只比较当前值：引用按 identity，浮点数按原始位表示。状态从 A 变成 B 又回到 A，CAS 可能认为“一直没变”。常见解法包括：
 
@@ -659,9 +661,11 @@ CAS 只比较当前值：引用按 identity，浮点数按原始位表示。状�
 
 引用类型 CAS 使用 `==`，不是 `.equals()`；浮点值按原始位表示比较，`+0.0`、`-0.0` 和不同 NaN payload 也要谨慎。
 
-## 13. 数组与 ByteBuffer 视图
+## 6. Buffer 视图、Fence 与硬件边界
 
-### 13.1 数组元素
+### 数组与 ByteBuffer 视图
+
+#### 数组元素
 
 数组 VarHandle 的坐标是“数组 + 元素下标”，可以直接对某个 lane 做原子更新：
 
@@ -689,7 +693,7 @@ public final class ArraySequencer {
 
 不同数组元素是不同 JMM 变量，但多个热点 lane 仍可能落在同一硬件 cache line，产生 false sharing。
 
-### 13.2 字节视图的 JDK 25 边界
+#### 字节视图的 JDK 25 边界
 
 `MethodHandles.byteArrayViewVarHandle` 和 `byteBufferViewVarHandle` 可以用指定字节序把字节区解释成 `int`、`long` 等类型。坐标中的 `int` 是**字节偏移**，不是“第几个 int”。
 
@@ -755,7 +759,7 @@ public final class DirectBufferView {
 | 只读 Buffer 写入 | `ReadOnlyBufferException` | 载体不允许修改 |
 | 坐标范围 | `NullPointerException`、数组越界或 Buffer `IndexOutOfBoundsException` | receiver、数组下标或字节范围无效 |
 
-## 14. 内存栅栏（Fence）为什么通常不是首选
+### 内存栅栏（Fence）为什么通常不是首选
 
 VarHandle 还提供：
 
@@ -778,7 +782,7 @@ flowchart TB
 
 除非实现成熟的并发算法并能写出完整证明，否则优先使用绑定到具体变量的 acquire/release、volatile、CAS，或更高层同步工具。单独插入一个 fence 不能凭空修复 data race。
 
-## 15. 字撕裂、64 位撕裂与伪共享
+### 字撕裂、64 位撕裂与伪共享
 
 这三个名词经常被混成一个问题：
 
@@ -806,11 +810,11 @@ flowchart TB
 
 False sharing 不会改变 JMM 的变量值语义，却可能显著抬高尾延迟。解决它需要测量真实布局、写入频率与核心放置；不要假设某个固定填充字节数在所有 JVM、对象布局和硬件上都成立。
 
-## 16. 怎样验证并发协议
+## 7. 怎样验证并发协议
 
 并发正确性不能靠“循环跑一百万次没出错”证明。一次测试只探索了 JVM、JIT、硬件和调度器允许空间中的极小部分。
 
-### 16.1 jcstress 检查允许结果
+### jcstress 检查允许结果
 
 OpenJDK jcstress 是并发语义测试工具。测试应先声明状态与多个 actor，再把结果分成：
 
@@ -830,7 +834,7 @@ flowchart TB
 
 jcstress 可以发现反例，但有限测试仍不是形式证明。协议设计要先有 HB / VarHandle 语义推导，再用测试验证实现没有偏离。[OpenJDK jcstress](https://openjdk.org/projects/code-tools/jcstress/)
 
-### 16.2 JMH 只测性能，不证明正确
+### JMH 只测性能，不证明正确
 
 JMH 用于构建和运行 JVM 微基准。它能帮助控制 warmup、fork、measurement 和死代码消除，但无法证明并发算法正确。基准至少应报告：
 
@@ -844,7 +848,7 @@ JMH 用于构建和运行 JVM 微基准。它能帮助控制 warmup、fork、mea
 
 完整的实验方法——包括开放负载、协调遗漏、HdrHistogram、JIT/GC 稳态和生产灰度——放在 [下一章：Java 低延迟到底应该怎么测](/signal-grid-blog/posts/java-low-latency-measurement/)。
 
-### 16.3 评审时要求一张证明表
+### 评审时要求一张证明表
 
 | 项目 | 必须回答 |
 | --- | --- |
@@ -858,21 +862,7 @@ JMH 用于构建和运行 JVM 微基准。它能帮助控制 warmup、fork、mea
 
 如果这些问题只能用“x86 一般不会”“压测没见过”回答，协议还没有完成。
 
-## 17. 回到 Disruptor、Agrona 与 Aeron
-
-本文的价值不是多认识一个 API，而是能重新解释后续组件：
-
-| 组件 | 表面动作 | JMM / VarHandle 视角 |
-| --- | --- | --- |
-| Disruptor | claim → 填槽 → publish | payload plain writes 先于发布状态，消费者通过 barrier 观察连续可用位置 |
-| Agrona `AtomicBuffer` | `putIntRelease` / `getIntAcquire` | 把同样的发布协议放进 Buffer 字节位置 |
-| Agrona Queue | `offer` / `poll` | 成功交接对象所有权，并由内部协议建立可见性 |
-| Aeron Publication | 填 log buffer → frame length 发布 | 以发布字段使完整 frame 对 Media Driver 可见 |
-| Aeron counters | plain / opaque / release / volatile 位置读写 | 监控快照与控制协议需要不同强度，不能混用 |
-
-因此：[后续的 Disruptor 章节](/signal-grid-blog/posts/lmax-disruptor-ring-buffer-and-sequencing/) 不再只是“Ring Buffer 很快”，而是一套领取、填充、release 发布、acquire 观察与 gating 防覆盖的协议；[Agrona 章节](/signal-grid-blog/posts/agrona-direct-buffer-queues-and-agents/) 则把这些语义扩展到 Buffer、队列、Agent 和跨进程共享内存的底层积木。进入它们之前，[下一章](/signal-grid-blog/posts/java-low-latency-measurement/) 会先建立判断“快”是否可信的测量方法，再由 [机器模型章节](/signal-grid-blog/posts/java-low-latency-machine-model-cache-locality-false-sharing-numa/) 解释缓存与硬件拓扑怎样塑造结果。
-
-## 18. 选型检查表
+## 8. 从共享不变量选择同步原语
 
 ```mermaid
 flowchart TB
@@ -887,30 +877,25 @@ flowchart TB
   U -- "否" --> H["优先更高层并发组件"]
 ```
 
-提交底层并发代码前，逐项确认：
+这棵决策树的起点不是“哪种访问模式最快”，而是共享状态包含什么不变量。不可变对象、安全发布、锁、单写者状态机和现成并发组件，往往比手写 VarHandle 协议更容易证明。只有当同步对象确实能压缩为一个明确的发布变量或单变量竞争更新时，才继续比较 release/acquire、volatile 与 RMW。
 
-1. 共享变量和冲突访问是否已全部列出；
-2. 每个冲突访问之间是否有 HB 或 VarHandle 协议；
-3. 是否把“可见”误当成“复合操作原子”；
-4. release/acquire 是否通过同一协议变量形成真实通信；
-5. 是否有人用 plain VarHandle 访问覆盖了字段声明的 volatile；
-6. weak CAS 是否在允许重试的循环中；
-7. CAS 重试体是否包含可能重复执行的副作用；
-8. 是否处理 ABA、溢出、关闭和永久自旋；
-9. Buffer 原子访问是否满足 JDK 版本、direct 与对齐条件；
-10. 是否先用 jcstress 验证结果集合，再用 JMH 测性能。
+无论最后选择哪种原语，评审都应回到前面的证明表：列出所有权、发布变量、成功与失败路径、复用代际和进度条件，再由 jcstress 寻找禁止结果，由 JMH 测量已经证明正确的实现。内存序不是孤立的性能开关，而是一份必须由读写双方共同遵守的线程间协议。
 
-## 19. 自测问题
+### 与 Disruptor、Agrona 和 Aeron 的衔接
 
-1. 生产者普通写 `payload`，再 `setRelease(ready, 1)`；消费者 `getOpaque(ready)` 读到 `1` 后读取 payload。为什么这仍不是完整的 release/acquire 发布协议？
-2. 一个字段声明为 `volatile`，但通过 VarHandle `get()` 读取。这个读取是什么语义？
-3. `compareAndExchangeRelease` 失败时，是否已经执行 release 写？为什么失败路径不能宣称发布完成？
-4. 两个线程分别更新 `long[]` 的相邻元素，没有 data race，却出现严重吞吐下降。更可能是哪类问题？
-5. `volatile int balance` 能否让“检查余额并扣减”成为原子事务？应该怎样重新划定同步边界？
+本文的价值不是多认识一个 API，而是能重新解释后续组件：
 
-一个完整的情境题：设计一个可循环复用的 SPSC mailbox，至少定义 EMPTY、READY 两个代际状态，写出生产者与消费者各自的访问模式、满载策略、关闭路径，并证明生产者不会覆盖未消费 payload、消费者不会把旧一轮 READY 当成新消息。只有当这张证明图成立后，才讨论能否把 volatile 削弱为 release/acquire。
+| 组件 | 表面动作 | JMM / VarHandle 视角 |
+| --- | --- | --- |
+| Disruptor | claim → 填槽 → publish | payload plain writes 先于发布状态，消费者通过 barrier 观察连续可用位置 |
+| Agrona `AtomicBuffer` | `putIntRelease` / `getIntAcquire` | 把同样的发布协议放进 Buffer 字节位置 |
+| Agrona Queue | `offer` / `poll` | 成功交接对象所有权，并由内部协议建立可见性 |
+| Aeron Publication | 填 log buffer → frame length 发布 | 以发布字段使完整 frame 对 Media Driver 可见 |
+| Aeron counters | plain / opaque / release / volatile 位置读写 | 监控快照与控制协议需要不同强度，不能混用 |
 
-## 20. 官方资料
+因此：[后续的 Disruptor 章节](/signal-grid-blog/posts/lmax-disruptor-ring-buffer-and-sequencing/) 不再只是“Ring Buffer 很快”，而是一套领取、填充、release 发布、acquire 观察与 gating 防覆盖的协议；[Agrona 章节](/signal-grid-blog/posts/agrona-direct-buffer-queues-and-agents/) 则把这些语义扩展到 Buffer、队列、Agent 和跨进程共享内存的底层积木。进入它们之前，[下一章](/signal-grid-blog/posts/java-low-latency-measurement/) 会先建立判断“快”是否可信的测量方法，再由 [机器模型章节](/signal-grid-blog/posts/java-low-latency-machine-model-cache-locality-false-sharing-numa/) 解释缓存与硬件拓扑怎样塑造结果。
+
+## 官方资料
 
 - [Java Language Specification 25：Threads and Locks](https://docs.oracle.com/javase/specs/jls/se25/html/jls-17.html)
 - [JLS 25 §17.4：Memory Model](https://docs.oracle.com/javase/specs/jls/se25/html/jls-17.html#jls-17.4)

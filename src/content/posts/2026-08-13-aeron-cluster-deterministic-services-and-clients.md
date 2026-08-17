@@ -2,7 +2,7 @@
 title: "Aeron Cluster：确定性业务内核、ClusteredService、会话与网关"
 description: "从 ClusteredService 生命周期出发，解释确定性状态机的代码边界、客户端 session 与业务身份、ingress/egress 交付歧义、请求去重、网关和外部副作用的正确设计。"
 date: 2026-08-13T11:10:00+08:00
-updated: 2026-08-13T11:10:00+08:00
+updated: 2026-08-17T17:45:00+08:00
 tags:
   - Aeron Cluster
   - ClusteredService
@@ -21,7 +21,9 @@ draft: false
 
 这一章关注 Cluster 最关键的应用契约：**状态只能由已排序输入决定。** 我们会同时处理客户端侧的另一个现实：网络故障后，“请求是否已经提交”常常不可知。确定性解决副本之间的一致，幂等与对账解决客户端和外部系统之间的不确定。
 
-## 1. 把业务写成状态转换函数
+## 确定性状态机怎样约束代码与输入
+
+### 把业务写成状态转换函数
 
 理想模型可以写成：
 
@@ -43,7 +45,7 @@ flowchart TB
 
 注意“逻辑效果”和“物理副作用”的区别。所有节点都可以确定地算出“应向客户返回成交结果”，但只有 Leader 真正发 egress；所有节点都可以记录“应提交清算”，但不能让每个副本各自调用一次支付或数据库接口。
 
-## 2. ClusteredService 的回调边界
+### ClusteredService 的回调边界
 
 1.52.2 的主要生命周期如下：
 
@@ -79,7 +81,7 @@ int doBackgroundWork(long nowNs);
 
 官方接口注释明确规定：`Cluster` 对象应只在已排序事件的响应中用于发送消息；不能从 `onStart`、`onRoleChange`、`onTakeSnapshot`、`onTerminate` 等生命周期回调发起这些动作。`onSessionOpen`、`onSessionClose` 和 `onNewLeadershipTermEvent` 是 `Cluster.offer` 顶层契约明确列出的例外，它们来自日志序列，仍必须保持确定性。Timer 的方法级契约更窄：`scheduleTimer` / `cancelTimer` 只保证能从 `onSessionMessage`、`onTimerEvent`、`onSessionOpen` 和 `onSessionClose` 使用；不要把 `onNewLeadershipTermEvent` 对 `offer` 的例外扩大成 timer 保证。
 
-### 2.1 `doBackgroundWork` 不是第二条业务线程
+#### `doBackgroundWork` 不是第二条业务线程
 
 `doBackgroundWork(nowNs)` 适合短小、常量时间的本地维护，例如保持一个外部连接活跃。它不能直接或间接修改服务状态，也不能调用 `Cluster.scheduleTimer(...)` 或 `Cluster.offer(...)` 等更新日志的 API。
 
@@ -101,7 +103,7 @@ public int doBackgroundWork(long nowNs)
 
 正确方向是让外部价格先经过授权的 gateway，编码成带版本的命令进入 ingress；每个副本再在 `onSessionMessage` 中处理相同价格事件。
 
-## 3. 隐蔽的非确定性来源
+### 隐蔽的非确定性来源
 
 很多非确定性代码在单节点测试里完全正常：
 
@@ -134,7 +136,7 @@ flowchart TB
 - 遍历前按稳定业务键排序；
 - 金额和数量使用有清晰舍入规则的整数或定点表示。
 
-### 3.1 先验证，再修改
+#### 先验证，再修改
 
 状态机没有数据库事务替你 rollback。一条命令应先完成结构、权限、版本和业务约束检查，再修改任何持久状态：
 
@@ -147,7 +149,9 @@ decode → validate envelope → authenticate identity
 
 如果在更新余额后才发现订单字段非法，抛异常不会自动把所有副本回滚。服务异常还可能终止 Agent，触发集群不可用或选举，而不是安全地把这一条命令标成失败。
 
-## 4. Session 不是业务身份
+## 客户端未知结果怎样由协议吸收
+
+### Session 不是业务身份
 
 `ClientSession` 表示客户端与 Cluster 的复制会话。正常 Leader failover 时，同一个 `AeronCluster` 客户端会处理 `NewLeaderEvent`、重建 ingress Publication，原 `clusterSessionId` 可以继续保持；只有旧 session 已 timeout / close，或应用重新建立全新的 AeronCluster session，才会得到新的 id。它适合路由响应、观察 open/close、读取认证 principal；无论是否跨一次选举保持，都不适合作为长期用户、设备或业务账户主键。
 
@@ -180,7 +184,7 @@ payload
 
 Cluster 默认最大并发 session 数是 10。生产配置应基于实际连接规模设置 `aeron.cluster.max.sessions`，并为断线期间新旧 session 短暂重叠留余量。达到上限不是“业务用户满了”，而是 Cluster 会话容量满了。
 
-## 5. `offer` 成功不等于业务成功
+### `offer` 成功不等于业务成功
 
 客户端调用 `AeronCluster.offer(...)` 得到正值，只说明消息被当前 Aeron Publication 接受。之后仍可能经历：
 
@@ -193,7 +197,7 @@ Cluster 默认最大并发 session 数是 10。生产配置应基于实际连接
 
 因此业务完成必须由关联的 egress 响应、后续状态查询或对账确认，而不能把 `offer > 0` 当作成交或入账成功。
 
-### 5.1 Leader 切换时的四种结果
+#### Leader 切换时的四种结果
 
 假设客户端发送 `requestId=900` 后连接中断：
 
@@ -218,7 +222,7 @@ flowchart TB
   R --> D["cluster-side dedup by requestId"]
 ```
 
-### 5.2 一个实用的幂等协议
+#### 一个实用的幂等协议
 
 服务按稳定业务身份维护一个有界去重表：
 
@@ -237,7 +241,15 @@ flowchart TB
 
 “服务端去重表无限增长”不是完整方案。可以按每个 client 的单调序号保留高水位与有限结果窗口，也可以使用带明确过期规则的 request id；过期必须由日志时间/事件驱动，不能各节点看本地墙钟清理。
 
-## 6. 响应为什么只由 Leader 发出
+#### 业务协议如何承接状态机边界
+
+命令 envelope 必须在任何状态修改前完成长度、schema id、template id、版本和枚举校验；价格、数量等定点字段还要固定单位、范围与溢出规则。稳定业务身份与认证 principal 的关系不能由 cluster session id 代替。
+
+每条命令携带 request/correlation id、aggregate id 和需要时的 expected version。协议同时定义幂等窗口、响应丢失后的状态查询，以及“可重试、永久失败、结果未知”三类终态；Snapshot 则保存仍在有效窗口内的去重和协议版本状态。
+
+未知消息、旧版本和额外字段必须走确定且可观察的路径。Decoder 先证明消息边界，再读取字段；非法输入在修改状态前拒绝并增加 invalid-request counter。这样协议不是字段目录，而是客户端不确定性与复制状态机之间的合同。
+
+### 响应为什么只由 Leader 发出
 
 所有副本都执行 `session.offer(...)` 这行代码，但 `ClientSession` 的契约规定：Leader 实际向 egress Publication 提交，Follower 返回 `MOCKED_OFFER`。
 
@@ -261,7 +273,7 @@ Cookbook 的 slow-client 示例给出几种策略：丢弃、断开客户端、�
 
 生产实现应有明确的有界预算，并监控 egress stream 102 的背压。
 
-## 7. Gateway 是一致性边界，不只是反向代理
+### Gateway 是一致性边界，不只是反向代理
 
 官方 Gateway 设计把外部协议和 Cluster 会话管理从业务状态机分离。一个合格 Gateway 可以负责：
 
@@ -285,7 +297,7 @@ flowchart TB
   Q["query / bulk data plane"] -. "separate path" .-> EXT
 ```
 
-### 7.1 Active-passive 与 active-active
+#### Active-passive 与 active-active
 
 一个 active Gateway 加一个 passive 备用通常更容易证明：只有一个入口拥有客户端连接和 pending 状态，切换后按 request id 恢复。
 
@@ -299,7 +311,9 @@ Active-active Gateway 并非不能做，但必须解决：
 
 如果这些问题没有实际容量或可用性收益，不要仅为了“无单点”引入 active-active。
 
-## 8. 外部慢任务怎样离开状态机
+## 外部工作与数据怎样回到有序输入
+
+### 外部慢任务怎样离开状态机
 
 数据库查询、复杂定价、文件生成和远程 API 调用不应阻塞 `onSessionMessage`。推荐把它们拆成两阶段协议：
 
@@ -319,7 +333,7 @@ Cluster 在第一阶段记录任务、状态版本和 deadline；Worker 在外�
 
 这正是官方 RFQ 示例值得学习的部分：把报价请求、外部报价者和 Cluster 内的确定性状态分开。不要照抄示例的业务字段，而应提炼协议边界和超时/重复结果处理。
 
-## 9. 数据库与 reference data
+### 数据库与 reference data
 
 Clustered Service 不应同步访问数据库。否则每个副本可能在不同时间读到不同值，数据库慢查询还会阻塞整个服务 Agent。
 
@@ -333,7 +347,9 @@ Clustered Service 不应同步访问数据库。否则每个副本可能在不�
 
 大文件不要作为一个超大 ingress 消息赌网络和缓冲区。使用 pull-driven 分块协议：Cluster 明确请求下一块，发送方只在收到 ACK 后推进，Cluster 保存已确认块号和总体摘要。
 
-## 10. 扩展通常依赖业务分片
+## 扩展与读取语义怎样保持一致性边界
+
+### 扩展通常依赖业务分片
 
 单个复制状态机必须按一个总序执行，增加同一 Cluster 的成员数主要提升容错，不会让 Leader 上的业务逻辑并行变快。容量超出一个状态机上限时，通常要按业务所有权拆成多个独立 Cluster shard。
 
@@ -356,7 +372,7 @@ flowchart TB
 
 在能够证明单 shard 确实到达业务处理上限前，不要过早分片。分片换来吞吐，也把路由、跨分片一致性、运维和灾备成本乘开。
 
-## 11. 多服务不是微服务替代品
+### 多服务不是微服务替代品
 
 Aeron Cluster 可在同一个 consensus log 下运行多个服务。1.52.2 的约束包括：
 
@@ -371,7 +387,7 @@ Aeron Cluster 可在同一个 consensus log 下运行多个服务。1.52.2 的�
 
 不要把十个服务名额理解成“在一个 Cluster 中塞十个微服务”。共享一条全序日志会把独立伸缩、故障隔离和发布节奏耦合在一起。只有确实需要相同顺序和原子观察边界的状态，才适合共处。
 
-## 12. 顺序读取与缓存一致性
+### 顺序读取与缓存一致性
 
 Cluster 内状态线性化，不意味着 Gateway 的本地缓存自动是线性一致读。若写命令刚提交，客户端立即读一个异步 projection，仍可能看到旧值。
 
@@ -382,24 +398,9 @@ Cluster 内状态线性化，不意味着 Gateway 的本地缓存自动是线性
 
 协议必须告诉调用者拿到哪一种语义。不要把“Cluster 是强一致”扩展成“所有 HTTP GET 都线性一致”。
 
-## 13. 业务协议设计清单
+## 用故障与差分测试证明确定性
 
-一条可靠命令至少要考虑：
-
-- 固定 header 和长度校验；
-- schema id、template id、schema version；
-- 稳定业务身份与认证 principal 的关系；
-- request id、correlation id 和幂等窗口；
-- aggregate id 与 expected version；
-- 整数/定点字段的单位、范围和溢出；
-- 未知消息类型、旧版本和额外字段怎样处理；
-- 错误是可重试、永久失败还是结果未知；
-- 响应丢失后怎样查询；
-- Snapshot 怎样保存去重和协议版本状态。
-
-协议 decoder 必须先验证消息长度，再读取字段。客户端输入不能依靠 Java 类型系统可信；错误长度、未知 template 和非法枚举都应在任何状态修改前被拒绝，并增加可观测的 invalid-request counter。
-
-## 14. 测试确定性，而不只是测试业务结果
+### 测试确定性，而不只是测试业务结果
 
 推荐建立三层测试：
 
@@ -416,7 +417,7 @@ Cluster 内状态线性化，不意味着 Gateway 的本地缓存自动是线性
 - Worker 结果晚于 timer、重复到达或版本过期；
 - egress 长时间背压但其他会话仍受策略保护。
 
-## 15. 本章结论
+## 结论：确定性解决副本一致，幂等协议吸收外部未知结果
 
 Clustered Service 的价值不在于给普通 Java 对象自动加副本，而在于提供一条严格的已排序回调通道。只有进入这条通道的时间、配置、外部结果和业务命令，才能安全地影响复制状态。
 

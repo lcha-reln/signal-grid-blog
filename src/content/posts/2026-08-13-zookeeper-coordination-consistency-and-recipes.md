@@ -2,7 +2,7 @@
 title: "ZooKeeper 3.9：从 znode、Watch 到 ZAB、一致性与工程配方"
 description: "以 Apache ZooKeeper 3.9.5 为基线，从数据模型、Session、Watch 和 ZAB 写入链路出发，讲清读写一致性、版本事务、选主与锁、fencing、安全、部署和故障排查。"
 date: 2026-08-13T19:30:00+08:00
-updated: 2026-08-17T16:55:00+08:00
+updated: 2026-08-17T17:45:00+08:00
 tags:
   - ZooKeeper
   - ZAB
@@ -59,7 +59,7 @@ flowchart LR
 
 一个很实用的判断方式是：**如果状态丢失会让多个进程对“谁有权做什么”产生分歧，它可能属于 ZooKeeper；如果状态本身就是业务事实或历史，它通常不属于 ZooKeeper。**
 
-## 2. 第一心智模型：一棵带版本的 znode 树
+### 第一心智模型：一棵带版本的 znode 树
 
 ZooKeeper 的命名空间类似文件系统，但每个 znode 可以同时拥有数据和子节点。路径必须是绝对路径，没有相对路径。
 
@@ -74,7 +74,7 @@ flowchart TB
   ELECTIONS --> LEADER["/order-writer<br/>epoch metadata"]
 ```
 
-### 2.1 数据是完整替换，不是字段级更新
+#### 数据是完整替换，不是字段级更新
 
 `getData()` 返回完整 `byte[]` 与 `Stat`；`setData()` 会完整替换 `byte[]`。ZooKeeper 不理解 JSON 字段，也不会替你合并两个并发修改。要避免覆盖，必须把 `Stat.version` 带回写操作：
 
@@ -90,7 +90,7 @@ zooKeeper.setData("/apps/order-service/config", next, stat.getVersion());
 
 还要防一个容易忽略的 ABA：节点被删除再以同一路径创建后，`version` 会从头开始。`czxid` 能帮助读取方识别“这已是另一次创建”，但 `setData(version)` 和 `Op.check` 不能直接把 `czxid` 当服务端比较条件，先读后比较仍有竞态。需要原子身份时，应保留一个永不删除重建的 generation/epoch znode，在它的 `version` 上 CAS，并把相关更新放进同一个 `multi`；另一种办法是每一代使用不可变的唯一子路径。
 
-### 2.2 `Stat` 是理解并发和历史的钥匙
+#### `Stat` 是理解并发和历史的钥匙
 
 常用字段不是装饰信息：
 
@@ -107,7 +107,7 @@ zooKeeper.setData("/apps/order-service/config", next, stat.getVersion());
 
 `zxid` 是 ZooKeeper 全局写入顺序；`version` 只在单个 znode 内递增。不要把 `/a` 的 version 7 与 `/b` 的 version 9 当成全局先后关系。
 
-### 2.3 生命周期与顺序命名是两个维度
+#### 生命周期与顺序命名是两个维度
 
 `CreateMode` 有 7 个可选组合，不宜把 `SEQUENTIAL` 误解成与 persistent、ephemeral 并列的一种生命周期：
 
@@ -123,7 +123,9 @@ zooKeeper.setData("/apps/order-service/config", next, stat.getVersion());
 
 顺序节点后缀是父节点局部的十位补零计数，例如 `lock-0000000042`。它适合构造队列顺序，不等于永不重复的全局业务 ID：同一父目录下其他子节点的创建也会推进计数，已创建节点随后删除会让现存列表出现空洞；`getChildren()` 的返回顺序也没有保证，客户端必须解析完整后缀再排序。父路径重建或 32 位计数溢出还会破坏“永远递增”的假设。TTL 节点依赖 `zookeeper.extendedTypesEnabled=true`，默认关闭；“到 TTL 时刻立即删除”也不是其保证。
 
-## 3. Ensemble：读走本地，写走 Leader 与多数派
+## 2. Ensemble、ZAB 与一致性边界
+
+### Ensemble：读走本地，写走 Leader 与多数派
 
 生产 ZooKeeper 通常由 3 或 5 个投票成员组成。客户端只连接其中一个 server；断开后，客户端库可带着同一个 Session 自动切换到其他 server。
 
@@ -149,7 +151,7 @@ flowchart LR
 
 3 个投票成员需要 2 个形成 quorum，可容忍 1 个失效；5 个需要 3 个，可容忍 2 个。4 个成员仍需要 3 个，只能容忍 1 个，因此偶数规模通常增加写入与运维成本，却没有增加故障容忍数。
 
-### 3.1 ZAB 不是一句“类似 Raft”就能带过
+### ZAB 不是一句“类似 Raft”就能带过
 
 ZooKeeper 使用 ZAB（ZooKeeper Atomic Broadcast）维护全序事务流。可以把它理解为两个主要阶段：
 
@@ -168,7 +170,7 @@ Leader 激活时，集群先选出包含权威历史的候选者，再让 follow
 
 ZAB 与 [Raft](/signal-grid-blog/posts/raft-consensus-leader-election-log-replication-and-safety/) 都使用 Leader、日志顺序和多数派交集保证安全，但二者的协议接口、术语、恢复细节和对应用暴露的模型不同。工程上应基于 ZooKeeper 的真实 API 和保证设计，而不是把某个 Raft 结论直接套上来。[ZooKeeper Internals](https://zookeeper.apache.org/doc/current/zookeeperInternals.html)
 
-## 4. 一致性：写线性化，普通读可能旧
+### 一致性：写线性化，普通读可能旧
 
 网上最常见的错误是：“ZooKeeper 是 CP，所以每次读都是强一致。”CAP 分类无法替代操作级语义。
 
@@ -199,7 +201,9 @@ sequenceDiagram
 
 另外，不同客户端不会在每一个真实时间点拥有完全相同的视图。Watch 也不会把这个事实改造成同步广播。
 
-## 5. Session：连接可以恢复，过期不可复活
+## 3. Session、Watch 与失败语义
+
+### Session：连接可以恢复，过期不可复活
 
 Session 是 ZooKeeper 客户端身份和临时所有权的基础。它不是某一条 TCP 连接：连接断开后，只要 Session 尚未被 ensemble 判定过期，客户端可以连接到另一台 server，携带 Session ID 和密码继续使用。
 
@@ -216,7 +220,7 @@ flowchart LR
 
 服务端会协商最终 Session timeout。默认下限是 `2 × tickTime`，上限是 `20 × tickTime`；应用传入的值不一定就是最终值，应读取客户端实际协商结果。
 
-### 5.1 `Disconnected`、`Expired` 和进程暂停是三件事
+### `Disconnected`、`Expired` 和进程暂停是三件事
 
 - `Disconnected`：当前没有 server 连接，Session **可能仍有效**；期间收不到远端 Watch；
 - `Expired`：ensemble 已结束 Session，临时节点会被删除，原 Session 永远不能恢复；
@@ -231,11 +235,11 @@ flowchart LR
 3. 每次领导权分配单调递增 token；
 4. 数据库、网关或下游写入口拒绝旧 token。
 
-### 5.2 不要手工“接管”别人的 Session
+### 不要手工“接管”别人的 Session
 
 Session ID 和密码允许另一个客户端恢复 Session。二者应视作一组敏感凭据；把它们复制给两个同时运行的进程，会产生互相踢连接、共享临时节点所有权和难以推理的行为。Session 恢复只适合受控的单实例迁移，不是高可用的双活捷径。客户端使用的 chroot 只改变路径视图，也不是认证或租户隔离边界。
 
-## 6. Watch：它是失效提示，不是变化日志
+### Watch：它是失效提示，不是变化日志
 
 标准 Watch 的正确使用模型是：**原子地读取一个快照并登记一次通知；通知到来后重新读取完整状态。**
 
@@ -261,7 +265,7 @@ sequenceDiagram
 
 Watch 仍提供有价值的顺序保证：对同一客户端，Watch、异步回复和其他事件按 ZooKeeper 观察到的顺序交付；客户端不会先读到新数据，再收到对应的旧通知。正因为这些回调在客户端事件线程上串行交付，回调必须迅速完成：只标记缓存失效或把工作移交给业务执行器，不能在里面做阻塞 I/O。3.9 的 `WatchedEvent` 可以携带事件 zxid；连接旧 server 时该值可能是 `-1`，不能把它当成始终可用的业务游标。
 
-### 6.1 data watch 与 child watch 不相同
+#### data watch 与 child watch 不相同
 
 - `exists()` / `getData()` 产生 data watch；
 - `getChildren()` 产生 child watch；
@@ -271,7 +275,7 @@ Watch 仍提供有价值的顺序保证：对同一客户端，Watch、异步回
 
 把所有变化都挂在一个父目录的 `getChildren` 上，很容易漏掉子节点数据更新。
 
-### 6.2 Persistent 与 Recursive Watch
+#### Persistent 与 Recursive Watch
 
 3.6 起可以用 `addWatch()` 建立不会在触发后移除的 persistent watch，并可选 recursive：
 
@@ -299,7 +303,7 @@ flowchart LR
 
 Apache Curator 的 `CuratorCache` 和 `PersistentWatcher` 能管理重连与恢复，但应用仍要定义“缓存尚未完成初始同步时是否可服务”。[Curator Cache](https://curator.apache.org/docs/recipes-curator-cache/) · [Persistent Watcher](https://curator.apache.org/docs/recipes-persistent-watcher/)
 
-## 7. 失败语义：超时不等于失败，重试不等于安全
+### 失败语义：超时不等于失败，重试不等于安全
 
 ZooKeeper 写操作可能已经在服务端提交，但响应在网络中丢失。客户端看到 `ConnectionLoss` 或超时，只能得到一个结论：**结果未知**。
 
@@ -327,7 +331,7 @@ sequenceDiagram
 
 成熟库可以封装 recipe 的恢复，但不能凭空推导业务意图。请求中最好携带稳定的 operation ID，而不是依赖“重试三次大概率成功”。
 
-### 7.1 原子多操作与版本检查
+#### 原子多操作与版本检查
 
 `multi` 可以把多项写操作作为一个 ZooKeeper 事务：全部成功，或全部不生效。
 
@@ -348,7 +352,9 @@ List<OpResult> results = zooKeeper.multi(ops);
 
 读操作也可以放入 multi-read，但读组与写组属于不同的 operation kind，不能把任意读写混成一个“数据库事务”。需要 read-modify-write 时，先读版本，再以 `Op.check` 约束写事务。
 
-## 8. 配方一：服务发现与成员关系
+## 4. 从协调语义到工程配方
+
+### 配方一：服务发现与成员关系
 
 一个简单成员目录可以让每个实例创建临时节点：
 
@@ -372,7 +378,7 @@ List<OpResult> results = zooKeeper.multi(ops);
 
 ZooKeeper 是成员事实源，不应让每个业务请求都同步读取 ZooKeeper。读取成员快照、建立本地负载均衡并通过 Watch 失效缓存，才是常见热路径。
 
-## 9. 配方二：Leader 选举与惊群控制
+### 配方二：Leader 选举与惊群控制
 
 标准公平选举使用 `EPHEMERAL_SEQUENTIAL`：
 
@@ -396,7 +402,7 @@ flowchart LR
 
 如果所有候选者都 Watch 最小节点，Leader 离开时所有客户端同时醒来并读取 children，形成 herd effect。监听直接前驱使每次只唤醒一个候选者。
 
-### 9.1 获胜不是授权完成
+#### 获胜不是授权完成
 
 领导权要转化成单调 epoch，再由下游执行 fencing：
 
@@ -426,9 +432,9 @@ sequenceDiagram
 
 这正是 [有状态服务高可用架构](/signal-grid-blog/posts/high-availability-stateful-service/) 中“选主只是开始”的具体实现基础。
 
-## 10. 配方三：锁、队列与屏障
+### 配方三：锁、队列与屏障
 
-### 10.1 分布式锁
+#### 分布式锁
 
 锁和选举使用相同的临时顺序队列。获得最小序号的客户端进入临界区，其余 Watch 前驱。公平性是按 ZooKeeper 看到的创建顺序，而不是墙上时钟或线程启动时间。
 
@@ -441,7 +447,7 @@ sequenceDiagram
 
 所以“锁 + fencing”通常比单独的锁更完整。使用 Curator `InterProcessMutex` 时也要监听连接状态：`SUSPENDED` 时无法确定仍持锁，`LOST` 时可以确定已经失去锁。锁 recipe 自己使用的路径也应独占，不能与应用数据节点混用。[Curator Shared Reentrant Lock](https://curator.apache.org/docs/recipes-shared-reentrant-lock/)
 
-### 10.2 队列
+#### 队列
 
 持久顺序节点可以表示按 ZooKeeper 顺序排列的任务。但它不是高吞吐消息队列：每条任务都是数据树写入、Watch 与删除，积压会占用 ensemble 内存、快照和日志。官方 recipes 更适合解释排序原理，生产任务流通常应优先选择 Kafka、Pulsar 或专用队列。
 
@@ -452,11 +458,11 @@ sequenceDiagram
 - 连接失败后要找回可能已创建的任务节点；
 - 队列无限增长不是容量策略。
 
-### 10.3 屏障
+#### 屏障
 
 Barrier 节点存在表示阻塞，删除表示放行；double barrier 还会用成员子节点统计进入与离开数量。它适合低频协调，不适合每批业务请求都走一次全局同步。
 
-## 11. Java 工程实践：原理看原生 API，生产优先 Curator
+### Java 工程实践：原理看原生 API，生产优先 Curator
 
 ZooKeeper 原生 Java client 暴露最直接的语义，但连接管理、重试、Watch 重建和 recipe 错误处理很容易重复造轮子。Apache Curator 5.9.0 提供成熟封装。[Curator Getting Started](https://curator.apache.org/docs/getting-started/) · [Curator Recipes](https://curator.apache.org/docs/recipes/)
 
@@ -481,7 +487,7 @@ ZooKeeper 原生 Java client 暴露最直接的语义，但连接管理、重试
 
 Curator 5.9.0 自己的 parent POM 仍把传递 ZooKeeper 版本设为 3.9.3，因此只写 Curator 依赖会偏离本文的 3.9.5 安全基线。实际工程应在 dependency management 或直接依赖中固定 3.9.5，并用 `mvn dependency:tree`、Maven Enforcer 或 Gradle dependency insight 确认最终解析版本，而不是相信源码中写过一个版本号就一定生效。
 
-### 11.1 连接和状态监听
+#### 连接和状态监听
 
 ```java
 RetryPolicy retryPolicy = new ExponentialBackoffRetry(1_000, 3);
@@ -511,7 +517,7 @@ if (!client.blockUntilConnected(10, TimeUnit.SECONDS)) {
 
 `start()` 只发起异步连接，不等于客户端已经可用；示例用有界等待建立启动门禁，真实服务还要把连接状态纳入 readiness。重试策略决定请求何时再次尝试，不会让非幂等操作自动变得幂等，也不能延长服务端已经过期的 Session。
 
-### 11.2 配置缓存
+#### 配置缓存
 
 ```java
 CuratorCache cache = CuratorCache.build(client, "/config");
@@ -537,13 +543,15 @@ cache.start();
 
 回调里不要执行长时间阻塞工作。上例把所有重建放进同一个串行执行器，并等 `initialized` 事件后的全量读取完成才打开 readiness；若换成多线程执行器，旧 reload 可能后完成并覆盖新值。也不要用“整棵树最大的 `mzxid`”判断快照新旧：删除最大 zxid 节点会让它倒退，多节点逐个读取本身也不是原子快照。需要整组配置原子发布时，应写入不可变版本目录，再用一个带 64 位业务 generation 的 pointer znode 原子切换。事件只触发“重建快照”，不直接按回调顺序增量修改关键配置。
 
-### 11.3 Leader recipe
+#### Leader recipe
 
 Curator 提供 `LeaderLatch` 和 `LeaderSelector`。若需要一个长期持有、显式关闭的 Leader 身份，`LeaderLatch` 简单；若希望在 `takeLeadership` 回调返回时主动交棒，`LeaderSelector` 更贴近轮换式工作。要让当前实例继续参与下一轮，必须显式调用 `leaderSelector.autoRequeue()`；它不是默认行为。
 
 无论选哪一个，都应把“拥有 recipe 的本地布尔值”和“具备业务写权限”分开：只有状态恢复、版本校验、token 分配、下游 fencing 和 readiness 全部通过后，才开放业务入口。
 
-## 12. 生产部署：3 个投票成员起步，5 个要有理由
+## 5. 从部署拓扑到安全边界
+
+### 生产部署：3 个投票成员起步，5 个要有理由
 
 ```mermaid
 flowchart TB
@@ -558,7 +566,7 @@ flowchart TB
   C3["remote readers"] --> O1
 ```
 
-### 12.1 成员数与故障域
+#### 成员数与故障域
 
 - 3 voters 是常见最小生产规模，放在独立机器或故障域；
 - 5 voters 允许同时损失 2 个，但每次写要等待更大的 quorum；
@@ -570,7 +578,7 @@ flowchart TB
 
 Observer 的写请求仍会转发给 Leader，读仍是 Observer 本地副本读。它不是异步只读备份，也不提供更强读取一致性。[Observers Guide](https://zookeeper.apache.org/doc/current/zookeeperObservers.html)
 
-### 12.2 磁盘和延迟
+#### 磁盘和延迟
 
 事务日志是写入确认路径的一部分，存储抖动会直接进入尾延迟和 quorum 健康：
 
@@ -582,15 +590,15 @@ Observer 的写请求仍会转发给 Leader，读仍是 Observer 本地副本读
 
 `forceSync=true` 是默认的持久性边界：服务端在确认事务前要求日志同步到稳定存储。关闭它也许能让错误基准更漂亮，却可能在电源或内核故障后丢失已经确认的事务，不应作为常规调优手段。客户端连接还要关注 `maxClientCnxns`：默认按“单个客户端 IP 到单台 server”限制为 60，NAT 或四层负载均衡会把大量实例汇聚到一个源 IP，必须结合真实拓扑评估，而不是盲目调大。
 
-### 12.3 Session timeout 不是越短越好
+#### Session timeout 不是越短越好
 
 短 timeout 提升故障发现速度，却更容易把 GC、CPU 饥饿或网络抖动变成 Session 过期；长 timeout 降低误判，却增加成员移除和接管延迟。应基于真实暂停分布、网络故障和 RTO 目标测量，不要从博客复制一个固定秒数。
 
-### 12.4 动态成员变更
+#### 动态成员变更
 
 Dynamic Reconfiguration 默认 `reconfigEnabled=false`。启用后必须给 `reconfig` 操作配置严格 ACL、认证和审计，因为它能改变 quorum 组成。滚动扩缩容还要避免一次替换过多成员，确保旧配置 quorum 与新配置的过渡保持安全。`reconfig` 返回新配置并不等于被移除进程已经可以立刻停机；仍要确认新成员完成同步、ensemble 稳定且客户端地址更新，再按 runbook 下线旧成员。[Dynamic Reconfiguration](https://zookeeper.apache.org/doc/current/zookeeperReconfig.html)
 
-## 13. 安全：默认安装不是生产安全基线
+### 安全：默认安装不是生产安全基线
 
 Apache 官方安全页明确说明：ZooKeeper 面向受信网络，默认没有传输加密、peer 身份认证，常见节点还会以 `OPEN_ACL_UNSAFE` 创建。安全能力是 opt-in。
 
@@ -619,7 +627,9 @@ flowchart LR
 
 `ruok` 只有显式放入 four-letter command whitelist 后才可调用，而默认 whitelist 只有 `srvr`。即使 `ruok` 返回 `imok`，也只表示进程在 client port 上响应，不证明它已经加入 quorum、能够提交写入或磁盘健康。健康检查至少要结合角色、zxid/同步状态、延迟和一次受控的业务级探针。
 
-## 14. 持久化、快照与灾难恢复
+## 6. 恢复链与协议健康
+
+### 持久化、快照与灾难恢复
 
 每个 server 维护内存数据树、事务日志和周期快照。快照不是“某一时刻之后不需要日志”的单文件备份；恢复通常要加载快照，再重放后续 WAL。[Chapter 02](/signal-grid-blog/posts/write-ahead-log-durability-and-crash-recovery/) 已解释 checkpoint、snapshot、日志安全截断与 `forceSync` 背后的通用持久化边界。
 
@@ -635,11 +645,11 @@ flowchart LR
   RESTORE --> READY["recovered server"]
 ```
 
-### 14.1 清理不是删除最新几个文件那么简单
+#### 清理不是删除最新几个文件那么简单
 
 `autopurge.snapRetainCount` 默认保留 3 份，`autopurge.purgeInterval` 默认 0，意味着自动清理默认没有启用。事务日志与快照有恢复依赖，应用应使用官方 purge 机制，不要按文件时间自行 `rm`。
 
-### 14.2 Snapshot/Restore 的角色
+#### Snapshot/Restore 的角色
 
 3.9 文档提供 AdminServer 的在线 snapshot stream 和 restore 流程，用于 quorum 灾难性丢失或建立带种子数据的新集群。恢复时所有成员应使用同一份 snapshot，先阻断客户端流量，移走原 data/log 目录，再逐节点 restore；不能在仍接受业务写入时随意把不同时间点快照混在一个 ensemble 中。[Snapshot and Restore Guide](https://zookeeper.apache.org/doc/current/zookeeperSnapshotAndRestore.html)
 
@@ -651,11 +661,11 @@ flowchart LR
 - 恢复后的 `myid` 与 `server.<id>` 映射、动态配置版本、客户端连接串和 chroot 正确；
 - 客户端重新建立 Session 后能重建成员、Watch 与本地缓存。
 
-### 14.3 升级
+#### 升级
 
 ZooKeeper 官方目前同时维护 3.8 与 3.9 两条线。升级前应阅读目标补丁版 release notes 和 Upgrade FAQ，先升级到各分支最新补丁，再按官方支持路径滚动推进。客户端与服务端兼容不等于新 API 可以在旧 server 上使用；persistent watch、同步 `sync()` 等能力仍要按最老 server 版本判断。
 
-## 15. 可观测性：从“进程活着”走到“协议健康”
+### 可观测性：从“进程活着”走到“协议健康”
 
 3.6 起的新 Metrics System 可以通过内置 Prometheus provider 导出。不要原样照搬官方示例阈值；应为自己的基线建立以下仪表盘：
 
@@ -679,7 +689,7 @@ metricsProvider.exportJvmInfo=true
 
 不要把 metrics 端口默认绑定到全网并裸露出去。官方 Monitor Guide 中的 `znode_count > 1000000`、`watch_count > 10000` 等只是示例，不是普适安全线；阈值要来自内存模型、容量测试和历史分位数。[Monitor Guide](https://zookeeper.apache.org/doc/current/zookeeperMonitor.html)
 
-### 15.1 症状到证据的排查路径
+#### 症状到证据的排查路径
 
 ```mermaid
 flowchart TB
@@ -702,38 +712,13 @@ flowchart TB
 - **磁盘将满**：先确认可恢复的 purge 范围并扩容，禁止边运行边手删未知 WAL；
 - **ACL 错误**：用 `whoami`、审计日志和具体 znode ACL 排查，不要临时改成 world:anyone。
 
-## 16. 最容易踩的十二个坑
+## 7. ZooKeeper 的正确边界
 
-1. 把 ZooKeeper 当成强一致的通用 KV 数据库；
-2. 认为 CAP 的 CP 标签等于所有普通读都线性化；
-3. 把 Watch 当成每次变化都不丢的事件流；
-4. 在 Watch 回调里直接按增量修改关键状态，而不重新读快照；
-5. 把 TCP 断开等同于 Session 过期；
-6. 把临时节点或 Curator `hasLeadership()` 当成外部写权限；
-7. 选主后没有 fencing token，旧主恢复仍可写；
-8. 对 `ConnectionLoss` 无脑重试顺序节点创建；
-9. 所有候选者都 Watch Leader，制造 herd effect；
-10. 使用 `OPEN_ACL_UNSAFE`，误以为父 ACL 会保护所有孩子；
-11. 把大配置、任务积压或业务日志塞进 znode；
-12. 只备份文件但从不执行完整 restore 演练。
+ZooKeeper 适合保存体量受控、带版本的协调事实，并用 Session、临时节点和 Watch 帮助参与者发现状态变化。它不是通用业务数据库，普通读、Watch、连接状态和选举结果也不能被扩大解释成完整的外部写授权。
 
-## 17. 一条可执行的设计清单
+因此，工程设计必须把三层责任分开：ZooKeeper 负责协调顺序与身份生命周期，应用负责在通知后重读并重建状态，最终资源负责用 fencing token 或等价条件拒绝过期持有者。恢复能力则来自事务日志、快照、备份与实际执行过的 restore 演练，而不是文件存在本身。
 
-在引入 ZooKeeper 前，把以下答案写进设计文档：
-
-- ZooKeeper 中每条路径保存的协调事实是什么，最大大小和基数是多少？
-- 哪些数据是 persistent，哪些身份必须绑定 Session？
-- 普通读允许多旧；需要 read-after-write 时使用什么协议？
-- Watch 触发后怎样重建完整状态；断线期间如何降级？
-- `ConnectionLoss` 后每一种写怎样判定是否已经成功？
-- Leader/lock 的 token 怎样生成，下游在哪里拒绝旧 token？
-- 3 个还是 5 个 voters，故障域和网络延迟依据是什么？
-- Session timeout 如何从 GC、网络和 RTO 数据推导？
-- TLS、认证、ACL、管理面、审计分别怎样配置？
-- WAL、快照、purge、异地备份和恢复演练怎样闭环？
-- 哪些指标定义“可提交写入”，而不只是“进程活着”？
-
-如果这些问题没有答案，换成 Curator 也只是把 API 写得更短，并没有让分布式协议变正确。
+Curator 可以把 API 和配方写得更短，却不会替系统定义数据边界、失败语义或外部副作用。只有这些协议已经明确，ZooKeeper 才真正承担协调服务，而不是成为一组隐含假设的存放处。
 
 ## 参考资料
 

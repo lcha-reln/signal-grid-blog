@@ -2,7 +2,7 @@
 title: "行情数据管线与订单簿重建：权威事件、快照、增量与 Gap 恢复"
 description: "从撮合引擎的权威事件出发，拆解行情归一化、排序、分发与扇出，讲清 L1/L2/L3、快照加增量、序列号、Gap 检测、校验和、断线重连、原子切换、回放与监控。"
 date: 2026-08-17T14:10:00+08:00
-updated: 2026-08-17T16:55:00+08:00
+updated: 2026-08-17T17:45:00+08:00
 tags:
   - 行情数据
   - 订单簿
@@ -32,7 +32,7 @@ draft: false
 
 > 本文以 2026-08-17 可查的一手协议为基线。交易所会修改频道、字段、权限、频率和恢复规则；生产实现必须把协议版本与产品元数据一起版本化，不能把本文示例当成永久不变的跨平台标准。
 
-## 1. 行情是撮合状态的投影，不是第二个撮合引擎
+## 行情是撮合状态的投影，不是第二个撮合引擎
 
 在自营交易所内部，撮合引擎消费一条权威命令序列，更新私有订单状态，并输出订单事件与成交事件。行情系统从这些事件中生成可公开的价格档位、逐笔成交、最优价和统计指标。外部行情消费者看到的是经过过滤与聚合后的投影，不是撮合内核的全部状态。
 
@@ -55,7 +55,7 @@ flowchart TB
 
 对外部交易所而言，权威事件流已经由对方定义。消费者必须遵守其频道契约，不能把自己的数据模型反过来强加给协议。
 
-## 2. L1、L2、L3 与逐笔成交分别表达什么
+### L1、L2、L3 与逐笔成交分别表达什么
 
 “订单簿”常被笼统地使用，但不同粒度保留的信息不同。
 
@@ -82,7 +82,7 @@ flowchart TB
 
 Nasdaq TotalView-ITCH 的协议把 Add、Executed、Cancel、Delete 和 Replace 定义为不同的 L3 动作；独立的 Trade 消息还明确不一定影响 displayed book。这是一个很好的反例：**成交流与订单簿流是两种权威投影，不能互相猜出来。**
 
-## 3. 先写清楚正确性合同
+### 先写清楚正确性合同
 
 在选 Map、跳表或 off-heap 数组之前，先定义什么叫“本地簿正确”。至少要拆成五个维度：
 
@@ -119,7 +119,7 @@ BookRuntime = (
 
 `pathConnectionEpoch` 按每条 socket/UDP path 独立变化，只用于来源与传输取证；A 路重连而 B 路保持连续时，不应让整本簿换代。`logicalFeedEpoch` 表示仲裁或适配之后的一条逻辑权威流，只有无法跨源会话证明连续时才变化；`reconstructionEpoch` 随 fresh snapshot / 本地重建而变化；`sequenceGeneration` 则允许 OKX 这类 feed 在**同一逻辑源、同一本簿**上合法重置数值序列。序列号只在协议声明的 domain 与 generation 内有意义。两个交易所的 `10042` 没有关系；同一交易所不同频道、产品或逻辑源换代前后的 `10042` 也未必属于同一条序列。
 
-### 3.1 快照只覆盖它声明的范围
+#### 快照只覆盖它声明的范围
 
 Snapshot 不是“宇宙中全部订单”的同义词。它可能只包含：
 
@@ -130,7 +130,7 @@ Snapshot 不是“宇宙中全部订单”的同义词。它可能只包含：
 
 例如 Binance Spot REST depth snapshot 最多返回每侧 5000 档。这个数字是 `snapshotSeedLimit`，不是 diff stream 的持续 `maintainedDepthCap`：快照之外的价位之后一旦发生变化，仍会进入本地已知集合，不能在每批后机械截回 5000 档；但从未变化的远端档位依然未知。相反，Kraken 的订阅 `depth` 才是必须在每批后维护的显式 cap。两类限制必须分字段建模。
 
-## 4. 一条可审计的行情数据管线
+## 一条可审计的行情数据管线
 
 生产管线最好把收包、协议解释、状态归约、验证和分发分开。每层都保留足够的来源信息，才可能在出错后回答“错在源头、解码、排序、重建还是下游”。
 
@@ -153,7 +153,7 @@ flowchart TB
 
 队列满时不能静默 drop，但动作取决于它位于哪里：A/B 仲裁前的单路 queue overflow 先把该 path 标为 degraded，另一条具有共同序列域的线路仍可能补齐；若仲裁窗口结束两路都没有该序列，才形成逻辑 Gap。普通单路 feed，或仲裁后的 authoritative/decoder queue overflow，则立即使受影响的 logical continuity domain 进入 INVALID。失效时还必须推进 generation fence，使满队列中迟到的旧批次无法在重建后再次发布 `valid=true`。所有路径都要保留 overflow 计数与 raw/transport 证据。
 
-### 4.1 Canonical model 不等于最小公分母
+### Canonical model 不等于最小公分母
 
 归一化很有用，但不能抹掉协议差异。下面这些更新不是一种东西：
 
@@ -180,7 +180,7 @@ Binance Spot diff depth 与 Coinbase L2 的 quantity 都是**新绝对量**，�
 - raw journal offset，便于从规范事件追溯到原始帧；
 - source time、gateway receive wall time、receive monotonic time、apply/publish time。
 
-### 4.2 冗余实时源：先仲裁，再判断 Gap
+### 冗余实时源：先仲裁，再判断 Gap
 
 两条网络线路不等于两条可以任意交错的消息流。只有交易所明确声明 A/B feed 属于**同一 feed/version、共享同一个序列域且内容等价**时，才可以按 packet sequence 做 first-arrival-wins：同一序列先到的一份进入解码，另一份作为重复证据；若 A 缺包而 B 随后补到，就用 B 的同序列包；两边都缺才进入官方 replay 或 snapshot 恢复。
 
@@ -202,7 +202,7 @@ flowchart TB
 
 普通的两条 WebSocket 连接通常没有这种共同 packet sequence 契约。它们可能接入不同后端、拥有不同 snapshot 或会话边界，不能把 A 的 seq 100 与 B 的 seq 101 拼成一条“完整流”。更稳妥的做法是各自独立建立并验证 candidate book，在计划换线时让新 candidate 追到 LIVE，再原子替换 active。CME MDP 3.0 的 A/B 增量源与恢复服务是“先证明同一序列域再仲裁”的典型参照，不应被泛化成所有双连接都可互补。
 
-## 5. Snapshot + Incremental 的核心：找到合法切点
+### Snapshot + Incremental 的核心：找到合法切点
 
 快照和增量来自并行演进的状态。若先请求 REST snapshot，等它返回后才订阅 WebSocket，那么在两者之间发生的更新没有任何来源可以补回。
 
@@ -274,7 +274,9 @@ install(snapshot):
 
 关键在于 `covered`、`relate` 和 `end` 必须由协议适配器定义。`SAFE_OVERLAP` 只适用于协议明确允许重放已覆盖部分的批次，例如 Binance 的 absolute replacement；ADD_DELTA 与 L3 action 若没有 entry-level cursor 去重，重放 overlap 会重复加量或重复 execute/cancel，应直接重建。不能把所有平台都硬编码成 `next == last + 1`。
 
-## 6. Binance Spot：为什么 bridge 是区间关系
+## 协议案例：不同 venue 不能共用一套恢复模板
+
+### Binance Spot：为什么 bridge 是区间关系
 
 Binance Spot diff depth 每个事件包含首个 update ID `U` 和末尾 update ID `u`。安全流程是先连接并缓存，再取 REST snapshot 的 `lastUpdateId=S`。
 
@@ -313,7 +315,7 @@ flowchart LR
 
 Binance 文档还要求客户端考虑 WebSocket 连接最长 24 小时。生产系统可在旧连接到期前预热新连接和 candidate book，验证新的 logical/reconstruction epoch 达到 LIVE 后再原子切换，而不是等断线才临时重建。
 
-## 7. Coinbase：L2 与 Full/L3 是两套恢复协议
+### Coinbase：L2 与 Full/L3 是两套恢复协议
 
 Coinbase Exchange 的 `level2` 频道订阅后先发送完整 `snapshot`，随后发送 `l2update`。这属于 inline snapshot：客户端不需要自己把 REST 快照与 L2 增量拼接，但仍需在看到 snapshot 前禁止发布有效簿。
 
@@ -335,7 +337,7 @@ Full 频道的消息类型不能仅凭名字机械改簿：
 
 Coinbase 还明确提醒，**对携带 sequence 且不承诺完整交付的普通频道**，即使客户端连接是 TCP/WebSocket，上游行情分发仍可能出现 drop 或 out-of-order。TCP 只能排序一条连接实际收到的字节，不能证明上游在写入该连接前没有遗漏。Exchange L2 的 payload 不要求客户端虚构 sequence gate，而是依赖该频道的 delivery guarantee；断连或 slow-consume 后仍应等待新 snapshot，不能沿用旧簿。
 
-## 8. Kraken：CRC 要在整批应用并截深之后计算
+### Kraken：CRC 要在整批应用并截深之后计算
 
 Kraken Spot WebSocket v2 `book` 频道先发送 snapshot，随后发送 price-level updates。它没有让客户端用一个通用 `last+1` 序列公式判断连续性，而是依赖流顺序与官方 CRC32 规范验证本地 top-10 视图。
 
@@ -365,7 +367,7 @@ CRC 只覆盖 top 10，不是对订阅 100 或 1000 档的全深度证明；CRC3
 
 千万不要把 price/qty 先解析成 binary floating point 再格式化计算 checksum。`0.10`、`0.1` 与二进制近似值的字符串可能不同。应保留原始 decimal 语义，或精确转换为协议要求的定点表示。Kraken 官方 checksum 指南给出的 golden vector 期望 unsigned CRC 为 `3310070434`，适合直接放进回归测试。
 
-## 9. OKX：2026 年后 JSON 订单簿不再使用 checksum
+### OKX：2026 年后 JSON 订单簿不再使用 checksum
 
 这是旧教程最容易过时的地方。OKX 已从 **2026-06-23** 起弃用 JSON `books`、`books-l2-tbt` 与 `books50-l2-tbt` 的 checksum；字段仍存在但固定为 `0`，不得把 `0` 当成“校验成功”。当前连续性应使用 `seqId/prevSeqId`。
 
@@ -388,7 +390,7 @@ flowchart LR
 
 频道语义也不同：`books` 是首个全量、后续增量；`books5` 与 `bbo-tbt` 属于快照型频道，不能套用增量簿的状态机。2026 年新增的 `books-rpi` 又有自己的 tuple 语义：第三项是 non-RPI quantity，不是普通 books 中曾经固定为 0 的旧字段。所有判断都应绑定 `feedVersion + channel` feature flag，而不是写一个全站 `if (checksum == 0) success` 或复用同一 tuple decoder。
 
-## 10. 四个平台的协议差异放在一张表里
+### 四个平台的协议差异放在一张表里
 
 | Feed | 初始状态 | 更新语义 | 连续性 / 完整性 | 失败动作 |
 | --- | --- | --- | --- | --- |
@@ -400,7 +402,9 @@ flowchart LR
 
 表格只能帮助比较，不能代替原始文档。尤其是产品权限、深度、推送频率、拍卖阶段与 heartbeat 规则，必须以当期频道说明为准。
 
-## 11. 单写者 reducer 与原子版本发布
+## 本地物化必须以原子版本为边界
+
+### 单写者 reducer 与原子版本发布
 
 每个稳定 `BookIdentity` 最容易证明的并发模型是单写者：一个 reducer 按已验证顺序修改私有 working state，读者只读取已经发布的 immutable version。
 
@@ -468,17 +472,17 @@ final class L2BookReducer {
 - sequence、epoch、validity 和 metadata version 与价格档一起切换；
 - BBO 在批次 commit 后从同一版本的两侧计算。
 
-### 11.1 为什么一条消息也要当成事务边界
+#### 为什么一条消息也要当成事务边界
 
 假设一个批次先删除旧 best ask，再添加新的 best ask。若读者在两步之间读取，可能看到空卖盘；相反的更新顺序还可能短暂制造 crossed book。平台发出的一个批次未必等于撮合事务，但只要协议规定它是不可分割的更新单位，消费者就必须把它作为原子 publish 边界。
 
 CME MDP 3.0 的恢复文档明确要求：一个 Incremental Refresh 中全部更新处理完之前，订单簿不能视为 valid。分块 MBO snapshot 也必须收齐后才能发布。这个原则同样适合 JSON feed：**批中可变，批后验证，版本级可见。**
 
-## 12. 精确数值、单位和产品元数据
+### 精确数值、单位和产品元数据
 
 价格和数量不是无单位的 `double`。
 
-### 12.1 使用整数 ticks/lots 或精确 decimal
+#### 使用整数 ticks/lots 或精确 decimal
 
 常见做法是：
 
@@ -494,7 +498,7 @@ quantityLots = exactQuantity / lotSize
 - 计算协议 checksum；
 - 在多个服务之间形成稳定的 canonical bytes。
 
-### 12.2 `size=10` 到底是什么单位
+#### `size=10` 到底是什么单位
 
 现货 quantity 常以 base asset 表示，但期货、永续和期权可能以 contracts 表示；线性与反向合约还可能使用不同 multiplier。Canonical instrument 至少需要版本化保存：
 
@@ -508,7 +512,7 @@ quantityLots = exactQuantity / lotSize
 
 若元数据在重建期间改变，不能继续按旧 scale 解释新帧；应显式切换 metadata version，必要时开启新的 reconstruction epoch 并重建。
 
-## 13. Gap、重复、乱序、Reset 与重连要分开处理
+### Gap、重复、乱序、Reset 与重连要分开处理
 
 `sequence <= last` 不能自动区分重复、迟到和另一会话的旧消息；`sequence > last+1` 也不一定适用于区间序列或 `prevSeqId` 链。正确做法是让 adapter 返回语义化结果：
 
@@ -540,11 +544,11 @@ sequenceDiagram
   B-->>C: publish valid new version
 ```
 
-### 13.1 乱序缓存不是默认修复手段
+#### 乱序缓存不是默认修复手段
 
 只有协议明确允许重排并给出窗口、唯一标识和补包机制时，才可以短暂缓存乱序消息。否则“等一会儿也许 41 会来”会让 stale book 继续对策略可见，还可能跨 reconnect 拼接两个 epoch。
 
-### 13.2 线路重连、逻辑源、重建与序列重置是四种边界
+#### 线路重连、逻辑源、重建与序列重置是四种边界
 
 同一数值 sequence 在重连后可能重用或重置，但四种动作不能合并：
 
@@ -555,7 +559,7 @@ sequenceDiagram
 
 如果下游协议只能表达“epoch + delta”，那么本地必须先把 reset update 整批、恰好一次地应用到当前簿，再发显式 RESET 与**应用该批之后**的新-generation 完整 snapshot，之后才发送后续 delta；不能漏掉 reset 消息携带的档位变化，也不能让下游把它当成一份新簿的起点。
 
-### 13.3 Heartbeat 与 book update 是两种指标
+#### Heartbeat 与 book update 是两种指标
 
 冷清市场长时间没有订单簿变化是正常的。应分别监控：
 
@@ -567,7 +571,7 @@ sequenceDiagram
 
 OKX 的空 asks/bids 保活可保持相同 `seqId`。把“序列没增加”直接判为断线，会制造不必要的重建风暴。
 
-## 14. Checksum、sequence 与不变量分别证明什么
+### Checksum、sequence 与不变量分别证明什么
 
 三种证据互相补充，但不能互相替代：
 
@@ -587,7 +591,9 @@ OKX 的空 asks/bids 保活可保持相同 `seqId`。把“序列没增加”直
 
 crossed book 不能无条件判错。集合竞价、pre-open 或特殊市场阶段可能允许表面交叉；跨交易所聚合视图更可能因传播延迟出现 locked/crossed。必须先看 market status，再决定不变量。
 
-## 15. 原始日志、Checkpoint 与可重放恢复
+## 恢复与分发必须携带连续性证据
+
+### 原始日志、Checkpoint 与可重放恢复
 
 如果系统承诺可审计或可重放，至少保留三层数据：
 
@@ -626,13 +632,13 @@ lastValidCheckpoint@localJournalOffset=J
 
 发现逻辑 Gap、无法衔接的新源会话或 fresh snapshot 时应写入 discontinuity marker；单路 `pathConnectionEpoch` 变化只写 transport provenance，不必打断仍连续的仲裁流。合法 in-band sequence reset 要先把 reset update 整批恰好应用一次，再写新的 `sequenceGeneration` 边界并保留簿连续性。不要为了让日志“看起来连续”，把两个没有共同序列契约的连接直接拼起来。恢复测试还要在 raw append、durable cursor、apply、publish 与 checkpoint 的每个边界注入崩溃，证明结果等价于某个合法 durable prefix。
 
-### 15.1 外部行情与内部行情的恢复边界不同
+#### 外部行情与内部行情的恢复边界不同
 
 自营交易所可以从撮合引擎权威事件日志重新派生行情；外部 venue 消费者缺了对方的一段网络数据，自己的 raw journal 也不会凭空补出缺失事件。除非平台提供 replay 服务，否则只能重新取得 snapshot。
 
 CME MDP 3.0 提供小范围 TCP Recovery：实时流先缓存，请求缺失 packet range，先应用补包再接回缓存流。这是协议明确的 replay，不是消费者自己猜测。
 
-## 16. 扇出与背压：不能让一个慢客户端拖住权威 ingest
+### 扇出与背压：不能让一个慢客户端拖住权威 ingest
 
 交易所行情通常不会因为某个下游 `request(1)` 就降低源速率。系统只能在有界缓存、持久化回放、降级与断开之间作明确选择。
 
@@ -664,7 +670,7 @@ Book、trade 与 candle 不能共用一个 `bookVersion`。Book delta/BBO 的 en
 
 权威 ingest、book reducer 与公网 WebSocket fanout 最好隔离线程、队列和故障域。公网慢客户端不应反压撮合输出或内部风控行情。
 
-## 17. 时间戳不是订单簿的排序权威
+### 时间戳不是订单簿的排序权威
 
 行情中至少存在这些时间：
 
@@ -681,17 +687,19 @@ Book、trade 与 candle 不能共用一个 `bookVersion`。Book delta/BBO 的 en
 
 跨机器延迟应同时报告时钟同步质量；进程内阶段耗时用 monotonic clock。更完整的时钟边界可回看[《分布式系统里的时间》](/signal-grid-blog/posts/distributed-systems-time-clocks-ordering-and-leases/)。
 
-## 18. BBO、Trade、Candle 与指数如何正确派生
+## 派生、聚合与优化都必须服从正确性边界
 
-### 18.1 BBO
+### BBO、Trade、Candle 与指数如何正确派生
+
+#### BBO
 
 BBO 应在整个 book batch commit 后，从同一个 immutable version 的 `maxBid/minAsk` 取得，并携带完整的 `bookStreamId + bookStreamOffset + logicalFeedEpoch + reconstructionEpoch + sequenceGeneration + sourceCursor + bookVersion`。若直接消费 venue 的 `bookTicker`，它是另一条权威派生流；不要把不同 cut 的本地 BBO 与 bookTicker 强行逐条判等。
 
-### 18.2 Trade
+#### Trade
 
 成交必须来自权威 trade/match feed，以协议声明的身份域做幂等，例如 `(venue, feed, instrument, session/domain, tradeId)`；裸 `tradeId` 未必跨产品、跨会话或跨日唯一。订单簿数量减少不能证明发生了成交。还要支持 trade bust/cancel：Nasdaq ITCH 的 Broken Trade 会引用原 match number，历史成交量、K 线和 time & sales 都必须按规则修正。
 
-### 18.3 Candle
+#### Candle
 
 K 线至少要明确：
 
@@ -708,11 +716,11 @@ bucket = floor((eventTime - origin) / width)
 
 但同 timestamp 的 open/close 顺序仍应使用 venue trade sequence 或权威事件顺序。High/Low/Volume 来自未被 bust 的合格成交；每个版本应携带已覆盖的 `tradeCursorRange`，迟到成交或撤销会产生新的 `candleVersion`。窗口结束不必然等于最终，final 需要 watermark 与 venue correction policy。
 
-### 18.4 Index 与 Mark Price
+#### Index 与 Mark Price
 
 指数价、溢价、基差和标记价格是带规则版本的产品模型，不是简单的 last trade。它们应保留成分 venue、权重、异常源剔除、时间窗和算法版本，不能塞进通用 `ticker.price` 后丢失血缘。
 
-## 19. 跨交易所聚合没有天然的全局快照
+### 跨交易所聚合没有天然的全局快照
 
 每个 venue 都有自己的 epoch、sequence 与延迟。聚合器在本机看到的只是多个独立最新版本的异步拼图。
 
@@ -736,7 +744,7 @@ flowchart TB
 
 不同 venue 的 best bid/ask 交叉，可能只是传播延迟、时钟误差或产品并不等价。不要删除某一边来“修正”画面；应暴露每个来源的版本和 staleness，让策略自行决定是否可交易。
 
-## 20. 性能优化必须在正确参考模型之后
+### 性能优化必须在正确参考模型之后
 
 行情热路径确实关心解析、内存布局、cache miss、队列和批处理，但优化顺序应是：
 
@@ -750,16 +758,16 @@ flowchart TB
 
 Java 并发与测量基础可分别回看 [Agrona](/signal-grid-blog/posts/agrona-direct-buffer-queues-and-agents/) 和[《Java 低延迟到底应该怎么测》](/signal-grid-blog/posts/java-low-latency-measurement/)。
 
-## 21. 测试：系统要么正确 LIVE，要么明确 INVALID
+## 用重放与故障注入证明管线正确
 
-### 21.1 Golden replay 与模型测试
+### Golden replay 与模型测试
 
 - 用官方 payload 样例与自录 raw frames 重放到精确 anchor 和 canonical book hash；
 - 朴素 Map/FIFO 参考实现与优化实现逐批对比；
 - live replay、checkpoint 恢复和全量重放得到相同最终版本；
 - checksum 使用官方 golden vector，例如 Kraken 文档给出的预期 CRC。
 
-### 21.2 故障注入矩阵
+### 故障注入矩阵
 
 | 故障 | 必须观察到的结果 |
 | --- | --- |
@@ -787,7 +795,7 @@ Java 并发与测量基础可分别回看 [Agrona](/signal-grid-blog/posts/agron
 | disk full / `force` 失败 | durable channel fail closed，不推进 cursor、不投递 replayable 事件 |
 | checkpoint 损坏或领先日志 | 拒绝该 checkpoint，回退到上一份可验证 durable 基线或停机修复 |
 
-### 21.3 属性不变量
+### 属性不变量
 
 建议把下面这些写成自动化断言：
 
@@ -822,7 +830,9 @@ flowchart TB
   CRASH --> EQ["恢复结果等价于合法 durable prefix"]
 ```
 
-## 22. 监控与故障处理 Runbook
+## 用运行证据识别失效合同并完成恢复
+
+### 监控与故障处理 Runbook
 
 单看 `websocket_connected=1` 远远不够。建议至少记录：
 
@@ -858,60 +868,7 @@ flowchart TB
 
 不要在告警后手工把 `valid` 改回 true，也不要清空 gap counter 后继续沿用旧簿。恢复的完成条件是新 snapshot、合法 bridge、追平和验证全部闭环。
 
-## 23. 常见反模式
-
-| 反模式 | 为什么错 | 正确方向 |
-| --- | --- | --- |
-| REST snapshot 完成后才开 WS | 中间更新永久缺失 | 先订阅缓存，再按 cut 拼接 |
-| 所有 qty 都做 `old += qty` | 很多 L2 feed 给的是绝对量 | 由 adapter 解释 SET/ADD/ACTION |
-| 看到 sequence 变大就继续 | 可能跨过未见区间 | 校验 range 或 prev 链 |
-| 用 timestamp 排序补 Gap | 时间不能证明消息完整性 | sequence/协议 replay/fresh snapshot |
-| TCP 所以不会丢行情 | 上游仍可能 drop/out-of-order | 端到端连续性检测 |
-| CRC 通过表示全簿正确 | 可能只覆盖 top-N，且 CRC 会碰撞 | 与 epoch、sequence、schema、不变量组合 |
-| OKX checksum=0 表示成功 | 2026-06 后字段固定为 0 | 使用 `seqId/prevSeqId` |
-| Gap 后继续发布旧 BBO | 旧簿可能看起来正常但不可证明 | 先 INVALID，再恢复 |
-| L2 数量减少就是成交 | 撤单、改单等可产生同形变化 | 使用权威 trade feed |
-| 用 `double` 排价格 | 排序、tick 与 checksum 不稳定 | decimal → 校验后的 ticks/lots |
-| 慢消费者就丢最老 delta | 下游簿形成静默永久洞 | durable replay 或显式 RESET |
-| 多 venue 最新值就是全球快照 | 不同 epoch、cut 与传播延迟 | 携带来源、as-of 和 staleness |
-| 批内每改一档就推送 | 读者看到半批与虚假交叉 | 整批 apply、verify、publish |
-
-## 24. 上线检查清单
-
-### 协议与状态
-
-- [ ] 每个 feed/version 都有明确 snapshot、update、heartbeat、reset 与 gap 契约；
-- [ ] 稳定 `BookIdentity` 与 path connection/logical feed/reconstruction/sequence 四类代际分开建模；
-- [ ] `snapshotSeedLimit` 与可选 `maintainedDepthCap` 分开，Binance 5000 不被误作持续截深上限；
-- [ ] snapshot cut 与 bridge 条件有官方测试向量；
-- [ ] L1/L2/L3、绝对量/差量/action 没有混用；
-- [ ] Gap、CRC fail、buffer overflow 和 malformed frame 都会 fail closed；
-- [ ] batch 只在完整应用与验证后发布；
-- [ ] auction、halt、pre-open 等状态使用正确不变量。
-
-### 恢复与分发
-
-- [ ] 单路 reconnect、逻辑源断裂、fresh snapshot 与合法 in-band sequence reset 使用各自正确的代际；
-- [ ] 冗余源只有在官方共享序列域内才 first-arrival-wins，普通双 WebSocket 不交错补洞；
-- [ ] raw journal 能反查 normalized event 和 book version；
-- [ ] durable channel 先持久 raw/normalized record 再投递或标记 replayable，失败时 fail closed；
-- [ ] checkpoint 只引用 durable cursor，并绑定 typed cursor、四类代际、metadata 与 canonical config；
-- [ ] lossless 与 latest-state 下游使用不同 overflow policy；
-- [ ] book、trade、candle 使用独立 stream cursor，不共用 `bookVersion`；
-- [ ] book envelope/ACK 同时带独立 `bookStreamOffset`、三类逻辑代际与 typed source cursor；
-- [ ] 慢消费者不会阻塞权威 ingest；
-- [ ] 下游 GAP/RESET 后能自动取得新 snapshot。
-
-### 数值、时间与可观测性
-
-- [ ] price/qty 使用精确 decimal 或校验后的 ticks/lots；
-- [ ] 合约 multiplier、单位、tick/lot 与产品状态版本化；
-- [ ] source、receive、apply、publish 时间分开记录；
-- [ ] sequence 是顺序权威，timestamp 不参与修 Gap；
-- [ ] 指标能区分连接活性、状态连续性与数据新鲜度；
-- [ ] 故障演练验证“正确 LIVE 或明确 INVALID”，不存在第三种静默错误状态。
-
-## 25. 结论
+## 结论：可信行情必须同时闭合身份、连续性、物化与恢复
 
 一条可信的行情管线不是“把数据送得快”，而是同时守住四个闭环：
 

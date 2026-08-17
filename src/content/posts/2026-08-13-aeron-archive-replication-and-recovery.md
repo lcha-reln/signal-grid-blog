@@ -2,7 +2,7 @@
 title: Aeron Archive：跨主机复制与灾备——Replication、Live Merge、备份与无重复恢复
 description: 基于 Aeron 1.52.2，拆解由目标端发起的跨 Archive replication、控制与数据通道、异步 signals、live merge、冷备恢复和业务 checkpoint。
 date: 2026-08-13T10:30:00+08:00
-updated: 2026-08-13T10:30:00+08:00
+updated: 2026-08-17T17:45:00+08:00
 tags:
   - Aeron
   - Aeron Archive
@@ -22,7 +22,9 @@ Replication 不是自动选主、共识协议或完整备份产品。它解决�
 
 本文以 **Aeron 1.52.2** 为基线，把控制响应、RecordingSignal、数据 position 和业务终态分开说明。
 
-## 1. 复制由目标 Archive 发起
+## 复制任务怎样建立源与目标的位置合同
+
+### 复制由目标 Archive 发起
 
 调用 `replicate(...)` 的客户端连接的是 **destination Archive**。destination 再建立内部 `AeronArchive` client 连接 source，请 source replay，自己建立 recording subscription 接收并落盘。
 
@@ -49,7 +51,7 @@ sequenceDiagram
 - `replicate` 返回的是 destination 上的 replication session ID；
 - destination recordingId 可能新建，也可能由参数指定后 extend。
 
-## 2. 控制平面与数据平面
+### 控制平面与数据平面
 
 跨主机复制至少有两组网络关系：
 
@@ -66,7 +68,7 @@ flowchart LR
 
 destination `Archive.Context.replicationChannel()` 提供默认数据 channel；单次 `ReplicationParams.replicationChannel(...)` 可以覆盖。endpoint、interface、MDC、tags 与防火墙应分别核对。
 
-### 2.1 本机测试为什么经常掩盖问题
+#### 本机测试为什么经常掩盖问题
 
 同一台机器用共享 Media Driver、localhost 和固定端口，很容易让错误配置“刚好可达”。上线前至少用两台主机或隔离 network namespace 验证：
 
@@ -76,7 +78,7 @@ destination `Archive.Context.replicationChannel()` 提供默认数据 channel；
 4. 可选 live destination；
 5. NAT / wildcard port / response-channel 组合。
 
-## 3. ReplicationParams 的边界
+### ReplicationParams 的边界
 
 1.52.2 的主要参数：
 
@@ -116,7 +118,7 @@ final long replicationId = destinationArchive.replicate(
 
 认证目前只支持把简单 encoded credentials 传给 source，不支持 replication challenge/response。需要更强身份与传输保护时，要在网络、部署与应用控制层补充。
 
-## 4. 新建还是续接 destination recording
+### 新建还是续接 destination recording
 
 ```mermaid
 flowchart TD
@@ -134,7 +136,9 @@ flowchart TD
 
 指定 `dstRecordingId` 时，不是覆盖任意旧 recording，而是从它的 stop position 继续。destination 的 layout 和 source position space 必须兼容。若灾备任务多阶段执行，希望接收端沿用特定 Aeron session，可用 `replicationSessionId`，但这不替代 descriptor / position 验证。
 
-## 5. `replicate()` 返回不等于复制完成
+## 复制状态怎样推进并报告终态
+
+### `replicate()` 返回不等于复制完成
 
 调用返回只说明 destination 接受请求并创建 replication session。它甚至可能尚未连上 source、尚未拿到 descriptor、尚未建立 replay Image。
 
@@ -180,7 +184,7 @@ while (!terminal)
 
 实际工程还应匹配 control session / correlation ID，处理 client reconnect，并给每个阶段设置业务 timeout。
 
-## 6. RecordingSignal 怎样解释
+### RecordingSignal 怎样解释
 
 Replication 通过 destination control session 发 signals。常见顺序与含义：
 
@@ -218,19 +222,19 @@ sequenceDiagram
 - **指定更早的 explicit stopPosition**：无异步错误，destination 达到该目标并正常 `REPLICATE_END`；这条路径可直接结束，不要求 `SYNC`；
 - **live merge**：无异步错误，收到 `MERGE`，并继续监控 live recording，而不是把 session 一结束就当永久成功。
 
-## 7. 有限复制与持续复制
+### 有限复制与持续复制
 
-### 7.1 停止的 source recording
+#### 停止的 source recording
 
 source descriptor 有 stop position 时，destination 从自身 stop（或 source start）replay 到 source stop。达到后发 `SYNC`，session 随后结束并发 `REPLICATE_END`。
 
-### 7.2 活跃 recording，不配置 liveDestination
+#### 活跃 recording，不配置 liveDestination
 
 默认 `stopPosition=NULL_POSITION` 可让 source replay follow 活跃 recording。它是一个持续任务，不能期待马上出现业务完成终态；运维需要监控 destination position 与 source position 的 lag。
 
 若指定 explicit stopPosition，达到该点后会直接完成并发 `REPLICATE_END`；当该目标早于 source descriptor 的自然 stop 时，不会先发 `SYNC`。stop 必须处于可复制范围和合法 position 边界。
 
-### 7.3 主动停止
+#### 主动停止
 
 ```java
 destinationArchive.stopReplication(replicationId);
@@ -239,7 +243,7 @@ destinationArchive.stopReplication(replicationId);
 
 停止请求也不是“数据已达某位置”的替代品。先记录最后确认的 destination max position，再决定下一次 extend 的起点。
 
-## 8. Replication Live Merge
+### Replication Live Merge
 
 对仍活跃的 source recording，可提供 `liveDestination`。destination 先通过 source replay 追赶，接近 source 当前 recording position 后，把 live destination 加到同一个 recording subscription；追平后移除 replay destination，继续直接录 live。
 
@@ -267,7 +271,7 @@ flowchart LR
 
 收到 `MERGE` 表明这个 replication session 已切走 source Archive replay，destination 正在从 live destination 继续录制；它不意味着 source 主机以后宕机时 live 路径会自动切到另一套业务 Publication。
 
-## 9. 一个可审计的复制任务状态表
+### 一个可审计的复制任务状态表
 
 持久化任务表至少应包含：
 
@@ -296,7 +300,9 @@ flowchart LR
 
 这样 Archive client 断开时，orchestrator 可以重新查询 destination Catalog，从事实 position 继续，而不是盲信内存里的 replicationId。
 
-## 10. Replication 不是完整备份策略
+## 备份恢复怎样承接业务承诺
+
+### Replication 不是完整备份策略
 
 单条 recording 的近实时副本仍可能同时遭遇：
 
@@ -317,7 +323,7 @@ flowchart TB
 
 standalone Archive 没有一个“拍全局事务快照并自动恢复所有外部状态”的通用 API。冷备应在 Archive 正常停止后复制 Catalog、segments、mark/link 的同一代目录，并在隔离环境 verify 与启动。
 
-## 11. 恢复时怎样避免消息重复或缺口
+### 恢复时怎样避免消息重复或缺口
 
 假设业务消费者在 primary 上最后安全处理的 `Header.position()` 为 `P`。它切到 backup recording 时应从 `P` replay，因为这是下一条起点。
 
@@ -344,7 +350,7 @@ backupMaxRecordedPosition >= durableConsumerCheckpoint
 
 如果小于，RPO 已经影响业务，不能假装无损切换。
 
-### 11.1 exactly-once 的真正边界
+#### exactly-once 的真正边界
 
 Archive position 能提供确定恢复点，但业务 side effect 与 checkpoint 若不在同一事务，崩溃窗口仍会造成：
 
@@ -353,7 +359,7 @@ Archive position 能提供确定恢复点，但业务 side effect 与 checkpoint
 
 解决办法是幂等键、业务状态与 checkpoint 同事务、inbox/outbox 或可重建状态机。Replication 复制 transport history，不复制外部数据库事务。
 
-## 12. RPO、RTO 与 lag
+### RPO、RTO 与 lag
 
 定义：
 
@@ -367,7 +373,7 @@ RPO 还受到 source 持久化边界影响：若 source `fileSyncLevel=0`，一�
 
 RTO 包含：发现故障、冻结写入、确认 backup 覆盖、启动消费者 replay、追赶、重新接 live、验证业务状态。只测 Archive 进程启动时间没有意义。
 
-## 13. 重试与幂等
+### 重试与幂等
 
 Replication session 失败后可重新请求，并指定已有 destination recordingId 续接。重试前必须查询 destination stop / max position，确认它与 source position space 兼容。
 
@@ -381,7 +387,9 @@ Replication session 失败后可重新请求，并指定已有 destination recor
 
 若业务确实要“用 source 完全替换 destination”，官方 sample 会先列 descriptor、truncate 到 start、等待 DELETE signal，再复制。这是破坏性工作流，不应成为普通重试默认路径。
 
-## 14. 灾备演练脚本应验证什么
+## 用故障演练证明 RPO 与 RTO
+
+### 恢复演练：故障注入与验收证据
 
 1. 断开 source 控制 channel，destination 是否报告异步错误；
 2. 断开 replication 数据 channel，position lag 是否告警；
@@ -393,30 +401,11 @@ Replication session 失败后可重新请求，并指定已有 destination recor
 8. retention 是否保留恢复所需 segment；
 9. 恢复后如何重新建立 primary / backup 角色，而不双写。
 
-## 15. 上线前的 Replication 审查表
+演练开始前必须证明 source control request/response、replication channel 和可选 live destination 分别双向可达，且没有把跨主机路径误配成 IPC；credentials 与网络隔离也属于同一前提。执行 owner 要持续 poll signals 和 errors，并分别为 source natural stop、explicit stop 与 live merge 定义终态，不能只等一个 `REPLICATE_END`。
 
-### 网络与认证
+演练只有在以下证据同时成立时才退出：destination Catalog 在重连后能重建任务事实；backup max position 覆盖“下一条消息”的业务 checkpoint；冷备包含 Catalog、segments、mark/link 与版本配置；restore、replay 和业务 state hash 全部通过；primary/backup 角色重新建立后没有双写。session timeout、业务 timeout 和最终 RPO/RTO 要分别记录，不能合并成一个“复制成功”。
 
-- destination 到 source control request / response 双向是否验证？
-- replication 与 optional live destinations 是否独立可达？
-- 是否误用 IPC？
-- credentials 与网络隔离是否满足安全要求？
-
-### 终态
-
-- owner 是否持续 poll signals 和 errors？
-- 是否按 source natural stop / explicit stop / live merge 三种场景分别定义终态，并联合检查 signal、position 与 error？
-- session timeout 与业务 timeout 是否分别记录？
-- 重连后是否从 destination Catalog 重建事实？
-
-### 恢复
-
-- checkpoint 是“下一 position”吗？
-- backup max position 是否覆盖 checkpoint？
-- 冷备是否包含 Catalog、segments、mark/link 与版本配置？
-- 最近一次真实 restore + replay + 业务校验是否成功？
-
-## 16. 本章结论
+## 结论：复制完成必须由位置、信号与业务恢复共同证明
 
 Aeron Archive Replication 是由 destination 发起的一条异步复制状态机：它连接 source、复制 descriptor、请求 replay、extend 本地 recording，并通过 signals 报告同步或 merge 进度。
 

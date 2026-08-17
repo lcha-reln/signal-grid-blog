@@ -2,7 +2,7 @@
 title: Aeron 与 SBE：从字节流到可演进协议——Schema、Flyweight 与兼容性测试
 description: 以 Aeron 1.52.2 与 SBE 1.39.0 为基线，从消息分层、XML Schema、生成式 Flyweight 和顺序访问讲到版本演进、Aeron 集成、边界校验与新旧 Codec 兼容性测试。
 date: 2026-08-17T16:55:00+08:00
-updated: 2026-08-17T16:55:00+08:00
+updated: 2026-08-17T17:45:00+08:00
 tags:
   - Aeron
   - SBE
@@ -33,7 +33,9 @@ Simple Binary Encoding（SBE）承担后一份合同：先用 XML Schema 定义�
 
 本文以 **Aeron 1.52.2、SBE 1.39.0、Agrona 2.5.0 与 Java 17+** 为版本基线。阅读前建议先理解 [Aeron 的 Channel、Stream、Session 与 Image](/signal-grid-blog/posts/aeron-transport-channel-stream-session-image/)；本文结束后再进入 [Publication、Log Buffer 与发送热路径](/signal-grid-blog/posts/aeron-transport-publication-log-buffer-offer-try-claim/)。
 
-## 1. 先把四层协议拆开
+## 第一阶段：从字节流建立可生成的协议合同
+
+### 先把四层协议拆开
 
 最常见的设计错误，是把所有字段都塞进“消息头”，或者反过来假设 Aeron 已经替应用解决了 framing、版本与业务幂等。
 
@@ -75,7 +77,7 @@ flowchart LR
   VAR -. "必须顺序消费" .-> VAR
 ```
 
-### 1.1 三类编号不要混用
+#### 三类编号不要混用
 
 - `streamId` 是 Aeron 的逻辑流匹配键，不是 SBE template。
 - `sessionId` 区分同一 stream 上的 Publication 来源，不是用户会话或业务 producer id。
@@ -87,7 +89,9 @@ flowchart LR
 
 因此“同一个 Aeron session 收到相同 template 两次”完全可能是两个合法业务命令；“Aeron position 相同”也只在同一 Image/recording 语境内有意义。
 
-## 2. SBE 为什么快，又为什么不是万能格式
+这些编号必须由 Schema registry 显式分配并永久保留，不能从 Java enum ordinal、类加载顺序或构建时间派生。message、group 与 data 的字段 id 各自在 Schema 容器中保持稳定；即使允许跨 template 复用数字，也不能借复用悄悄改变同名字段的业务语义。
+
+### SBE 为什么快，又为什么不是万能格式
 
 SBE 的核心选择可以概括成三句话：
 
@@ -126,7 +130,7 @@ flowchart LR
 
 “没有中间对象”也不等于端到端零拷贝：`Publication.offer()` 仍会把应用 Buffer 内容复制进 Publication log；`tryClaim()` 才能省掉应用 Buffer 到 log 的那一次 copy。跨线程长期保存回调数据时，应用仍然必须复制到自己拥有的存储。
 
-## 3. 一份可以演进的订单 Schema
+### 一份可以演进的订单 Schema
 
 下面用简化订单协议讲清 wire layout。价格和数量用缩放后的整数；业务元数据负责说明 scale、tick 和 lot，不用 `double` 把十进制语义带入 wire。
 
@@ -197,7 +201,7 @@ flowchart LR
 - `accountId` 是 version 1 新增字段，放在原 root block 尾部，并声明 `sinceVersion=1`、`optional`。
 - `maxValue=1024` 是 wire 上限的一部分，但解码入口仍应核对外层 frame length 和业务允许值。
 
-### 3.1 root block、group 与 var-data 是三种布局
+#### root block、group 与 var-data 是三种布局
 
 ```mermaid
 flowchart TB
@@ -214,7 +218,7 @@ flowchart TB
 
 root fixed fields 可以按生成的 offset 访问。group 和 var-data 会改变 decoder 的内部 `limit`；它们不是任意顺序的 getter 集合。一个 template 若有两个变长字段，就必须先完整处理第一个，再访问第二个。
 
-### 3.2 对齐是 Schema 选择，不是自动赠品
+#### 对齐是 Schema 选择，不是自动赠品
 
 SBE 允许用显式 `offset` 组织字段。常用做法是按 8、4、2、1 字节递减排列标量，减少空洞并让自然对齐更清晰。但仍要注意：
 
@@ -223,7 +227,7 @@ SBE 允许用显式 `offset` 组织字段。常用做法是按 8、4、2、1 字
 - 跨语言 codec 必须以 schema offset 为准，不能依赖 Java 对象布局；
 - 为“看起来整齐”插入或移动已有字段，会破坏 wire compatibility。
 
-## 4. 把 Schema 生成纳入构建
+### 把 Schema 生成纳入构建
 
 官方 `sbe-tool` 不是运行时反射库，而是构建工具。生产仓库应把 schema、生成器版本和生成参数固定下来，生成代码要么作为构建产物，要么经过严格的可重复生成检查。
 
@@ -318,7 +322,9 @@ gateway/
 
 这样 schema 变更会形成清晰的代码审查与发布边界，而不是藏在某个服务的内部模型里。
 
-## 5. 编码：先 header，再 body，最后才知道完整长度
+## 第二阶段：编码与解码首先是所有权协议
+
+### 编码：先 header，再 body，最后才知道完整长度
 
 生成后的 Java API 可以直接覆盖 `MutableDirectBuffer`：
 
@@ -359,7 +365,7 @@ sequenceDiagram
 
 有 group 或 var-data 时，`encodedLength()` 取决于当前游标走到了哪里；只有完整编码后才是整条消息长度。提前读取并发送，会把未完成尾部当成合法消息。编码器也不是一个可跨线程共享的无状态 singleton：每次 `wrap` 都会改变其 buffer、offset 和 limit。
 
-### 5.1 与 `tryClaim` 集成
+#### 与 `tryClaim` 集成
 
 小消息可以直接在 Publication log 的 claimed 区域中编码：
 
@@ -400,7 +406,7 @@ if (result > 0)
 - `tryClaim` 的最大长度受 Aeron `maxPayloadLength` 限制，不能拿它发送任意大消息；
 - `commit` 让 frame 对 Aeron transport 或 subscriber 可见；UDP 路径随后由 Sender 处理，IPC 路径没有 Sender 这一跳。无论哪种路径，它都不代表对端业务提交。
 
-## 6. 解码入口必须先做 envelope 校验
+### 解码入口必须先做 envelope 校验
 
 一个安全的 dispatcher 不应直接假设“这个 stream 上只有 NewOrder”：
 
@@ -495,7 +501,7 @@ flowchart TB
 
 `schemaId` 正确不代表消息可信。SBE 没有签名或认证；恶意/损坏输入仍可能声明巨大 count 或 length。对不可信网络，认证与加密应在传输/外层 envelope 解决，codec 入口继续执行严格 bounds 和业务校验。
 
-## 7. Flyweight 的所有权：最快的对象往往最短命
+### Flyweight 的所有权：最快的对象往往最短命
 
 decoder 的 getter 通常只是从当前 `DirectBuffer` 某个 offset 读取 primitive。它没有拥有消息字节，因此把 decoder 或 buffer 引用放进异步队列极其危险。
 
@@ -533,7 +539,7 @@ sequenceDiagram
 
 复制不是失败。正确的边界通常是“网络/codec 热路径零临时对象，进入长期状态或异步所有权时做一次明确、可计量的 copy”。
 
-## 8. 顺序访问不是建议，而是 codec 状态机
+### 顺序访问不是建议，而是 codec 状态机
 
 固定字段可以按生成的 getter 读取，但 repeating group 和 var-data 会推进同一个内部 `limit`。如果 Schema 的顺序是 `legs group -> attributes group -> memo data`，就不能先读 `memo`，再回来读 `legs`。
 
@@ -570,7 +576,7 @@ encoder.checkEncodingIsComplete();
 
 若没有显式设置，Java codec 的默认值会跟随 Agrona bounds checks，通常在 bounds checks 开启时也开启；因此不能把“没有配置该属性”简单解释成固定的开或关。启动日志和基准报告应同时记录 Agrona bounds-check 与 SBE precedence-check 的实际值。建议在单元测试、兼容性测试、回放环境和预发布环境开启；压测应同时记录开启与关闭的成本。它能捕获“漏掉 group”“跳过 var-data”“未调用 `next()`”等 API 协议错误，但不能验证价格、权限或幂等。
 
-### 8.1 一个 group 必须完整消费
+#### 一个 group 必须完整消费
 
 ```java
 for (final LegsDecoder leg : orderDecoder.legs())
@@ -585,7 +591,9 @@ final String memo = orderDecoder.memo();
 
 若业务不关心 group 内容，也不能直接跳到 memo；应使用生成 codec 提供的 skip 方式，或仍按序迭代消费。因为下一个 block 的起点不是编译期固定 offset，而是由前面实际 count 和长度决定。
 
-## 9. `blockLength` 与 `actingVersion` 怎样实现兼容
+## 第三阶段：版本演进必须由交叉证据证明
+
+### `blockLength` 与 `actingVersion` 怎样实现兼容
 
 假设 version 0 的 NewOrder 到 `timeInForce` 结束；version 1 在 root block 尾部增加可选 `accountId`：
 
@@ -601,7 +609,7 @@ flowchart LR
   end
 ```
 
-### 9.1 新 decoder 读取旧消息
+#### 新 decoder 读取旧消息
 
 旧 sender header 携带较小的 `actingBlockLength` 和 `actingVersion=0`。新 decoder `wrap(buffer, offset, actingBlockLength, actingVersion)` 后：
 
@@ -611,13 +619,13 @@ flowchart LR
 
 业务代码不能把 primitive null value 当合法账户。应使用生成的 `accountIdNullValue()` 比较，并明确“字段缺失”的业务策略。
 
-### 9.2 旧 decoder 读取新消息
+#### 旧 decoder 读取新消息
 
 旧 decoder知道旧字段 offset；它读取自己理解的前缀，并根据发送方 header 的较大 root block length 找到后续 group/var-data 起点。尾部新增 fixed field 会被忽略。
 
 这就是“只在 block 尾部追加”的意义。若把新字段插到中间，旧 decoder 会把后面字段的字节当成旧 offset 的另一个字段，通常不会优雅报错，而是产生**看似合法的错误值**。
 
-### 9.3 兼容与不兼容变更表
+#### 兼容与不兼容变更表
 
 | 变更 | wire 是否可兼容 | 要求/原因 |
 | --- | --- | --- |
@@ -647,7 +655,7 @@ flowchart TB
   SEMANTIC -- 否 --> NEWID
 ```
 
-## 10. wire compatibility 不等于 semantic compatibility
+### wire compatibility 不等于 semantic compatibility
 
 考虑给订单新增 `accountId`。在字节层它是尾部 optional field，可以兼容；但业务层还要回答：
 
@@ -674,9 +682,11 @@ flowchart LR
 - 将缺失字段的默认含义从“未知”改成“账户 0”；
 - 复用 requestId 域，却改变其去重生命周期。
 
+因此 SBE 的 `optional` 只声明“旧字节中允许缺少这个字段”，不声明领域规则也允许缺失。是否接受缺失值、采用什么默认语义、何时拒绝旧客户端，必须由业务 capability 和状态机规则决定。
+
 因此 Schema review 必须和领域规则、元数据版本以及部署顺序一起审，不能只看 XML diff。
 
-## 11. 新旧 Codec 交叉矩阵才是兼容性证据
+### 新旧 Codec 交叉矩阵才是兼容性证据
 
 每次协议发布至少保留当前版与仍在生产的历史版 Schema/生成 codec。假设 v0 和 v1 同时存在，测试矩阵是：
 
@@ -705,7 +715,7 @@ flowchart TB
   V11 --> ASSERT
 ```
 
-### 11.1 Golden vector 要保存什么
+#### Golden vector 要保存什么
 
 每个关键 template 至少保存：
 
@@ -720,7 +730,7 @@ flowchart TB
 
 不要只做“encode 后立刻用同一版本 decode”。同一个 generator bug 可能在两边对称存在，round-trip 仍然绿色；固定 golden bytes 和异语言实现能提供独立证据。
 
-### 11.2 一个兼容性测试骨架
+#### 一个兼容性测试骨架
 
 ```java
 @Test
@@ -747,7 +757,9 @@ void newDecoderReadsVersionZeroMessage()
 
 现实工程中 v0、v1 生成类需要不同 package，避免类名冲突；CI 先从 Git tag/发布 artifact 取旧 schema，再分别生成 codec。不要通过复制当前生成代码冒充“旧版本”。
 
-## 12. Aeron 接收路径：先重组、再解码、最后推进业务状态
+## 第四阶段：把协议接回 Aeron 的运行与恢复边界
+
+### Aeron 接收路径：先重组、再解码、最后推进业务状态
 
 超过 `maxPayloadLength` 的 Aeron message 会被分片。SBE 不应在第一个 fragment 上开始解码一个尚未完整的业务消息。
 
@@ -779,7 +791,7 @@ sequenceDiagram
 
 若处理流程是 decode → 入队 → worker apply，应在入队前复制 owned data，并对队列满定义明确的 backpressure/reject 策略。静默丢一条 command 再继续处理下一条，会把可靠传输变成不可检测的业务 gap。
 
-## 13. Aeron Cluster 中的 SBE：确定性比省对象更重要
+### Aeron Cluster 中的 SBE：确定性比省对象更重要
 
 Aeron Cluster 常用 SBE 编码 ingress command、egress response 和 snapshot record，但 codec 不会自动提供确定性。
 
@@ -803,7 +815,7 @@ flowchart LR
 - codec 只读取日志字节，不调用本地墙钟、随机数或外部服务；
 - 升级期间 app version、Schema version、snapshot version 与 rollout 顺序明确关联。
 
-### 13.1 Snapshot 兼容是另一份合同
+#### Snapshot 兼容是另一份合同
 
 SBE 的 optional extension 对 snapshot 很有帮助，但 Cluster snapshot 不等同于在线 command：
 
@@ -815,7 +827,7 @@ SBE 的 optional extension 对 snapshot 很有帮助，但 Cluster snapshot 不�
 
 发布前至少做 `old snapshot -> new service load -> old log suffix replay -> state hash` 测试。
 
-## 14. 发布新 Schema 的安全顺序
+### 发布新 Schema 的安全顺序
 
 只要系统允许滚动升级，就必须假设一段时间内 old/new producer 和 consumer 同时存在。
 
@@ -838,7 +850,7 @@ flowchart TB
 
 如果新业务“必须依赖 accountId”，那就不能仅靠字段 optional 宣称兼容。应在所有必要 reader 升级后才启用该业务能力，旧 sender 的缺失请求则明确拒绝或走可审计的旧路径。
 
-### 14.1 版本协商不要在每条消息上发明复杂握手
+#### 版本协商不要在每条消息上发明复杂握手
 
 常见选择有：
 
@@ -850,7 +862,7 @@ flowchart TB
 
 不要假设“收到过一条 v1 消息，所以对方以后永远支持 v1”：重连、故障切换和混合实例都会改变能力。能力必须绑定到会话/实例代际并可失效。
 
-## 15. 性能测试：测协议路径，不测一个 getter
+### 性能测试：测协议路径，不测一个 getter
 
 SBE 的设计目标是低延迟，但最终结果取决于字段分布、Buffer、copy、Aeron offer/poll、业务校验和线程拓扑。可信实验至少拆成：
 
@@ -888,7 +900,7 @@ JMH 中应使用独立 fork、预热、消费结果，并避免把输入做成�
 
 更完整的测量方法见 [Java 低延迟到底应该怎么测](/signal-grid-blog/posts/java-low-latency-measurement/)。
 
-## 16. 运行时防线与故障策略
+### 运行时防线与故障策略
 
 协议错误不能只写日志后继续猜。建议为每个接收边界定义以下状态：
 
@@ -921,64 +933,7 @@ stateDiagram-v2
 - malformed length 不能通过扫描下一个“像 header 的字节”继续解码同一 frame；
 - Cluster log 中出现不可解码 command 属于恢复阻断，应 fail closed，而不是让各副本各自忽略。
 
-## 17. 常见反模式
-
-| 反模式 | 为什么错 | 更好的做法 |
-| --- | --- | --- |
-| “Aeron 已经有 frame，所以不需要 SBE header” | transport identity 不能选择业务 codec/version | 每条应用消息携带稳定 header 或等价 envelope |
-| template id 跟 Java enum ordinal 一起变化 | 重排 enum 就改变 wire id | 在 Schema registry 中显式分配、永久保留 id |
-| 在 root block 中间插字段 | 旧 decoder 会按旧 offset 误读 | 只在 block 尾部追加 optional field |
-| 改字段含义但不升代际 | 字节可解码，业务已经不兼容 | 新 template/字段 + 能力门控 + migration |
-| 随意扩展 composite | 官方版本机制不能安全跳过新增 composite 成员 | 新 composite 与新 template |
-| group/var-data 乱序 getter | decoder limit 已被前一段决定 | 按 Schema 顺序读取或显式 skip |
-| 保存 callback decoder 稍后再读 | Flyweight 不拥有底层字节 | 回调内处理或复制 owned data |
-| 把 `tryClaim` 当任意长度零拷贝 | 受 max payload 和 claim 生命周期约束 | 小固定消息才用，始终 commit/abort |
-| 只做同版 round-trip test | 对称 bug 与兼容断裂不可见 | golden bytes + old/new 交叉 + 跨语言 |
-| 全局关闭 bounds checks 追求速度 | 损坏输入可越界或耗尽资源 | 先量化开销，只在可信边界做受控优化 |
-| optional 字段等于业务可选 | wire 缺失策略不代表领域允许缺失 | 单独定义业务 capability 与拒绝规则 |
-| Archive 能 replay 等于协议可恢复 | 历史字节可能缺旧 codec 或 migration | 保留 schema/codecs/golden vectors 与恢复演练 |
-
-## 18. 上线检查清单
-
-### Schema 与治理
-
-- [ ] `schemaId` 在协议域内唯一，`templateId` 在 schema 内唯一且不复用；message/group/data 的 id 在各自 schema 容器中不重复并保持稳定，跨 template 复用同一 id 时仍保持同一字段语义；
-- [ ] wire `version`、artifact version、业务 feature version 分开；
-- [ ] 新 fixed field 只追加在 root/group block 尾部；
-- [ ] optional field 有 `sinceVersion`、null/default 和业务缺失策略；
-- [ ] composite/类型/含义的破坏性变化使用新 template；
-- [ ] price/quantity scale、单位、instrument metadata version 明确。
-
-### Codec 与所有权
-
-- [ ] code generation 是构建图的一部分，生成器版本固定；
-- [ ] warnings 在 CI 中作为失败；
-- [ ] 测试与预发布开启 precedence checks；
-- [ ] encoder 完整编码后才读取 `encodedLength()`；
-- [ ] group/var-data 按 Schema 顺序完整处理；
-- [ ] 回调 Buffer/Flyweight 不逃逸，跨线程数据有明确 copy；
-- [ ] `tryClaim` 所有路径都 commit 或 abort。
-
-### 边界与恢复
-
-- [ ] fragment 先完整重组再解码；
-- [ ] header、block、count、var-data、整数溢出与资源上限都校验；
-- [ ] unknown schema/template/enum 有显式、可观测策略；
-- [ ] 业务幂等键不依赖 Aeron position/session；
-- [ ] Archive/Cluster 恢复环境保留历史 codec 与 schema；
-- [ ] snapshot 兼容与 log command 兼容分别测试；
-- [ ] malformed critical command fail closed。
-
-### 兼容与发布
-
-- [ ] old/new encoder × decoder 四象限全部通过；
-- [ ] 有固定 golden bytes 和跨语言 vectors；
-- [ ] reader-first、writer-later 的 rollout 已演练；
-- [ ] 新能力由 capability/feature flag 门控；
-- [ ] 回滚版本仍能读取已产生的新消息；
-- [ ] 协议指标能定位具体 peer/template/version。
-
-## 19. 最后建立一个准确心智模型
+## 结论：SBE 的性能建立在可演进的字节合同上
 
 SBE 的价值不是“把 JSON 换成二进制”这么简单。它把消息布局从运行时猜测变成构建期合同，并让生成的 Flyweight 直接覆盖 Aeron/Agrona Buffer。代价是调用方必须尊重更严格的顺序、所有权和版本规则。
 

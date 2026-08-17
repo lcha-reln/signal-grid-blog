@@ -2,7 +2,7 @@
 title: "WAL 到底保证什么：从 Write-Ahead Rule、fsync 到崩溃恢复"
 description: "从故障模型出发，拆解 WAL 的先行写入规则与 write、force、ack 的持久化边界，讲清 ARIES 恢复、group commit、checkpoint、日志截断，以及 WAL 不负责的复制和 exactly-once。"
 date: 2026-08-17T10:30:00+08:00
-updated: 2026-08-17T16:55:00+08:00
+updated: 2026-08-17T17:45:00+08:00
 tags:
   - WAL
   - Write-Ahead Logging
@@ -28,7 +28,7 @@ WAL（Write-Ahead Logging，常译“预写日志”）真正建立的是一组�
 
 本文以 [ARIES 原论文](https://research.ibm.com/publications/aries-a-transaction-recovery-method-supporting-fine-granularity-locking-and-partial-rollbacks-using-write-ahead-logging) 解释经典事务恢复，以 [PostgreSQL 18 WAL 文档](https://www.postgresql.org/docs/18/wal-intro.html) 展示现代产品的承诺层级，再用 JDK 25 与 Linux/POSIX 的官方契约落到 Java 工程。ARIES 是一种重要算法，不是所有 WAL 产品的统一内部实现；PostgreSQL、Kafka、Raft 日志也不能彼此直接套用。
 
-## 1. 先给一个有条件的答案
+## 1. WAL 的保证从故障模型开始
 
 WAL 能保证什么？一个不偷换前提的回答是：
 
@@ -62,7 +62,7 @@ WAL 本身通常不保证：
 
 因此，“用了 WAL”不是一个完整的可靠性声明。完整声明至少要写明：**防什么故障、ACK 代表什么、恢复到哪里、哪些数据可能丢、哪些副作用需要额外协议。**
 
-## 2. 故障模型决定“持久”这个词的强度
+### 故障模型决定“持久”这个词的强度
 
 同一个字节可能依次存在于 Java 堆外缓冲、内核 page cache、控制器缓存、设备缓存和非易失介质。不同故障会清掉不同层。
 
@@ -93,9 +93,9 @@ JDK provider → OS → 文件系统 → 虚拟块设备 → RAID/控制器 → 
 
 任何一层谎报完成，应用层再严谨的 WAL 也无法凭空恢复缺失的字节。
 
-## 3. WAL 有两条核心先行规则
+## 2. 从先行规则到合法持久前缀
 
-### 3.1 规则一：日志先于脏数据页
+### WAL 规则一：日志先于脏数据页
 
 更新后的数据页覆盖持久介质中的旧页之前，能够解释这次更新、满足恢复需要的日志必须已经稳定。
 
@@ -107,7 +107,7 @@ pageLSN <= durableLSN
 
 如果页中可能含有未提交事务的修改，ARIES 至少要求相应 undo 信息先稳定。这样即使缓冲池采用 **steal**，把含有未提交修改的页提前写盘，恢复也有材料把 loser transaction 撤销。
 
-### 3.2 规则二：持久提交先于 ACK
+### WAL 规则二：持久提交先于 ACK
 
 系统向客户端返回“该事务已持久提交”之前，commit record 以及事务恢复所需的先前日志必须已经稳定：
 
@@ -141,7 +141,7 @@ sequenceDiagram
 
 若产品提供“异步提交”，它不是推翻第二条，而是明确把 ACK 降级为“逻辑完成、尚未承诺抗崩溃”。PostgreSQL 的[异步提交文档](https://www.postgresql.org/docs/18/wal-async-commit.html)说明：`synchronous_commit=off` 可能丢失近期已返回成功的事务，但恢复仍停在一个自洽的稳定 WAL 前缀；这和关闭 `fsync` 后可能破坏写入顺序、导致数据库损坏不是一回事。
 
-## 4. append、write、force 与 ACK 是四个不同状态
+### append、write、force 与 ACK 是四个不同状态
 
 很多实现把下列变量都叫 `position`，然后在代码里悄悄混用：
 
@@ -175,7 +175,7 @@ flowchart TB
 
 一个正确的日志写入器只能按**连续前缀**推进 `durableLSN`。不能因为 LSN 105 的某块先到盘，就越过不确定的 103、104 对 105 回 ACK。单写者、单一序列器和批次边界之所以常见，不只是为了性能，更是为了让这条证明足够简单。
 
-## 5. WAL 记录必须能证明“最长合法前缀”
+### WAL 记录必须能证明“最长合法前缀”
 
 日志是追加的，不代表每次追加原子。一次掉电可能留下：
 
@@ -219,7 +219,7 @@ CRC 只能帮助检测常见撕裂与损坏，不能让多 sector 写入变成�
 
 PostgreSQL 的 [`full_page_writes`](https://www.postgresql.org/docs/18/runtime-config-wal.html) 是一个典型例子：增量 WAL 不足以修复新旧混合的 torn page，所以每次 checkpoint 后页面第一次修改时会把整页映像写入 WAL。数据 checksum 负责检测，full-page image 提供重建材料；二者不能互相替代。
 
-## 6. WAL 怎样形成事务原子性
+## 3. WAL 怎样形成事务原子性
 
 “每条 frame 都完整”仍不等于“事务原子”。恢复必须知道哪些事务已经提交、哪些没有，以及失败时应 redo、undo 还是忽略。
 
@@ -246,7 +246,7 @@ COMMIT(txn-7)
 
 还要注意：操作日志里的 `balance += 5` 并不天然幂等。恢复能安全跳过已应用记录，通常依靠 LSN、pageLSN、事务状态和条件判断，而不是因为“加 5”重复执行也没关系。
 
-## 7. 为什么经典数据库选择 steal + no-force
+### 为什么经典数据库选择 steal + no-force
 
 缓冲池有两个彼此独立的策略问题：
 
@@ -274,11 +274,11 @@ flowchart TB
 
 这也是 WAL 的性能本质：它不是消灭写入，而是把提交关键路径上的许多随机数据页写，转换成较小且可批处理的顺序日志同步。数据页仍要写，只是可以被后台合并和调度。
 
-## 8. ARIES 怎样从崩溃现场恢复
+### ARIES 怎样从崩溃现场恢复
 
 [ARIES 论文](https://research.ibm.com/publications/aries-a-transaction-recovery-method-supporting-fine-granularity-locking-and-partial-rollbacks-using-write-ahead-logging)把恢复组织成 Analysis、Redo、Undo 三阶段。它是理解 WAL 闭环的最佳模型之一，但不是所有产品的统一实现；例如 PostgreSQL 主要以 REDO 恢复物理页，并由 MVCC/事务状态处理未提交版本，不能把 ARIES 的逐条 UNDO / CLR 恢复流程原样套过去。
 
-### 8.1 先认识几个 LSN
+#### 先认识几个 LSN
 
 | 名称 | 所属对象 | 回答的问题 |
 | --- | --- | --- |
@@ -291,7 +291,7 @@ flowchart TB
 
 LSN 是日志地址与恢复顺序标记，不是 wall-clock 时间，也不是跨数据库的全局业务序列号。
 
-### 8.2 Analysis：重建崩溃时的元数据
+#### Analysis：重建崩溃时的元数据
 
 Analysis 从最后一个完整 checkpoint 的记录开始扫到日志尾，重建：
 
@@ -301,7 +301,7 @@ Analysis 从最后一个完整 checkpoint 的记录开始扫到日志尾，重�
 - 每个事务的 `LastLSN` 与后续 undo 入口；
 - `RedoLSN = min(RecLSN)`，即 redo 最早可能需要检查的位置。
 
-### 8.3 Redo：repeat history，不只重做 winner
+#### Redo：repeat history，不只重做 winner
 
 ARIES 的 Redo 会“重演历史”：把崩溃前已经发生、但尚未反映在持久数据页上的更新重新做一遍，**包括 loser transaction（崩溃时尚未提交、需要回滚的事务）的更新**。prepared / in-doubt transaction 已进入两阶段提交的不确定状态，不应被当作普通 loser 自动撤销；恢复必须重建它们的状态与锁，并等待协调者给出 COMMIT 或 ABORT 决议。常见跳过条件是：
 
@@ -311,7 +311,7 @@ ARIES 的 Redo 会“重演历史”：把崩溃前已经发生、但尚未反�
 
 只有仍缺失的更新才执行。这样先还原崩溃瞬间的物理状态，随后 Undo 才能沿正确历史撤销 loser。
 
-### 8.4 Undo：撤销 loser，并写 CLR
+#### Undo：撤销 loser，并写 CLR
 
 Undo 沿各 loser transaction 的日志链逆序撤销。每完成一次补偿，就写一条 Compensation Log Record（CLR）：
 
@@ -341,13 +341,13 @@ flowchart LR
   C2 --> E["恢复重启时跳过已补偿部分"]
 ```
 
-### 8.5 pageLSN 不是魔法幂等键
+#### pageLSN 不是魔法幂等键
 
 `pageLSN >= record.LSN` 让恢复判断“这个页已经包含该更新”，所以 redo 能被安全跳过。它不代表日志操作本身天然幂等，也不代表业务副作用可重复执行。
 
 若一条日志描述“调用支付 API”或“发邮件”，页面上的 LSN 无法撤回外部世界。WAL 恢复只应直接重做它负责的持久状态；外部副作用要通过 outbox、幂等键、fencing 或可查询状态单独闭环。
 
-## 9. Checkpoint 不是 commit，也不是删除按钮
+### Checkpoint 不是 commit，也不是删除按钮
 
 checkpoint 的共同目标是建立更近的恢复起点、缩短恢复工作；具体是否把所有脏页刷盘，取决于恢复算法。
 
@@ -398,7 +398,9 @@ checkpoint、snapshot、backup 和 archive 要分开：
 | archived WAL | 把基线推进到后续时刻 | 必须配套可用基线 |
 | replica | 降低节点故障恢复时间 | 不是历史备份，错误也可能复制 |
 
-## 10. Group commit：一次 force 服务多个事务
+## 4. ACK 合同、Group Commit 与 Java 持久化边界
+
+### Group commit：一次 force 服务多个事务
 
 同步屏障往往比编码和顺序写昂贵。若每个小事务都单独 force，吞吐会受存储同步延迟限制。Group commit 把一批事务的日志连续写入，再一次 force 到批次末端：
 
@@ -435,7 +437,7 @@ PostgreSQL 的 [`commit_delay`](https://www.postgresql.org/docs/18/wal-configura
 - ENOSPC、EIO、同步超时与日志盘余量；
 - 崩溃恢复需要扫描的字节和耗时。
 
-## 11. ACK 是产品契约，不是一个固定按钮
+### ACK 是产品契约，不是一个固定按钮
 
 “提交成功”可以对应不同耐久等级。PostgreSQL 18 的 `synchronous_commit` 很适合展示这条分层：
 
@@ -463,9 +465,9 @@ EXTERNALLY_DONE 外部副作用已由独立协议确认
 
 如果业务只返回一个 `success`，文档必须明确它对应哪一层。指标、超时和重试也应围绕同一语义，否则调用方会自然把最弱的成功理解成最强的保证。
 
-## 12. Java 中的 write、force、SYNC 与 mmap
+### Java 中的 write、force、SYNC 与 mmap
 
-### 12.1 `write()` 不等于写完整，更不等于 durable
+#### `write()` 不等于写完整，更不等于 durable
 
 JDK 的 `FileChannel.write()` 返回实际写入的字节数，一次调用可能没有消费完整个 `ByteBuffer`，甚至可以返回 0。可靠实现必须循环，并对长期无进展 fail closed：
 
@@ -490,7 +492,7 @@ static void writeFully(FileChannel channel, ByteBuffer src) throws IOException {
 
 `BufferedOutputStream.flush()`、`BufferedWriter.flush()` 一类用户态 `flush()` 通常只把 Java 缓冲推给下一层；`close()` 释放资源。二者都不是 WAL 的 durable barrier，`FileChannel` 本身也没有 `flush()` 方法。Linux 还允许某些 write-back 错误延迟到后续 `fsync()` 才报告。
 
-### 12.2 `FileChannel.force()` 的精确边界
+#### `FileChannel.force()` 的精确边界
 
 [JDK 25 `FileChannel.force`](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/channels/FileChannel.html#force(boolean)) 规定：文件位于本地存储设备时，返回后，经该 channel 对文件作出的相关变化已经写到设备；非本地设备没有同样保证。
 
@@ -502,7 +504,7 @@ static void writeFully(FileChannel channel, ByteBuffer src) throws IOException {
 
 内存映射写入必须调用 [`MappedByteBuffer.force()`](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/MappedByteBuffer.html#force())。它解决 persistence，不替代多线程可见性协议；共享映射里的结构仍需要单写者、锁或 VarHandle 等并发设计。
 
-### 12.3 `SYNC` / `DSYNC` 不是事务
+#### `SYNC` / `DSYNC` 不是事务
 
 用 `StandardOpenOption.SYNC` 打开的文件，每次 write 要求同步内容与元数据；`DSYNC` 只要求内容以及后续正确读取所必需的元数据。JDK 同样把强保证限定在默认 provider 与本地设备。
 
@@ -516,7 +518,9 @@ static void writeFully(FileChannel channel, ByteBuffer src) throws IOException {
 
 WAL 常用普通 write 加批次 `force()`，因为这样能保留 group commit。是否改用 SYNC/DSYNC，要由目标文件系统上的故障测试与延迟证据决定。
 
-## 13. 一个可证明的单写者 WAL 骨架
+## 5. 从单写者 WAL 骨架到 Segment 与 Manifest
+
+### 一个可证明的单写者 WAL 骨架
 
 `FileChannel` 可以被多线程调用，不代表多线程就能安全拼一条逻辑日志。一个 frame 可能跨多次 write；不同线程若在这些调用之间交错，字节边界、LSN 顺序和 batch ACK 都难以证明。JDK 还明确说明，多进程同时用 APPEND 时单次写的原子性依文件系统而定。
 
@@ -606,7 +610,7 @@ final class WalWriter {
 
 安全动作通常是停止写入和 ACK，重启后扫描并分类损坏。只有能证明故障位于未确认的追加尾部时才截断或启新 segment；若可能触及已承诺数据，就必须 fail closed 并从冗余材料修复。
 
-## 14. Segment 与 manifest：atomic rename 仍不等于 durable
+### Segment 与 manifest：atomic rename 仍不等于 durable
 
 快照、checkpoint manifest 和 WAL segment 经常采用“临时文件写完后 rename”发布。Linux 同一文件系统内的 [`rename(2)`](https://man7.org/linux/man-pages/man2/rename.2.html) 可以原子替换目标，使并发观察者看到旧名字或新名字；Java `ATOMIC_MOVE` 则只承诺操作要么原子完成、要么抛出异常，目标已存在时究竟替换还是失败取决于 provider，必须在部署平台验证。两者都不自动证明断电后新目录项还在。
 
@@ -637,7 +641,9 @@ Linux `fsync(2)` 明确说：文件同步不会自动让包含它的目录项落
 - 删除旧 segment 同样修改目录，若正确性依赖“它一定消失”，也要同步目录；
 - 更稳健的恢复应由 manifest/epoch 判定有效集合，让多余旧文件只浪费空间而不会被误用。
 
-## 15. 本地 WAL、复制日志、备份是三个维度
+## 6. 分布式与业务保证边界
+
+### 本地 WAL、复制日志、备份是三个维度
 
 本地 `force` 回答：“这台机器的这个日志前缀，是否能跨约定的本地崩溃保存？”
 
@@ -655,7 +661,7 @@ flowchart TB
   B -. "不能直接提供在线共识" .-> Q
 ```
 
-### 15.1 WAL 不自动等于 quorum commit
+### 本地 WAL 不自动等于 quorum commit
 
 Raft 的持久状态、日志复制和多数派提交规则属于另一层协议。后面的 Raft 章节会详细解释：某条记录存在于 Leader 本地 WAL，不等于它已 committed；即使客户端超时，记录也可能在后续选举中被保留并提交，或被新的权威日志覆盖。
 
@@ -674,7 +680,7 @@ archivedPosition
 
 不要用一个 `position` 同时代表全部状态。
 
-### 15.2 WAL 不是完整备份
+### WAL 不是完整备份
 
 [PostgreSQL PITR 文档](https://www.postgresql.org/docs/18/continuous-archiving.html)要求：一个可用的 base backup，加上从该基线起连续、完整的 archived WAL。只有 WAL、没有匹配基线，通常无法从空盘重建全部数据；只有基线、没有后续 WAL，也只能恢复到基线时刻。
 
@@ -687,7 +693,7 @@ archivedPosition
 - 从备份恢复的 RTO 是否经过实测；
 - 归档损坏、缺 segment 或重复上传时能否 fail closed。
 
-## 16. WAL 为什么仍不能给出 exactly-once
+### WAL 为什么仍不能给出 exactly-once
 
 设想一个事务已经完成 `force(commitLSN)`，但进程在把成功响应送达客户端前崩溃：
 
@@ -717,7 +723,7 @@ requestId -> COMPLETED(resultHash, resultPayload)
 
 重复请求查到已完成结果时返回缓存结果，而不是再次执行状态变化。
 
-### 16.1 外部副作用要用 outbox/inbox
+#### 外部副作用要用 outbox/inbox
 
 若事务还要发 Kafka、调用支付 API 或发邮件，本地 WAL 的 commit record 无法回滚另一个系统。常见办法是把“业务状态变化”和“待发送事件”写进同一数据库事务：
 
@@ -735,7 +741,7 @@ flowchart TB
 
 这提供的是“至少一次投递 + 幂等消费”的可恢复闭环，不应偷换成任意外部世界的绝对 exactly-once。Publisher 在发送成功、标记 outbox 前仍可能崩溃，所以外部接收方必须能识别重复；若外部系统不能幂等，也要接受人工对账、补偿或更强事务协调的成本。
 
-## 17. 崩溃测试比正常单元测试更重要
+## 7. 用崩溃测试证明可恢复性
 
 只用 `kill -9` 测过，不代表断电安全。它主要验证进程退出，内核 page cache 仍可能把未 force 数据继续写盘，从而让实现显得比真实承诺更可靠。
 
@@ -745,7 +751,7 @@ flowchart TB
 2. **内核级**：强制重启或 panic，验证 page cache 丢失；
 3. **电源/设备级**：在目标硬件或可控故障平台切电，验证控制器和设备缓存。
 
-### 17.1 每个持久化边界都要能注入 crash
+### 每个持久化边界都要能注入 crash
 
 ```mermaid
 flowchart TB
@@ -773,7 +779,7 @@ flowchart TB
 - 归档缺一个 segment、重复 segment、错误 timeline；
 - 日志盘满导致不能记录 undo/CLR 的场景。
 
-### 17.2 真正要断言的是不变量
+### 真正要断言的是不变量
 
 每次故障恢复后至少验证：
 
@@ -790,43 +796,7 @@ flowchart TB
 
 用 property-based test 或确定性故障注入时，可以把每个持久化动作编号，在第 N 个动作后崩溃，遍历所有 N。这样比“随机 kill 几次看起来没坏”更接近证明。
 
-## 18. 设计评审时逐项回答
-
-### 日志与顺序
-
-- 谁唯一分配 LSN？多线程是否可能交错 frame？
-- frame 如何携带版本、长度、类型、事务、CRC 和上限？
-- 如何识别最长合法前缀，并证明可截断部分从未被 durable ACK？
-- force 失败后是否立即 fail closed？
-- `durableLSN` 是否只能按连续前缀推进？
-
-### 提交与恢复
-
-- durable ACK 精确等待什么？是否存在异步提交模式？
-- 事务是 redo-only、undo-redo、copy-on-write，还是其他模型？
-- winner 与 loser 如何识别？恢复再次崩溃怎样继续？
-- checkpoint 的语义是什么？是否强刷脏页？
-- safe truncation 同时受哪些消费者约束？
-
-### 文件系统与设备
-
-- 是否循环处理 short write？
-- 使用 `force(false)`、`force(true)`、SYNC 还是 DSYNC，为什么？
-- mmap 修改是否调用自己的 `force()`？
-- 新文件、rename、unlink 的父目录怎样持久？
-- 目标 JDK/provider、文件系统、mount、云盘和控制器是否做过断电验证？
-
-### 分布式与业务边界
-
-- 本地 durable、replicated、committed、applied 分别是什么位置？
-- 单盘、单机和机房故障分别由什么机制处理？
-- base backup 与连续 WAL 是否实际做过恢复演练？
-- 客户端结果未知时怎样用 requestId 查询或去重？
-- 外部副作用是否进入 outbox/inbox、幂等或补偿协议？
-
-只要其中一个问题回答成“应该没事”，就还没有完成 WAL 的可靠性设计。
-
-## 19. 最后再回答一次：WAL 到底保证什么
+## 8. WAL 的保证边界
 
 WAL 不是“一个永远追加的文件”，而是一份可恢复协议的证据链：
 

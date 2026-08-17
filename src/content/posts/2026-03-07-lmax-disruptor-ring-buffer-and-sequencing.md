@@ -2,7 +2,7 @@
 title: LMAX Disruptor 4：Ring Buffer、消费拓扑与 Batch Rewind
 description: 基于 Disruptor 4.0.0，从发布协议、序列协调、消费依赖和背压讲到 WaitStrategy、批处理与 Batch Rewind，并说明它何时适合替代队列、何时并不适合。
 date: 2026-03-07T10:43:08+08:00
-updated: 2026-08-17T16:55:00+08:00
+updated: 2026-08-17T17:45:00+08:00
 categories:
   - 高性能组件
 tags:
@@ -448,7 +448,7 @@ disruptor.handleEventsWith(
 
 官方 User Guide 解释了整批回滚再执行的模型；稳定版 API 应在 DSL 或 `BatchEventProcessorBuilder` 构造时传入策略。[Batch Rewind Guide](https://lmax-exchange.github.io/disruptor/user-guide/index.html#_batch_rewind) · [4.0 Disruptor DSL 源码](https://github.com/LMAX-Exchange/disruptor/blob/4.0.0/src/main/java/com/lmax/disruptor/dsl/Disruptor.java)
 
-## 9. 如何判断是否真的更快
+## 9. 怎样证明 Disruptor 在你的拓扑上更合适
 
 不要复用十多年前的“每秒多少操作”作为自己的容量结论。官方后来补充的现代吞吐测试使用 AMD EPYC 9374F、Linux 5.4.277 与 OpenJDK 11.0.24；在该环境里，结果仍明显依赖拓扑：
 
@@ -471,21 +471,9 @@ disruptor.handleEventsWith(
 - 注入突发、最慢消费者停顿、Ring Buffer 满、异常与 shutdown；
 - 和**语义等价**的有界队列、单线程事件循环或批处理实现比较。
 
-## 10. 生产检查清单
+生产证据还要覆盖运行过程，而不是只留一张基准结果：关联观察 producer cursor、叶子 consumer sequence、lag、remaining capacity、拒绝数、batch size、rewind 和 handler 延迟。关闭时先停止发布，再使用带超时的 `shutdown` 排空；否则一次看似正常的部署切换也可能丢掉仍在 Ring Buffer 中的业务。
 
-上线前逐项回答：
-
-- [ ] 业务需要多播依赖图，还是其实只需要竞争消费的工作队列？
-- [ ] `ProducerType.SINGLE` 是否由架构保证，而不是“目前看起来只有一个线程”？
-- [ ] Ring Buffer 容量能覆盖峰值突发和最慢消费者的最坏停顿吗？
-- [ ] 容量满时是等待、拒绝、有限重试还是持久化降级？
-- [ ] 每个 handler 的异常是终止、跳过、补偿还是整批重放？
-- [ ] Event 的所有字段是否每次完整覆写，引用字段是否在依赖末端清理？
-- [ ] 是否监控 producer cursor、叶子 consumer sequence、lag、remaining capacity、拒绝数、batch size、queue depth、rewind 和 handler 延迟？
-- [ ] 是否先停止发布，再使用带超时的 `shutdown` 排空？
-- [ ] WaitStrategy 是否在生产规格机器上验证过，而不是凭“BusySpin 最快”选择？
-
-## 11. 什么时候不要用
+### 什么时候不要用
 
 这些场景通常有更直接的工具：
 

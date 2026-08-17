@@ -2,7 +2,7 @@
 title: "Kafka 4.3：从分区日志、ISR 与 KRaft 到消费语义、事务和生产运维"
 description: "以 Apache Kafka 4.3.1 为基线，从 topic、partition、record batch 和复制日志出发，讲清 KRaft 元数据、Leader/ISR、高水位、生产确认、消费组再均衡、offset、事务与 exactly-once 的真实边界，以及容量、监控、升级和故障处理。"
 date: 2026-08-13T20:25:00+08:00
-updated: 2026-08-17T16:55:00+08:00
+updated: 2026-08-17T17:45:00+08:00
 tags:
   - Apache Kafka
   - KRaft
@@ -70,9 +70,9 @@ Kafka 不是：
 - 低延迟 RPC、分布式锁或协调服务；
 - 只靠副本数就能替代备份和跨区域灾备的系统。
 
-## 2. Topic、Partition、Key 与 Offset
+### Topic、Partition、Key 与 Offset
 
-### 2.1 Partition 同时是顺序、复制和并行的基本单元
+#### Partition 同时是顺序、复制和并行的基本单元
 
 一个 topic 被切分成多个 partition。每个 partition 是独立的有序日志，拥有自己的 Leader、副本集合和 offset 空间。
 
@@ -93,7 +93,7 @@ flowchart TB
 
 不要先拍脑袋创建 500 个 partition，再问 key 应该如何路由。正确顺序是：先定义业务顺序域和峰值吞吐，再决定 partition 数、key schema 与扩容路径。
 
-### 2.2 Key 不是普通标签，而是状态所有权协议
+#### Key 不是普通标签，而是状态所有权协议
 
 未显式指定 partition 时，有 key 的 record 通常按 key 选择 partition。这样相同 key 在 partition 数不变、分区逻辑不变的条件下会落到同一 partition。
 
@@ -113,7 +113,7 @@ topic + serialized key + partitioning rule + partition count
 
 业务应把“同一 key 的先后关系”“是否允许迁移”“扩 partition 后如何过渡”写进 topic contract，而不是留给 producer 默认值决定。
 
-### 2.3 Offset 是位置，不是业务序号
+#### Offset 是位置，不是业务序号
 
 offset 只在 `(topic, partition)` 内有意义。下面三个值完全不同：
 
@@ -132,9 +132,9 @@ payments-0@42
 
 如果业务必须验证“每个订单事件 1001、1002、1003 一个都不能缺”，仍要在 payload 中维护业务序列域，并使用下一章的 Gap 恢复协议。Kafka offset 无法替代它。
 
-## 3. Broker 磁盘里不是“一条消息一个文件”
+### Broker 磁盘里不是“一条消息一个文件”
 
-### 3.1 Record Batch 是端到端效率的核心
+#### Record Batch 是端到端效率的核心
 
 Producer 会把同一 partition 的多条 record 聚合成 batch。batch 在客户端压缩后，经 broker 校验并以批次形式写入日志，再以批次形式被 consumer 拉取和解压。
 
@@ -161,7 +161,7 @@ flowchart LR
 
 不要通过把 `linger.ms` 调大来掩盖 broker 过载，也不要在没有压测的情况下把 batch 和 request 上限扩大十倍。大 batch 会增加尾延迟、内存占用和失败重试成本。
 
-### 3.2 Segment、索引与 Page Cache
+#### Segment、索引与 Page Cache
 
 partition 日志由多个 segment 组成，活跃 segment 追加写，旧 segment 在滚动后成为保留、压缩和远程上传的处理单位。每个 segment 有日志文件和稀疏索引；查找 offset 时先定位 segment，再通过索引缩小扫描范围。
 
@@ -177,7 +177,7 @@ flowchart TB
 
 Kafka 大量利用顺序 I/O 和操作系统 page cache。被频繁读取的热数据通常直接从 page cache 服务；非 TLS 路径还可以利用 `sendfile` 减少文件到 socket 的用户态复制。TLS 需要在用户态处理加密，不能把“Kafka 零拷贝”理解为所有配置下都没有复制。[官方 Design](https://kafka.apache.org/43/design/design/) · [Log Implementation](https://kafka.apache.org/43/implementation/log/)
 
-### 3.3 写入 page cache 不等于任意硬件故障下都已落盘
+#### 写入 page cache 不等于任意硬件故障下都已落盘
 
 Kafka 的耐久模型依赖复制，而不是每条消息都在响应前对 Leader 磁盘做一次同步 `fsync`。[WAL 章节](/signal-grid-blog/posts/write-ahead-log-durability-and-crash-recovery/) 解释的是通用本地持久边界；这里必须再叠加 Kafka 的 ISR 与 ACK 协议。所以：
 
@@ -186,9 +186,11 @@ Kafka 的耐久模型依赖复制，而不是每条消息都在响应前对 Lead
 - 操作系统、磁盘控制器和云盘语义仍影响节点级持久性；
 - 复制保护的是在线副本故障，不是误删 topic、错误程序写坏数据或跨区域灾难。
 
-## 4. Producer 发送热路径
+## 2. 从 Producer 写入到副本提交
 
-### 4.1 `send()` 通常只是把 record 放入客户端管线
+### Producer 发送热路径
+
+#### `send()` 通常只是把 record 放入客户端管线
 
 `KafkaProducer` 是线程安全的，通常应跨业务线程共享一个实例。`send()` 会序列化 key/value、选择 partition、进入 accumulator，并由后台 Sender 线程获取 metadata、建立连接、发送批次与处理响应。
 
@@ -243,7 +245,7 @@ try (KafkaProducer<String, byte[]> producer = new KafkaProducer<>(props)) {
 
 这些参数仍必须与 topic 的 replication factor、`min.insync.replicas`、消息上限和业务超时共同评审。
 
-### 4.2 `acks=0 / 1 / all` 到底在确认什么
+#### `acks=0 / 1 / all` 到底在确认什么
 
 | `acks` | Leader 行为 | 主要风险 |
 | --- | --- | --- |
@@ -265,7 +267,7 @@ replicas placed across independent racks / zones
 
 此时可容忍一个副本暂时离开而继续写；若 ISR 低于 2，系统宁可拒绝写入，也不把单副本写入伪装成高耐久成功。这个选择牺牲一部分可用性来保护已确认数据。
 
-### 4.3 幂等 Producer 的能力边界
+#### 幂等 Producer 的能力边界
 
 Kafka 4.3 中 `enable.idempotence` 在没有冲突配置时默认启用，并要求：
 
@@ -287,9 +289,9 @@ broker 通过 producer ID、producer epoch 和 partition 内 batch sequence 去�
 
 因此 payload 仍应携带稳定的 `eventId` / `commandId`，下游仍需要业务幂等键。
 
-## 5. 数据副本：Leader、Follower、ISR、HW 与 Leader Epoch
+### 数据副本：Leader、Follower、ISR、HW 与 Leader Epoch
 
-### 5.1 一个 partition 的副本链路
+#### 一个 partition 的副本链路
 
 每个 partition 在任一时刻有一个数据 Leader。Producer 和普通 consumer 与 Leader 交互；Follower 持续向 Leader fetch 数据并追赶日志。
 
@@ -313,7 +315,7 @@ sequenceDiagram
 
 Follower 不是由 Leader 主动 push；它通过 fetch 复制。Leader 根据副本进度维护 ISR，并推进可见边界。
 
-### 5.2 四个位置不要混用
+#### 四个位置不要混用
 
 | 位置 | 含义 | 读法 |
 | --- | --- | --- |
@@ -333,7 +335,7 @@ flowchart LR
   HW --> TAIL["offset 48+<br/>not committed"]
 ```
 
-### 5.3 ISR 不是“所有配置副本”
+#### ISR 不是“所有配置副本”
 
 ISR 是当前保持同步资格的副本集合，包含 Leader。Follower 若在时间窗口内无法持续追赶，会被移出 ISR；恢复并追上后可重新加入。
 
@@ -347,7 +349,7 @@ min ISR           = acks=all 写入允许成功所需的同步副本下限
 
 只看 replication factor=3 而不看 ISR，是典型的虚假安全感。一个长期卡在 ISR=1 的三副本 topic，本质上已接近单副本运行。
 
-### 5.4 Leader Epoch 防止旧历史被当成新历史
+#### Leader Epoch 防止旧历史被当成新历史
 
 每次 Leader 变更都会关联新的 leader epoch。Follower 追赶或 consumer 恢复时，可以用 epoch 信息判断某个 offset 是否仍属于当前权威历史，并在需要时截断分叉尾部。
 
@@ -363,17 +365,17 @@ flowchart TB
 
 这也解释了为什么只保存一个裸 offset 不够完成所有一致性判断。对需要长期恢复的工具或外部 checkpoint，最好同时保存 topic ID / partition、offset、leader epoch 和业务 schema 版本。
 
-### 5.5 Unclean Leader Election 是明确的数据取舍
+#### Unclean Leader Election 是明确的数据取舍
 
 若所有 ISR 都不可用，让落后的非 ISR replica 成为 Leader 可以更快恢复可用，但它可能缺少已经确认的记录。默认应保持 unclean leader election 禁用；如果某个极端场景明确选择可用性优先，必须把潜在数据丢失写入业务 SLO，而不是把开关当普通故障恢复参数。
 
-### 5.6 Eligible Leader Replicas 不是把所有落后副本都变安全
+#### Eligible Leader Replicas 不是把所有落后副本都变安全
 
 Kafka 4.0 引入 Eligible Leader Replicas（ELR），新集群从 4.1 起默认启用。它在严格 `min.insync.replicas` 规则下追踪一组虽然不在当前 ISR、但仍可能安全接任的副本；Controller 选 Leader 时依次考虑 ISR、ELR，再在特定边界考虑最后已知 Leader。
 
 ELR 改善了某些 ISR 收缩后的恢复能力，但并没有取消 RF、min ISR、rack awareness、磁盘可靠性和 unclean election 的设计责任。启用后，`min.insync.replicas` 的集群级管理也有额外约束，升级和修改前应按官方 runbook 验证。[官方 Eligible Leader Replicas](https://kafka.apache.org/43/operations/eligible-leader-replicas/)
 
-## 6. KRaft：元数据 Quorum 与数据副本是两套协议
+### KRaft：元数据 Quorum 与数据副本是两套协议
 
 Kafka 4.3 只支持 KRaft。KRaft Controller 通过独立的 metadata quorum 管理：
 
@@ -413,7 +415,7 @@ flowchart TB
 
 三个 controller 能容忍一个 controller 故障，不代表所有 topic 自动拥有三个数据副本；反过来，topic RF=3 也不能替代 controller majority。
 
-### 6.1 生产环境分离 Controller 与 Broker
+#### 生产环境分离 Controller 与 Broker
 
 KRaft 用 `process.roles` 指定 `broker`、`controller` 或组合模式。组合进程便于开发环境，但官方不建议关键生产部署使用，因为 controller 无法与数据流量独立扩缩、滚动和隔离资源。
 
@@ -428,7 +430,7 @@ controller.quorum.bootstrap.servers=controller-1:9093,controller-2:9093,controll
 
 Kafka 4.1+ 支持 dynamic controller quorum（KRaft feature level 1）；它使用 `controller.quorum.bootstrap.servers` 发现 quorum，并可通过工具安全增删 controller。旧 static quorum 仍使用 `controller.quorum.voters`。两种模式不能凭配置片段猜，应先用 `kafka-features.sh --bootstrap-controller ... describe` 确认 `kraft.version`。[官方 KRaft Operations](https://kafka.apache.org/43/operations/kraft/)
 
-### 6.2 Metadata Snapshot 不是业务数据备份
+#### Metadata Snapshot 不是业务数据备份
 
 KRaft metadata log 与 snapshot 保存的是集群元数据状态，不包含所有 topic record。即使 metadata quorum 健康，broker 数据盘误删仍会丢业务记录；即使 topic 副本健康，误删 topic 的元数据操作也会传播到集群。
 
@@ -440,9 +442,11 @@ KRaft metadata log 与 snapshot 保存的是集群元数据状态，不包含所
 - 应用发布错误写入大量坏事件；
 - 区域级故障和跨集群恢复。
 
-## 7. Consumer：位置、拉取与处理循环
+## 3. 从 Consumer 位置到处理原子性
 
-### 7.1 Consumer 是 Pull 模型
+### Consumer：位置、拉取与处理循环
+
+#### Consumer 是 Pull 模型
 
 Consumer 向 partition Leader 发 FetchRequest，并携带希望从哪个 offset 开始读取。Broker 可以长轮询等待更多数据，以避免无数据时忙循环，同时利用批量传输提高效率。
 
@@ -469,7 +473,7 @@ next record to process   = 42
 committed offset         = 42
 ```
 
-### 7.2 `KafkaConsumer` 不是多线程共享对象
+#### `KafkaConsumer` 不是多线程共享对象
 
 除 `wakeup()` 等明确例外外，`KafkaConsumer` 不是线程安全的。常见安全模型有两种：
 
@@ -490,7 +494,7 @@ flowchart LR
   PAUSE -->|"drained"| RESUME["resume partition"]
 ```
 
-### 7.3 手动提交的最小安全循环
+#### 手动提交的最小安全循环
 
 同步处理、at-least-once 的基础写法：
 
@@ -516,7 +520,7 @@ while (running) {
 
 它仍有一个明确窗口：业务已处理、offset 尚未提交时进程崩溃，重启后会重复处理。因此 `processIdempotently` 不是装饰词；若副作用在数据库，应使用唯一业务键、inbox 表或同库事务把处理结果和消费 checkpoint 一起提交。这个循环还要求 `enable.auto.commit=false`，否则自动提交会建立另一条与业务完成无关的 checkpoint 路径。
 
-### 7.4 Auto Commit 不是自动 exactly-once
+#### Auto Commit 不是自动 exactly-once
 
 `enable.auto.commit=true` 只让客户端周期性提交消费位置。它不知道：
 
@@ -528,9 +532,9 @@ while (running) {
 
 简单日志打印可以接受 auto commit；有状态或有副作用的 consumer 应显式定义提交边界。
 
-## 8. Consumer Group 与再均衡
+### Consumer Group 与再均衡
 
-### 8.1 Group 在做的是 Partition Ownership 转移
+#### Group 在做的是 Partition Ownership 转移
 
 同一 consumer group 内，每个 partition 同一时刻分配给一个普通 consumer。不同 group 彼此独立。
 
@@ -552,7 +556,7 @@ flowchart TB
 
 当成员加入、离开、超时，订阅 topic 的 partition 变化，或 group 协议需要更新 assignment 时，会发生再均衡。再均衡不是纯粹的负载均衡动画，而是有状态所有权转移：旧 owner 必须停止、提交安全位置、交出分区；新 owner 从 committed offset 恢复。
 
-### 8.2 Classic 与新 Consumer Protocol
+#### Classic 与新 Consumer Protocol
 
 Kafka 4.0 起，KIP-848 新一代 Consumer Rebalance Protocol 已 GA。Broker 端默认具备能力，但 Kafka 4.3 client 仍需显式设置：
 
@@ -585,7 +589,7 @@ flowchart TB
 
 Classic 也不等于永远“全停式”再均衡：它可以使用 `CooperativeStickyAssignor` 做增量式迁移。Kafka 4.3 的 classic 默认 assignor 列表仍把 `RangeAssignor` 放在前面，实际默认行为不会仅因列表里同时存在 cooperative assignor 就自动变成 cooperative；迁移时需要按官方方式滚动调整 assignor。新 Consumer protocol 的 fully incremental 模型则是协议本身的能力，二者不要混为一谈。
 
-### 8.3 Static Membership 只减少无谓迁移，不是永久租约
+#### Static Membership 只减少无谓迁移，不是永久租约
 
 配置稳定唯一的 `group.instance.id` 可以让短暂重启保留成员身份，减少大量 state 迁移。但它不意味着：
 
@@ -596,7 +600,7 @@ Classic 也不等于永远“全停式”再均衡：它可以使用 `Cooperativ
 
 部署系统必须确保 instance ID 与实例身份稳定绑定，并处理重复实例被 fence 的错误。
 
-### 8.4 `max.poll.interval.ms` 保护的是应用活性
+#### `max.poll.interval.ms` 保护的是应用活性
 
 若应用过久不调用 `poll()`，coordinator 会认为它无法继续可靠处理 assignment，并触发所有权转移。简单把 `max.poll.interval.ms` 调成一小时，只是让故障发现变慢。
 
@@ -608,7 +612,7 @@ Classic 也不等于永远“全停式”再均衡：它可以使用 `Cooperativ
 - 在 revoke 时停止接收新任务、等待有界 drain、提交连续完成位置；
 - 超过 drain 预算就放弃未完成任务，让新 owner 重放。
 
-## 9. 从 Offset 提交推导投递语义
+### 从 Offset 提交推导投递语义
 
 Kafka 的 producer 耐久性和 consumer 处理语义是两个问题。不能因为 producer 幂等，就宣布整个链路 exactly-once。
 
@@ -629,15 +633,15 @@ flowchart TB
 
 网络超时还有“结果未知”：producer 或 consumer 发出请求后连接断开，不能仅凭客户端没收到响应推断服务端没执行。重试必须是协议的一部分。
 
-## 10. Kafka Transaction 与 Exactly-Once 的真实边界
+### Kafka Transaction 与 Exactly-Once 的真实边界
 
-### 10.1 Idempotence 与 Transaction 不是一回事
+#### Idempotence 与 Transaction 不是一回事
 
 幂等 producer 解决单 producer session 内自动重试的重复批次；transaction 则把多个 partition 的输出和消费 offset 组成一个原子提交单元。
 
 配置稳定、唯一的 `transactional.id` 后，producer 获得跨 session 的事务身份。新实例初始化相同 transactional ID 时会 fence 旧 producer，防止两个实例同时提交同一身份的事务。
 
-### 10.2 Consume → Transform → Produce 的原子链路
+#### Consume → Transform → Produce 的原子链路
 
 ```mermaid
 sequenceDiagram
@@ -691,7 +695,7 @@ isolation.level=read_committed
 
 否则 `read_uncommitted` consumer 仍会看到被 abort 的事务记录。
 
-### 10.3 LSO 与长事务
+#### LSO 与长事务
 
 `read_committed` 按 offset 顺序返回。若 offset 42 属于未完成事务，即使 43–100 的其他记录已经复制，consumer 也不能越过它；LSO 会停在第一个 open transaction 位置。这会让“复制正常但 read_committed lag 上升”。
 
@@ -705,7 +709,7 @@ isolation.level=read_committed
 
 不要用超长 transaction 包住几分钟的外部 HTTP 调用。
 
-### 10.4 Exactly-Once 只覆盖 Kafka 管理的原子边界
+#### Exactly-Once 只覆盖 Kafka 管理的原子边界
 
 Kafka transaction 可以原子地：
 
@@ -728,9 +732,11 @@ Kafka transaction 可以原子地：
 
 Kafka 4.0 起的 Transactions Server-Side Defense 会强化 producer epoch 与事务边界，但它仍不会把外部数据库拉入 Kafka transaction。[官方 Transaction Protocol](https://kafka.apache.org/43/operations/transaction-protocol/) · [官方 Design：Using Transactions](https://kafka.apache.org/43/design/design/#using-transactions)
 
-## 11. Retention 与 Log Compaction 是两种不同问题
+## 4. 日志生命周期与接口演进
 
-### 11.1 Delete Policy：按时间或空间回收历史
+### Retention 与 Log Compaction 是两种不同问题
+
+#### Delete Policy：按时间或空间回收历史
 
 `cleanup.policy=delete` 根据保留时间或空间预算让旧 segment 进入删除流程。要注意：
 
@@ -740,7 +746,7 @@ Kafka 4.0 起的 Transactions Server-Side Defense 会强化 producer epoch 与�
 - 落后超过保留窗口会遇到 offset out of range；
 - retention 是容量策略，不是合规级不可恢复删除证明。
 
-### 11.2 Compaction：按 Key 保留较新的状态
+#### Compaction：按 Key 保留较新的状态
 
 `cleanup.policy=compact` 让后台 cleaner 删除同一 key 的旧值，但保持剩余记录的相对顺序与原 offset。
 
@@ -758,19 +764,19 @@ flowchart TB
 
 压缩不会把 offset 重新编号。consumer 从 offset 10 读取时，可能直接拿到 11 或更高位置，因此 offset 不能假设连续。
 
-### 11.3 Tombstone 与删除语义
+#### Tombstone 与删除语义
 
 key 非空、value 为 `null` 的 record 是 tombstone。Cleaner 会删除该 key 的旧值，tombstone 自身在 `delete.retention.ms` 后也可被清理。
 
 这意味着重建完整状态的 consumer 必须在 tombstone 保留窗口内追到日志头，否则它可能只看到“没有这个 key”，却不知道这是从未存在还是已经删除。对长时间离线的缓存重建，需评估 tombstone 保留、快照和 bootstrap 方案。
 
-### 11.4 `compact,delete` 是组合策略
+#### `compact,delete` 是组合策略
 
 组合策略同时按 key 压缩、按整体保留预算删除旧 segment。它不是“永远保留每个 key 的最终值”；delete retention 仍可能把整段历史移除。
 
 官方保证的核心是：compaction 不重排剩余记录、不改变 offset，且及时跟上 head 的 consumer 能看到写入流；它不是立即发生，也不是数据库唯一约束。[官方 Log Compaction](https://kafka.apache.org/43/design/design/#log_compaction)
 
-## 12. Tiered Storage：本地热层与远程历史层
+### Tiered Storage：本地热层与远程历史层
 
 Tiered Storage 将已关闭 segment 上传到远程存储，使 broker 本地磁盘主要保留热数据，历史 fetch 可从远程层读取。
 
@@ -795,7 +801,7 @@ Kafka 4.3 的重要边界：
 
 Tiered Storage 减少本地历史容量压力，但不是备份：删除 topic、错误 retention 或控制面操作仍可能驱动远程对象被删除。灾备必须独立设计。[官方 Tiered Storage](https://kafka.apache.org/43/operations/tiered-storage/)
 
-## 13. Share Group：Kafka 4.3 的工作队列式消费模型
+### Share Group：Kafka 4.3 的工作队列式消费模型
 
 传统 consumer group 以 partition 为所有权单位，适合需要 partition 顺序和状态局部性的处理。Share Group 则允许同一 partition 的 record 被多个 share consumer 协作处理，消费者数可以超过 partition 数。
 
@@ -829,7 +835,7 @@ Broker 会记录 delivery attempt，并用每 partition 的 record lock 上限�
 
 还要明确三条限制：Share Group 不提供普通 consumer group 的严格 partition 独占与完成顺序；它不支持把 record acknowledgement 放进 producer transaction，因此不能直接套用 Kafka EOS；它也不提供 static membership。Share Group 的 `read_committed` / `read_uncommitted` 是 group 级读取选择，默认仍是 `read_uncommitted`，open transaction 同样可能压住可见边界。
 
-## 14. Schema、Topic Contract 与可演进性
+### Schema、Topic Contract 与可演进性
 
 Kafka 只保存 bytes 和少量 record metadata，不知道 JSON 字段是否兼容。一个可运维 topic 至少应明确：
 
@@ -850,9 +856,11 @@ Kafka 只保存 bytes 和少量 record metadata，不知道 JSON 字段是否兼
 
 不要把 schema version 只放在一个会被中间系统丢弃的 header 中；权威 decoder 应能从 payload envelope 或注册中心 ID 判断格式。
 
-## 15. 容量与性能：从瓶颈方程开始
+## 5. 容量、安全与协议健康
 
-### 15.1 Partition 数不是越多越好
+### 容量与性能：从瓶颈方程开始
+
+#### Partition 数不是越多越好
 
 粗略下限可以从吞吐与并行度估算：
 
@@ -872,7 +880,7 @@ partitions >= max(
 - 更长的故障恢复与运维操作时间；
 - 更难均匀的热点分布。
 
-### 15.2 磁盘和网络不是只算 Producer 流量
+#### 磁盘和网络不是只算 Producer 流量
 
 假设入口压缩后为 `W` bytes/s、RF 为 `R`、有 `G` 个全量 consumer group，粗略集群流量至少包含：
 
@@ -885,7 +893,7 @@ retention storage per day  ≈ W × 86400 × R
 
 还未包含重新分配、落后副本追赶、远程上传/回读、压缩重写和协议开销。容量规划应使用压测后的压缩比、峰值系数与恢复带宽，而不是平均业务 payload 大小。
 
-### 15.3 Consumer Lag 要换算成时间和恢复能力
+#### Consumer Lag 要换算成时间和恢复能力
 
 `lag=1,000,000` 单独没有意义。100 万条每条 100B 与每条 1MB 完全不同。应至少同时看：
 
@@ -899,7 +907,7 @@ estimated recovery time = backlog bytes ÷ positive catch-up bytes/s
 
 如果持续消费能力不高于持续入口速率，任何有限 backlog 最终都会增长，扩大 retention 只能推迟故障。
 
-### 15.4 调优顺序
+#### 调优顺序
 
 建议按以下证据链调优：
 
@@ -910,7 +918,7 @@ estimated recovery time = backlog bytes ÷ positive catch-up bytes/s
 5. 检查 consumer 单条处理、GC、外部依赖和 pause/resume；
 6. 最后再增加 partition、broker 或调整线程与缓存。
 
-## 16. 安全与多租户不是一个 `SASL_SSL` 就结束
+### 安全与多租户不是一个 `SASL_SSL` 就结束
 
 Kafka 安全要分三层：
 
@@ -941,9 +949,9 @@ flowchart LR
 
 Kafka 支持带宽和 request-rate quota。多租户集群应按 user/client-id 设计配额、topic namespace、ACL 模板和紧急限流，而不是等事故发生再全局降速。[官方 Security Overview](https://kafka.apache.org/43/security/security-overview/) · [Quotas Design](https://kafka.apache.org/43/design/design/#quotas)
 
-## 17. 生产监控：从“服务活着”升级到“日志仍可恢复”
+### 生产监控：从“服务活着”升级到“日志仍可恢复”
 
-### 17.1 Cluster 与 Controller
+#### Cluster 与 Controller
 
 至少监控：
 
@@ -954,7 +962,7 @@ Kafka 支持带宽和 request-rate quota。多租户集群应按 user/client-id 
 - offline partition、leader election、unclean election；
 - controller quorum 是否仍有多数。
 
-### 17.2 Data Replication
+#### Data Replication
 
 至少监控：
 
@@ -981,7 +989,7 @@ flowchart TB
   T --> T1["abort, fence, LSO-HW gap"]
 ```
 
-### 17.3 Producer 与 Consumer
+#### Producer 与 Consumer
 
 Producer：
 
@@ -1003,9 +1011,9 @@ Consumer：
 
 官方 JMX remote 默认未启用；若通过环境变量启用，不能沿用无认证的开发配置暴露到不可信网络。[官方 Monitoring](https://kafka.apache.org/43/operations/monitoring/)
 
-## 18. 故障诊断：按症状追因果
+### 故障诊断：按症状追因果
 
-### 18.1 Producer 出现超时
+#### Producer 出现超时
 
 检查顺序：
 
@@ -1018,7 +1026,7 @@ Consumer：
 
 不要看到 timeout 就无限重试。无限重试会把 broker 故障变成 producer 内存和上游线程池故障。
 
-### 18.2 Consumer Lag 只在部分 Partition 增长
+#### Consumer Lag 只在部分 Partition 增长
 
 优先怀疑：
 
@@ -1029,7 +1037,7 @@ Consumer：
 - 异步处理只按全局队列限流，没有按 partition pause；
 - transaction LSO 被 open transaction 卡住。
 
-### 18.3 ISR 反复 Shrink / Expand
+#### ISR 反复 Shrink / Expand
 
 可能原因包括：
 
@@ -1042,9 +1050,11 @@ Consumer：
 
 先找无法持续追赶的资源瓶颈，不要第一时间放宽 replica lag 阈值把问题隐藏在 ISR 里。
 
-## 19. 变更、扩容与升级 Runbook
+## 6. 变更与跨集群恢复
 
-### 19.1 Topic 变更
+### 变更、扩容与升级 Runbook
+
+#### Topic 变更
 
 增加 partition 前必须回答：
 
@@ -1055,7 +1065,7 @@ Consumer：
 
 replication factor 和 replica placement 变更要用 reassignment 工具，并设置合理 throttle。完成后及时验证并移除 throttle；若 throttle 低于持续写入速率，迁移可能永远追不上。
 
-### 19.2 Broker 滚动升级
+#### Broker 滚动升级
 
 Kafka 4.3 的基本顺序是：
 
@@ -1071,11 +1081,11 @@ flowchart LR
 
 4.3 只支持 KRaft，ZooKeeper-mode cluster 必须先迁移。滚动升级二进制后，不要立即 finalize feature level；先验证控制面、生产消费、事务、Connect/Streams 和第三方 client。4.3 的 metadata 变更意味着 finalize 后不能简单假设可降级。[官方 Upgrade Guide](https://kafka.apache.org/43/getting-started/upgrade/)
 
-### 19.3 Java 版本
+#### Java 版本
 
 Kafka 4.3 对 Java 17、21、25 有完整支持，Java 11 仅适用于部分 client/Streams 场景；broker/controller 不应继续按旧教程停留在 Java 11。升级 JDK 要单独观察 TLS provider、GC、direct/native memory 和 startup flags。[官方 Java Version](https://kafka.apache.org/43/operations/java-version/)
 
-## 20. 跨集群灾备：复制不是备份
+### 跨集群灾备：复制不是备份
 
 MirrorMaker 2 等跨集群复制可以异步镜像 topic、配置和消费位点映射，适合区域灾备和数据分发。但它通常不是同步共识：
 
@@ -1103,49 +1113,7 @@ flowchart LR
 
 [官方 Geo-Replication](https://kafka.apache.org/43/operations/geo-replication-cross-cluster-data-mirroring/)
 
-## 21. 一套可落地的设计检查表
-
-### 数据与顺序
-
-- [ ] 每个 topic 的业务语义、owner 和 schema 明确；
-- [ ] key 与 partition 是按业务顺序域设计，而不是随手选字段；
-- [ ] 明确没有跨 partition 总序；
-- [ ] 业务连续性需要时，payload 有独立 sequence 与 epoch；
-- [ ] 增加 partition 的迁移方案经过演练。
-
-### 生产与复制
-
-- [ ] RF、min ISR、acks、idempotence 与 rack placement 联合评审；
-- [ ] 业务重试携带稳定 eventId；
-- [ ] unclean leader election 的取舍明确；
-- [ ] ISR、under-min-ISR 和磁盘故障有告警；
-- [ ] 结果未知有幂等与对账流程。
-
-### 消费与副作用
-
-- [ ] 提交的是下一条待处理 offset；
-- [ ] poll、worker、pause/resume 和 revoke 有明确协议；
-- [ ] 选择 classic 或 consumer protocol，并验证迁移；
-- [ ] 数据库等外部副作用有 inbox/outbox/幂等；
-- [ ] poison record 有有界重试、隔离和人工恢复流程。
-
-### 保留与恢复
-
-- [ ] retention 大于最坏停机与重放时间；
-- [ ] compacted topic 定义 tombstone 和 bootstrap；
-- [ ] Tiered Storage 插件、远程成本和限制已验证；
-- [ ] 跨集群 RPO/RTO、fencing、offset 切换经过演练；
-- [ ] 复制与备份被当成两个不同能力。
-
-### 运维与安全
-
-- [ ] controller 与 broker 在生产隔离角色；
-- [ ] TLS、认证、ACL、quota 分层配置；
-- [ ] JMX 与管理工具只在受控网络开放；
-- [ ] upgrade 在 finalize feature level 前有观察窗口；
-- [ ] 恢复演练覆盖 broker、disk、controller、AZ、误删和坏发布。
-
-## 22. 最后把整条因果链串起来
+## 7. 最后把整条因果链串起来
 
 ```mermaid
 flowchart LR

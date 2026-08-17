@@ -2,7 +2,7 @@
 title: Aeron Archive：把实时流变成可定位的历史——架构、控制会话与录制生命周期
 description: 基于 Aeron 1.52.2，从四条通信路径、控制会话、ID 命名空间和绝对 position 入手，完整拆解录制的创建、发现、停止与运行时观测。
 date: 2026-08-13T10:00:00+08:00
-updated: 2026-08-13T10:00:00+08:00
+updated: 2026-08-17T17:45:00+08:00
 tags:
   - Aeron
   - Aeron Archive
@@ -26,7 +26,9 @@ Aeron Transport 解决的是“现在怎样把帧送过去”；Aeron Archive �
 
 本文以 **Aeron 1.52.2** 为基线。先建立 Archive 的坐标系和生命周期；磁盘格式、Replay、Replication 与运维分别留给后续章节。
 
-## 1. Archive 在系统里增加了什么
+## Archive 先把实时流变成可寻址的录制对象
+
+### Archive 在系统里增加了什么
 
 一个最小 Archive 系统至少有三类角色：发布业务流的应用、Media Driver，以及 Archive 进程中的 Recorder / Replayer。应用侧的 `AeronArchive` 不是存储引擎，它是控制客户端。
 
@@ -51,7 +53,7 @@ Recorder 订阅目标 stream，并把收到的帧复制到 segment 文件；Repl
 
 录制和重放都有独立的 Aeron 数据路径，也都有连接建立、流控、线程调度和超时。
 
-## 2. 四条通信路径必须分别配置
+### 四条通信路径必须分别配置
 
 一次完整交互不是只有一个 `controlChannel`。逻辑上至少有四条路径：
 
@@ -81,7 +83,7 @@ sequenceDiagram
 
 录制事件若要动态增加多个观察者，应使用适合的 MDC 或 multicast 设计，而不是假设一个静态 unicast channel 会自动广播。
 
-## 3. 先分清六种 ID
+### 先分清六种 ID
 
 Archive API 中最危险的错误，通常不是算法，而是把一个 `long` 当成了另一个 `long`。
 
@@ -110,7 +112,7 @@ flowchart TD
 
 一个不带 `session-id` 的 recording subscription 可以先后匹配多个 Image；每个 Image 都会得到独立 `recordingId`。所以它们本来就不可能是同一个值。
 
-### 3.1 怎样从 subscription 找到 recordingId
+#### 怎样从 subscription 找到 recordingId
 
 控制应答返回 subscription ID 后，真正的 Image 可能还没出现。生产代码应等待 `RecordingSignal.START`，或在 counters 中找到匹配的 `RecordingPos`：
 
@@ -127,11 +129,11 @@ final long recordingSubscriptionId = archive.startRecording(
 
 如果 Publication 还没连接，立即调用 `listRecordings` 并假定最后一个就是自己的 recording，会产生竞态。并发启动多个录制时，这种“取最大 ID”尤其危险。
 
-## 4. Channel、stream 与 session 怎样决定录谁
+### Channel、stream 与 session 怎样决定录谁
 
 Archive 的 recording subscription 仍遵守 Aeron 的匹配规则。
 
-### 4.1 wildcard 与 session-specific
+#### wildcard 与 session-specific
 
 不带 `session-id` 的 channel 相当于“录制这个 channel / stream 上匹配的每个 Image”。后来的新 session 也可能被录下，并形成新的 recording。
 
@@ -146,7 +148,7 @@ Archive 的 recording subscription 仍遵守 Aeron 的匹配规则。
 
 这不是去重失败，而是两次明确订阅。
 
-### 4.2 LOCAL 与 REMOTE 不是“机器距离”标签
+#### LOCAL 与 REMOTE 不是“机器距离”标签
 
 `SourceLocation.LOCAL` 对 UDP channel 使用 spy subscription，从同一 Media Driver 的网络 Publication 本地旁路读取；`REMOTE` 使用普通 Subscription。IPC 不需要 spy 前缀。
 
@@ -161,13 +163,15 @@ try (ExclusivePublication publication =
 
 `addRecordedPublication` / `addRecordedExclusivePublication` 是便捷 API：它们先创建 Publication，再为其 session-specific channel 启动录制。前者只接受该 channel / stream 的第一个 original Publication；想明确单写者语义，通常直接选 ExclusivePublication。
 
-### 4.3 spy 连接语义
+#### spy 连接语义
 
 本地 UDP Publication 只有 spy 而没有网络订阅者时，是否视为 connected 取决于 Media Driver 的 `spiesSimulateConnection`。示例常设置为 `true`，这是拓扑选择，不是 Archive 的持久化保证。
 
 IPC Publication 被 Archive 的 IPC Subscription 匹配后即可连接，不受这个 UDP spy 选项控制。
 
-## 5. 一次录制从请求到真正写入
+## 一次录制怎样从请求推进到可观察状态
+
+### 一次录制从请求到真正写入
 
 把启动过程拆成状态机，就不会把控制成功当成录制成功。
 
@@ -192,7 +196,7 @@ stateDiagram-v2
 5. 文件系统在故障后可恢复：取决于 sync 策略、硬件与操作系统，不等于第 3 点；
 6. 业务消费者持久化 checkpoint：这是应用自己的边界。
 
-### 5.1 autoStop 的真实含义
+#### autoStop 的真实含义
 
 `autoStop=true` 时，匹配 Image 到 EOS 或关闭后，Archive 不但停止 recording，还移除对应 recording subscription。因此这个订阅不会等下一次同 channel / stream 的 session。
 
@@ -200,7 +204,7 @@ stateDiagram-v2
 
 所以 autoStop 不是“异常时帮我停止”，而是决定 subscription 是否跨 Image 存活。
 
-## 6. Position 是字节坐标，不是消息序号
+### Position 是字节坐标，不是消息序号
 
 Aeron position 是 stream 中的绝对字节位置，包含 frame header、对齐和 padding。它不是 payload 字节累计，也不是“第 N 条消息”。
 
@@ -218,7 +222,7 @@ flowchart LR
 
 消息可能被 Aeron 分片。直接处理 fragments 时，checkpoint 必须服从 fragment 边界和业务原子性；使用 assembler 后，也要理解回调给出的 assembled header 语义。不能用业务 payload 长度自己推算下一个 position。
 
-## 7. 用 RecordingPos 观察主动录制
+### 用 RecordingPos 观察主动录制
 
 `RecordingPos` 是 Aeron counters 中的 Archive recording position，counter type ID 为 `100`，标签通常以 `rec-pos` 开头。key 中包含 recordingId、source sessionId、source identity 与 archiveId。
 
@@ -235,13 +239,15 @@ flowchart LR
 
 `getMaxRecordedPosition` 很适合“不关心当前是否活跃，只要最新可读上界”的控制逻辑。它从 1.44.0 起可用；跨 Archive 共用 counters 时，还应使用带 archiveId 的 `RecordingPos.findCounterIdByRecording(...)` 变体，避免命中别的 Archive。
 
-### 7.1 RecordingPos 到底证明了什么
+#### RecordingPos 到底证明了什么
 
 Recorder 完成 block write 后才推进 counter；如果 `fileSyncLevel > 0`，相应 `force(...)` 发生在 position 更新前。但默认 sync level 为 0，此时 position 只说明数据已复制到操作系统页缓存附近的边界，**不说明掉电后一定存在于稳定介质**。
 
 这条区别会在下一章详细展开。应用若用 RecordingPos 决定向上游确认，必须先写出自己的故障模型：只防进程崩溃，还是也防主机断电、控制器缓存丢失和存储损坏。
 
-## 8. 停止录制：停止哪个对象
+## 停止、查询与线程所有权怎样闭合生命周期
+
+### 停止录制：停止哪个对象
 
 同一 API 提供多种停止方式，因为调用者掌握的身份不同：
 
@@ -271,7 +277,7 @@ sequenceDiagram
   Archive-->>App: final absolute position
 ```
 
-## 9. Catalog 查询不是“数组下标分页”
+### Catalog 查询不是“数组下标分页”
 
 Archive 提供：
 
@@ -305,7 +311,7 @@ while (true)
 
 Listing consumer 在 `AeronArchive` 的同步调用内部执行。**不要从 consumer 回调重入同一个 `AeronArchive` 实例。** 先收集必要字段，退出回调后再发下一条控制请求。
 
-## 10. Client 的线程与存活约束
+### Client 的线程与存活约束
 
 `AeronArchive` 默认用 `ReentrantLock`，因此公开调用可由多线程串行进入；这不意味着所有组合都适合任意并发，也不允许回调重入。只有确定单线程所有权时才可配置 `NoOpLock`。
 
@@ -328,7 +334,9 @@ flowchart LR
 
 从 1.49.0 起，命名 Archive client 会得到 type ID `113` 的 per-client control-session counter，有助于把一个控制会话对应到具体服务实例。
 
-## 11. 最小可用的录制闭环
+## 用最小闭环证明录制可以恢复
+
+### 最小可用的录制闭环
 
 下面不是可直接复制的完整服务，而是一条正确的控制顺序：
 
@@ -354,30 +362,11 @@ try (AeronArchive archive = AeronArchive.connect(archiveCtx))
 
 Context 在没有传入现成 `Aeron` 时会自己创建并拥有它；传入共享实例时，所有权与关闭顺序必须显式设计。不要让 Archive client 关闭仍被业务 Publication 使用的 Aeron client。
 
-## 12. 生产前的录制审查表
+一条录制闭环必须同时留下三类证据：匹配证据记录 channel、stream、source session 与 LOCAL/REMOTE 拓扑；完成证据区分控制 OK、START signal、RecordingPos、STOP 与业务 checkpoint；恢复证据持久化 recordingId、start/stop position、Schema 版本和 sync policy。`startRecording` 返回值必须按 `recordingSubscriptionId` 保存，不能冒充 recordingId。
 
-### 身份与匹配
+这些证据由单一 owner 持续消费 control signals 和异步错误，并把 RecordingPos 停滞、Archive error counter 与磁盘余量放进同一观测面。这样“录制已启动”“字节已推进”“进程崩溃后可恢复”才不会被压成一个含糊的绿色状态。
 
-- 是否把 `startRecording` 返回值命名成 `recordingSubscriptionId`？
-- recordingId 从哪个确定事件获得？
-- channel 是否需要锁定 `session-id`？
-- 是否存在 wildcard 与 session-specific 双重匹配？
-- LOCAL spy 与 REMOTE Subscription 是否符合实际拓扑？
-
-### 完成与持久性
-
-- 控制 OK、START、RecordingPos、STOP、业务 checkpoint 分别由谁确认？
-- sync level 为 0 时，系统承诺是否只覆盖进程崩溃？
-- stop 后是否持久化 recordingId、start/stop position 与业务 schema 版本？
-
-### 线程与运维
-
-- 谁独占或串行化 `AeronArchive` client？
-- callbacks 是否避免重入？
-- 是否持续消费 control signals / errors？
-- 是否监控 RecordingPos 停滞、Archive error counter 与磁盘余量？
-
-## 13. 本章结论
+## 结论：Archive 只有同时固定身份、位置与终态才算可恢复
 
 Archive 的核心不是“把 UDP 包写进文件”，而是建立三个可连接的坐标系：
 

@@ -2,7 +2,7 @@
 title: Aeron Transport：Subscription、poll 与消息重组
 description: 深入 Aeron 1.52.2 接收热路径，讲清 Subscription 与 Image 的线程所有权、poll duty cycle、回调内存、fragmentation、FragmentAssembler 与 controlledPoll 的提交语义。
 date: 2026-08-13T09:30:00+08:00
-updated: 2026-08-17T16:55:00+08:00
+updated: 2026-08-17T17:45:00+08:00
 tags:
   - Aeron
   - Aeron Transport
@@ -27,7 +27,9 @@ subscription.poll(fragmentHandler, fragmentLimit);
 
 本文以 **Aeron 1.52.2** 源码与 Javadoc 为基线，从 Image 的 position 推进机制解释这些边界。发送侧的 term、MTU 和 `offer` 见 [Transport 第 3 篇：Publication、Log Buffer 与发送热路径](/signal-grid-blog/posts/aeron-transport-publication-log-buffer-offer-try-claim/)。
 
-## 1. Subscription 聚合 Image，不拥有一条全局日志
+## Subscription 的所有权从主动轮询开始
+
+### Subscription 聚合 Image，不拥有一条全局日志
 
 一个 Subscription 匹配 channel + stream，下方可以同时有多幅 Image：
 
@@ -52,7 +54,7 @@ flowchart LR
 
 Subscription 的 `poll` 会从一个轮转起点遍历 Image，尽量避免每次总从第一幅开始。它提供跨 Image 的轮询公平性，不提供跨 session 全局顺序。
 
-### 1.1 Subscription 和 Image 都不是线程安全对象
+#### Subscription 和 Image 都不是线程安全对象
 
 Aeron 1.52.2 Javadoc 对 `Subscription` 和 `Image` 的并发契约很明确：它们不应由多个线程并发 poll。典型所有权是：
 
@@ -70,7 +72,7 @@ flowchart TB
 
 如果多个 worker 都要处理数据，可让一个 poller 解码后分片到有界队列；但这会引入复制、重新排序、队列背压与生命周期管理。不能让多个线程同时 poll 同一个 Subscription，指望它自动成为竞争消费者。
 
-### 1.2 多个 Subscription 是广播，不是抢任务
+#### 多个 Subscription 是广播，不是抢任务
 
 同一个 driver 内创建两个匹配的 Subscription，它们各有自己的 subscriber position，都能看到 Publication 的消息。较慢的 tethered Subscription 还可能限制接收窗口，从而把背压传回发送端。
 
@@ -82,7 +84,7 @@ flowchart TB
 
 Aeron 不提供 broker 式 consumer group rebalancing。
 
-## 2. `poll` 是 duty cycle，不是阻塞读取
+### `poll` 是 duty cycle，不是阻塞读取
 
 `poll` 立即检查当前可读 fragment，最多处理 `fragmentLimit` 个，然后返回实际 fragment 数。没有数据时返回 0，不会等待下一条消息。
 
@@ -111,7 +113,7 @@ public int doWork()
 
 只在启动时调用一次 `poll`，或者每秒由定时器调用一次，都会让接收窗口停止前进并快速把背压传给 Publication。Cookbook 一再强调 polling loop，原因就在这里。
 
-### 2.1 `fragmentLimit` 不是 message limit
+#### `fragmentLimit` 不是 message limit
 
 官方核心页面有时把这个参数宽泛写成“消息数”，但 1.52.2 Javadoc 与源码都以 **message fragments** 计数：
 
@@ -122,7 +124,7 @@ public int doWork()
 
 所以 `poll(...) == 20` 不代表业务处理了 20 条完整消息。使用 assembler 后，delegate 收到的完整消息数可能更少。
 
-### 2.2 fragment limit 是公平性与批处理旋钮
+#### fragment limit 是公平性与批处理旋钮
 
 过小：
 
@@ -138,7 +140,7 @@ public int doWork()
 
 应以 duty-cycle 时长、接收 backlog 和尾延迟测量选择，而不是照抄示例里的 10、20 或 100。
 
-## 3. 回调 buffer 是借来的只读视图
+### 回调 buffer 是借来的只读视图
 
 `FragmentHandler` 的参数：
 
@@ -174,7 +176,7 @@ void onFragment(final DirectBuffer buffer, final int offset, final int length, f
 
 复制会增加带宽和分配，生产实现常用对象池或有界 slab，但“谁拥有、何时可复用”的协议必须比优化更先确定。
 
-### 3.1 handler 应保持短小且有界
+#### handler 应保持短小且有界
 
 普通 `poll` 会在调用线程同步执行 handler。数据库请求、阻塞 I/O、锁等待或不可控日志格式化都会直接停止 subscriber position：
 
@@ -190,7 +192,9 @@ flowchart LR
 
 若业务处理本来就可能阻塞，要么接受并配置这种端到端传压，要么在 poller 与 worker 间建立**有界**交接；无界线程池/队列只会把可控背压变成不可控内存。
 
-## 4. Fragmentation：一条消息如何跨多个 DATA frame
+## 分片消息怎样重组并推进 position
+
+### Fragmentation：一条消息如何跨多个 DATA frame
 
 当 `offer` 的消息长度大于 `maxPayloadLength()`、但不超过 `maxMessageLength()` 时，Aeron 自动拆分。每个 fragment 都有 DATA header，并用 flags 表达边界：
 
@@ -205,7 +209,7 @@ flowchart LR
 
 同一 session 内，Receiver 先修复缺口并推进连续位置，因此正常 poll 会按 term offset 看见连续 fragments。但 FragmentHandler 本身不替业务重组；直接解码每个回调会把一条大消息误当成多条。
 
-### 4.1 `FragmentAssembler` 的两条路径
+#### `FragmentAssembler` 的两条路径
 
 最简单的接法：
 
@@ -236,7 +240,7 @@ stateDiagram-v2
   Empty --> Complete: unfragmented, direct delegate
 ```
 
-### 4.2 按 session 清理重组 buffer
+#### 按 session 清理重组 buffer
 
 Assembler 为每个出现过大消息的 session 保留可增长 buffer。若 session 数量动态变化而从不清理，内存会长期保留。应在 unavailable image 回调中释放：
 
@@ -257,7 +261,7 @@ try (Subscription subscription = aeron.addSubscription(
 
 还有一个更隐蔽的并发边界：`FragmentAssembler` 的重组 map **只用 sessionId 作 key**，不是 Image correlation ID。若一个聚合型 Subscription / MDS 同时存在两个 sessionId 相同的 Image，分片状态可能互相污染；某个 Image unavailable 时按 session 清理，也可能清掉另一个 Image 的状态。应保证同一 Subscription 内并存 Image 的 sessionId 唯一，或分别 poll 每幅 `Image`，并为每幅 Image 使用独立的 `ImageFragmentAssembler`。
 
-### 4.3 大消息会改变内存与延迟形状
+#### 大消息会改变内存与延迟形状
 
 把 max message 调大不是免费的：
 
@@ -269,7 +273,7 @@ try (Subscription subscription = aeron.addSubscription(
 
 对多 MiB payload，Archive、对象存储引用、应用层 chunking 或另一个传输可能更合适。选择应由原子消息语义、恢复需求和内存上限共同决定。
 
-## 5. 普通 `poll` 怎样推进 position
+### 普通 `poll` 怎样推进 position
 
 `Image.poll` 从当前 subscriber position 找到 active term 和 offset，依次读取已提交 frame。每处理一个 frame，内部 offset 先按 32 字节对齐推进；在 `finally` 中把本次已经跨过的区域发布为新 subscriber position。
 
@@ -295,7 +299,9 @@ sequenceDiagram
 - 业务需要原地重试时，考虑 `controlledPoll` 并显式返回 `ABORT`；
 - 无论哪种 API，外部副作用仍需幂等或事务。
 
-## 6. `controlledPoll`：控制的是 Image position
+## Controlled Poll 怎样定义应用提交边界
+
+### `controlledPoll`：控制的是 Image position
 
 `ControlledFragmentHandler` 返回四种 Action：
 
@@ -315,7 +321,7 @@ flowchart TD
   ACTION -->|"CONTINUE"| CT["batch commit later<br/>continue Image"]
 ```
 
-### 6.1 ABORT 是“别推进这幅 Image”，不是事务回滚
+#### ABORT 是“别推进这幅 Image”，不是事务回滚
 
 典型用法是先尝试写入一个有界下游队列：
 
@@ -335,13 +341,13 @@ final ControlledFragmentHandler handler = (buffer, offset, length, header) ->
 
 `ABORT` 只控制 subscriber position。exactly-once 仍需要幂等请求 ID、事务 outbox/inbox、单写者状态机或其他应用协议。
 
-### 6.2 Subscription 可能继续轮询别的 Image
+#### Subscription 可能继续轮询别的 Image
 
 `Subscription.controlledPoll` 的 Javadoc 特别说明：某幅 Image 返回 BREAK 或 ABORT 后，Subscription 仍可以继续读取其他 Image，只要总 fragment limit 未耗尽。
 
 因此 ABORT 不是“冻结整个 Subscription”。若业务必须在所有 session 上全局停住，应让外层停止下一次 poll，或直接对特定 `Image.controlledPoll` 建立更精细的调度；不要依赖一个 Action 隐式实现全局屏障。
 
-### 6.3 handler 抛异常不等于 ABORT
+#### handler 抛异常不等于 ABORT
 
 1.52.2 `Image.controlledPoll` 同样捕获异常并调用 error handler；因为 local offset 已经越过当前 frame，`finally` 可能提交它。需要 ABORT 时必须在业务 handler 内捕获可恢复失败并显式返回：
 
@@ -363,13 +369,13 @@ final ControlledFragmentHandler handler = (buffer, offset, length, header) ->
 
 不可恢复异常则应进入明确的停机/隔离流程；悄悄记录后继续可能推进位置并造成业务缺口。
 
-### 6.4 回调内禁止重入 Aeron client
+#### 回调内禁止重入 Aeron client
 
 `FragmentHandler` 与 `ControlledFragmentHandler` Javadoc 都明确禁止在回调中对 Aeron client 做 reentrant call，否则行为未定义。不要在 handler 内同步 add/close Publication、Subscription，或发起其他需要 Client Conductor 协调的资源操作。
 
 更稳妥的做法是把控制请求写进当前 agent 的状态，在 handler 返回后处理。
 
-## 7. `ControlledFragmentAssembler`：整条消息决定 Action
+### `ControlledFragmentAssembler`：整条消息决定 Action
 
 大消息与 controlled poll 必须配套使用 `ControlledFragmentAssembler`：
 
@@ -393,25 +399,27 @@ final int fragmentsRead = subscription.controlledPoll(assembler, fragmentLimit);
 
 这仍然只对当前进程内 Image position 有意义。进程崩溃后若要从相同消息恢复，需要 Archive replay 与持久化消费 position，而不是依赖内存 assembler。
 
-## 8. `BREAK`、`COMMIT` 何时有用
+### `BREAK`、`COMMIT` 何时有用
 
-### 8.1 BREAK：达到应用批次边界
+#### BREAK：达到应用批次边界
 
 例如一条完整业务消息让本次时间预算耗尽，返回 BREAK 可以提交它并结束当前 Image 的 poll。与 ABORT 的区别是当前消息不会重投。
 
-### 8.2 COMMIT：缩小一批消息的重投/进度边界
+#### COMMIT：缩小一批消息的重投/进度边界
 
 CONTINUE 会在 poll 结束时批量发布 position；COMMIT 则在当前 fragment 后立即 release-store position，再继续处理。它可以让 flow control 更快看到进度，或在长批次内建立阶段边界，但会增加 position 写入。
 
 COMMIT 依然不是持久化提交。如果业务数据库尚未提交，subscriber position 前进只代表这次运行时不会再次从 Image 交付这些 fragment。
 
-### 8.3 不要用 deprecated Image 定位 API 搭新协议
+#### 不要用 deprecated Image 定位 API 搭新协议
 
 Aeron 1.52 在 `Image` 上把 `controlledPeek(...)` 和直接 `position(long)` 标记为 deprecated，计划在 1.53 移除。旧文章用它们实现“窥探后手动提交”的模式不适合新代码。
 
 新设计优先使用 `controlledPoll`、Archive replay session 或明确的业务缓冲；升级前也应查 1.52.2 Javadoc 的 deprecated 清单。
 
-## 9. `blockPoll` 与 `rawPoll` 是批量底层接口
+## 底层批量读取与失败模型如何选择
+
+### `blockPoll` 与 `rawPoll` 是批量底层接口
 
 Subscription/Image 还提供面向连续块的读取方式：
 
@@ -426,7 +434,7 @@ Subscription/Image 还提供面向连续块的读取方式：
 
 它们不适合直接取代普通业务 handler，因为调用方必须正确理解 frame、padding、term 边界、文件生命周期和 position。若目标只是得到完整业务消息，用 assembler 更安全。
 
-## 10. 三种失败模型不要混为一谈
+### 三种失败模型不要混为一谈
 
 ```mermaid
 flowchart TB
@@ -444,7 +452,9 @@ flowchart TB
 
 把第三种问题只用 ABORT 解决，会在崩溃时失去恢复点；把第一种问题在业务 payload 里重新造一套 NAK，又会重复底层协议。
 
-## 11. 接收热路径监控
+## 用热路径指标证明接收循环健康
+
+### 接收热路径监控
 
 至少观察：
 
@@ -467,39 +477,7 @@ pub-pos - snd-pos  = 发送侧待发送积压
 
 这些 counters 是并发更新的采样，不构成原子快照。单次出现负值或不一致可能只是读取时序；应看连续趋势和相关事件。
 
-## 12. 一份可执行的接收端清单
-
-### 12.1 线程与 duty cycle
-
-- 一个 Subscription/Image 只有一个 poll owner；
-- 没有数据时用与 CPU 预算匹配的 IdleStrategy；
-- handler 不做无界阻塞；
-- fragment limit 通过 duty-cycle 与 backlog 测量选择。
-
-### 12.2 内存
-
-- 回调 buffer 和 Header 不跨回调持有；
-- 异步交接前复制到有明确所有权的有界存储；
-- 大消息使用正确 assembler；
-- unavailable image 时释放 session buffer；
-- 对最大消息和并发 session 做内存上限测试。
-
-### 12.3 失败
-
-- 普通 poll 抛异常不会自动重投；
-- controlled handler 可恢复失败显式返回 ABORT；
-- ABORT 前不能留下不可重复副作用；
-- BREAK/COMMIT 只提交运行时 position，不等于业务持久化；
-- 重启恢复使用 Archive/快照与持久消费位置。
-
-### 12.4 语义
-
-- fragment count 与完整 message count 分开统计；
-- 多 Image 没有全局顺序；
-- Subscription 不是竞争消费组；
-- 传输去重与业务幂等分层设计。
-
-## 13. 小结
+## 结论：接收正确性取决于轮询所有权、重组边界与位置提交
 
 Aeron 的接收性能来自应用主动、连续、有限地消费共享日志；它不会用阻塞 `receive()` 隐藏线程调度，也不会替 handler 决定事务边界。
 

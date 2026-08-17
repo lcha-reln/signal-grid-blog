@@ -2,7 +2,7 @@
 title: "Aeron Cluster：运行与性能工程——Counters、ClusterTool 与排障 Runbook"
 description: "把 Aeron Cluster 的 role、Election State、append/commit/service position、Backup 与错误 counters 组织成可执行观测模型，并给出 ClusterTool、性能容量测试和分层排障方法。"
 date: 2026-08-13T11:50:00+08:00
-updated: 2026-08-13T11:50:00+08:00
+updated: 2026-08-17T17:45:00+08:00
 tags:
   - Aeron Cluster
   - 运维
@@ -23,7 +23,9 @@ Aeron Cluster 的好处之一，是很多内部进度都作为 Aeron counter 暴
 
 本文以 1.52.2 当前源码注册的 counters 和 `ClusterTool` 命令为准，并把性能讨论建立在容量模型和实测上，不复用脱离硬件/消息大小的固定吞吐数字。
 
-## 1. 先建立四层观测模型
+## 先用位置和状态建立观测系统
+
+### 先建立四层观测模型
 
 ```mermaid
 flowchart TB
@@ -43,7 +45,7 @@ flowchart TB
 
 “Aeron 很慢”不是可操作诊断。
 
-## 2. Cluster 的关键 counters
+### Cluster 的关键 counters
 
 官方 Understanding Cluster Counters 页面给出主要类别，1.52.2 还可从 `AeronCounters` 与组件源码核对 type id。常用观察项包括：
 
@@ -62,7 +64,7 @@ flowchart TB
 - Backup next query deadline；
 - Backup error count。
 
-### 2.1 State、Role、Election 是三件事
+#### State、Role、Election 是三件事
 
 Consensus Module 的稳定/控制状态包括 initializing、active、suspended、snapshot、quitting、terminating、closed 等；Role 表示 Leader/Follower；Election State 表示是否处于 18 状态选举恢复链。
 
@@ -78,7 +80,7 @@ flowchart TB
 
 一个节点可以角色仍显示 Follower，却正在 `FOLLOWER_CATCHUP`；也可能 CM state 为 `SNAPSHOT` 而 Cluster 完全健康。不能把任何非 `ACTIVE` 字符串都当故障。
 
-### 2.2 位置要成组看
+#### 位置要成组看
 
 最有价值的差值：
 
@@ -101,7 +103,7 @@ Position 是字节位置。把 20 MB lag 直接说成“落后 20 万条”没�
 
 这里的权威 Commit Position 来自 Leader。Follower 的同名 counter 受本地 append / log adapter 进度限制，表示本地已消费的已通知提交前缀，合法情况下也可能落后于 Leader；监控不要把任意节点的 counter 混成一个集群标量。
 
-## 3. 默认 stream id 是排障地图
+### 默认 stream id 是排障地图
 
 1.52.2 常见默认 stream id：
 
@@ -130,7 +132,7 @@ Position 是字节位置。把 20 MB lag 直接说成“落后 20 万条”没�
 
 只看业务端口会错过成员间 channel。
 
-## 4. ClusterTool 1.52.2 的真实命令
+### ClusterTool 1.52.2 的真实命令
 
 `ClusterTool` 通过 cluster directory 的 mark file/counters 观察或控制节点。当前 `COMMANDS` 表实际注册：
 
@@ -157,7 +159,7 @@ Position 是字节位置。把 20 MB lag 直接说成“落后 20 万条”没�
 
 类级 Javadoc 还写着 `standby-snapshot`，但 1.52.2 当前 `COMMANDS` map **没有注册它**。不能仅凭注释把它写进可执行 Runbook。
 
-### 4.1 调用形状
+#### 调用形状
 
 ```text
 java ... io.aeron.cluster.ClusterTool <cluster-dir> <command> [options]
@@ -165,7 +167,7 @@ java ... io.aeron.cluster.ClusterTool <cluster-dir> <command> [options]
 
 应使用与运行 Cluster 完全相同的 1.52.2 构件，避免 mark file、codec 或命令集合版本不匹配。`recovery-plan` 当前实现要求显式提供 service count，少参数会打印帮助并返回错误。
 
-### 4.2 `shutdown` 与 `abort`
+#### `shutdown` 与 `abort`
 
 `shutdown` 发起有序关闭并拍 snapshot；`abort` 不拍 snapshot 即停止。两者都不是普通健康检查。执行前确认：
 
@@ -176,11 +178,11 @@ java ... io.aeron.cluster.ClusterTool <cluster-dir> <command> [options]
 - 客户端 drain 与维护窗口；
 - 操作是否有审计和回滚计划。
 
-### 4.3 `suspend` 的边界
+#### `suspend` 的边界
 
 `suspend` 暂停向 Cluster Log 追加，常用于受控维护/诊断。它会影响新 ingress 和 timer 等需要追加日志的活动，不能当作“只暂停某个业务”。使用前后要观察 CM state、Commit Position、session 和 Gateway 行为，并通过 `resume` 明确恢复。
 
-## 5. 一次值班的安全起手式
+### 一次值班的安全起手式
 
 ```mermaid
 flowchart TB
@@ -211,7 +213,7 @@ disk capacity and filesystem/kernel errors
 
 在证据未冻结前重启可能清除 counters、错误日志和线程现场，还会触发新 Election，掩盖初始原因。
 
-## 6. Error Log 的正确读法
+### Error Log 的正确读法
 
 Aeron 的 Distinct Error Log 会聚合相同错误，保留首次/最近时间和 observation count。`ClusterTool errors` 可以读取 Aeron 与 Cluster 组件错误。
 
@@ -245,7 +247,9 @@ Aeron 的 Distinct Error Log 会聚合相同错误，保留首次/最近时间�
 
 `ClusterTerminationException` 常见于无法安全继续的边界，例如 time unit / app version 不兼容、Archive 存储耗尽、Aeron client 已关闭，或 Consensus Module 的 Archive subscription 断开。它们不是“打印后继续”的普通业务异常。配置文档有时会把 heartbeat setter 名写错；1.52.2 实际配置项是 `leaderHeartbeatTimeoutNs`。详见 [Cluster Errors](https://aeron.io/docs/aeron-cluster/cluster-errors/) 与固定版本源码。
 
-## 7. 性能上限首先在业务状态机
+## 再证明容量与背压边界
+
+### 性能上限首先在业务状态机
 
 一个 Clustered Service 的权威状态转换是顺序执行的。若每条命令平均占用服务线程 `S` 秒，单服务理论处理上限大致受 `1/S` 约束；实际还要扣除日志轮询、codec、响应、timer、snapshot 和 GC。
 
@@ -267,7 +271,7 @@ flowchart TB
   LAT["latency W"] -. "L = λW" .-> Q
 ```
 
-### 7.1 不要把示例 benchmark 当容量承诺
+#### 不要把示例 benchmark 当容量承诺
 
 官方性能页面中 JSON、SBE、single/multiple service 的数字适合说明 codec 和业务成本会影响上限，但它们依赖：
 
@@ -282,7 +286,7 @@ flowchart TB
 
 引用数字时必须连同环境；规划时必须在自己的硬件和协议上压测。
 
-## 8. 容量测试必须覆盖整条提交链
+### 容量测试必须覆盖整条提交链
 
 至少分五类：
 
@@ -305,7 +309,7 @@ flowchart TB
 
 只给平均延迟会隐藏 Cluster 最重要的长尾和暂停。
 
-## 9. Codec、分配与日志
+### Codec、分配与日志
 
 业务热路径常见成本：
 
@@ -321,7 +325,7 @@ SBE/Agrona buffer 可降低部分成本，但必须先保证 schema、边界检�
 
 生产日志应采样或聚合，错误路径保留足够 correlation。不要在每条已提交命令上做同步字符串日志，那会把状态机吞吐变成日志磁盘吞吐。
 
-## 10. 背压策略必须逐边界定义
+### 背压策略必须逐边界定义
 
 ```mermaid
 flowchart TB
@@ -346,9 +350,11 @@ flowchart TB
 
 无界 Gateway queue 会把 Aeron backpressure 变成 JVM OOM；服务内无限 `session.offer` 循环会把一个慢客户端变成整个 RSM 停顿。
 
-## 11. 分层故障模式
+## 从症状定位失败层
 
-### 11.1 CPU / JVM
+### 分层故障模式
+
+#### CPU / JVM
 
 症状：心跳 timeout、Election churn、所有 position 间歇停顿。检查：
 
@@ -358,7 +364,7 @@ flowchart TB
 - 频率降档、NUMA 远端内存；
 - 业务 callback 或 snapshot 是否耗时过长。
 
-### 11.2 网络 / UDP
+#### 网络 / UDP
 
 症状：Follower append lag、Image 断连、retransmit/NAK、canvass 或 catch-up await。检查：
 
@@ -368,7 +374,7 @@ flowchart TB
 - flow control 和接收者是否过慢；
 - consensus/log/catch-up channel 是否被错误共用或限速。
 
-### 11.3 Archive / 磁盘
+#### Archive / 磁盘
 
 症状：Leader/Follower append 停顿、snapshot 很慢、Backup reset、recovery replay 慢。检查：
 
@@ -378,7 +384,7 @@ flowchart TB
 - sync level 与硬件能力；
 - recording id、stop position 和 Recording Log 一致性。
 
-### 11.4 Service / 业务
+#### Service / 业务
 
 症状：Commit 继续、Service position 落后。检查：
 
@@ -389,7 +395,7 @@ flowchart TB
 - decode 异常、服务 error counter；
 - 多服务中是哪一个 service id 落后。
 
-### 11.5 Client / Gateway
+#### Client / Gateway
 
 症状：Cluster positions 正常，客户超时。检查：
 
@@ -400,7 +406,7 @@ flowchart TB
 - new leader event 是否更新 endpoint；
 - 下游 WebSocket/HTTP 客户端是否过慢。
 
-## 12. 报警设计
+### 报警设计
 
 建议报警而非仅展示：
 
@@ -420,9 +426,11 @@ flowchart TB
 
 报警应有持续窗口和多信号关联。例如单个 Follower 短暂 lag 可自动恢复；若同时出现 Commit 停顿、磁盘 p99 上升和 Archive error，才需要升级响应。
 
-## 13. 变更与发布 Runbook
+## 让变更和维护留下退出证据
 
-### 13.1 变更前
+### 变更与发布 Runbook：进入、推进与退出证据
+
+#### 进入条件
 
 - 记录当前版本、appVersion、配置 hash 和成员表；
 - `list-members`、`recording-log`、`recovery-plan` 留档；
@@ -431,7 +439,7 @@ flowchart TB
 - 明确是否支持当前版本组合的滚动升级；
 - 准备回滚版本、兼容 snapshot 和停止条件。
 
-### 13.2 变更中
+#### 推进条件
 
 - 一次只处理一个成员，始终保留多数派；
 - 等待该成员完成 replay/catch-up、Election CLOSED、append lag 归零；
@@ -439,7 +447,7 @@ flowchart TB
 - 未稳定前不要继续下一个成员；
 - 若触发持续 Election 或 recording 验证失败，停止发布并保存证据。
 
-### 13.3 变更后
+#### 退出证据
 
 - 触发并验证新 snapshot；
 - 确认 Backup 可以读取新 snapshot/schema；
@@ -447,7 +455,9 @@ flowchart TB
 - 进行一次受控 Leader 切换或计划内故障验证；
 - 更新基准、Runbook 和配置清单。
 
-## 14. 每日、每周与每季度维护
+只要成员未完成 catch-up、Election 反复、恢复介质不可验证或业务摘要不一致，发布就必须停在当前多数派，不得继续处理下一个成员。变更完成不是所有进程都换了版本，而是提交链、恢复链和客户端未知结果处理都重新回到预算。
+
+### 每日、每周与每季度维护
 
 **每日**：角色/选举、position lag、error count、磁盘、Backup RPO、session/backpressure。
 
@@ -466,7 +476,7 @@ recording validated
 → measured RPO and RTO within SLO
 ```
 
-## 15. 本章结论
+## 结论：可运维性来自可定位的提交链与可退出的变更
 
 Aeron Cluster 可运维的关键，不是收集更多指标，而是把 counters 放回提交链。Role/Election 告诉我们权威状态，append/commit/service position 定位复制与执行阶段，Backup counters 衡量灾备缺口；JVM、磁盘和 UDP 指标解释为什么这些位置停止。
 
