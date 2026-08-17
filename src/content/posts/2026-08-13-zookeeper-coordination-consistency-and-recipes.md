@@ -2,7 +2,7 @@
 title: "ZooKeeper 3.9：从 znode、Watch 到 ZAB、一致性与工程配方"
 description: "以 Apache ZooKeeper 3.9.5 为基线，从数据模型、Session、Watch 和 ZAB 写入链路出发，讲清读写一致性、版本事务、选主与锁、fencing、安全、部署和故障排查。"
 date: 2026-08-13T19:30:00+08:00
-updated: 2026-08-17T10:30:00+08:00
+updated: 2026-08-17T11:45:00+08:00
 tags:
   - ZooKeeper
   - ZAB
@@ -24,7 +24,7 @@ draft: false
 
 文章会使用原生 API 解释语义，再用 **Apache Curator 5.9.0** 展示工程写法。ZooKeeper 3.9 的源码仍维持 Java 8 字节码兼容基线；为让示例更清晰，本文代码采用 Java 17 的语法表达，生产环境应选择仍受维护的 LTS JDK。Curator 能替我们处理连接、重试和成熟 recipe，但它不能替业务定义 fencing、幂等、结果未知和降级策略。
 
-本文是“有状态系统可靠性”学习路径的 Chapter 04。前两章先由 [WAL](/signal-grid-blog/posts/write-ahead-log-durability-and-crash-recovery/) 建立本地持久前缀，再由 [Chapter 03：Raft 论文精读](/signal-grid-blog/posts/raft-consensus-leader-election-log-replication-and-safety/) 建立多数派、任期、复制日志和安全性证明的通用框架；本章转向 ZooKeeper 实际暴露的 znode、Session、Watch、ACL 与 recipe。ZAB 与 Raft 不是同一个协议。
+本文是“有状态系统可靠性”学习路径的 Chapter 05。前面先由 [WAL](/signal-grid-blog/posts/write-ahead-log-durability-and-crash-recovery/) 建立本地持久前缀，通过 [Chapter 03：分布式时间](/signal-grid-blog/posts/distributed-systems-time-clocks-ordering-and-leases/) 理解 Session timeout、Lease 与 fencing 的时间边界，再由 [Chapter 04：Raft 论文精读](/signal-grid-blog/posts/raft-consensus-leader-election-log-replication-and-safety/) 建立多数派、任期、复制日志和安全性证明的通用框架；本章转向 ZooKeeper 实际暴露的 znode、Session、Watch、ACL 与 recipe。ZAB 与 Raft 不是同一个协议。
 
 ## 1. ZooKeeper 解决的不是“存数据”，而是“协调决定”
 

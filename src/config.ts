@@ -142,9 +142,9 @@ export const SERIES: readonly SeriesDefinition[] = [
     key: "availability",
     title: "有状态系统可靠性",
     eyebrow: "STATEFUL RESILIENCE",
-    description: "围绕单写者有状态服务，从 WAL、本地持久化与崩溃恢复，推进到复制、任期与 fencing、消息连续性、快照重放和故障切换，明确一致性、可用性与恢复的边界。",
+    description: "围绕单写者有状态服务，从 WAL、本地持久化与崩溃恢复，推进到物理时间、因果顺序、复制、任期与 fencing，再连接消息连续性、快照重放和故障切换。",
     prerequisite: "理解基础分布式系统与事件驱动概念；不要求预先掌握 WAL、Kafka、Aeron 或 ZooKeeper。",
-    outcome: "能够定义故障模型、确认点与持久化边界，计算 RTO/RPO，并设计可证明唯一写者、可检测缺口、可重放和可演练的恢复协议。",
+    outcome: "能够定义故障模型、确认点与持久化边界，区分墙钟、逻辑顺序与权威提交，计算 RTO/RPO，并设计可证明唯一写者、可隔离旧写（fencing）、可检测缺口和可演练的恢复协议。",
     color: "coral",
     index: "03",
     stages: [
@@ -157,10 +157,10 @@ export const SERIES: readonly SeriesDefinition[] = [
       },
       {
         index: "02",
-        eyebrow: "CONSENSUS & COORDINATION",
-        title: "共识与协调",
-        description: "理解多数派日志、任期、协调状态与 fencing。",
-        fromOrder: 30,
+        eyebrow: "TIME, CONSENSUS & COORDINATION",
+        title: "时间、共识与协调",
+        description: "先区分墙钟、逻辑顺序与故障检测，再理解多数派日志、任期、协调状态、Lease 与 fencing。",
+        fromOrder: 25,
       },
       {
         index: "03",

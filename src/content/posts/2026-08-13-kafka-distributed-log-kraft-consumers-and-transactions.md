@@ -2,7 +2,7 @@
 title: "Kafka 4.3：从分区日志、ISR 与 KRaft 到消费语义、事务和生产运维"
 description: "以 Apache Kafka 4.3.1 为基线，从 topic、partition、record batch 和复制日志出发，讲清 KRaft 元数据、Leader/ISR、高水位、生产确认、消费组再均衡、offset、事务与 exactly-once 的真实边界，以及容量、监控、升级和故障处理。"
 date: 2026-08-13T20:25:00+08:00
-updated: 2026-08-17T10:30:00+08:00
+updated: 2026-08-17T11:45:00+08:00
 tags:
   - Apache Kafka
   - KRaft
@@ -22,7 +22,7 @@ draft: false
 
 本文以 **Apache Kafka 4.3.1** 为版本基线。Kafka 4.x 已完全移除 ZooKeeper 模式，元数据控制面由 KRaft 管理；4.3.1 是 2026 年 6 月发布的维护版本，除常规修复外，还修复了 Kafka Streams 的关键 RocksDB native memory leak。本文不会把旧版 ZooKeeper-era 教程中的命令和参数直接平移到 4.3。[官方 Downloads](https://kafka.apache.org/community/downloads/) · [4.3.1 Release Announcement](https://kafka.apache.org/blog/2026/06/25/apache-kafka-4.3.1-release-announcement/) · [4.3 Upgrade Guide](https://kafka.apache.org/43/getting-started/upgrade/)
 
-本文是“有状态系统可靠性”学习路径的 Chapter 05。建议先阅读 [Chapter 01：有状态服务的高可用架构](/signal-grid-blog/posts/high-availability-stateful-service/) 建立全景，由 [Chapter 02：WAL 到底保证什么](/signal-grid-blog/posts/write-ahead-log-durability-and-crash-recovery/) 区分 page cache、本地持久与恢复前缀，再通过 [Chapter 03：Raft 论文精读](/signal-grid-blog/posts/raft-consensus-leader-election-log-replication-and-safety/) 理解多数派提交，并由 [Chapter 04：ZooKeeper 协调、一致性与工程配方](/signal-grid-blog/posts/zookeeper-coordination-consistency-and-recipes/) 理解协调服务的控制面接口。要特别说明：**现代 Kafka 不依赖 ZooKeeper，KRaft 也不能被当成标准 Raft 的同义实现**；这里是知识依赖，不是 Kafka 4.x 的部署依赖。下一章会进一步讨论 [Chapter 06：应用级消息序列号、Gap 检测与恢复](/signal-grid-blog/posts/distributed-message-sequencing/)。
+本文是“有状态系统可靠性”学习路径的 Chapter 06。建议先阅读 [Chapter 01：有状态服务的高可用架构](/signal-grid-blog/posts/high-availability-stateful-service/) 建立全景，由 [Chapter 02：WAL 到底保证什么](/signal-grid-blog/posts/write-ahead-log-durability-and-crash-recovery/) 区分 page cache、本地持久与恢复前缀，通过 [Chapter 03：分布式时间](/signal-grid-blog/posts/distributed-systems-time-clocks-ordering-and-leases/) 理解物理时间戳、逻辑顺序和超时的边界，再由 [Chapter 04：Raft 论文精读](/signal-grid-blog/posts/raft-consensus-leader-election-log-replication-and-safety/) 理解多数派提交，并由 [Chapter 05：ZooKeeper 协调、一致性与工程配方](/signal-grid-blog/posts/zookeeper-coordination-consistency-and-recipes/) 理解协调服务的控制面接口。要特别说明：**现代 Kafka 不依赖 ZooKeeper，KRaft 也不能被当成标准 Raft 的同义实现**；这里是知识依赖，不是 Kafka 4.x 的部署依赖。下一章会进一步讨论 [Chapter 07：应用级消息序列号、Gap 检测与恢复](/signal-grid-blog/posts/distributed-message-sequencing/)。
 
 ## 1. 先给 Kafka 一个准确定位
 

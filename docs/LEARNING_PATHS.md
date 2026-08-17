@@ -60,12 +60,13 @@
 | --- | ---: | ---: | --- | --- |
 | 故障模型与本地恢复 | 01 | 10 | 有状态服务的高可用架构：热备复制、选主与快照恢复 | `high-availability-stateful-service` |
 | 故障模型与本地恢复 | 02 | 20 | WAL 到底保证什么：从 Write-Ahead Rule、fsync 到崩溃恢复 | `write-ahead-log-durability-and-crash-recovery` |
-| 共识与协调 | 03 | 30 | Raft 论文精读：Leader 选举、日志复制、安全性与成员变更 | `raft-consensus-leader-election-log-replication-and-safety` |
-| 共识与协调 | 04 | 40 | ZooKeeper 3.9：从 znode、Watch 到 ZAB、一致性与工程配方 | `zookeeper-coordination-consistency-and-recipes` |
-| 分布式日志与消息连续性 | 05 | 50 | Kafka 4.3：从分区日志、ISR 与 KRaft 到消费语义、事务和生产运维 | `kafka-distributed-log-kraft-consumers-and-transactions` |
-| 分布式日志与消息连续性 | 06 | 60 | 分布式消息序列号：Gap 检测、乱序处理与 Aeron 实战 | `distributed-message-sequencing` |
+| 时间、共识与协调 | 03 | 25 | 分布式时间：时钟、因果与租约 | `distributed-systems-time-clocks-ordering-and-leases` |
+| 时间、共识与协调 | 04 | 30 | Raft 论文精读：Leader 选举、日志复制、安全性与成员变更 | `raft-consensus-leader-election-log-replication-and-safety` |
+| 时间、共识与协调 | 05 | 40 | ZooKeeper 3.9：从 znode、Watch 到 ZAB、一致性与工程配方 | `zookeeper-coordination-consistency-and-recipes` |
+| 分布式日志与消息连续性 | 06 | 50 | Kafka 4.3：从分区日志、ISR 与 KRaft 到消费语义、事务和生产运维 | `kafka-distributed-log-kraft-consumers-and-transactions` |
+| 分布式日志与消息连续性 | 07 | 60 | 分布式消息序列号：Gap 检测、乱序处理与 Aeron 实战 | `distributed-message-sequencing` |
 
-本路径先建立单写者有状态服务的复制与恢复全景，再用 WAL 说明单机如何建立可恢复的持久前缀；接着由 Raft 原论文构造多数派共识、日志提交和安全性证明的标准模型，并转入 ZooKeeper/ZAB 暴露给应用的协调接口；最后进入 Kafka/KRaft 的分布式日志工程和应用级序列号、Gap 检测与恢复协议。本地 WAL、复制提交、备份/PITR 和外部副作用是不同保证；Raft 也是分析框架，不代表 ZooKeeper、Kafka 或 Aeron Cluster 与标准 Raft 使用相同协议，现代 Kafka 更不依赖 ZooKeeper。
+本路径先建立单写者有状态服务的复制与恢复全景，再用 WAL 说明单机如何建立可恢复的持久前缀；随后区分墙钟、单调时钟、逻辑时钟、超时与 Lease，避免把时间戳误作共识。接着由 Raft 原论文构造多数派共识、日志提交和安全性证明的标准模型，并转入 ZooKeeper/ZAB 暴露给应用的协调接口；最后进入 Kafka/KRaft 的分布式日志工程和应用级序列号、Gap 检测与恢复协议。本地 WAL、时间顺序、复制提交、备份/PITR 和外部副作用是不同保证；Raft 也是分析框架，不代表 ZooKeeper、Kafka 或 Aeron Cluster 与标准 Raft 使用相同协议，现代 Kafka 更不依赖 ZooKeeper。
 
 ## Java 低延迟工程
 

@@ -2,7 +2,7 @@
 title: "Raft 论文精读：Leader 选举、日志复制、安全性与成员变更"
 description: "以 Raft 扩展论文为主线，从复制状态机、任期和 RPC 出发，讲清 Leader 选举、日志匹配、提交规则、安全性证明、成员变更、日志压缩与客户端语义，并用故障时间线解释协议边界。"
 date: 2026-08-13T22:30:00+08:00
-updated: 2026-08-17T10:30:00+08:00
+updated: 2026-08-17T11:45:00+08:00
 tags:
   - Raft
   - 分布式共识
@@ -22,7 +22,7 @@ Raft 经常被概括成一句话：**选出 Leader，把日志复制到多数节
 
 本文以 Diego Ongaro 与 John Ousterhout 的 [Raft 扩展版论文](https://raft.github.io/raft.pdf) 为主要依据，按论文的因果链重写，而不是逐段翻译。配图均为重新设计的教学图；文中的 Java 伪代码只表达协议约束，不对应任何特定开源实现。
 
-这是“有状态系统可靠性”学习路径的 Chapter 03。建议先阅读 [Chapter 01：有状态服务的高可用架构](/signal-grid-blog/posts/high-availability-stateful-service/) 建立工程全景，再由 [Chapter 02：WAL 到底保证什么](/signal-grid-blog/posts/write-ahead-log-durability-and-crash-recovery/) 理解本地持久前缀、ACK 与崩溃恢复；本文给出“多数副本如何对一条有序日志达成一致”的标准模型。下一章会转向 [Chapter 04：ZooKeeper 与 ZAB](/signal-grid-blog/posts/zookeeper-coordination-consistency-and-recipes/)，比较共识算法与协调服务对应用暴露的不同接口。
+这是“有状态系统可靠性”学习路径的 Chapter 04。建议先阅读 [Chapter 01：有状态服务的高可用架构](/signal-grid-blog/posts/high-availability-stateful-service/) 建立工程全景，由 [Chapter 02：WAL 到底保证什么](/signal-grid-blog/posts/write-ahead-log-durability-and-crash-recovery/) 理解本地持久前缀、ACK 与崩溃恢复，再通过 [Chapter 03：分布式时间](/signal-grid-blog/posts/distributed-systems-time-clocks-ordering-and-leases/) 区分墙钟、逻辑顺序、超时与 Lease；本文给出“多数副本如何对一条有序日志达成一致”的标准模型。下一章会转向 [Chapter 05：ZooKeeper 与 ZAB](/signal-grid-blog/posts/zookeeper-coordination-consistency-and-recipes/)，比较共识算法与协调服务对应用暴露的不同接口。
 
 > **版本边界**：本文解释的是 2014 年扩展版论文中的基础 Raft，包括 Leader 选举、日志复制、安全性、joint consensus、快照和客户端语义。Pre-Vote、CheckQuorum、ReadIndex、Leadership Transfer、每次只改一个成员（one-server-at-a-time reconfiguration）等常见能力来自后续论文、博士论文或工程实现，不能倒过来写成原论文协议的一部分。
 

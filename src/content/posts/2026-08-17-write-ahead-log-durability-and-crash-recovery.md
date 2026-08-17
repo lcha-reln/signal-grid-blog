@@ -2,7 +2,7 @@
 title: "WAL 到底保证什么：从 Write-Ahead Rule、fsync 到崩溃恢复"
 description: "从故障模型出发，拆解 WAL 的先行写入规则与 write、force、ack 的持久化边界，讲清 ARIES 恢复、group commit、checkpoint、日志截断，以及 WAL 不负责的复制和 exactly-once。"
 date: 2026-08-17T10:30:00+08:00
-updated: 2026-08-17T10:30:00+08:00
+updated: 2026-08-17T11:45:00+08:00
 tags:
   - WAL
   - Write-Ahead Logging
@@ -24,7 +24,7 @@ draft: false
 
 WAL（Write-Ahead Logging，常译“预写日志”）真正建立的是一组先后约束：在允许数据页进入持久介质之前，恢复所需的日志必须先稳定；在向调用方承诺“已持久提交”之前，提交记录及其依赖的日志必须先稳定。只有日志格式、日志序列号（Log Sequence Number，LSN）、同步屏障、确认策略、恢复算法、checkpoint 和保留策略一起闭环，这些顺序才会变成可验证的原子性与持久性。
 
-本文是“有状态系统可靠性”学习路径的 Chapter 02。建议先读 [Chapter 01：有状态服务的高可用架构](/signal-grid-blog/posts/high-availability-stateful-service/) 建立故障模型、RTO/RPO 与恢复全景；下一章 [Raft 论文精读](/signal-grid-blog/posts/raft-consensus-leader-election-log-replication-and-safety/) 会把这里的**本地持久前缀**扩展为多个节点共同认可的**复制提交前缀**。
+本文是“有状态系统可靠性”学习路径的 Chapter 02。建议先读 [Chapter 01：有状态服务的高可用架构](/signal-grid-blog/posts/high-availability-stateful-service/) 建立故障模型、RTO/RPO 与恢复全景；下一章 [Chapter 03：分布式时间](/signal-grid-blog/posts/distributed-systems-time-clocks-ordering-and-leases/) 会先区分物理时间、逻辑顺序、超时与 Lease，随后 [Chapter 04：Raft 论文精读](/signal-grid-blog/posts/raft-consensus-leader-election-log-replication-and-safety/) 再把这里的**本地持久前缀**扩展为多个节点共同认可的**复制提交前缀**。
 
 本文以 [ARIES 原论文](https://research.ibm.com/publications/aries-a-transaction-recovery-method-supporting-fine-granularity-locking-and-partial-rollbacks-using-write-ahead-logging) 解释经典事务恢复，以 [PostgreSQL 18 WAL 文档](https://www.postgresql.org/docs/18/wal-intro.html) 展示现代产品的承诺层级，再用 JDK 25 与 Linux/POSIX 的官方契约落到 Java 工程。ARIES 是一种重要算法，不是所有 WAL 产品的统一内部实现；PostgreSQL、Kafka、Raft 日志也不能彼此直接套用。
 
@@ -657,7 +657,7 @@ flowchart TB
 
 ### 15.1 WAL 不自动等于 quorum commit
 
-Raft 的持久状态、日志复制和多数派提交规则属于另一层协议。下一章会详细解释：某条记录存在于 Leader 本地 WAL，不等于它已 committed；即使客户端超时，记录也可能在后续选举中被保留并提交，或被新的权威日志覆盖。
+Raft 的持久状态、日志复制和多数派提交规则属于另一层协议。后面的 Raft 章节会详细解释：某条记录存在于 Leader 本地 WAL，不等于它已 committed；即使客户端超时，记录也可能在后续选举中被保留并提交，或被新的权威日志覆盖。
 
 Kafka 的 `acks=all` 也不是 `fsync all disks`。它等待**当前 ISR** 按 Kafka 协议确认复制，耐久性还依赖 replication factor、`min.insync.replicas`、leader election 与存储实现。完整边界见 [Kafka 4.3 深度指南](/signal-grid-blog/posts/kafka-distributed-log-kraft-consumers-and-transactions/)。
 
@@ -842,7 +842,7 @@ WAL 不是“一个永远追加的文件”，而是一份可恢复协议的证�
 
 > WAL 保证的不是“任何东西都不丢”，而是让系统能证明：在它承诺覆盖的故障模型里，哪些变化已经不可丢，哪些变化必须撤销，崩溃后应从哪一个合法前缀继续。
 
-下一章进入 [Raft 论文精读](/signal-grid-blog/posts/raft-consensus-leader-election-log-replication-and-safety/)：当一份本地日志变成多份副本，系统还需要任期、选举、日志匹配与多数派提交，才能证明这个前缀不会被未来 Leader 推翻。
+下一章进入 [《分布式时间》](/signal-grid-blog/posts/distributed-systems-time-clocks-ordering-and-leases/)：先解释为什么墙钟、逻辑顺序、超时与 Lease 不能互相替代；再由后续 [Raft 论文精读](/signal-grid-blog/posts/raft-consensus-leader-election-log-replication-and-safety/) 说明一份本地日志变成多份副本后，系统还需要任期、选举、日志匹配与多数派提交，才能证明这个前缀不会被未来 Leader 推翻。
 
 ## 官方资料
 
