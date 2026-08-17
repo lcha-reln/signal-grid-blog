@@ -2,7 +2,7 @@
 title: "Aeron Cluster：运行与性能工程——Counters、ClusterTool 与排障 Runbook"
 description: "把 Aeron Cluster 的 role、Election State、append/commit/service position、Backup 与错误 counters 组织成可执行观测模型，并给出 ClusterTool、性能容量测试和分层排障方法。"
 date: 2026-08-13T11:50:00+08:00
-updated: 2026-08-17T17:45:00+08:00
+updated: 2026-08-17T23:42:09+08:00
 tags:
   - Aeron Cluster
   - 运维
@@ -483,6 +483,8 @@ Aeron Cluster 可运维的关键，不是收集更多指标，而是把 counters
 `ClusterTool` 很强，也有直接改变恢复和可用性的命令。1.52.2 当前真实命令集应从 `COMMANDS` 注册表核对，不能依赖旧文档注释。所有高风险命令都需要路径校验、证据备份、审计和离线演练。
 
 性能工程则应覆盖三节点提交、慢副本、选举、snapshot、replay 和 Backup，而不是只跑单节点平均吞吐。最终目标是把“快”和“能恢复”都变成可重复测量的 SLO。
+
+接下来进入专题的工程验收阶段。先在 [Aeron 升级工程](/signal-grid-blog/posts/aeron-upgrade-engineering-protocol-archive-cluster-rollback/) 中划清 SBE、client/driver、Archive format、Cluster Snapshot 与混合版本的回滚边界，再到 [Cluster 故障实验室](/signal-grid-blog/posts/aeron-cluster-failure-lab-snapshot-election-backup-recovery/) 用请求历史、位置、状态摘要、RPO 和 RTO 证明恢复合同。
 
 ## 一手资料
 

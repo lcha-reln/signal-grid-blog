@@ -2,7 +2,7 @@
 title: "Aeron Cluster：确定性业务内核、ClusteredService、会话与网关"
 description: "从 ClusteredService 生命周期出发，解释确定性状态机的代码边界、客户端 session 与业务身份、ingress/egress 交付歧义、请求去重、网关和外部副作用的正确设计。"
 date: 2026-08-13T11:10:00+08:00
-updated: 2026-08-17T17:45:00+08:00
+updated: 2026-08-17T23:42:09+08:00
 tags:
   - Aeron Cluster
   - ClusteredService
@@ -423,7 +423,7 @@ Clustered Service 的价值不在于给普通 Java 对象自动加副本，而�
 
 客户端一侧则必须接受现实：`offer` 成功不是提交确认，Leader 切换可能让结果处于未知状态。稳定业务身份、request id、Cluster 内去重、pending journal、状态查询和外部 sink 幂等共同构成交付协议。
 
-下一章会处理状态机的另两个基础设施：Timer 如何变成可重放的日志事件，Snapshot 如何与业务状态、会话、去重表和版本演进共同形成可验证的恢复点。
+下一章先把视角移到 Cluster 边缘：[Gateway、幂等请求、Read Barrier 与 Projection 恢复](/signal-grid-blog/posts/aeron-cluster-edge-consistency-gateway-idempotency-read-barrier-projection-recovery/) 将说明 pending journal 怎样跨 Leader 切换保留结果未知，读模型怎样用已提交位置建立 read-your-writes，以及慢客户端为何不能反压权威状态机。随后再进入 Timer 与 Snapshot。
 
 ## 一手资料
 

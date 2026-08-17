@@ -2,7 +2,7 @@
 title: "Aeron Cluster：生产部署与灾备——拓扑、安全与 Cluster Backup"
 description: "围绕三到五成员拓扑、channel 与磁盘、Kubernetes StatefulSet、安全默认值和 Cluster Backup，说明生产部署的故障域、持久化、认证授权、RPO/RTO 与静态成员边界。"
 date: 2026-08-13T11:40:00+08:00
-updated: 2026-08-17T17:45:00+08:00
+updated: 2026-08-17T23:42:09+08:00
 tags:
   - Aeron Cluster
   - 生产部署
@@ -410,7 +410,7 @@ Cluster 的生产可靠性来自具体资源：低延迟多数派网络、稳定
 
 开源 Cluster Backup 持续复制 snapshot 和 live log，但不投票、不自动接管，也不提供零 RPO。默认 Authenticator 会立即放行空 principal，默认 AuthorisationService 的允许范围主要是 Backup/Standby 控制动作；业务命令授权和链路加密仍由部署者负责。
 
-最后一章将把这些资源变成可操作的观测系统：应该看哪些 counters，ClusterTool 当前有哪些真实命令，如何从位置、状态、CPU、磁盘和 UDP 指标建立排障 Runbook。
+下一章将把这些资源变成可操作的观测系统：应该看哪些 counters，ClusterTool 当前有哪些真实命令，如何从位置、状态、CPU、磁盘和 UDP 指标建立排障 Runbook。
 
 ## 一手资料
 

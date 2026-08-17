@@ -21,14 +21,18 @@
 | Aeron Archive | 11 | 90 | Aeron Archive：Replay、Bounded Replay 与历史追实时 | `aeron-archive-replay-and-live-merge` |
 | Aeron Archive | 12 | 100 | Aeron Archive：跨主机复制、Live Merge 与灾备恢复 | `aeron-archive-replication-and-recovery` |
 | Aeron Archive | 13 | 110 | Aeron Archive：校验、修复、迁移、监控与容量治理 | `aeron-archive-operations-and-repair` |
-| Aeron Cluster | 14 | 120 | Aeron Cluster：架构、组件与一条消息的提交之旅 | `aeron-cluster-architecture-and-log-commit` |
-| Aeron Cluster | 15 | 130 | Aeron Cluster：确定性业务内核、会话、协议与网关 | `aeron-cluster-deterministic-services-and-clients` |
-| Aeron Cluster | 16 | 140 | Aeron Cluster：Timers、Snapshots 与 Replay | `aeron-cluster-timers-snapshots-and-recovery` |
-| Aeron Cluster | 17 | 150 | Aeron Cluster：选举、Catch-up、Leader 切换与一致性边界 | `aeron-cluster-elections-catchup-and-consistency` |
-| Aeron Cluster | 18 | 160 | Aeron Cluster：生产部署、安全边界与 Cluster Backup | `aeron-cluster-deployment-security-and-backup` |
-| Aeron Cluster | 19 | 170 | Aeron Cluster：Counters、ClusterTool、性能与排障 Runbook | `aeron-cluster-operations-performance-and-troubleshooting` |
+| Aeron Archive | 14 | 115 | Aeron 可恢复服务实战：Request/Response、Archive 录制、Checkpoint 与断线追赶 | `aeron-recoverable-service-request-response-archive-checkpoint-catchup` |
+| Aeron Cluster | 15 | 120 | Aeron Cluster：架构、组件与一条消息的提交之旅 | `aeron-cluster-architecture-and-log-commit` |
+| Aeron Cluster | 16 | 130 | Aeron Cluster：确定性业务内核、会话、协议与网关 | `aeron-cluster-deterministic-services-and-clients` |
+| Aeron Cluster | 17 | 135 | Aeron Cluster 边缘一致性：Gateway、幂等请求、Read Barrier 与 Projection 恢复 | `aeron-cluster-edge-consistency-gateway-idempotency-read-barrier-projection-recovery` |
+| Aeron Cluster | 18 | 140 | Aeron Cluster：Timers、Snapshots 与 Replay | `aeron-cluster-timers-snapshots-and-recovery` |
+| Aeron Cluster | 19 | 150 | Aeron Cluster：选举、Catch-up、Leader 切换与一致性边界 | `aeron-cluster-elections-catchup-and-consistency` |
+| Aeron Cluster | 20 | 160 | Aeron Cluster：生产部署、安全边界与 Cluster Backup | `aeron-cluster-deployment-security-and-backup` |
+| Aeron Cluster | 21 | 170 | Aeron Cluster：Counters、ClusterTool、性能与排障 Runbook | `aeron-cluster-operations-performance-and-troubleshooting` |
+| 升级与故障验收 | 22 | 175 | Aeron 升级工程：协议兼容、Archive 迁移、Cluster 滚动重启与回滚 | `aeron-upgrade-engineering-protocol-archive-cluster-rollback` |
+| 升级与故障验收 | 23 | 180 | Aeron Cluster 故障实验室：三节点、Snapshot、选举、Backup 与恢复验收 | `aeron-cluster-failure-lab-snapshot-election-backup-recovery` |
 
-本路径以 Aeron 1.52.2、SBE 1.39.0 和对应官方文档、源码及 Javadoc 为版本基线。在线 Cookbook 用于补充实战问题，不替代核心概念与 API 事实。Transport 是 Archive 与 Cluster 的共同前提；SBE 把传输字节收敛为可演进协议；Archive 负责可定位的持久化流，Cluster 在 Transport 与 Archive 之上建立确定性复制状态机。Agrona 不重复放入本路径，阅读 Buffer、Agent 与 IdleStrategy 时可回到 [Java 低延迟工程 Chapter 08](../src/content/posts/2026-03-10-agrona-direct-buffer-queues-and-agents.md)。
+本路径以 Aeron 1.52.2、SBE 1.39.0 和对应官方文档、源码及 Javadoc 为版本基线。在线 Cookbook 用于补充实战问题，不替代核心概念与 API 事实。Transport 是 Archive 与 Cluster 的共同前提；SBE 把传输字节收敛为可演进协议；Archive 负责可定位的持久化流，并可与业务 Checkpoint 组合成可恢复服务；Cluster 在 Transport 与 Archive 之上建立确定性复制状态机，最后通过升级与故障实验验证整条恢复链。Agrona 不重复放入本路径，阅读 Buffer、Agent 与 IdleStrategy 时可回到 [Java 低延迟工程 Chapter 08](../src/content/posts/2026-03-10-agrona-direct-buffer-queues-and-agents.md)。
 
 ## 交易系统
 

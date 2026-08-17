@@ -2,7 +2,7 @@
 title: Aeron Archive：生产运维手册——校验和、修复、迁移、监控与容量治理
 description: 基于 Aeron 1.52.2，说明 recording/replay checksum 的帧改写、ArchiveTool 各命令风险、格式迁移步骤，以及 counters、线程和磁盘告警的生产基线。
 date: 2026-08-13T10:40:00+08:00
-updated: 2026-08-17T17:45:00+08:00
+updated: 2026-08-17T23:42:09+08:00
 tags:
   - Aeron
   - Aeron Archive
@@ -419,7 +419,9 @@ Archive 运维的核心纪律是：**先保全整代目录，再验证；先理�
 
 Checksum 会改写持久 DATA frame 的 session-id 字段；verify 并非绝对只读；compact 永久移除非 VALID 历史；migration 必须以完整冷备和恢复测试为前提。生产健康也不能只看 PID，要把 counters、agent cycle、I/O 尾延迟、position lag、磁盘余量与灾备 checkpoint 放在同一张图上。
 
-至此，Archive 五篇形成完整闭环：录制身份与生命周期、磁盘与持久性、历史到实时消费、跨主机复制与恢复，以及生产运维。它们都围绕同一原则：把 position 当事实坐标，把异步终态与业务承诺分开。
+至此，Archive 五篇完成了组件主线：录制身份与生命周期、磁盘与持久性、历史到实时消费、跨主机复制与恢复，以及生产运维。它们都围绕同一原则：把 position 当事实坐标，把异步终态与业务承诺分开。
+
+下一篇进入 [Aeron 可恢复服务实战](/signal-grid-blog/posts/aeron-recoverable-service-request-response-archive-checkpoint-catchup/)：把 Request/Response、Archive 录制、业务 Checkpoint、重启 replay、追到 live 和请求去重放进同一个故障模型，回答“没有 Cluster 时，怎样把这些能力组合成可恢复服务”。
 
 ## 官方资料与版本基线
 

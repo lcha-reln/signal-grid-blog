@@ -2,7 +2,7 @@
 title: Aeron Transport：Channel、Stream、Session 与 Image 的身份模型
 description: 以 Aeron 1.52.2 为基线，从复制日志而非消息队列的视角，讲清 Media Driver、Channel URI、Stream、Session、Image、连接生命周期与传输保证。
 date: 2026-08-13T09:10:00+08:00
-updated: 2026-08-17T17:45:00+08:00
+updated: 2026-08-17T23:42:09+08:00
 tags:
   - Aeron
   - Aeron Transport
@@ -314,7 +314,7 @@ try (MediaDriver driver = MediaDriver.launchEmbedded(driverContext);
 
 Publication 的连接状态不是永久握手凭证。接收者可以出现、离开、超时或重新建立 Image。业务不能在启动时检查一次 `isConnected()`，随后假定链路永远存在。
 
-对 multicast/MDC，连接判定还会受 flow-control strategy、group minimum size 和 spy 配置影响。Transport 第 6 篇会单独讲这些拓扑语义。
+对 multicast/MDC，连接判定还会受 flow-control strategy、group minimum size 和 spy 配置影响；后文的 [MDC、MDS、Spy 与 Response Channels](/signal-grid-blog/posts/aeron-transport-mdc-mds-spy-response-channels/) 会单独讲这些拓扑语义。
 
 ### 6.2 Image 可用性回调是资源事件
 

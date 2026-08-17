@@ -63,9 +63,9 @@ export const SERIES: readonly SeriesDefinition[] = [
     key: "aeron",
     title: "Aeron 系统工程",
     eyebrow: "AERON SYSTEMS",
-    description: "从 Transport 的可靠低延迟传输与 SBE 协议演进，到 Archive 的录制、回放与复制，再到 Cluster 的确定性状态机、选举恢复和生产运维，建立完整而可验证的 Aeron 心智模型。",
+    description: "从 Transport 的可靠低延迟传输与 SBE 协议演进，到 Archive 录制、可恢复服务与历史追赶，再到 Cluster 的确定性状态机、边缘一致性、升级和故障验收，建立完整而可验证的 Aeron 心智模型。",
     prerequisite: "熟悉 Java 17、线程与网络基础；建议先了解 UDP、背压和二进制 Buffer。Agrona 章节可作为底层原语补充阅读，不要求预先掌握 SBE。",
-    outcome: "能够正确设计可演进的 SBE 消息并组合 Transport、Archive 与 Cluster，解释位置、流控、持久化和一致性边界，完成兼容性验证与可恢复的生产部署。",
+    outcome: "能够正确设计可演进的 SBE 消息并组合 Transport、Archive 与 Cluster，解释位置、流控、持久化和一致性边界，完成断线追赶、边缘幂等、兼容升级与故障恢复验收。",
     color: "cyan",
     index: "01",
     stages: [
@@ -79,8 +79,8 @@ export const SERIES: readonly SeriesDefinition[] = [
       {
         index: "02",
         eyebrow: "AERON ARCHIVE",
-        title: "录制、回放与复制",
-        description: "理解录制目录、持久性边界、历史追赶、跨主机复制与磁盘治理。",
+        title: "录制、回放与可恢复服务",
+        description: "理解录制目录、持久性边界、历史追赶、跨主机复制、磁盘治理和业务 Checkpoint。",
         fromOrder: 70,
       },
       {
@@ -89,6 +89,13 @@ export const SERIES: readonly SeriesDefinition[] = [
         title: "确定性集群与恢复",
         description: "把共识日志、业务状态机、客户端语义、选举、灾备和运行手册连成闭环。",
         fromOrder: 120,
+      },
+      {
+        index: "04",
+        eyebrow: "EVOLUTION & FAILURE LAB",
+        title: "升级与故障验收",
+        description: "把协议兼容、Archive 与 Snapshot 迁移、回滚边界和三节点故障恢复变成可验证工程。",
+        fromOrder: 175,
       },
     ],
   },

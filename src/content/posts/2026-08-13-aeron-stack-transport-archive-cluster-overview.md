@@ -1,8 +1,8 @@
 ---
 title: Aeron 全栈导读：Transport、Archive、Cluster 与 Agrona 的边界
-description: 以 Aeron 1.52.2 为基线，先建立 Transport、SBE、Archive、Cluster 与 Agrona 的完整心智模型，澄清协议、流、Image、Position、持久化、全序和 exactly-once 的真实边界，再进入后续 18 个深挖章节。
+description: 以 Aeron 1.52.2 为基线，先建立 Transport、SBE、Archive、Cluster 与 Agrona 的完整心智模型，澄清协议、流、Image、Position、持久化、全序和 exactly-once 的真实边界，再进入后续 22 个深挖章节。
 date: 2026-08-13T18:05:00+08:00
-updated: 2026-08-17T17:45:00+08:00
+updated: 2026-08-17T23:42:09+08:00
 tags:
   - Aeron
   - Aeron Transport
@@ -296,7 +296,7 @@ aeron:udp?endpoint=10.20.0.12:40123
 
 ## 11. 本专题怎样阅读
 
-后续 18 章按真实依赖分为三段：
+后续 22 章按真实依赖分为四段：
 
 ### 阶段一：Aeron Transport
 
@@ -304,11 +304,15 @@ aeron:udp?endpoint=10.20.0.12:40123
 
 ### 阶段二：Aeron Archive
 
-从录制控制会话进入磁盘布局与持久性，再讲 replay、历史追实时、跨主机复制和破坏性运维。完成后，应能区分 recording subscription id、recordingId、source sessionId、replay session id 与 replication id，并能写出恢复 runbook。
+从录制控制会话进入磁盘布局与持久性，再讲 replay、历史追实时、跨主机复制和破坏性运维，最后把 Request/Response、录制、业务 Checkpoint、重启 replay 与追到 live 组合成一个可恢复服务。完成后，应能区分 recording subscription id、recordingId、source sessionId、replay session id 与 replication id，并能说明一次业务确认究竟依赖哪条持久化边界。
 
 ### 阶段三：Aeron Cluster
 
-先沿一条 ingress 消息走过复制与 commit，再把确定性服务、timer、snapshot、election、catch-up、部署安全、Cluster Backup 和 ClusterTool 串起来。完成后，应能说明 leader 在任意时刻死亡时：哪些输入已提交、哪些结果未知、状态从哪里恢复、客户端该如何重试。
+先沿一条 ingress 消息走过复制与 commit，再把确定性服务、Gateway 边缘一致性、timer、snapshot、election、catch-up、部署安全、Cluster Backup 和 ClusterTool 串起来。完成后，应能说明 leader 在任意时刻死亡时：哪些输入已提交、哪些结果未知、状态从哪里恢复、客户端该如何重试与恢复投影。
+
+### 阶段四：升级与故障验收
+
+最后把协议、Archive、Snapshot 和混合版本的兼容边界组织成升级与回滚过程，再用三节点故障实验验证 Leader 崩溃、慢 Follower、网络分区、磁盘压力、坏 Snapshot 与 Backup 恢复。完成后，升级成功和“系统可恢复”都必须有位置、状态摘要、请求历史、RPO 与 RTO 证据，而不是只看进程重新启动。
 
 Cookbook 中的端口、fragment、timeout、Wireshark、慢客户端、startup task 与 Kubernetes 等问题，会放进对应原理章节，不另做一组脱离上下文的“问答摘抄”。
 

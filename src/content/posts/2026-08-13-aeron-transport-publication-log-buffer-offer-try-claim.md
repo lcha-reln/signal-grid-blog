@@ -2,7 +2,7 @@
 title: Aeron Transport：Publication、Log Buffer 与发送热路径
 description: 以 Aeron 1.52.2 源码为准，拆解 ConcurrentPublication、ExclusivePublication、三段 term log、position、offer 返回码、tryClaim 所有权与发送侧背压。
 date: 2026-08-13T09:20:00+08:00
-updated: 2026-08-17T17:45:00+08:00
+updated: 2026-08-17T23:42:09+08:00
 tags:
   - Aeron
   - Aeron Transport
@@ -28,7 +28,7 @@ draft: false
 5. `tryClaim` 为什么不是一句“零拷贝更快”就能概括？
 6. term、MTU、消息上限和资源占用怎样联系起来？
 
-建议先读 [Transport 第 1 篇：Channel、Stream、Session 与 Image](/signal-grid-blog/posts/aeron-transport-channel-stream-session-image/)，确认 Publication session 是一个独立顺序域；再读 [Aeron 与 SBE](/signal-grid-blog/posts/aeron-sbe-schema-flyweight-and-compatibility-testing/)，明确本文写入 log 的字节怎样形成完整、可演进的应用消息。
+建议先读 [Channel、Stream、Session 与 Image](/signal-grid-blog/posts/aeron-transport-channel-stream-session-image/)，确认 Publication session 是一个独立顺序域；再读 [Aeron 与 SBE](/signal-grid-blog/posts/aeron-sbe-schema-flyweight-and-compatibility-testing/)，明确本文写入 log 的字节怎样形成完整、可演进的应用消息。
 
 ## 1. Publication 是本地日志写入口
 
