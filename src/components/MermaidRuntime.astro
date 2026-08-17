@@ -1,5 +1,80 @@
+<dialog
+  id="mermaid-viewer"
+  class="mermaid-viewer"
+  data-mermaid-viewer
+  aria-labelledby="mermaid-viewer-title"
+  aria-describedby="mermaid-viewer-help"
+>
+  <div class="mermaid-viewer-shell">
+    <header class="mermaid-viewer-header">
+      <div class="mermaid-viewer-heading">
+        <span>DIAGRAM VIEWER</span>
+        <h2 id="mermaid-viewer-title" data-mermaid-viewer-title>图表大图</h2>
+      </div>
+
+      <div class="mermaid-viewer-toolbar" aria-label="图表缩放工具">
+        <button type="button" data-mermaid-zoom-out aria-label="缩小图表" title="缩小（-）">−</button>
+        <output data-mermaid-zoom-label aria-label="当前缩放比例">100%</output>
+        <button type="button" data-mermaid-zoom-in aria-label="放大图表" title="放大（+）">+</button>
+        <button type="button" class="mermaid-viewer-fit" data-mermaid-fit>适合窗口</button>
+        <button type="button" class="mermaid-viewer-close" data-mermaid-close>关闭</button>
+      </div>
+    </header>
+
+    <p id="mermaid-viewer-help" class="mermaid-viewer-help">
+      拖拽或滚轮移动，Ctrl / ⌘ + 滚轮缩放；也可使用双指、+ / −、方向键与 0。
+    </p>
+
+    <div
+      class="mermaid-viewer-viewport"
+      data-mermaid-viewport
+      tabindex="0"
+      role="region"
+      aria-label="可缩放和拖动的图表"
+    >
+      <div class="mermaid-viewer-canvas" data-mermaid-canvas></div>
+      <p class="mermaid-viewer-loading" data-mermaid-loading aria-live="polite">正在生成大图…</p>
+    </div>
+    <span class="mermaid-viewer-status" data-mermaid-viewer-status aria-live="polite" aria-atomic="true"></span>
+  </div>
+</dialog>
+
 <script>
+  type MermaidApi = typeof import("mermaid").default;
+  type Point = { x: number; y: number };
+  type ViewState = {
+    naturalWidth: number;
+    naturalHeight: number;
+    fitScale: number;
+    scale: number;
+    x: number;
+    y: number;
+  };
+
   const originals = new WeakMap<HTMLElement, string>();
+  const viewer = document.querySelector<HTMLDialogElement>("[data-mermaid-viewer]")!;
+  const viewerTitle = viewer.querySelector<HTMLElement>("[data-mermaid-viewer-title]")!;
+  const viewport = viewer.querySelector<HTMLElement>("[data-mermaid-viewport]")!;
+  const canvas = viewer.querySelector<HTMLElement>("[data-mermaid-canvas]")!;
+  const loading = viewer.querySelector<HTMLElement>("[data-mermaid-loading]")!;
+  const zoomLabel = viewer.querySelector<HTMLOutputElement>("[data-mermaid-zoom-label]")!;
+  const zoomStatus = viewer.querySelector<HTMLElement>("[data-mermaid-viewer-status]")!;
+  const zoomIn = viewer.querySelector<HTMLButtonElement>("[data-mermaid-zoom-in]")!;
+  const zoomOut = viewer.querySelector<HTMLButtonElement>("[data-mermaid-zoom-out]")!;
+  const fitButton = viewer.querySelector<HTMLButtonElement>("[data-mermaid-fit]")!;
+  const closeButton = viewer.querySelector<HTMLButtonElement>("[data-mermaid-close]")!;
+
+  const pointers = new Map<number, Point>();
+  let mermaidApi: MermaidApi | undefined;
+  let renderQueue: Promise<void> = Promise.resolve();
+  let viewerRequest = 0;
+  let viewerRenderId = 0;
+  let activeTrigger: HTMLButtonElement | undefined;
+  let activeNode: HTMLElement | undefined;
+  let viewState: ViewState | undefined;
+  let previousGestureCenter: Point | undefined;
+  let previousGestureDistance = 0;
+  let announceTimer: number | undefined;
 
   function collectNodes(): HTMLElement[] {
     document.querySelectorAll<HTMLElement>("pre > code.language-mermaid").forEach((code) => {
@@ -14,17 +89,12 @@
     return [...document.querySelectorAll<HTMLElement>(".article-body .mermaid")];
   }
 
-  async function renderMermaid() {
-    const nodes = collectNodes();
-    if (nodes.length === 0) return;
-    const { default: mermaid } = await import("mermaid");
+  async function getMermaid(): Promise<MermaidApi> {
+    if (!mermaidApi) mermaidApi = (await import("mermaid")).default;
+    return mermaidApi;
+  }
 
-    for (const node of nodes) {
-      if (!originals.has(node)) originals.set(node, node.textContent ?? "");
-      node.removeAttribute("data-processed");
-      node.textContent = originals.get(node) ?? "";
-    }
-
+  function configureMermaid(mermaid: MermaidApi) {
     const isDark = document.documentElement.dataset.theme !== "light";
     mermaid.initialize({
       startOnLoad: false,
@@ -52,14 +122,407 @@
             fontFamily: "ui-sans-serif, system-ui, sans-serif",
           },
     });
+  }
 
+  function nearestHeading(node: HTMLElement): string {
+    const frame = node.parentElement?.classList.contains("mermaid-frame") ? node.parentElement : node;
+    let cursor = frame.previousElementSibling;
+    while (cursor) {
+      if (/^H[2-4]$/.test(cursor.tagName)) return cursor.textContent?.trim() ?? "";
+      cursor = cursor.previousElementSibling;
+    }
+    return "";
+  }
+
+  function decorateNodes(nodes: HTMLElement[]) {
+    nodes.forEach((node, index) => {
+      if (!node.querySelector("svg")) return;
+
+      let frame = node.parentElement?.classList.contains("mermaid-frame")
+        ? node.parentElement
+        : undefined;
+      if (!frame) {
+        frame = document.createElement("div");
+        frame.className = "mermaid-frame";
+        node.before(frame);
+        frame.append(node);
+      }
+
+      const heading = nearestHeading(node);
+      const label = heading ? `图表 ${index + 1}：${heading}` : `图表 ${index + 1}`;
+      frame.dataset.mermaidLabel = label;
+
+      let button = frame.querySelector<HTMLButtonElement>("[data-mermaid-open]");
+      if (!button) {
+        button = document.createElement("button");
+        button.type = "button";
+        button.className = "mermaid-expand";
+        button.dataset.mermaidOpen = "";
+        button.setAttribute("aria-haspopup", "dialog");
+        button.setAttribute("aria-controls", "mermaid-viewer");
+        button.innerHTML = '<span aria-hidden="true">⤢</span><span class="mermaid-expand-label">查看大图</span>';
+        frame.append(button);
+      }
+      button.setAttribute("aria-label", `放大查看：${label}`);
+    });
+  }
+
+  async function renderMermaid() {
+    const nodes = collectNodes();
+    if (nodes.length === 0) return;
+    const mermaid = await getMermaid();
+
+    for (const node of nodes) {
+      if (!originals.has(node)) originals.set(node, node.textContent ?? "");
+      node.removeAttribute("data-processed");
+      node.textContent = originals.get(node) ?? "";
+    }
+
+    configureMermaid(mermaid);
     try {
       await mermaid.run({ nodes });
     } catch (error) {
       console.warn("Mermaid diagram could not be rendered", error);
     }
+    decorateNodes(nodes);
   }
 
-  renderMermaid();
-  window.addEventListener("signal-grid:theme", renderMermaid);
+  function queueMermaidRender() {
+    renderQueue = renderQueue.then(renderMermaid, renderMermaid);
+    return renderQueue;
+  }
+
+  function syncDialogLock() {
+    document.body.classList.toggle("dialog-open", Boolean(document.querySelector("dialog[open]")));
+  }
+
+  function currentZoom(): number {
+    if (!viewState || viewState.fitScale <= 0) return 1;
+    return viewState.scale / viewState.fitScale;
+  }
+
+  function updateZoomLabel(announce = false) {
+    const percent = `${Math.round(currentZoom() * 100)}%`;
+    zoomLabel.value = percent;
+    zoomLabel.textContent = percent;
+    if (!announce) return;
+    window.clearTimeout(announceTimer);
+    announceTimer = window.setTimeout(() => {
+      zoomStatus.textContent = `当前缩放比例 ${percent}`;
+    }, 180);
+  }
+
+  function clampView() {
+    if (!viewState) return;
+    const width = viewState.naturalWidth * viewState.scale;
+    const height = viewState.naturalHeight * viewState.scale;
+    const viewportWidth = viewport.clientWidth;
+    const viewportHeight = viewport.clientHeight;
+    const padding = 18;
+
+    viewState.x = width <= viewportWidth - padding * 2
+      ? (viewportWidth - width) / 2
+      : Math.min(padding, Math.max(viewportWidth - width - padding, viewState.x));
+    viewState.y = height <= viewportHeight - padding * 2
+      ? (viewportHeight - height) / 2
+      : Math.min(padding, Math.max(viewportHeight - height - padding, viewState.y));
+  }
+
+  function applyView(announce = false) {
+    if (!viewState) return;
+    clampView();
+    canvas.style.transform = `translate3d(${viewState.x}px, ${viewState.y}px, 0) scale(${viewState.scale})`;
+    viewport.classList.toggle("is-zoomed", currentZoom() > 1.01);
+    updateZoomLabel(announce);
+  }
+
+  function resetView(announce = true) {
+    if (!viewState) return;
+    const availableWidth = Math.max(1, viewport.clientWidth - 36);
+    const availableHeight = Math.max(1, viewport.clientHeight - 36);
+    viewState.fitScale = Math.min(
+      1,
+      availableWidth / viewState.naturalWidth,
+      availableHeight / viewState.naturalHeight,
+    );
+    viewState.scale = viewState.fitScale;
+    viewState.x = (viewport.clientWidth - viewState.naturalWidth * viewState.scale) / 2;
+    viewState.y = (viewport.clientHeight - viewState.naturalHeight * viewState.scale) / 2;
+    applyView(announce);
+  }
+
+  function zoomTo(level: number, clientX?: number, clientY?: number, announce = true) {
+    if (!viewState) return;
+    const nextLevel = Math.min(8, Math.max(1, level));
+    const nextScale = viewState.fitScale * nextLevel;
+    const rect = viewport.getBoundingClientRect();
+    const anchorX = clientX === undefined ? viewport.clientWidth / 2 : clientX - rect.left;
+    const anchorY = clientY === undefined ? viewport.clientHeight / 2 : clientY - rect.top;
+    const contentX = (anchorX - viewState.x) / viewState.scale;
+    const contentY = (anchorY - viewState.y) / viewState.scale;
+
+    viewState.scale = nextScale;
+    viewState.x = anchorX - contentX * nextScale;
+    viewState.y = anchorY - contentY * nextScale;
+    applyView(announce);
+  }
+
+  function panBy(deltaX: number, deltaY: number) {
+    if (!viewState) return;
+    viewState.x += deltaX;
+    viewState.y += deltaY;
+    applyView(false);
+  }
+
+  function points(): Point[] {
+    return [...pointers.values()];
+  }
+
+  function centerOf(first: Point, second: Point): Point {
+    return { x: (first.x + second.x) / 2, y: (first.y + second.y) / 2 };
+  }
+
+  function distanceBetween(first: Point, second: Point): number {
+    return Math.hypot(second.x - first.x, second.y - first.y);
+  }
+
+  function beginGesture() {
+    const active = points();
+    if (active.length === 1) {
+      previousGestureCenter = active[0];
+      previousGestureDistance = 0;
+    } else if (active.length >= 2) {
+      previousGestureCenter = centerOf(active[0], active[1]);
+      previousGestureDistance = distanceBetween(active[0], active[1]);
+    }
+  }
+
+  async function openViewer(node: HTMLElement, trigger: HTMLButtonElement) {
+    const source = originals.get(node);
+    if (!source) return;
+
+    const searchDialog = document.querySelector<HTMLDialogElement>("[data-search-dialog][open]");
+    if (searchDialog) {
+      await new Promise<void>((resolve) => {
+        searchDialog.addEventListener("close", () => resolve(), { once: true });
+        searchDialog.close();
+      });
+    }
+    const otherDialog = document.querySelector<HTMLDialogElement>("dialog[open]");
+    if (otherDialog && otherDialog !== viewer) return;
+
+    activeNode = node;
+    activeTrigger = trigger;
+    const frame = node.parentElement?.classList.contains("mermaid-frame") ? node.parentElement : undefined;
+    viewerTitle.textContent = frame?.dataset.mermaidLabel ?? "图表大图";
+    canvas.replaceChildren();
+    canvas.removeAttribute("style");
+    loading.hidden = false;
+    loading.textContent = "正在生成大图…";
+    viewState = undefined;
+    pointers.clear();
+    const request = ++viewerRequest;
+
+    if (!viewer.open) viewer.showModal();
+    syncDialogLock();
+    viewport.focus();
+
+    try {
+      await renderQueue;
+      const mermaid = await getMermaid();
+      configureMermaid(mermaid);
+      const { svg } = await mermaid.render(`signal-grid-mermaid-viewer-${++viewerRenderId}`, source);
+      if (request !== viewerRequest || !viewer.open || activeNode !== node) return;
+
+      canvas.innerHTML = svg;
+      const rendered = canvas.querySelector<SVGSVGElement>("svg");
+      if (!rendered) throw new Error("Mermaid viewer did not produce an SVG");
+      const box = rendered.viewBox.baseVal;
+      const naturalWidth = Math.max(1, box.width || rendered.getBoundingClientRect().width);
+      const naturalHeight = Math.max(1, box.height || rendered.getBoundingClientRect().height);
+      rendered.style.width = `${naturalWidth}px`;
+      rendered.style.height = `${naturalHeight}px`;
+      rendered.style.maxWidth = "none";
+      rendered.style.maxHeight = "none";
+      rendered.setAttribute("role", "img");
+      rendered.setAttribute("aria-label", viewerTitle.textContent ?? "图表大图");
+      canvas.style.width = `${naturalWidth}px`;
+      canvas.style.height = `${naturalHeight}px`;
+      loading.hidden = true;
+      viewState = { naturalWidth, naturalHeight, fitScale: 1, scale: 1, x: 0, y: 0 };
+      requestAnimationFrame(() => resetView(false));
+    } catch (error) {
+      if (request !== viewerRequest || !viewer.open) return;
+      loading.hidden = false;
+      loading.textContent = "大图生成失败，请关闭后重试。";
+      console.warn("Mermaid viewer could not render the diagram", error);
+    }
+  }
+
+  function closeViewer() {
+    if (viewer.open) viewer.close();
+  }
+
+  document.addEventListener("click", (event) => {
+    const target = event.target as Element | null;
+    const button = target?.closest<HTMLButtonElement>("[data-mermaid-open]");
+    if (!button) return;
+    const frame = button.closest<HTMLElement>(".mermaid-frame");
+    const node = frame?.querySelector<HTMLElement>(".mermaid");
+    if (node) void openViewer(node, button);
+  });
+
+  let inlinePress: { pointerId: number; x: number; y: number; frame: HTMLElement } | undefined;
+  document.addEventListener("pointerdown", (event) => {
+    if (event.pointerType !== "mouse" || event.button !== 0) return;
+    const target = event.target as Element | null;
+    if (target?.closest("[data-mermaid-open]")) return;
+    const frame = target?.closest<HTMLElement>(".mermaid-frame");
+    if (!frame) return;
+    inlinePress = { pointerId: event.pointerId, x: event.clientX, y: event.clientY, frame };
+  });
+  document.addEventListener("pointerup", (event) => {
+    if (!inlinePress || inlinePress.pointerId !== event.pointerId) return;
+    const press = inlinePress;
+    inlinePress = undefined;
+    if (Math.hypot(event.clientX - press.x, event.clientY - press.y) > 6) return;
+    const node = press.frame.querySelector<HTMLElement>(".mermaid");
+    const button = press.frame.querySelector<HTMLButtonElement>("[data-mermaid-open]");
+    if (node && button) void openViewer(node, button);
+  });
+  document.addEventListener("pointercancel", () => { inlinePress = undefined; });
+
+  zoomIn.addEventListener("click", () => zoomTo(currentZoom() * 1.25));
+  zoomOut.addEventListener("click", () => zoomTo(currentZoom() / 1.25));
+  fitButton.addEventListener("click", () => resetView());
+  closeButton.addEventListener("click", closeViewer);
+
+  viewport.addEventListener("wheel", (event) => {
+    if (!viewState) return;
+    event.preventDefault();
+    if (event.ctrlKey || event.metaKey) {
+      zoomTo(currentZoom() * Math.exp(-event.deltaY * 0.002), event.clientX, event.clientY, false);
+      updateZoomLabel(true);
+    } else {
+      panBy(-event.deltaX, -event.deltaY);
+    }
+  }, { passive: false });
+
+  viewport.addEventListener("pointerdown", (event) => {
+    if (!viewState || event.button > 0) return;
+    pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+    viewport.setPointerCapture(event.pointerId);
+    viewport.classList.add("is-dragging");
+    beginGesture();
+  });
+
+  viewport.addEventListener("pointermove", (event) => {
+    if (!pointers.has(event.pointerId) || !viewState) return;
+    pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+    const active = points();
+
+    if (active.length === 1 && previousGestureCenter) {
+      panBy(active[0].x - previousGestureCenter.x, active[0].y - previousGestureCenter.y);
+      previousGestureCenter = active[0];
+      return;
+    }
+
+    if (active.length >= 2 && previousGestureCenter && previousGestureDistance > 0) {
+      const nextCenter = centerOf(active[0], active[1]);
+      const nextDistance = distanceBetween(active[0], active[1]);
+      const rect = viewport.getBoundingClientRect();
+      const anchorX = previousGestureCenter.x - rect.left;
+      const anchorY = previousGestureCenter.y - rect.top;
+      const contentX = (anchorX - viewState.x) / viewState.scale;
+      const contentY = (anchorY - viewState.y) / viewState.scale;
+      const nextLevel = Math.min(8, Math.max(1, currentZoom() * nextDistance / previousGestureDistance));
+      const nextScale = viewState.fitScale * nextLevel;
+      viewState.scale = nextScale;
+      viewState.x = nextCenter.x - rect.left - contentX * nextScale;
+      viewState.y = nextCenter.y - rect.top - contentY * nextScale;
+      applyView(false);
+      previousGestureCenter = nextCenter;
+      previousGestureDistance = nextDistance;
+    }
+  });
+
+  function endPointer(event: PointerEvent) {
+    pointers.delete(event.pointerId);
+    if (pointers.size === 0) viewport.classList.remove("is-dragging");
+    beginGesture();
+    updateZoomLabel(true);
+  }
+  viewport.addEventListener("pointerup", endPointer);
+  viewport.addEventListener("pointercancel", endPointer);
+
+  viewport.addEventListener("dblclick", (event) => {
+    zoomTo(currentZoom() > 1.05 ? 1 : 2, event.clientX, event.clientY);
+  });
+
+  viewer.addEventListener("keydown", (event) => {
+    if (event.ctrlKey || event.metaKey || event.altKey) return;
+    if (event.key === "+" || event.key === "=") {
+      event.preventDefault();
+      zoomTo(currentZoom() * 1.25);
+    } else if (event.key === "-") {
+      event.preventDefault();
+      zoomTo(currentZoom() / 1.25);
+    } else if (event.key === "0") {
+      event.preventDefault();
+      resetView();
+    } else if (event.key === "ArrowLeft" && event.target === viewport) {
+      event.preventDefault();
+      panBy(48, 0);
+    } else if (event.key === "ArrowRight" && event.target === viewport) {
+      event.preventDefault();
+      panBy(-48, 0);
+    } else if (event.key === "ArrowUp" && event.target === viewport) {
+      event.preventDefault();
+      panBy(0, 48);
+    } else if (event.key === "ArrowDown" && event.target === viewport) {
+      event.preventDefault();
+      panBy(0, -48);
+    }
+  });
+
+  viewer.addEventListener("click", (event) => {
+    if (event.target === viewer) closeViewer();
+  });
+  viewer.addEventListener("close", () => {
+    ++viewerRequest;
+    const trigger = activeTrigger;
+    activeNode = undefined;
+    activeTrigger = undefined;
+    viewState = undefined;
+    pointers.clear();
+    previousGestureCenter = undefined;
+    previousGestureDistance = 0;
+    window.clearTimeout(announceTimer);
+    announceTimer = undefined;
+    canvas.replaceChildren();
+    canvas.removeAttribute("style");
+    loading.hidden = false;
+    zoomStatus.textContent = "";
+    viewport.classList.remove("is-dragging", "is-zoomed");
+    syncDialogLock();
+    requestAnimationFrame(() => trigger?.focus());
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (viewer.open && (event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+    }
+  }, true);
+
+  const resizeObserver = new ResizeObserver(() => {
+    if (viewer.open && viewState) resetView(false);
+  });
+  resizeObserver.observe(viewport);
+
+  queueMermaidRender();
+  window.addEventListener("signal-grid:theme", () => {
+    closeViewer();
+    queueMermaidRender();
+  });
 </script>
