@@ -2,7 +2,7 @@
 title: 分布式消息序列号：Gap 检测、乱序处理与 Aeron 实战
 description: 从序列域、接收窗口和故障恢复出发，讲清消息 Gap、重复与乱序的检测边界，并给出 Aeron 中可落地的发送、接收、持久化与监控方案。
 date: 2026-03-11T12:00:00+08:00
-updated: 2026-08-17T11:45:00+08:00
+updated: 2026-08-17T16:55:00+08:00
 categories:
   - 高可用架构
 tags:
@@ -20,7 +20,7 @@ draft: false
 
 在有状态服务中，消息顺序并不是一个孤立的传输问题。主节点切换、进程重启、发送重试和并行消费，都可能让接收端遇到重复、缺口或来自旧任期的消息。
 
-本文是“有状态系统可靠性”学习路径的 Chapter 07。建议先阅读 [Chapter 01：有状态服务的高可用架构](/signal-grid-blog/posts/high-availability-stateful-service/) 建立全景，由 [Chapter 02：WAL](/signal-grid-blog/posts/write-ahead-log-durability-and-crash-recovery/) 理解本地持久前缀，通过 [Chapter 03：分布式时间](/signal-grid-blog/posts/distributed-systems-time-clocks-ordering-and-leases/) 区分时间戳、因果顺序和权威序列，再由 [Chapter 04：Raft](/signal-grid-blog/posts/raft-consensus-leader-election-log-replication-and-safety/) 理解任期、提交与结果未知，经 [Chapter 05：ZooKeeper](/signal-grid-blog/posts/zookeeper-coordination-consistency-and-recipes/) 建立 Session、选主和 fencing 边界，并通过 [Chapter 06：Kafka](/signal-grid-blog/posts/kafka-distributed-log-kraft-consumers-and-transactions/) 理解 offset、复制和恢复位置，最后进入应用级序列号协议。
+本文是“有状态系统可靠性”学习路径的 Chapter 08。建议先阅读 [Chapter 01：有状态服务的高可用架构](/signal-grid-blog/posts/high-availability-stateful-service/) 建立全景，由 [Chapter 02：WAL](/signal-grid-blog/posts/write-ahead-log-durability-and-crash-recovery/) 理解本地持久前缀，通过 [Chapter 03：分布式时间](/signal-grid-blog/posts/distributed-systems-time-clocks-ordering-and-leases/) 区分时间戳、因果顺序和权威序列，用 [Chapter 04：一致性模型](/signal-grid-blog/posts/consistency-models-linearizability-serializability-and-real-time-order/) 判断客户端观察合同，再由 [Chapter 05：Raft](/signal-grid-blog/posts/raft-consensus-leader-election-log-replication-and-safety/) 理解任期、提交与结果未知，经 [Chapter 06：ZooKeeper](/signal-grid-blog/posts/zookeeper-coordination-consistency-and-recipes/) 建立 Session、选主和 fencing 边界，并通过 [Chapter 07：Kafka](/signal-grid-blog/posts/kafka-distributed-log-kraft-consumers-and-transactions/) 理解 offset、复制和恢复位置，最后进入应用级序列号协议。
 
 序列号能以很低的成本暴露消息流的不连续，但它不会自动提供可靠投递、恢复、幂等或 exactly-once。生产系统真正需要设计的是：**序列号属于哪个域、由哪个任期的生产者生成、发现缺口后如何恢复，以及业务状态和消费位置如何一起提交。**
 
@@ -324,7 +324,7 @@ flowchart TB
 
 ## 6. Kafka offset 也不是全局业务序列
 
-在 [Chapter 01](/signal-grid-blog/posts/high-availability-stateful-service/) 的消息驱动架构里，Kafka offset 可以作为恢复锚点；[Chapter 06](/signal-grid-blog/posts/kafka-distributed-log-kraft-consumers-and-transactions/) 已从日志压缩、事务和消费恢复的角度展开其边界。完整身份至少是 `(topic, partition, offset)`：
+在 [Chapter 01](/signal-grid-blog/posts/high-availability-stateful-service/) 的消息驱动架构里，Kafka offset 可以作为恢复锚点；[Chapter 07](/signal-grid-blog/posts/kafka-distributed-log-kraft-consumers-and-transactions/) 已从日志压缩、事务和消费恢复的角度展开其边界。完整身份至少是 `(topic, partition, offset)`：
 
 - offset 只在一个 partition 内标识位置，不能跨 partition 直接比较。
 - Kafka 官方客户端文档明确说明 offset 不保证连续，例如日志压缩和事务控制记录都可能让 consumer position 跳跃。
@@ -388,7 +388,7 @@ flowchart TB
 - [Aeron Position](https://aeron.io/docs/aeron/aeron-understanding-position/)
 - [Aeron Channels, Streams and Sessions](https://aeron.io/docs/aeron/aeron-channel-stream-session/)
 - [Aeron Archive Overview](https://aeron.io/docs/aeron-archive/overview/)
-- [Apache Kafka 4.1 KafkaConsumer：Offsets and Consumer Position](https://kafka.apache.org/41/javadoc/org/apache/kafka/clients/consumer/KafkaConsumer.html)
-- [Java 24 Files API](https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/nio/file/Files.html)
-- [Java 24 FileChannel API](https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/nio/channels/FileChannel.html)
+- [Apache Kafka 4.3 KafkaConsumer：Offsets and Consumer Position](https://kafka.apache.org/43/javadoc/org/apache/kafka/clients/consumer/KafkaConsumer.html)
+- [Java 25 Files API](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Files.html)
+- [Java 25 FileChannel API](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/channels/FileChannel.html)
 - [RFC 1982：Serial Number Arithmetic](https://www.rfc-editor.org/info/rfc1982/)

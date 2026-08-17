@@ -2,7 +2,7 @@
 title: "有状态服务的高可用架构：热备复制、选主与快照恢复"
 description: "以 Kafka 分区日志和双节点热备为主线，拆解确定性执行、Leader 选举与 fencing、状态校验、快照恢复和输出持久化，并明确 RTO、RPO 与一致性边界。"
 date: 2026-03-08T14:43:51+08:00
-updated: 2026-08-17T11:45:00+08:00
+updated: 2026-08-17T16:55:00+08:00
 categories:
   - 高可用架构
 tags:
@@ -26,7 +26,7 @@ draft: false
 
 > 这不是仅靠几项中间件配置就能获得的“强一致方案”。一致性来自完整协议：确定性执行、按分区记录的恢复位点、Leader epoch、下游 fencing、原子快照，以及可重复验证的故障切换流程。
 
-本文是学习路径的架构总览。下一章 [《WAL 到底保证什么》](/signal-grid-blog/posts/write-ahead-log-durability-and-crash-recovery/) 会先解释单机怎样用日志、持久化屏障和恢复算法建立可恢复前缀；Chapter 03 的 [《分布式时间》](/signal-grid-blog/posts/distributed-systems-time-clocks-ordering-and-leases/) 再拆开墙钟、因果顺序、超时与 Lease；随后 Chapter 04 的 [Raft 论文精读](/signal-grid-blog/posts/raft-consensus-leader-election-log-replication-and-safety/) 才把本地日志扩展为多数副本共同认可的提交前缀。本文的双节点热备参考模型本身不是 Raft 集群。
+本文是学习路径的架构总览。下一章 [《WAL 到底保证什么》](/signal-grid-blog/posts/write-ahead-log-durability-and-crash-recovery/) 会先解释单机怎样用日志、持久化屏障和恢复算法建立可恢复前缀；Chapter 03 的 [《分布式时间》](/signal-grid-blog/posts/distributed-systems-time-clocks-ordering-and-leases/) 再拆开墙钟、因果顺序、超时与 Lease；Chapter 04 用 [operation history 精确定义一致性合同](/signal-grid-blog/posts/consistency-models-linearizability-serializability-and-real-time-order/)，随后 Chapter 05 的 [Raft 论文精读](/signal-grid-blog/posts/raft-consensus-leader-election-log-replication-and-safety/) 才把本地日志扩展为多数副本共同认可的提交前缀。本文的双节点热备参考模型本身不是 Raft 集群。
 
 ## 先定义故障边界和目标
 

@@ -2,7 +2,7 @@
 title: "保证金风险引擎：权益、维持保证金与标记价格"
 description: "用明确的账户作用域拆开钱包余额、权益、保证金余额、可用保证金与维持保证金，解释标记价格的数据链路、风险比率方向和简化强平公式的适用边界。"
 date: 2026-03-10T01:00:00+08:00
-updated: 2026-08-17T14:10:00+08:00
+updated: 2026-08-17T16:55:00+08:00
 categories:
   - 交易系统
 tags:
@@ -23,7 +23,7 @@ draft: false
 
 因此，风险引擎不能先背一个公式再套所有产品。它必须先确定**账户作用域、抵押品规则、价格快照、持仓模式和比率方向**，再计算当前规则版本下的 IM、MM 与风险动作。
 
-本文是交易系统学习路径的 Chapter 10。[Chapter 08：永续资金费用](/signal-grid-blog/posts/perpetual-funding-rate/) 会改变账户现金与风险缓冲，[Chapter 09：交易账本与双重记账](/signal-grid-blog/posts/trading-ledger-double-entry-accounting-and-reconciliation/) 已把这些现金流拆成 posted、pending 与 available 等可审计状态；这里再把账本余额和仓位估值接入同一风险快照。
+本文是交易系统学习路径的 Chapter 11。[Chapter 09：永续资金费用](/signal-grid-blog/posts/perpetual-funding-rate/) 会改变账户现金与风险缓冲，[Chapter 10：交易账本与双重记账](/signal-grid-blog/posts/trading-ledger-double-entry-accounting-and-reconciliation/) 已把这些现金流拆成 posted、pending 与 available 等可审计状态；这里再把账本余额和仓位估值接入同一风险快照。
 
 > 本文讨论风险模型和实现边界，不构成交易建议。所有公式中的费率、档位、价格源和清算步骤都必须以目标平台当期规则为准。
 

@@ -1,8 +1,8 @@
 ---
 title: Aeron 全栈导读：Transport、Archive、Cluster 与 Agrona 的边界
-description: 以 Aeron 1.52.2 为基线，先建立 Transport、Archive、Cluster 与 Agrona 的完整心智模型，澄清流、Image、Position、持久化、全序和 exactly-once 的真实边界，再进入后续 17 个深挖章节。
+description: 以 Aeron 1.52.2 为基线，先建立 Transport、SBE、Archive、Cluster 与 Agrona 的完整心智模型，澄清协议、流、Image、Position、持久化、全序和 exactly-once 的真实边界，再进入后续 18 个深挖章节。
 date: 2026-08-13T18:05:00+08:00
-updated: 2026-08-13T18:05:00+08:00
+updated: 2026-08-17T16:55:00+08:00
 tags:
   - Aeron
   - Aeron Transport
@@ -296,11 +296,11 @@ aeron:udp?endpoint=10.20.0.12:40123
 
 ## 11. 本专题怎样阅读
 
-后续 17 章按真实依赖分为三段：
+后续 18 章按真实依赖分为三段：
 
 ### 阶段一：Aeron Transport
 
-先用身份和位置模型回答“我到底在连接哪条流”，再分别拆发送热路径、接收与 fragmentation、可靠 UDP 协议、复杂拓扑和 Media Driver 运维。完成后，应能从 counters 和返回值解释一条消息为什么没有前进。
+先用身份和位置模型回答“我到底在连接哪条流”，再用 SBE 把字节流收敛成可演进的应用协议，随后分别拆发送热路径、接收与 fragmentation、可靠 UDP 协议、复杂拓扑和 Media Driver 运维。完成后，应能从 schema、counters 和返回值解释一条消息为什么无法解码或没有前进。
 
 ### 阶段二：Aeron Archive
 

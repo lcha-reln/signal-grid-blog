@@ -2,7 +2,7 @@
 title: Agrona 2：DirectBuffer、并发队列与 Agent 执行模型
 description: 基于 Agrona 2.5.0，围绕 Buffer 与内存顺序、SPSC/MPSC 队列、Agent/IdleStrategy 和低分配集合，解释所有权、背压与生命周期，并纠正“零 GC、零拷贝、无锁就一定更快”的常见误区。
 date: 2026-03-10T11:15:21+08:00
-updated: 2026-08-14T18:35:00+08:00
+updated: 2026-08-17T16:55:00+08:00
 tags:
   - Agrona
   - Java 并发
@@ -13,7 +13,7 @@ tags:
   - 低分配
 permalink: agrona-direct-buffer-queues-and-agents
 series: performance
-seriesOrder: 40
+seriesOrder: 80
 featured: false
 draft: false
 ---

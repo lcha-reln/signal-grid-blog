@@ -2,7 +2,7 @@
 title: Aeron Transport：Subscription、poll 与消息重组
 description: 深入 Aeron 1.52.2 接收热路径，讲清 Subscription 与 Image 的线程所有权、poll duty cycle、回调内存、fragmentation、FragmentAssembler 与 controlledPoll 的提交语义。
 date: 2026-08-13T09:30:00+08:00
-updated: 2026-08-13T09:30:00+08:00
+updated: 2026-08-17T16:55:00+08:00
 tags:
   - Aeron
   - Aeron Transport
@@ -25,7 +25,7 @@ subscription.poll(fragmentHandler, fragmentLimit);
 
 但要把它写成可靠的生产代码，必须回答一串隐藏问题：谁拥有 Subscription？`fragmentLimit` 限制的是消息还是 frame？handler 收到的 buffer 能保存多久？大消息怎样重组？业务失败后 `ABORT` 会不会撤销副作用？回调抛异常时 position 到底推进没有？
 
-本文以 **Aeron 1.52.2** 源码与 Javadoc 为基线，从 Image 的 position 推进机制解释这些边界。发送侧的 term、MTU 和 `offer` 见 [Transport 第 2 篇：Publication、Log Buffer 与发送热路径](/signal-grid-blog/posts/aeron-transport-publication-log-buffer-offer-try-claim/)。
+本文以 **Aeron 1.52.2** 源码与 Javadoc 为基线，从 Image 的 position 推进机制解释这些边界。发送侧的 term、MTU 和 `offer` 见 [Transport 第 3 篇：Publication、Log Buffer 与发送热路径](/signal-grid-blog/posts/aeron-transport-publication-log-buffer-offer-try-claim/)。
 
 ## 1. Subscription 聚合 Image，不拥有一条全局日志
 

@@ -2,7 +2,7 @@
 title: "分布式时间：时钟、因果与租约"
 description: "从墙钟、单调时钟与同步误差出发，讲清 happens-before、Lamport Clock、Vector Clock、HLC、TrueTime、超时与故障检测、Lease 与 fencing，以及时间戳不能替代共识的边界。"
 date: 2026-08-17T11:45:00+08:00
-updated: 2026-08-17T11:45:00+08:00
+updated: 2026-08-17T16:55:00+08:00
 tags:
   - 分布式系统
   - 时钟同步
@@ -30,7 +30,7 @@ draft: false
 
 这些问题需要的工具分别是墙钟、单调时钟、逻辑时钟，以及 sequencer 或共识协议。它们可以组合，却不能互相冒充。
 
-本文是“有状态系统可靠性”学习路径的 Chapter 03。建议先读 [Chapter 01：有状态服务的高可用架构](/signal-grid-blog/posts/high-availability-stateful-service/) 建立故障模型，再由 [Chapter 02：WAL 到底保证什么](/signal-grid-blog/posts/write-ahead-log-durability-and-crash-recovery/) 理解本地持久前缀。本文把单机带入多节点世界：先拆开物理时间、因果顺序、超时与 Lease，下一章再用 [Chapter 04：Raft 论文精读](/signal-grid-blog/posts/raft-consensus-leader-election-log-replication-and-safety/) 说明多数副本怎样形成不可被未来 Leader 推翻的提交顺序。
+本文是“有状态系统可靠性”学习路径的 Chapter 03。建议先读 [Chapter 01：有状态服务的高可用架构](/signal-grid-blog/posts/high-availability-stateful-service/) 建立故障模型，再由 [Chapter 02：WAL 到底保证什么](/signal-grid-blog/posts/write-ahead-log-durability-and-crash-recovery/) 理解本地持久前缀。本文把单机带入多节点世界：先拆开物理时间、因果顺序、超时与 Lease；下一章 [Chapter 04：一致性模型](/signal-grid-blog/posts/consistency-models-linearizability-serializability-and-real-time-order/) 再教我们怎样从 operation history 判断 API 承诺，随后 Chapter 05 才用 Raft 说明多数副本怎样形成不可被未来 Leader 推翻的提交顺序。
 
 本文以 Lamport 1978 年论文、NTPv4 RFC、JDK 25 API、Hybrid Logical Clock 原论文、Spanner/TrueTime 论文和 Gray–Cheriton Lease 论文为主要依据。示例是为解释不变量而重写的教学模型，不代表任一产品的完整实现。
 
@@ -781,7 +781,7 @@ flowchart TB
 
 > 时间读数不是分布式事实，而是协议在特定时钟、网络和故障假设下取得的一份证据。先写清要证明什么，再选择时钟。
 
-下一章进入 [Raft 论文精读](/signal-grid-blog/posts/raft-consensus-leader-election-log-replication-and-safety/)：Raft 的 term、选举超时与心跳会使用时间推动活性，但日志安全性来自投票限制、日志匹配和多数派交集，而不是同步墙钟。
+下一章进入 [一致性模型](/signal-grid-blog/posts/consistency-models-linearizability-serializability-and-real-time-order/)：先用 invocation、response 与实时先序把“看起来一致”变成可检查的 history contract；再由后续 [Raft 论文精读](/signal-grid-blog/posts/raft-consensus-leader-election-log-replication-and-safety/) 说明 term、选举超时与心跳只用时间推动活性，日志安全性来自投票限制、日志匹配和多数派交集，而不是同步墙钟。
 
 ## 官方与原始资料
 

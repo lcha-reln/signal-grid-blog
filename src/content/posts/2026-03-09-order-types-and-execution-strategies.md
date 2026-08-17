@@ -2,7 +2,7 @@
 title: "交易订单语义：Market、Limit、TIF、Post-Only 与条件单"
 description: "把价格约束、有效期、只挂单、只减仓和条件触发拆成正交维度，解释订单状态机、成交边界，以及跨交易所 FOK 无法提供原子性的原因。"
 date: 2026-03-09T18:00:00+08:00
-updated: 2026-08-13T11:00:00+08:00
+updated: 2026-08-17T16:55:00+08:00
 categories:
   - 交易系统
 tags:
@@ -23,7 +23,7 @@ draft: false
 
 如果把这些维度混在一起，系统很容易出现两个危险误解：市价单或止损单“一定成交”，以及分别在两家交易所提交 FOK 就能让两条腿“同时成功或同时失败”。前者忽略流动性、价格保护和风控拒绝，后者忽略两个撮合引擎之间根本没有共同事务。
 
-本文是交易系统学习路径的 Chapter 03。建议先阅读 [CEX 交易系统全景](/signal-grid-blog/posts/cex-trading-system-overview/)，再把本文的订单契约接到撮合与账本链路上。
+本文是交易系统学习路径的 Chapter 04。建议先阅读 [CEX 交易系统全景](/signal-grid-blog/posts/cex-trading-system-overview/) 与 [交易品种主数据和市场状态](/signal-grid-blog/posts/trading-instrument-master-market-state-and-rule-versioning/)，再把订单契约绑定到明确的规则版本、交易状态、撮合与账本链路上。
 
 > 本文讨论订单和系统语义，不构成交易建议。平台会按产品、地区、账户模式和版本调整参数；接入时应以目标平台当期 API schema、产品规则和返回码为准。
 

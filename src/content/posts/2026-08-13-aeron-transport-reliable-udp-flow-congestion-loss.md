@@ -2,7 +2,7 @@
 title: Aeron Transport：可靠 UDP、流控、拥塞控制与丢包恢复
 description: 从 Aeron 1.52.2 线路协议出发，解释 SETUP、Status Message、DATA、NAK、连续位置、三层窗口、receiver group、max/min/tagged 流控、CUBIC 与 unreliable/untethered 边界。
 date: 2026-08-13T09:40:00+08:00
-updated: 2026-08-13T09:40:00+08:00
+updated: 2026-08-17T16:55:00+08:00
 tags:
   - Aeron
   - Aeron Transport
@@ -39,7 +39,7 @@ flowchart LR
   SUB2["Publication<br/>business B → A"] -->|"second stream DATA"| SUB2B["Subscription"]
 ```
 
-若要请求/响应，必须建立第二条 Publication/Subscription 方向，并定义 correlation、超时与幂等。第五篇会展开 Response Channels。
+若要请求/响应，必须建立第二条 Publication/Subscription 方向，并定义 correlation、超时与幂等。第六篇会展开 Response Channels。
 
 ### 1.1 协议 frame 类型
 

@@ -2,7 +2,7 @@
 title: Java 低延迟到底应该怎么测：JMH、尾延迟与生产证据链
 description: 从问题定义、测量边界和正确性基线出发，讲清 JMH 微基准、JIT 与 GC 预热、端到端负载、协调遗漏、尾延迟直方图、硬件噪声、剖析与生产验证，建立可复现的 Java 低延迟证据链。
 date: 2026-08-14T18:35:00+08:00
-updated: 2026-08-14T18:35:00+08:00
+updated: 2026-08-17T16:55:00+08:00
 tags:
   - Java 性能
   - JMH
@@ -25,7 +25,7 @@ draft: false
 
 **低延迟不是某个数字，而是一条证据链。** 正确的测试要把业务承诺、测量边界、到达模型、JVM 生命周期、硬件环境、统计方法和生产验证连起来。少掉其中一环，就很容易把“测试工具跑出了一个数”误当成“系统满足了延迟目标”。
 
-这是“Java 低延迟工程”的 Chapter 02。上一章 [Java Memory Model 与 VarHandle](/signal-grid-blog/posts/java-memory-model-varhandle-memory-ordering/) 解决的是“程序是否正确”；本章解决“正确实现是否真的更快，以及代价是什么”。后续的 [Disruptor](/signal-grid-blog/posts/lmax-disruptor-ring-buffer-and-sequencing/) 与 [Agrona](/signal-grid-blog/posts/agrona-direct-buffer-queues-and-agents/) 会把这套方法用于具体组件。
+这是“Java 低延迟工程”的 Chapter 02。上一章 [Java Memory Model 与 VarHandle](/signal-grid-blog/posts/java-memory-model-varhandle-memory-ordering/) 解决的是“程序是否正确”；本章解决“正确实现是否真的更快，以及代价是什么”。下一章会先把证据放回 [Cache、局部性、伪共享与 NUMA 的机器模型](/signal-grid-blog/posts/java-low-latency-machine-model-cache-locality-false-sharing-numa/)，后续的 [Disruptor](/signal-grid-blog/posts/lmax-disruptor-ring-buffer-and-sequencing/) 与 [Agrona](/signal-grid-blog/posts/agrona-direct-buffer-queues-and-agents/) 再把三层基础用于具体组件。
 
 本文以 **JDK 25** 与 **JMH 1.37** 为示例基线。工具版本会变化，测量原则不会：先写清问题，再选择实验层级；先保证负载与样本没有撒谎，再解释结果。
 
@@ -1067,7 +1067,7 @@ artifacts:
 - relaxed poll 的短暂 `null` 是否被误算为空队列？
 - Broadcast lapped、队列 offer failure 和 Ring Buffer 容量不足是否都计数？
 
-JMM 告诉我们实现为何正确；本章告诉我们如何证明它在目标条件下值得采用。下一章进入 [LMAX Disruptor 4](/signal-grid-blog/posts/lmax-disruptor-ring-buffer-and-sequencing/)，把发布协议、消费拓扑、背压与 Batch Rewind 放进这条证据链。
+JMM 告诉我们实现为何正确；本章告诉我们如何证明它在目标条件下值得采用。下一章进入 [Java 低延迟的机器模型](/signal-grid-blog/posts/java-low-latency-machine-model-cache-locality-false-sharing-numa/)，把硬件计数器背后的 Cache、局部性、伪共享、TLB、SMT 与 NUMA 关系讲清，再由 Disruptor 把这些约束落到发布协议、消费拓扑、背压与 Batch Rewind。
 
 ## 19. 官方资料与继续阅读
 

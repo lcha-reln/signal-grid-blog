@@ -2,7 +2,7 @@
 title: Aeron Transport：Channel、Stream、Session 与 Image 的身份模型
 description: 以 Aeron 1.52.2 为基线，从复制日志而非消息队列的视角，讲清 Media Driver、Channel URI、Stream、Session、Image、连接生命周期与传输保证。
 date: 2026-08-13T09:10:00+08:00
-updated: 2026-08-13T09:10:00+08:00
+updated: 2026-08-17T16:55:00+08:00
 tags:
   - Aeron
   - Aeron Transport
@@ -314,7 +314,7 @@ try (MediaDriver driver = MediaDriver.launchEmbedded(driverContext);
 
 Publication 的连接状态不是永久握手凭证。接收者可以出现、离开、超时或重新建立 Image。业务不能在启动时检查一次 `isConnected()`，随后假定链路永远存在。
 
-对 multicast/MDC，连接判定还会受 flow-control strategy、group minimum size 和 spy 配置影响。Transport 第 5 篇会单独讲这些拓扑语义。
+对 multicast/MDC，连接判定还会受 flow-control strategy、group minimum size 和 spy 配置影响。Transport 第 6 篇会单独讲这些拓扑语义。
 
 ### 6.2 Image 可用性回调是资源事件
 
@@ -474,7 +474,7 @@ flowchart TD
 - Publication 和 Subscription 的连接是动态资源关系，不是一次建立后永久有效；
 - 传输确认、应用处理、持久化和 exactly-once 属于不同层次。
 
-下一篇将沿发送热路径深入 Publication、三段 term log、position、`offer` 与 `tryClaim`，并把每个返回码变成明确的控制流，而不是一个无限重试循环。
+下一篇先进入 [Aeron 与 SBE](/signal-grid-blog/posts/aeron-sbe-schema-flyweight-and-compatibility-testing/)：把这里传输的字节收敛为有 schema、template、version 和兼容性证据的应用协议；随后再沿发送热路径深入 Publication、三段 term log、position、`offer` 与 `tryClaim`，并把每个返回码变成明确的控制流，而不是一个无限重试循环。
 
 ## 官方资料
 

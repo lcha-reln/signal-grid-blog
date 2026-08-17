@@ -2,7 +2,7 @@
 title: LMAX Disruptor 4：Ring Buffer、消费拓扑与 Batch Rewind
 description: 基于 Disruptor 4.0.0，从发布协议、序列协调、消费依赖和背压讲到 WaitStrategy、批处理与 Batch Rewind，并说明它何时适合替代队列、何时并不适合。
 date: 2026-03-07T10:43:08+08:00
-updated: 2026-08-14T18:35:00+08:00
+updated: 2026-08-17T16:55:00+08:00
 categories:
   - 高性能组件
 tags:
@@ -14,7 +14,7 @@ tags:
   - 背压
 permalink: lmax-disruptor-ring-buffer-and-sequencing
 series: performance
-seriesOrder: 30
+seriesOrder: 70
 featured: false
 draft: false
 ---
@@ -460,7 +460,7 @@ disruptor.handleEventsWith(
 
 这组数据说明 Disruptor 在对应微基准中有优势，也同时说明：多生产者竞争、版本与消费拓扑会改变结果，甚至旧版某个拓扑会落后于 `ArrayBlockingQueue`。它不是你的业务 SLA。[官方 Performance Testing](https://lmax-exchange.github.io/disruptor/disruptor.html#_throughput_performance_testing)
 
-本节只保留 Disruptor 特有的实验矩阵。如何避免 JMH 死代码消除、开放负载中的协调遗漏，如何记录尾延迟并画出饱和曲线，详见前一章 [Java 低延迟到底应该怎么测](/signal-grid-blog/posts/java-low-latency-measurement/)。
+本节只保留 Disruptor 特有的实验矩阵。通用测量合同见 [Java 低延迟到底应该怎么测](/signal-grid-blog/posts/java-low-latency-measurement/)；它的前一章 [Java 低延迟的机器模型](/signal-grid-blog/posts/java-low-latency-machine-model-cache-locality-false-sharing-numa/) 则解释 Cache Line、伪共享、预取和 NUMA 为什么会改变 Ring Buffer 的真实结果。
 
 可信的评估至少要包含：
 

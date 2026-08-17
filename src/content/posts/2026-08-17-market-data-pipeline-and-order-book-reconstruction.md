@@ -2,7 +2,7 @@
 title: "行情数据管线与订单簿重建：权威事件、快照、增量与 Gap 恢复"
 description: "从撮合引擎的权威事件出发，拆解行情归一化、排序、分发与扇出，讲清 L1/L2/L3、快照加增量、序列号、Gap 检测、校验和、断线重连、原子切换、回放与监控。"
 date: 2026-08-17T14:10:00+08:00
-updated: 2026-08-17T14:10:00+08:00
+updated: 2026-08-17T16:55:00+08:00
 tags:
   - 行情数据
   - 订单簿
@@ -28,7 +28,7 @@ draft: false
 5. 断线、缓存溢出、校验失败和慢消费者发生后，系统如何停止传播错误？
 6. BBO、逐笔成交、K 线与跨交易所聚合视图，哪些能从订单簿派生，哪些不能？
 
-本文是“交易系统”学习路径的 Chapter 06。建议先读 [Chapter 04：订单簿与自成交保护](/signal-grid-blog/posts/order-book-and-self-trade-prevention/) 和 [Chapter 05：撮合机制](/signal-grid-blog/posts/matching-engine-and-auctions/)；本文解释撮合输出如何成为可复制、可恢复的行情。下一章再进入 [合约仓位生命周期](/signal-grid-blog/posts/position-lifecycle-and-pnl/)。
+本文是“交易系统”学习路径的 Chapter 07。建议先读 [Chapter 05：订单簿与自成交保护](/signal-grid-blog/posts/order-book-and-self-trade-prevention/) 和 [Chapter 06：撮合机制](/signal-grid-blog/posts/matching-engine-and-auctions/)；本文解释撮合输出如何成为可复制、可恢复的行情。下一章再进入 [合约仓位生命周期](/signal-grid-blog/posts/position-lifecycle-and-pnl/)。
 
 > 本文以 2026-08-17 可查的一手协议为基线。交易所会修改频道、字段、权限、频率和恢复规则；生产实现必须把协议版本与产品元数据一起版本化，不能把本文示例当成永久不变的跨平台标准。
 
