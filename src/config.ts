@@ -95,9 +95,9 @@ export const SERIES: readonly SeriesDefinition[] = [
     key: "trading",
     title: "交易系统",
     eyebrow: "EXCHANGE SYSTEMS",
-    description: "围绕中心化交易所，从产品与订单语义一路走到撮合、仓位、保证金、清算和账本，建立业务规则与系统状态机之间的映射。",
+    description: "围绕中心化交易所，从产品与订单语义一路走到撮合、行情重建、仓位、账本、保证金和清算，建立业务规则与系统状态机之间的映射。",
     prerequisite: "理解基础现货交易和百分比、盈亏计算；了解事件驱动架构更佳。",
-    outcome: "能够解释订单从受理、撮合到清算入账的完整生命周期，并把产品规则转成可测试、可审计的状态与账务约束。",
+    outcome: "能够解释订单从受理、撮合到清算入账的完整生命周期，说明撮合事件如何形成可恢复行情，并把产品规则转成可测试、可审计的状态、数据与账务约束。",
     color: "amber",
     index: "02",
     stages: [
@@ -110,9 +110,9 @@ export const SERIES: readonly SeriesDefinition[] = [
       },
       {
         index: "02",
-        eyebrow: "ORDER FLOW",
-        title: "订单与撮合",
-        description: "从订单契约追到订单簿、撮合、成交与自成交保护。",
+        eyebrow: "ORDER FLOW & MARKET DATA",
+        title: "订单、撮合与行情",
+        description: "从订单契约追到订单簿、撮合和成交事件，再用快照、增量、序列号与校验恢复可验证的行情。",
         fromOrder: 30,
       },
       {

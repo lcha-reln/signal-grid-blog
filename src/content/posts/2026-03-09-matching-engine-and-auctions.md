@@ -2,7 +2,7 @@
 title: "撮合机制：价格时间优先、连续竞价与集合竞价"
 description: "从权威输入序列出发解释价格时间优先、连续撮合的 resting-order price，以及集合竞价以单一清算价最大化可成交量的算法与平台差异。"
 date: 2026-03-09T14:41:31+08:00
-updated: 2026-08-13T10:00:00+08:00
+updated: 2026-08-17T14:10:00+08:00
 categories:
   - 交易系统
 tags:
@@ -163,7 +163,7 @@ CLOSED → AUCTION_COLLECT → AUCTION_MATCH → CONTINUOUS → HALTED
 - 集合竞价只产生一个清算价，并在平局时执行版本化的 venue 规则；
 - 回放测试覆盖部分成交、撤单竞争、深度耗尽、拍卖平局和故障切换。
 
-撮合算法依赖的订单簿结构与自成交边界，可回看[订单簿队列与自成交保护](/signal-grid-blog/posts/order-book-and-self-trade-prevention/)。
+撮合算法依赖的订单簿结构与自成交边界，可回看[订单簿队列与自成交保护](/signal-grid-blog/posts/order-book-and-self-trade-prevention/)。下一章进入[行情数据管线与订单簿重建](/signal-grid-blog/posts/market-data-pipeline-and-order-book-reconstruction/)，继续说明这里产生的订单与成交事件怎样变成可验证、可恢复的公开行情。
 
 ## 官方参考
 

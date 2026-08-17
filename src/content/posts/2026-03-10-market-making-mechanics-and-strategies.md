@@ -2,7 +2,7 @@
 title: "订单簿做市：价差、库存、逆向选择与合规边界"
 description: "从订单簿双边报价出发，解释价差收益、库存偏移、逆向选择、Delta 与 VaR 的边界，并区分自成交、洗售交易和合规交叉交易。"
 date: 2026-03-10T10:00:00+08:00
-updated: 2026-08-17T12:20:00+08:00
+updated: 2026-08-17T14:10:00+08:00
 categories:
   - 交易系统
 tags:
@@ -20,7 +20,7 @@ draft: false
 
 订单簿做市不是“同时挂一个买单和一个卖单，就稳定赚到中间价差”。报价成交后，做市商获得库存；在下一次对冲或反向成交前，库存会暴露在价格、基差、波动率、延迟和流动性风险中。主动吃单者还可能比报价方更早知道价格即将变化，这就是逆向选择。
 
-本文是交易系统学习路径的 Chapter 13，也是系统综合章。它会用到 [订单簿与自成交保护](/signal-grid-blog/posts/order-book-and-self-trade-prevention/)、[订单委托与执行策略](/signal-grid-blog/posts/order-types-and-execution-strategies/) 以及 [仓位生命周期与盈亏](/signal-grid-blog/posts/position-lifecycle-and-pnl/) 中的概念。
+本文是交易系统学习路径的 Chapter 14，也是系统综合章。它会用到 [订单簿与自成交保护](/signal-grid-blog/posts/order-book-and-self-trade-prevention/)、[行情数据管线与订单簿重建](/signal-grid-blog/posts/market-data-pipeline-and-order-book-reconstruction/)、[订单委托与执行策略](/signal-grid-blog/posts/order-types-and-execution-strategies/) 以及 [仓位生命周期与盈亏](/signal-grid-blog/posts/position-lifecycle-and-pnl/) 中的概念。
 
 > 本文讨论市场结构、系统控制与合规边界，不构成投资、交易、收益或策略建议。任何做市安排都必须服从适用法律、交易场所规则、客户授权和内部风险限额。
 
