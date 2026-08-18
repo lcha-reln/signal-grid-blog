@@ -9,9 +9,9 @@ qualification_profile: none
 current_phase: P0
 current_task: TASK-P0-002
 created_at: 2026-08-18T21:03:38+08:00
-updated_at: 2026-08-18T22:34:56+08:00
-last_reconciled_at: 2026-08-18T22:34:56+08:00
-reconciliation_base_git_sha: 70ee0bca3bba8975c45c1f06c314b907bba498b2
+updated_at: 2026-08-19T00:35:39+08:00
+last_reconciled_at: 2026-08-19T00:35:39+08:00
+reconciliation_base_git_sha: 11eeeedc1793f633dd9861036e5bdda2e93f62f8
 next_review_due: 2026-08-25T21:03:38+08:00
 ---
 
@@ -31,7 +31,7 @@ next_review_due: 2026-08-25T21:03:38+08:00
 
 - 当前阶段：`P0`——项目合同、边界、工作负载、SLO、故障模型和生产定义。
 - 唯一主任务：`TASK-P0-002`——选择实现仓库并冻结可复现构建合同。
-- 当前代码状态：尚未创建撮合实现仓库；本博客仓库只承载项目记录和教程。
+- 当前代码状态：已在 `/Users/reln/aeron-cluster-matching-engine` 建立 local-only provisional bootstrap 仓库，固定提交为 `9dbe8e9f8578ad8fa27da54ca494c8e9a092c379`；仓库只含 `deployable=false` 的构建与供应链合同，没有撮合、Cluster、Gateway、镜像或其他产品实现。本博客仓库仍只承载项目记录和教程。
 - 当前生产声明：`not_proven`。
 
 ### 已确认事实
@@ -55,21 +55,22 @@ next_review_due: 2026-08-25T21:03:38+08:00
 - 用恶意变异验证项目记录 linter 会拒绝伪 SHA、空 ADR、错绑 EVD、未闭合任务和无证据的生产资格声明。
 - 完成 Node 24 full verifier 与 1440/621/620/390 明暗主题、Mermaid 大图及键盘交互验收，并把本地结果固化到 `EVD-0002` artifact。
 - 发布初始框架 commit `afe7e6cafe8d716d9f6e12751d3b8beb33ab1fb9` 并完成完整线上矩阵；随后发布最终审计 release `70ee0bca3bba8975c45c1f06c314b907bba498b2`，观察 Pages build/deploy 成功并复验长期稳定文案、总账链接、canonical 和 Mermaid。
+- 建立独立的 local-only bootstrap 仓库，锁定 Aeron/SBE/Agrona/Gradle 与 provisional JDK 候选，提交依赖锁、verification metadata、SBOM、依赖图和 fail-closed policy；本地 full gate、33 个负向变异、依赖篡改、双路径/双缓存在线与离线复现、解包后离线 round-trip 均通过，记录为 `EVD-0007 partial`。
 
 ### 阻塞项
 
-- `OQ-001`：真实实现使用独立代码仓库还是当前用户已有的某个私有仓库，尚未决定。
+- `OQ-001`：独立本地路径、`main` 和 provisional local-only authority 已确定；remote URI、private/public、license、分支保护、备份恢复和 artifact retention 尚未决定。
 - `OQ-002`：V1 的目标业务流量、产品数、订单簿深度、消息尺寸和峰值形态尚未由用户输入或真实数据证明。
 - `OQ-003`：目标部署是裸机、专用虚拟机还是云实例，硬件、网卡、NVMe 和故障域尚未冻结。
-- `OQ-004`：JDK 25 的具体补丁版本、GC、Aeron sync profile 和线程/CPU 拓扑尚未通过实验决定。
+- `OQ-004`：Temurin 25.0.4+7 仅作为本地 provisional 构建输入；适用的 2026-08 CSPU/vendor security response、最终 JDK patch、GC、Aeron sync profile 和线程/CPU 拓扑尚未闭合。
 - `OQ-005`：交易前风险预占属于同一 Cluster bounded context，还是独立权威服务返回凭证，尚待 ADR。
 - `OQ-009`：双 Gateway 采用 active/passive 还是 active/active、外部会话由谁拥有和 fencing、状态从哪里恢复，尚待 ADR。
 - `OQ-010`：业务 engine/stream generation 的转换触发、predecessor/cutover/rebuild 合同与 DR fork 语义尚待 ADR。
 
 ### 接下来三个动作
 
-1. 接受或修改 `ADR-0002`，确定独立实现仓库的位置、权限、分支保护与 artifact 归档边界。
-2. 接受或修改 `ADR-0001`，锁定 JDK、Aeron、SBE、Agrona、Gradle wrapper、依赖校验和 CI 制品摘要。
+1. 由用户确认访问模型并授权后建立受保护 remote（private 为默认候选，尚未接受）、访问控制、分支保护、备份恢复和 artifact authority，完成 `ADR-0002`；本地 provisional authority 不能替代这些边界。
+2. 复核适用的 JDK 安全发行版/vendor advisory，更新完整 vendor/build/平台摘要，并让同一合同在 hosted CI 通过后再完成 `ADR-0001`。
 3. 收集 `WORKLOAD_PROFILE-001`、`HARDWARE_PROFILE-001`、`DURABILITY_PROFILE-001`、`FAILURE_PROFILE-001` 的第一版输入；在此以前不接受任何 TPS、延迟、RPO 或 RTO 目标。
 
 ### 最近可信证据
@@ -78,8 +79,8 @@ next_review_due: 2026-08-25T21:03:38+08:00
 | --- | --- |
 | 博客框架 release | `70ee0bca3bba8975c45c1f06c314b907bba498b2` |
 | EVD-0002 框架验收 | `pass`；Node 24 full、linter 变异、本地浏览器矩阵、Pages run `32148371343` 与最终线上烟测均通过 |
-| 项目实现 commit | 不存在 |
-| 可复现构建 | 不存在 |
+| 项目实现 commit | local-only bootstrap `9dbe8e9f8578ad8fa27da54ca494c8e9a092c379`；`main`、clean、无 remote、无产品源码 |
+| 可复现构建 | `EVD-0007 partial`；本地双路径/双缓存 online/offline 与解包 round-trip 一致，合同 ZIP SHA-256 `e8e83fbafd36671f4205534476943d7a16a962823f3cff180683aac91ade6db5` |
 | 确定性测试 | 不存在 |
 | 三节点故障测试 | 不存在 |
 | 容量报告 | 不存在 |
@@ -88,14 +89,14 @@ next_review_due: 2026-08-25T21:03:38+08:00
 
 ### 预期工作树
 
-`TASK-P0-001` 已由最终框架 release 和 `EVD-0002` 闭合。本次最终审计回填只应修改本记录与 `EVD-0002` artifact；完成后博客工作树应干净，且仍不存在撮合实现代码。若发现密钥、真实客户数据、生产系统地址、未登记的实现源码或外部制品，立即停止并把 `record_health` 改为 `needs_reconciliation`。
+本次记录回填只应修改本记录并新增 `EVD-0007` artifact；实现仓库必须保持在 clean commit `9dbe8e9f8578ad8fa27da54ca494c8e9a092c379`。该仓库不得出现撮合/Cluster/Gateway 产品源码，博客仓库不得出现实现源码。若发现密钥、真实客户数据、生产系统地址、未登记源码或外部制品，立即停止并把 `record_health` 改为 `needs_reconciliation`。
 
 ### 恢复工作前必须阅读
 
 - `REQ-QUAL-001`、`REQ-QUAL-002`、`REQ-OPS-001`
 - `INV-001` 至 `INV-015`
 - `ADR-0001` 至 `ADR-0010`
-- `RISK-001` 至 `RISK-012`
+- `RISK-001` 至 `RISK-013`，尤其是证据漂移 `RISK-012` 与 local-only authority `RISK-013`
 - 当前 `TASK-*` 与所有关联 `EVD-*`
 
 ### 不得当成事实的事项
@@ -286,10 +287,10 @@ ID 永不重排、删除或复用。语义发生实质变化时创建新 ID，�
 
 | ID | 问题 | Owner | 决策截止点 | 关联项 | Resolution | Updated | 状态 |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| OQ-001 | 实现仓库位置与访问模型 | unassigned | P1 开始前 | ADR-0002 | — | 2026-08-18 | open |
+| OQ-001 | 实现仓库位置与访问模型 | unassigned | P1 开始前 | ADR-0002 | local path `/Users/reln/aeron-cluster-matching-engine`、`main` 与 provisional local-only authority 已确定；remote URI、private/public、license、branch protection、backup/recovery 与 artifact retention 未定 | 2026-08-19 | open |
 | OQ-002 | 真实 workload profile | unassigned | 接受 SLO 前 | REQ-QUAL-001 | — | 2026-08-18 | open |
 | OQ-003 | 目标硬件、网络、磁盘、故障域 | unassigned | P4/P6 前 | HARDWARE_PROFILE-001 | — | 2026-08-18 | open |
-| OQ-004 | JDK/GC/线程与 sync profile | unassigned | P3 前初选，P6 定稿 | ADR-0001 | — | 2026-08-18 | open |
+| OQ-004 | JDK/GC/线程与 sync profile | unassigned | P3 前初选，P6 定稿 | ADR-0001 | Temurin 25.0.4+7 HotSpot 仅为本地 provisional 构建输入；适用 CSPU/vendor security response、最终 patch、GC、线程与 sync profile 未定 | 2026-08-19 | open |
 | OQ-005 | 风险预占与 Cluster 的原子边界 | unassigned | P2 前 | ADR-0005 | — | 2026-08-18 | open |
 | OQ-006 | Outbox ACK 粒度、保留窗口和慢消费者策略 | unassigned | P5 前 | ADR-0008 | — | 2026-08-18 | open |
 | OQ-007 | 生产认证、传输加密和密钥轮换方案 | unassigned | P7 前 | REQ-SEC-001 | — | 2026-08-18 | open |
@@ -301,14 +302,21 @@ ID 永不重排、删除或复用。语义发生实质变化时创建新 ID，�
 
 | 组件 | 候选版本 | 当前状态 | 证据 | 接受前必须完成 |
 | --- | --- | --- | --- | --- |
-| Aeron | 1.52.2 | proposed | 官方 release、tag、Javadoc | 固定依赖 SHA、变更审计、兼容/故障回归 |
-| SBE | 1.39.0 | proposed | 官方 release/tag | generator/runtime 同版、黄金 fixture |
-| Agrona | 2.5.0 | proposed | 官方 release/tag | 数据结构/API 核对 |
-| JDK | 25.x 候选，最低 17 | proposed | JDK 支持合同 | 固定 vendor/patch、GC/JIT/故障矩阵 |
-| Gradle | TBD | proposed | wrapper distribution | wrapper checksum、离线可复现 |
+| Aeron | 1.52.2 | proposed | `EVD-0007`：lock、artifact SHA、tag `5b62f21d917af027cdf5a3241aa5f355149b04fa` | hosted CI、兼容/故障回归、供应链 authority |
+| SBE | 1.39.0 | proposed | `EVD-0007`：独立 `sbeCodegen` lock、artifact SHA、tag `e773b57cac6b2008ce30dd219a33de49766c6013` | generator/runtime fixture、hosted CI、供应链 authority |
+| Agrona | 2.5.0 | proposed | `EVD-0007`：显式 runtime dependency、lock、artifact SHA、tag `eaaa178c2bc47d7c03ab45403e24d95d83c89152` | API/性能核对、hosted CI、供应链 authority |
+| JDK | Eclipse Temurin 25.0.4+7-LTS HotSpot，macOS aarch64 provisional | proposed | `EVD-0007`：archive SHA-256 `5a101c54abf5a9f16c0f70d8c38ba99e6567c1ba213378f0bb04497284f051bd` 与 exact runtime gate | 复核适用 CSPU/vendor security release，重锁完整 build/平台制品并完成 GC/JIT/故障矩阵 |
+| Gradle | 9.7.0，revision `3defbfc59d757b873d787b2261de5c7f8a00970a` | proposed | `EVD-0007`：distribution/wrapper SHA、strict locks、offline/repro/round-trip | hosted CI、远端保护与持久 artifact authority |
 | Linux | TBD | proposed | 目标镜像 | kernel/NIC/NVMe/clock/NUMA 证据 |
 
 禁止 SNAPSHOT、浮动版本和未登记的 transitive override 进入 release 构建。每次升级都让依赖该版本的 EVD 变为 `stale`，直到完整回归。
+
+实现仓库恢复账本：
+
+- 逻辑仓库 ID：`aeron-cluster-matching-engine`；绝对路径：`/Users/reln/aeron-cluster-matching-engine`。
+- 默认分支：`main`；最近核对 HEAD：`9dbe8e9f8578ad8fa27da54ca494c8e9a092c379`；工作树：`clean`；核对时间：2026-08-19T00:25:53+08:00。
+- Remote：`none`；可见性：`local-only provisional`；hosted CI：`none`；license：`none`；持久 artifact authority：`none`。
+- 当前制品只是一份 `deployable=false` 的 build-contract ZIP；它不是撮合实现、部署包或生产 release。
 
 ## 5. 术语、候选身份、数值、时间与顺序模型
 
@@ -787,6 +795,7 @@ Archive segment 只有在所有引用者都越过它之后才可清理：active 
 | EVD-0004 | GATE-004 HA | 三主机 leader failure trace | 不存在 | 未执行 | planned | 拓扑/Aeron/config 变化 |
 | EVD-0005 | GATE-006 容量 | open-loop workload + histograms | 不存在 | 未执行 | planned | profile/实现/硬件变化 |
 | EVD-0006 | GATE-007 DR | immutable artifacts + restore drill | 不存在 | 未执行 | planned | backup/schema/key/runtime 变化 |
+| EVD-0007 | TASK-P0-002/ADR-0001/ADR-0002 本地实现仓库 bootstrap 与构建合同 | [本地 bootstrap 验收 artifact](./evidence/EVD-0007-implementation-repository-bootstrap.md)；实现 commit `9dbe8e9f8578ad8fa27da54ca494c8e9a092c379` | Eclipse Temurin 25.0.4+7-LTS HotSpot；Gradle 9.7.0；macOS 26.0.1 (25A362)、Darwin 25.0.0、arm64/Apple M2；local-only repo | 本地 full gate、33 个负向变异、依赖篡改、双路径/双缓存 online/offline 和解包 round-trip 通过；输出为 local ignored、Artifact URI `none`；无 remote/hosted CI/license/artifact authority，JDK vendor security response 待复核 | partial | 实现 commit、wrapper、lock、verification metadata、JDK、依赖版本、policy 或环境变化；适用 vendor security release/advisory；仓库 authority 变化 |
 
 证据记录必须包含：关联 REQ/INV/GATE、artifact URI/sha256、命令、workload、fault schedule、硬件、配置、版本/commit、期望、实际、时间、verdict 和失效条件。大日志不粘进本文件。
 
@@ -797,9 +806,19 @@ Archive segment 只有在所有引用者都越过它之后才可清理：active 
 - Artifact：[Project 01 框架本地与发布验收](./evidence/EVD-0002-local-validation.md)。
 - 本地结论：项目记录结构、11 类正反变异、Node 24 full gate、响应式明暗主题、Mermaid 渲染/放大/Esc 关闭、Project 锚点与 base-aware 回链均通过。
 - 发布结论：被验收 release 为 `70ee0bca3bba8975c45c1f06c314b907bba498b2`；[Pages run `32148371343`](https://github.com/lcha-reln/signal-grid-blog/actions/runs/32148371343) 的 build 34 秒、deploy 5 分 11 秒，均成功；[专题](https://lcha-reln.github.io/signal-grid-blog/series/production/)和[首篇文章](https://lcha-reln.github.io/signal-grid-blog/posts/production-aeron-cluster-matching-engine-project/)已完成最终线上烟测，长期稳定文案、总账链接、canonical、4/4 Mermaid 与页面宽度均正确。
-- 最终 release 本地证据：Node 24 full verifier 为 119 definitions、8 tasks、10 gates，Astro 0 diagnostics，76 pages 与 65 个 Pagefind 页面；本次纯审计回填新增 `CHG-20260818-004` 后，当前记录以 120 definitions、8 tasks、10 gates 再次通过同一 Node 24 full verifier。
+- 最终 release 本地证据：Node 24 full verifier 为 119 definitions、8 tasks、10 gates，Astro 0 diagnostics，76 pages 与 65 个 Pagefind 页面；`CHG-20260818-004` 回填当时，记录以 120 definitions、8 tasks、10 gates 再次通过同一 Node 24 full verifier。
 - 当前 verdict：`pass`，只闭合 `TASK-P0-001` 并为 `GATE-001` 提供项目框架这一局部证据；`GATE-001` 仍是 `partial`，`claim_status` 仍是 `not_proven`。
-- 当前边界：没有撮合实现仓库、Aeron Cluster 运行证据、HA/容量/持久性/DR 证据，也没有任何生产资格声明。
+- 当前边界：已有 local-only `deployable=false` build-contract 仓库，但没有撮合实现、Aeron Cluster 运行证据、HA/容量/持久性/DR 证据，也没有任何生产资格声明。
+
+#### EVD-0007 当前详细记录
+
+- Artifact：[实现仓库 bootstrap 与可复现构建合同](./evidence/EVD-0007-implementation-repository-bootstrap.md)。
+- 证明对象：`TASK-P0-002`、`ADR-0001`、`ADR-0002`；当前 verdict 为 `partial`，不闭合任务或接受 ADR。
+- 实现仓库：`/Users/reln/aeron-cluster-matching-engine`，`main`，commit `9dbe8e9f8578ad8fa27da54ca494c8e9a092c379`，工作树 clean，无 remote。
+- 本地结论：精确 runtime/self-test、依赖锁与 verification metadata、源码/tag/制品摘要、规范化 graph/SBOM、33 个负向变异、依赖篡改、两条绝对路径/两套独立 Gradle Home 的 online/offline 构建，以及解包 ZIP 后的 offline byte-for-byte round-trip 均通过。
+- 不可变输出：build-contract ZIP SHA-256 `e8e83fbafd36671f4205534476943d7a16a962823f3cff180683aac91ade6db5`；resolved manifest `8043e45adbcda0f75c7082a5cb0b1280dcbbc3ba1e80667e4a8ac120ebc47a71`；dependency graph `ba0211e62e416bf6445c5c44ec9c194a933ffa844425ddba7072a7c7e50d428d`；CycloneDX SBOM `8a1f7c496d7f306a8d40b1b0d4434efd7dd64d2b434f5db91053c07689caa2f8`；contract properties `c62c40f2d69c7fab4d11bfaa99a5b835c798e06103bd318f6af05f4b8bd0be9c`。
+- 未闭合边界：没有 remote、hosted CI、branch protection、license、持久 artifact authority 或产品源码；JDK 25.0.4+7 只是 observation cutoff 上的 provisional 输入，仍需复核适用 CSPU/vendor security release 并重跑全部门禁。
+- 结论：本证据证明本地 bootstrap 合同可审计、可离线复现；它不证明远端供应链信任、撮合正确性、Cluster HA、容量、持久性、DR 或生产资格。
 
 #### EVD-0001 详细记录
 
@@ -812,7 +831,7 @@ Archive segment 只有在所有引用者都越过它之后才可清理：active 
 - 实际：Aeron 1.52.2、SBE 1.39.0、Agrona 2.5.0 满足该范围内的期望。
 - 核对时间：2026-08-18T20:30:00+08:00。
 - Verdict：`pass`；新 release、tag 删除/重指、官方安全公告或 ADR-0001 状态变化时立即 `stale`。
-- 后续：ADR-0001 接受前必须下载真实依赖，登记仓库 checksum/签名/SBOM 和 resolved dependency graph；本 EVD 不替代这些证据。
+- 后续：真实下载、checksum、SBOM 和 resolved dependency graph 已由 `EVD-0007 partial` 记录；`ADR-0001` 接受前仍需复核适用 JDK vendor security response、建立 hosted CI/远端保护与持久 artifact authority，并补齐兼容和故障验证。本 EVD 不替代这些证据。
 
 ## 17. ADR 决策日志
 
@@ -821,17 +840,17 @@ Archive segment 只有在所有引用者都越过它之后才可清理：active 
 ### ADR-0001：依赖与运行时版本基线
 
 - 状态：`proposed`
-- 候选：Aeron 1.52.2、SBE 1.39.0、Agrona 2.5.0、固定 JDK 25 patch。
+- 候选：`EVD-0007` 已在本地锁定 Aeron 1.52.2、SBE 1.39.0、Agrona 2.5.0、Gradle 9.7.0 和 provisional Temurin 25.0.4+7；JDK vendor security response 与 hosted CI 尚未闭合。
 - 必须满足：REQ-QUAL-002、REQ-OPS-006。
-- 接受前证据：依赖锁和制品 SHA、JDK/GC 基线、fixed-tag 源码审计、兼容/故障测试计划。
+- 接受前证据：在适用 JDK 安全发行版上更新 vendor/build/平台摘要并重跑依赖锁、制品 SHA、fixed-tag 源码审计、hosted CI、兼容/故障测试计划；本地 `EVD-0007 partial` 只是输入证据。
 - 重开触发：新正式 release、安全修复、JDK 生命周期、不可接受缺陷。
 
 ### ADR-0002：实现代码仓库与博客边界
 
 - 状态：`proposed`
-- 候选决定：实现放独立代码仓库；博客只放项目控制记录和教程。
+- 候选决定：实现放独立代码仓库；当前 local-only provisional authority 为 `/Users/reln/aeron-cluster-matching-engine` 的 `main`/`9dbe8e9f8578ad8fa27da54ca494c8e9a092c379`，博客只放项目控制记录和教程。
 - 原因：生产代码需要独立 CI、release/tag、镜像、权限和大体积证据；静态站点不应混入运行密钥与部署状态。
-- 待决定：仓库 URI、private/public、license、release 流程和跨仓链接。
+- 待决定：remote URI、private/public、license、访问/审核/branch protection、backup/recovery、release/tag、hosted CI、artifact retention 和跨仓链接；本地仓库不能替代这些控制。
 - 重开触发：用户指定已有仓库或组织策略。
 
 ### ADR-0003：权威状态、单写者与确定性模型
@@ -903,6 +922,7 @@ Archive segment 只有在所有引用者都越过它之后才可清理：active 
 | RISK-010 | 降低 election timeout 遇到 GC/CPU/network stall | 选举抖动、不可用 | JFR/OS/network + chaos | 从最坏 stall 推导，留裕量 | unassigned | 未接受；生产前必须关闭或显式升级 | 2026-08-25 | open |
 | RISK-011 | 版本升级产生旧模型不可表达状态 | 无法回滚 | mixed-version/state migration tests | committed gate、dual format、pre-activation baseline | unassigned | 未接受；生产前必须关闭或显式升级 | 2026-08-25 | open |
 | RISK-012 | 证据因版本/硬件/profile 漂移仍被当有效 | 虚假生产声明 | linter/review due | 自动 stale、artifact lineage | unassigned | 未接受；生产前必须关闭或显式升级 | 2026-08-25 | open |
+| RISK-013 | local-only provisional implementation authority 没有远端保护且可能丢失或漂移 | 源码/证据不可恢复，或出现多个互相冲突的 authority | 对照双仓恢复账本、固定 commit、工作树与备份恢复演练 | 用户确认访问模型并授权后建立受保护 remote、最小权限/ruleset、独立备份和持久 artifact authority | unassigned | 未接受；`TASK-P0-002` 闭合前必须缓解 | 2026-08-26 | open |
 
 ## 19. 阶段、任务与里程碑
 
@@ -928,7 +948,7 @@ Archive segment 只有在所有引用者都越过它之后才可清理：active 
 | ID | Phase | 交付物 | 验收 | 证据 | 状态 | 下一动作 |
 | --- | --- | --- | --- | --- | --- | --- |
 | TASK-P0-001 | P0 | production 专题、PROJECT_RECORD、结构 linter、首篇地图 | 独立技术/记录/集成审校，Node24 full，浏览器、链接/SEO/路由 | EVD-0002 | done | 已由 release `70ee0bca3bba8975c45c1f06c314b907bba498b2` 发布并验收 |
-| TASK-P0-002 | P0 | 实现仓库与可复现构建合同 | ADR-0001/0002 accepted，wrapper/lock/CI | 待分配 | doing | 确认仓库边界并接受或修改 ADR-0001/0002 |
+| TASK-P0-002 | P0 | 实现仓库与可复现构建合同 | ADR-0001/0002 accepted，wrapper/lock/verification、hosted CI、远端权限与 artifact retention 闭合 | EVD-0007 | doing | 用户确认访问模型并授权后建立 remote，再闭合 JDK security response、hosted CI 与两项 ADR |
 | TASK-P0-003 | P0 | WORKLOAD/HARDWARE/DURABILITY/FAILURE profiles v1 | 所有单位、来源、owner、版本明确 | 待分配 | todo | 收集真实目标和限制 |
 | TASK-P0-004 | P0 | V1 订单、TIF、STP、风险和错误语义 | 产品合同+状态机表 | 待分配 | todo | 业务语义评审 |
 | TASK-P1-001 | P1 | 纯 Java 参考撮合模型 | trace/属性/差分 Oracle | EVD-0003 | todo | 等 P0 Gate |
@@ -979,7 +999,7 @@ Chapter 01 只绑定博客框架 release、项目记录和验收证据。从开�
 | --- | --- | --- | --- |
 | 项目总记录 | 本文件 | 项目控制面 | 全部 ID |
 | 对外教程 | `src/content/posts/` | 已发布叙述 | Chapter/REQ/INV/EVD/commit |
-| 实现源码 | 独立仓库 TBD | 代码行为 | ADR、release tag、build SHA |
+| 实现仓库（当前仅构建合同） | local provisional `/Users/reln/aeron-cluster-matching-engine`；remote TBD | local-only commit `9dbe8e9f8578ad8fa27da54ca494c8e9a092c379`，尚非持久 authority | ADR、release tag、build SHA、`EVD-0007` |
 | Protocol schema/fixtures | 实现仓库 | wire contract | schema version/compat report |
 | Test trace/seed | artifact store TBD | 故障复现 | commit/config/fault schedule |
 | Benchmark histogram/report | artifact store TBD | 性能观察 | workload/hardware/durability profile |
@@ -993,12 +1013,12 @@ Chapter 01 只绑定博客框架 release、项目记录和验收证据。从开�
 
 ### 工作已停在哪里
 
-Phase 0 的记录和站点框架已由 release `70ee0bca3bba8975c45c1f06c314b907bba498b2` 发布并验收。当前停在 `TASK-P0-002`：尚未创建实现仓库，尚未接受版本/拓扑/协议 ADR，也没有任何撮合、Cluster 或性能代码。
+Phase 0 的记录和站点框架已由 release `70ee0bca3bba8975c45c1f06c314b907bba498b2` 发布并验收。当前停在 `TASK-P0-002`：local-only bootstrap 仓库及可复现构建合同已经存在，但没有 remote、hosted CI、license、持久 artifact authority 或产品实现；版本/仓库 ADR 仍为 `proposed`，也没有任何撮合、Cluster 或性能代码。
 
 ### 下一位执行者应做什么
 
-1. 先核对 `reconciliation_base_git_sha`、当前任务和 `EVD-0002`；框架 release 与线上验收已经完成，不得把它误读为撮合实现或生产资格。
-2. 接受或修改 `ADR-0002` 与 `ADR-0001`，确定实现仓库、JDK/Aeron/SBE/Agrona/Gradle/CI 的可复现构建合同。
+1. 先核对 `reconciliation_base_git_sha`、双仓恢复账本、当前任务和 `EVD-0002/0007`；框架 release 与本地 bootstrap 证据都不得误读为撮合实现或生产资格。
+2. 由用户确认访问模型并授权后建立受保护 remote、访问保护和 artifact authority；复核适用的 JDK security release/vendor advisory，在 hosted CI 重跑合同，再评审 `ADR-0002` 与 `ADR-0001`。
 3. 收集首个 workload/hardware/durability/failure profile；没有 profile 时不要直接开始写“高性能”撮合代码或声明容量目标。
 
 ### 绝对不要做什么
@@ -1017,11 +1037,17 @@ Phase 0 的记录和站点框架已由 release `70ee0bca3bba8975c45c1f06c314b907
 | CHG-20260818-002 | 2026-08-18T22:06:45+08:00 | 完成技术/记录/集成终审，显式 Project 归属、linter 变异门禁、Pages build 强制校验、Node 24 full 与浏览器矩阵 | 让长期控制账本和站点框架在首发前 fail closed | TASK-P0-001、EVD-0002、GATE-001 | [本地验收 artifact](./evidence/EVD-0002-local-validation.md)；release SHA 待提交 | 发布后用审计 follow-up 回填 release/Pages 证据 |
 | CHG-20260818-003 | 2026-08-18T22:17:10+08:00 | 回填首个框架 release、Pages run 与生产 URL，把 EVD-0002 升为 pass，将唯一主任务推进到 TASK-P0-002，并把首篇进度句改成不随时间漂移的等义表述 | 让长期记录准确反映已经观察到的发布事实，同时保持生产资格边界和教程的长期可读性 | TASK-P0-001、TASK-P0-002、EVD-0002、GATE-001、FACT-011、Chapter 01 | release `afe7e6cafe8d716d9f6e12751d3b8beb33ab1fb9`；[Pages run 32146500240](https://github.com/lcha-reln/signal-grid-blog/actions/runs/32146500240)；[验收 artifact](./evidence/EVD-0002-local-validation.md) | 接受或修改 ADR-0001/0002，创建可复现实现仓库 |
 | CHG-20260818-004 | 2026-08-18T22:34:56+08:00 | 回填包含最终总账状态与长期稳定文章表述的审计 release、Pages run 和线上轻量烟测 | 让 canonical 记录绑定最终被部署 revision，而不是停在初始框架 release | FACT-011、EVD-0002、TASK-P0-001、Chapter 01 | release `70ee0bca3bba8975c45c1f06c314b907bba498b2`；[Pages run 32148371343](https://github.com/lcha-reln/signal-grid-blog/actions/runs/32148371343)；[验收 artifact](./evidence/EVD-0002-local-validation.md) | 进入 TASK-P0-002，接受或修改 ADR-0001/0002 |
+| CHG-20260819-005 | 2026-08-19T00:25:53+08:00 | 建立 local-only 实现仓库 bootstrap，固定版本/依赖/源码摘要，加入严格 policy、33 个负向变异、篡改与双路径离线复现，并登记 EVD-0007、RISK-013、版本账本与 Resume | 把可复现构建从计划变成可审计的本地局部证据，同时显式保留远端 authority、hosted CI 和 JDK 安全响应缺口 | TASK-P0-002、ADR-0001、ADR-0002、OQ-001、OQ-004、RISK-013、EVD-0007 | implementation commit `9dbe8e9f8578ad8fa27da54ca494c8e9a092c379`；[EVD-0007 artifact](./evidence/EVD-0007-implementation-repository-bootstrap.md) | 用户确认访问模型并授权后建立 remote，复核适用 JDK security release并在 hosted CI 重跑；任务保持 doing |
 
 ## 24. 一手资料索引
 
 - [Aeron 1.52.2 release](https://github.com/aeron-io/aeron/releases/tag/1.52.2)
 - [Aeron 1.52.2 Javadoc](https://javadoc.io/doc/io.aeron/aeron-all/1.52.2)
+- [Gradle 9.7.0 release notes](https://docs.gradle.org/9.7.0/release-notes.html)
+- [Gradle release checksums](https://gradle.org/release-checksums/)
+- [Eclipse Temurin 25.0.4+7 release](https://github.com/adoptium/temurin25-binaries/releases/tag/jdk-25.0.4%2B7)
+- [Oracle Java 安全更新节奏公告](https://blogs.oracle.com/java/transitioning-java-to-more-frequent-security-updates)
+- [Oracle JDK 25.0.4 release notes](https://www.oracle.com/java/technologies/javase/25-0-4-relnotes.html)
 - [Aeron Cluster Overview](https://aeron.io/docs/aeron-cluster/overview/)
 - [Gateway Design](https://aeron.io/docs/aeron-cluster/gateway-design/)
 - [Efficient Business Logic](https://aeron.io/docs/aeron-cluster/efficient-business-logic/)
