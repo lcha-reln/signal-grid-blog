@@ -4,11 +4,13 @@
 - 证明对象：`TASK-P0-002`、`ADR-0001`、`ADR-0002`
 - Observation cutoff：2026-08-19T00:25:53+08:00
 - 实现对象：local-only repository commit `9dbe8e9f8578ad8fa27da54ca494c8e9a092c379`
-- Verdict：`partial`
+- Verdict：`stale`
 
 ## 1. Verdict 的准确边界
 
-本证据证明一个独立的本地实现仓库已经建立，并且其中的 `deployable=false` 构建合同能在已固定的本地工具链上通过完整性、负向变异、离线构建和字节复现门禁。它没有闭合 `TASK-P0-002`，也没有接受 `ADR-0001` 或 `ADR-0002`。
+本证据曾证明 commit `9dbe8e9f8578ad8fa27da54ca494c8e9a092c379` 中的独立本地实现仓库已经建立，并且其中的 `deployable=false` 构建合同能在当时固定的本地工具链上通过完整性、负向变异、离线构建和字节复现门禁。实现仓库随后演进到 `ad461b3bd0cfdeddedac2fa93a37c5cba1c203ea`，policy、验证脚本、JDK 安全状态和规范化输出均已变化，命中了本文件原先声明的失效条件；因此当前 verdict 为 `stale`，新 revision 的局部证据由 `EVD-0008` 承接。
+
+`stale` 不会抹掉本文件对旧 commit 的历史观察，但它禁止任何执行者把这些旧摘要当作当前实现 revision、当前 JDK 安全适用性或远端 authority 的证据。本证据从未闭合 `TASK-P0-002`，也从未接受 `ADR-0001` 或 `ADR-0002`。
 
 以下条件仍不存在或尚未被接受：remote、hosted CI、branch protection、review/ruleset、license、独立备份、持久 artifact authority、最终 JDK 安全补丁，以及任何撮合、Aeron Cluster、Gateway、镜像或部署实现。因此，本证据不得用来声明高可用、真实流量能力或生产资格。
 
@@ -51,9 +53,9 @@
 | SBE Tool | `1.39.0` | tag `e773b57cac6b2008ce30dd219a33de49766c6013`；独立 `sbeCodegen` 解析域 |
 | Agrona | `2.5.0` | tag `eaaa178c2bc47d7c03ab45403e24d95d83c89152`；显式 runtime dependency |
 | Gradle | [`9.7.0`](https://docs.gradle.org/9.7.0/release-notes.html) | revision `3defbfc59d757b873d787b2261de5c7f8a00970a`；[官方 checksums](https://gradle.org/release-checksums/)中的 distribution SHA-256 `84fbba45c7f4c64abc77460e1c00f541e9f960e3c7ed2538f1ede19eacd873ae`；wrapper JAR SHA-256 `7a9ce74cff467ca1bf60a4fcd9f05185acceda4d0f382434d393e17864262c5d` |
-| JDK | Eclipse Temurin [`25.0.4+7-LTS` HotSpot，macOS aarch64](https://github.com/adoptium/temurin25-binaries/releases/tag/jdk-25.0.4%2B7) | [官方 artifact](https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.4%2B7/OpenJDK25U-jdk_aarch64_mac_hotspot_25.0.4_7.tar.gz) SHA-256 `5a101c54abf5a9f16c0f70d8c38ba99e6567c1ba213378f0bb04497284f051bd`；仅为 provisional observation input |
+| JDK | Eclipse Temurin [`25.0.4+7-LTS` HotSpot，macOS aarch64](https://github.com/adoptium/temurin25-binaries/releases/tag/jdk-25.0.4%2B7) | [官方 artifact](https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.4%2B7/OpenJDK25U-jdk_aarch64_mac_hotspot_25.0.4_7.tar.gz) SHA-256 `5a101c54abf5a9f16c0f70d8c38ba99e6567c1ba213378f0bb04497284f051bd`；仅为当时的 provisional observation input |
 
-Oracle 的 [Java 安全更新节奏公告](https://blogs.oracle.com/java/transitioning-java-to-more-frequent-security-updates)和 [JDK 25.0.4 release notes](https://www.oracle.com/java/technologies/javase/25-0-4-relnotes.html)把 2026-08-18 标为 CSPU 窗口；这个日期不等于 Eclipse Temurin/OpenJDK 已发布一个可直接采用的新 GA，也不能用日期预判厂商版本号。出现适用的 vendor security release 或 advisory 后，必须重新固定 vendor、完整 build、平台 archive digest，并重跑本证据的全部门禁。
+Oracle 的 [Java 安全更新节奏公告](https://blogs.oracle.com/java/transitioning-java-to-more-frequent-security-updates)和 [JDK 25.0.4 release notes](https://www.oracle.com/java/technologies/javase/25-0-4-relnotes.html)把 2026-08-18 标为 CSPU 窗口；这个日期不等于 Eclipse Temurin/OpenJDK 已发布一个可直接采用的新 GA，也不能用日期预判厂商版本号。出现适用的 vendor security release 或 advisory 后，必须重新固定 vendor、完整 build、平台 archive digest，并重跑本证据的全部门禁；该失效触发随后已经发生，见 `EVD-0009`。
 
 ## 5. 验收命令与观察
 
