@@ -1,5 +1,5 @@
-import { readFile, readdir, stat } from "node:fs/promises";
-import { resolve } from "node:path";
+import { lstat, readFile, readdir, realpath } from "node:fs/promises";
+import { isAbsolute, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const projectsRoot = fileURLToPath(new URL("../docs/projects/", import.meta.url));
@@ -62,6 +62,7 @@ async function verifyRecord(source, recordPath) {
   const failures = [];
   const fail = (message) => failures.push(message);
   const lines = source.split("\n");
+  const projectDirectory = resolve(recordPath, "..");
   const cellsOf = (line) =>
     line
       .split("|")
@@ -86,9 +87,16 @@ async function verifyRecord(source, recordPath) {
   if (!frontmatterMatch) fail("missing YAML frontmatter");
 
   const frontmatter = new Map();
+  const frontmatterKeyCounts = new Map();
   for (const line of (frontmatterMatch?.[1] ?? "").split("\n")) {
-    const match = line.match(/^([a-z_]+):\s*(.+)$/);
-    if (match) frontmatter.set(match[1], match[2].trim());
+    const match = line.match(/^([a-z_]+):\s*(.*)$/);
+    if (match) {
+      frontmatterKeyCounts.set(match[1], (frontmatterKeyCounts.get(match[1]) ?? 0) + 1);
+      frontmatter.set(match[1], match[2].trim());
+    }
+  }
+  for (const [key, count] of frontmatterKeyCounts) {
+    if (count !== 1) fail(`frontmatter field ${key} must be defined exactly once`);
   }
 
   const requiredFrontmatter = [
@@ -98,6 +106,7 @@ async function verifyRecord(source, recordPath) {
     "project_status",
     "claim_status",
     "qualification_profile",
+    "qualification_evidence_set",
     "current_phase",
     "current_task",
     "updated_at",
@@ -106,7 +115,7 @@ async function verifyRecord(source, recordPath) {
     "next_review_due",
   ];
   for (const key of requiredFrontmatter) {
-    if (!frontmatter.has(key)) fail(`missing frontmatter field: ${key}`);
+    if (!frontmatter.has(key) || isBlank(frontmatter.get(key))) fail(`missing or empty frontmatter field: ${key}`);
   }
 
   if (frontmatter.get("record_schema") !== "signal-grid-project-record/v1") {
@@ -133,7 +142,10 @@ async function verifyRecord(source, recordPath) {
     fail("reconciliation_base_git_sha must be a 40-character hexadecimal SHA or none");
   }
 
-  const profileId = "(?:WORKLOAD|HARDWARE|DURABILITY|FAILURE)_PROFILE-\\d{3}";
+  const atomicProfileId = "(?:WORKLOAD|HARDWARE|DURABILITY|FAILURE)_PROFILE-\\d{3}";
+  const profileSetId = "PROFILE_SET-\\d{3}";
+  const qualificationSetId = "QUALIFICATION_SET-\\d{3}";
+  const profileId = `(?:${atomicProfileId}|${profileSetId}|${qualificationSetId})`;
   const idPattern = new RegExp(
     `\\b(?:FACT-\\d{3}|ASM-\\d{3}|OQ-\\d{3}|REQ-(?:FUNC|QUAL|OPS|SEC)-\\d{3}|INV-\\d{3}|ADR-\\d{4}|RISK-\\d{3}|EVD-\\d{4}|GATE-\\d{3}|TASK-P\\d+-\\d{3}|${profileId}|CHG-\\d{8}-\\d{3})\\b`,
     "g",
@@ -214,14 +226,16 @@ async function verifyRecord(source, recordPath) {
         }
       }
     }
-    evidenceRows.set(cells[0], {
+    const evidenceRow = {
       proves: cells[1],
       artifact: cells[2],
       environment: cells[3],
       result: cells[4],
       state,
       invalidation: cells[6],
-    });
+      localMarkdownArtifacts: [],
+    };
+    evidenceRows.set(cells[0], evidenceRow);
     const artifactLinks = [...(cells[2] ?? "").matchAll(/\[[^\]]*\]\(([^)]+)\)/g)].map(
       (match) => match[1].trim().replace(/^<|>$/g, ""),
     );
@@ -241,11 +255,36 @@ async function verifyRecord(source, recordPath) {
         fail(`evidence ${cells[0]} has an invalid encoded artifact link: ${artifactLink}`);
         continue;
       }
-      const artifactPath = resolve(recordPath, "..", decodedPath);
+      const artifactPath = resolve(projectDirectory, decodedPath);
+      const projectRelativePath = relative(projectDirectory, artifactPath);
+      if (
+        projectRelativePath === "" ||
+        projectRelativePath === ".." ||
+        projectRelativePath.startsWith(`..${sep}`) ||
+        isAbsolute(projectRelativePath)
+      ) {
+        fail(`evidence ${cells[0]} relative artifact escapes the project directory: ${artifactLink}`);
+        continue;
+      }
       try {
-        const artifactStat = await stat(artifactPath);
-        if (!artifactStat.isFile()) {
-          fail(`evidence ${cells[0]} relative artifact is not a file: ${artifactLink}`);
+        const artifactStat = await lstat(artifactPath);
+        if (artifactStat.isSymbolicLink() || !artifactStat.isFile()) {
+          fail(`evidence ${cells[0]} relative artifact must be a regular non-symlink file: ${artifactLink}`);
+          continue;
+        }
+        const [projectRealPath, artifactRealPath] = await Promise.all([
+          realpath(projectDirectory),
+          realpath(artifactPath),
+        ]);
+        const expectedRealPath = resolve(projectRealPath, projectRelativePath);
+        const realRelativePath = relative(projectRealPath, artifactRealPath);
+        if (
+          artifactRealPath !== expectedRealPath ||
+          realRelativePath === ".." ||
+          realRelativePath.startsWith(`..${sep}`) ||
+          isAbsolute(realRelativePath)
+        ) {
+          fail(`evidence ${cells[0]} relative artifact resolves through a symlink or outside the project: ${artifactLink}`);
           continue;
         }
       } catch (error) {
@@ -260,16 +299,47 @@ async function verifyRecord(source, recordPath) {
         fail(`evidence ${cells[0]} cannot read Markdown artifact ${artifactLink}: ${error.message}`);
         continue;
       }
-      const declaredId = artifactSource.match(/^- 证据 ID：\s*`?(EVD-\d{4})`?\s*$/m)?.[1];
+      const declaredIdLines = [...artifactSource.matchAll(/^- 证据 ID：.*$/gm)];
+      const declaredIdMatches = [...artifactSource.matchAll(/^- 证据 ID：\s*`?(EVD-\d{4})`?\s*$/gm)];
+      if (declaredIdLines.length !== 1 || declaredIdMatches.length !== 1) {
+        fail(`evidence ${cells[0]} Markdown artifact ${artifactLink} must declare exactly one evidence ID`);
+      }
+      const declaredId = declaredIdMatches[0]?.[1];
       if (declaredId !== cells[0]) {
         fail(`evidence ${cells[0]} Markdown artifact ${artifactLink} must declare the same evidence ID`);
       }
-      const declaredVerdict = artifactSource.match(/^- Verdict：\s*`?([a-z_]+)`?/m)?.[1];
+      const declaredVerdictLines = [...artifactSource.matchAll(/^- Verdict：.*$/gm)];
+      const declaredVerdictMatches = [...artifactSource.matchAll(/^- Verdict：\s*`?([a-z_]+)`?.*$/gm)];
+      if (declaredVerdictLines.length !== 1 || declaredVerdictMatches.length !== 1) {
+        fail(`evidence ${cells[0]} Markdown artifact ${artifactLink} must declare exactly one verdict`);
+      }
+      const declaredVerdict = declaredVerdictMatches[0]?.[1];
       if (declaredVerdict !== state) {
         fail(
           `evidence ${cells[0]} Markdown artifact ${artifactLink} verdict ${declaredVerdict ?? "missing"} does not match registry state ${state}`,
         );
       }
+      const machineEvidenceIdMatches = [...artifactSource.matchAll(/^- Evidence-ID:\s*`?(EVD-\d{4})`?\s*$/gm)];
+      const machineKindMatches = [...artifactSource.matchAll(/^- Evidence-Kind:\s*`([a-z_]+)`\s*$/gm)];
+      const machineVerdictMatches = [...artifactSource.matchAll(/^- Verdict:\s*`?([a-z_]+)`?\s*$/gm)];
+      const machineProofMatches = [...artifactSource.matchAll(/^- Proof-Object:\s*`([^`]+)`\s*$/gm)];
+      const machineResultMatches = [...artifactSource.matchAll(/^- Result:\s*`([^`]+)`\s*$/gm)];
+      const machineFieldLineCounts = {
+        evidenceId: [...artifactSource.matchAll(/^- Evidence-ID:.*$/gm)].length,
+        kind: [...artifactSource.matchAll(/^- Evidence-Kind:.*$/gm)].length,
+        verdict: [...artifactSource.matchAll(/^- Verdict:.*$/gm)].length,
+        proofObject: [...artifactSource.matchAll(/^- Proof-Object:.*$/gm)].length,
+        result: [...artifactSource.matchAll(/^- Result:.*$/gm)].length,
+      };
+      evidenceRow.localMarkdownArtifacts.push({
+        path: artifactLink,
+        evidenceId: machineEvidenceIdMatches.length === 1 ? machineEvidenceIdMatches[0][1] : undefined,
+        kind: machineKindMatches.length === 1 ? machineKindMatches[0][1] : undefined,
+        verdict: machineVerdictMatches.length === 1 ? machineVerdictMatches[0][1] : undefined,
+        proofObject: machineProofMatches.length === 1 ? machineProofMatches[0][1] : undefined,
+        result: machineResultMatches.length === 1 ? machineResultMatches[0][1] : undefined,
+        machineFieldCounts: machineFieldLineCounts,
+      });
     }
   }
 
@@ -406,6 +476,66 @@ async function verifyRecord(source, recordPath) {
   const profileRows = [];
   const profileRowsById = new Map();
   const profilePattern = new RegExp(`^${profileId}$`);
+  const atomicProfilePattern = new RegExp(`^${atomicProfileId}$`);
+  const profileSetPattern = new RegExp(`^${profileSetId}$`);
+  const qualificationSetPattern = new RegExp(`^${qualificationSetId}$`);
+  const parseStrictTraceIds = (value, patternSource, label) => {
+    const source = (value ?? "").trim();
+    const tokenSource = `\`(${patternSource})\``;
+    const fullPattern = new RegExp(`^${tokenSource}(?:\\s*<br\\s*/?>\\s*${tokenSource})*$`);
+    if (!fullPattern.test(source)) {
+      fail(`${label} must contain only backticked IDs separated by <br>`);
+      return [];
+    }
+    return [...source.matchAll(new RegExp(tokenSource, "g"))].map((match) => match[1]);
+  };
+  const proofObjectIdSource = `(?:FACT-\\d{3}|ASM-\\d{3}|OQ-\\d{3}|REQ-(?:FUNC|QUAL|OPS|SEC)-\\d{3}|INV-\\d{3}|ADR-\\d{4}|RISK-\\d{3}|EVD-\\d{4}|GATE-\\d{3}|TASK-P\\d+-\\d{3}|${profileId})`;
+  const parseStrictProofObjectIds = (value, label) => {
+    const source = (value ?? "").trim();
+    const fullPattern = new RegExp(`^${proofObjectIdSource}(?:/${proofObjectIdSource})*$`);
+    if (!fullPattern.test(source)) {
+      fail(`${label} must be a positive slash-separated ID list with no prose`);
+      return [];
+    }
+    return source.split("/");
+  };
+  const exactPassProofs = (evidenceIds, expectedIds, expectedKind, expectedResult, label) => {
+    const expected = [...expectedIds].sort();
+    const matched = [];
+    for (const evidenceId of evidenceIds) {
+      if (evidenceStates.get(evidenceId) !== "pass") continue;
+      const proofIds = parseStrictProofObjectIds(evidenceRows.get(evidenceId)?.proves, `${label} ${evidenceId}`);
+      const uniqueProofIds = [...new Set(proofIds)].sort();
+      if (
+        proofIds.length === expected.length &&
+        uniqueProofIds.join(",") === expected.join(",") &&
+        normalizedValue(evidenceRows.get(evidenceId)?.result) === expectedResult
+      ) {
+        const row = evidenceRows.get(evidenceId);
+        const artifacts = row?.localMarkdownArtifacts ?? [];
+        if (artifacts.length !== 1) {
+          fail(`${label} ${evidenceId} requires exactly one project-contained non-symlink Markdown artifact`);
+          continue;
+        }
+        const artifact = artifacts[0];
+        if (
+          Object.values(artifact.machineFieldCounts).some((count) => count !== 1) ||
+          artifact.evidenceId !== evidenceId ||
+          artifact.kind !== expectedKind ||
+          artifact.verdict !== "pass" ||
+          artifact.proofObject !== normalizedValue(row?.proves) ||
+          artifact.result !== expectedResult
+        ) {
+          fail(
+            `${label} ${evidenceId} artifact must exactly bind Evidence-ID, Evidence-Kind, Verdict, Proof-Object, and Result to the registry`,
+          );
+          continue;
+        }
+        matched.push(evidenceId);
+      }
+    }
+    return matched;
+  };
   for (const line of lines) {
     const cells = cellsOf(line);
     const id = cells[0] ?? "";
@@ -516,6 +646,39 @@ async function verifyRecord(source, recordPath) {
     }
   }
 
+  const profileSetBindings = new Map();
+  const qualificationSetBindings = new Map();
+  const profileTraceStart = lines.findIndex((line) => line === "### 12.1.1 Profile Set 追踪矩阵");
+  const profileTraceEnd = lines.findIndex(
+    (line, index) => index > profileTraceStart && /^###\s+12\.(?:1\.[2-9]|[2-9])\b|^##\s+/.test(line),
+  );
+  if (profileTraceStart !== -1) {
+    const profileTraceBlock = lines.slice(
+      profileTraceStart + 1,
+      profileTraceEnd === -1 ? lines.length : profileTraceEnd,
+    );
+    for (const line of profileTraceBlock) {
+      const cells = cellsOf(line);
+      const setId = (cells[0] ?? "").replaceAll("`", "");
+      if (!profileSetPattern.test(setId) && !qualificationSetPattern.test(setId)) continue;
+      requireCellCount(`profile trace ${setId}`, cells, 3);
+      const evidenceIds = parseStrictTraceIds(cells[2], "EVD-\\d{4}", `Profile trace ${setId} evidence`);
+      if (profileSetPattern.test(setId)) {
+        if (profileSetBindings.has(setId)) fail(`duplicate Profile Set trace row for ${setId}`);
+        const memberIds = parseStrictTraceIds(cells[1], atomicProfileId, `Profile Set ${setId} binding`);
+        profileSetBindings.set(setId, { memberIds, evidenceIds });
+      } else {
+        if (qualificationSetBindings.has(setId)) fail(`duplicate Qualification Set trace row for ${setId}`);
+        const boundProfileSetIds = parseStrictTraceIds(
+          cells[1],
+          profileSetId,
+          `Qualification Set ${setId} binding`,
+        );
+        qualificationSetBindings.set(setId, { boundProfileSetIds, evidenceIds });
+      }
+    }
+  }
+
   const gateEvidence = new Map();
   const traceStart = lines.findIndex((line) => line === "### 15.1 Gate 追踪矩阵");
   const traceEnd = lines.findIndex((line, index) => index > traceStart && /^##\s+/.test(line));
@@ -536,14 +699,38 @@ async function verifyRecord(source, recordPath) {
 
   const claimStatus = frontmatter.get("claim_status");
   const allGatesPass = gateStates.size > 0 && [...gateStates.values()].every((state) => state === "pass");
+  if (claimStatus === "not_proven") {
+    if (frontmatter.get("qualification_profile") !== "none") {
+      fail("not_proven claim must keep qualification_profile none");
+    }
+    if (frontmatter.get("qualification_evidence_set") !== "none") {
+      fail("not_proven claim must keep qualification_evidence_set none");
+    }
+  }
   if (claimStatus === "qualified_for_named_profile") {
     if (!allGatesPass) fail("qualified claim is forbidden while any production gate is not pass");
     const qualificationProfile = frontmatter.get("qualification_profile");
     const qualificationProfileRow = profileRowsById.get(qualificationProfile);
-    if (!qualificationProfileRow) {
-      fail("qualified claim requires qualification_profile to reference a defined profile");
+    if (!qualificationProfileRow || !profileSetPattern.test(qualificationProfile)) {
+      fail("qualified claim requires qualification_profile to reference a defined PROFILE_SET");
     } else if (qualificationProfileRow[2] !== "verified") {
       fail(`qualified claim requires verified qualification_profile ${qualificationProfile}`);
+    }
+    const qualificationEvidenceSet = frontmatter.get("qualification_evidence_set");
+    const qualificationEvidenceRow = profileRowsById.get(qualificationEvidenceSet);
+    if (!qualificationEvidenceRow || !qualificationSetPattern.test(qualificationEvidenceSet)) {
+      fail("qualified claim requires qualification_evidence_set to reference a defined QUALIFICATION_SET");
+    } else if (qualificationEvidenceRow[2] !== "verified") {
+      fail(`qualified claim requires verified qualification_evidence_set ${qualificationEvidenceSet}`);
+    }
+    const qualificationBoundaryPattern = /(?:\bdraft\b|\bunresolved\b|\bnull\b|\bmissing\b|\bunknown\b|\bnone\b|\bunassigned\b|\bTBD\b|\bTODO\b|not[_ -]?proven|not[_ -]?qualified|未知|未分配|待确认|待定|待分配|未闭合|未验证|无来源|无真实)/i;
+    for (const [id, cells] of [
+      [qualificationProfile, qualificationProfileRow],
+      [qualificationEvidenceSet, qualificationEvidenceRow],
+    ]) {
+      if (cells && [cells[3], cells[4], cells[5]].some((value) => qualificationBoundaryPattern.test(value))) {
+        fail(`qualified claim forbids unresolved, unknown, or draft owner/source/action text for ${id}`);
+      }
     }
     if (frontmatter.get("record_health") !== "current") {
       fail("qualified claim requires record_health current");
@@ -569,10 +756,75 @@ async function verifyRecord(source, recordPath) {
         fail(`qualified claim requires verified invariant ${cells[0]}`);
       }
     }
-    const currentProfiles = profileRows.filter((cells) => cells[2] !== "superseded");
-    if (currentProfiles.length === 0) fail("qualified claim requires at least one current profile");
+    const currentProfiles = profileRows.filter(
+      (cells) => atomicProfilePattern.test(cells[0]) && cells[2] !== "superseded",
+    );
+    if (currentProfiles.length !== 4) {
+      fail(`qualified claim requires exactly four current atomic profiles, found ${currentProfiles.length}`);
+    }
     for (const cells of currentProfiles) {
       if (cells[2] !== "verified") fail(`qualified claim requires verified profile ${cells[0]}`);
+      if ([cells[3], cells[4], cells[5]].some((value) => qualificationBoundaryPattern.test(value))) {
+        fail(`qualified claim forbids unresolved, unknown, or draft owner/source/action text for ${cells[0]}`);
+      }
+    }
+    const currentKinds = currentProfiles.map((cells) => cells[0].split("_PROFILE-")[0]);
+    const expectedKinds = ["DURABILITY", "FAILURE", "HARDWARE", "WORKLOAD"];
+    if ([...new Set(currentKinds)].sort().join(",") !== expectedKinds.join(",")) {
+      fail(`qualified claim requires one current profile of each kind; found ${currentKinds.sort().join(",")}`);
+    }
+    const selectedProfileBinding = profileSetBindings.get(qualificationProfile);
+    if (!selectedProfileBinding) {
+      fail(`qualified claim requires a Profile Set trace row for ${qualificationProfile}`);
+    } else {
+      const expectedMemberIds = currentProfiles.map((cells) => cells[0]).sort();
+      const actualMemberIds = [...new Set(selectedProfileBinding.memberIds)].sort();
+      if (
+        selectedProfileBinding.memberIds.length !== 4 ||
+        actualMemberIds.join(",") !== expectedMemberIds.join(",")
+      ) {
+        fail(`Profile Set ${qualificationProfile} must bind exactly the four current atomic profiles`);
+      }
+      const setEvidenceIds = exactPassProofs(
+        selectedProfileBinding.evidenceIds,
+        [qualificationProfile, ...expectedMemberIds],
+        "profile_set_verification",
+        `profile_set_verified=${qualificationProfile}`,
+        `Profile Set ${qualificationProfile} evidence`,
+      );
+      if (setEvidenceIds.length !== 1) {
+        fail(`Profile Set ${qualificationProfile} requires exactly one pass evidence proving the set and all four members`);
+      } else {
+        const expectedSource = setEvidenceIds[0];
+        for (const cells of [...currentProfiles, qualificationProfileRow]) {
+          if (cells && normalizedValue(cells[4]) !== expectedSource) {
+            fail(`${cells[0]} current source must be the selected Profile Set evidence ${expectedSource}`);
+          }
+        }
+      }
+    }
+    const selectedQualificationBinding = qualificationSetBindings.get(qualificationEvidenceSet);
+    if (!selectedQualificationBinding) {
+      fail(`qualified claim requires a Qualification Set trace row for ${qualificationEvidenceSet}`);
+    } else {
+      if (
+        selectedQualificationBinding.boundProfileSetIds.length !== 1 ||
+        selectedQualificationBinding.boundProfileSetIds[0] !== qualificationProfile
+      ) {
+        fail(`Qualification Set ${qualificationEvidenceSet} must bind selected Profile Set ${qualificationProfile}`);
+      }
+      const qualificationEvidenceIds = exactPassProofs(
+        selectedQualificationBinding.evidenceIds,
+        [qualificationEvidenceSet, qualificationProfile],
+        "qualification_grant",
+        `qualification_granted=${qualificationEvidenceSet};profile_set=${qualificationProfile};claim=qualified_for_named_profile`,
+        `Qualification Set ${qualificationEvidenceSet} evidence`,
+      );
+      if (qualificationEvidenceIds.length !== 1) {
+        fail(`Qualification Set ${qualificationEvidenceSet} requires exactly one pass evidence proving it and the selected Profile Set`);
+      } else if (normalizedValue(qualificationEvidenceRow?.[4]) !== qualificationEvidenceIds[0]) {
+        fail(`${qualificationEvidenceSet} current source must be its selected qualification evidence ${qualificationEvidenceIds[0]}`);
+      }
     }
     if (riskRows.length === 0) fail("qualified claim requires a risk register");
     for (const cells of riskRows) {

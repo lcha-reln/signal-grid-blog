@@ -1,17 +1,21 @@
-# EVD-0008：Remote authority readiness 与当前 revision 构建合同
+# EVD-0008：Remote authority readiness 历史构建合同
 
 - 证据 ID：`EVD-0008`
 - 证明对象：`TASK-P0-002`、`ADR-0001`、`ADR-0002`、`RISK-013`、`RISK-014`
 - 关联控制：`REQ-QUAL-002`、`REQ-OPS-006`、`GATE-001`；不闭合任何业务 `INV` 或 Gate
 - Observation cutoff：2026-08-19T01:27:53+08:00
 - 实现对象：local-only repository commit `ad461b3bd0cfdeddedac2fa93a37c5cba1c203ea`
-- Verdict：`partial`
+- Verdict：`stale`
+
+## 0. 失效记录
+
+本 artifact 的观察对象固定为实现 commit `ad461b3bd0cfdeddedac2fa93a37c5cba1c203ea`。2026-08-19，项目在新 commit 中加入 qualification Profile/schema/Set、validator、门禁与 bundle 内容，命中了本证据声明的 HEAD、policy、脚本和 bundle 失效条件。因此本证据当前 verdict 为 `stale`，以下结果只保留为旧 revision 的不可变历史观察；当前 revision 由 `EVD-0010 partial` 承接。
 
 ## 1. Verdict 的准确边界
 
-本证据证明当前实现仓库 revision 的 `deployable=false` 构建合同和 proposed remote-authority readiness 合同能够在固定的历史复现运行时上通过本地 fail-closed 门禁。`RAP-0001` 的状态词继续是 remote/artifact authority=`not_established`、Hosted CI=`not_observed`；readiness 对应的 `remoteAuthorityEstablished`、`hostedCiObserved`、`artifactAuthorityEstablished` 三个布尔值均为 `false`，qualification 仍为 `not_proven`。
+本证据曾证明上述旧 revision 的 `deployable=false` 构建合同和 proposed remote-authority readiness 合同能够在固定的历史复现运行时上通过本地 fail-closed 门禁。该 revision 的 `RAP-0001` 状态词是 remote/artifact authority=`not_established`、Hosted CI=`not_observed`；readiness 对应的 `remoteAuthorityEstablished`、`hostedCiObserved`、`artifactAuthorityEstablished` 三个布尔值均为 `false`，qualification 为 `not_proven`。
 
-本证据不证明远端 enforcement、provider-hosted CI、branch/ruleset 保护、许可证、持久 artifact authority、备份恢复、完整 observation validator、当前安全生产 JDK，或任何撮合、Aeron Cluster、Gateway、性能和生产资格。`TASK-P0-002` 继续为 `doing`，`ADR-0001/0002` 继续为 `proposed`。
+本证据从未证明远端 enforcement、provider-hosted CI、branch/ruleset 保护、许可证、持久 artifact authority、备份恢复、完整 observation validator、当前安全生产 JDK，或任何撮合、Aeron Cluster、Gateway、性能和生产资格。它也不能证明当前实现 revision；`ADR-0001/0002` 从未因此被接受。
 
 ## 2. 双仓与环境观察
 
@@ -105,7 +109,7 @@ deployable=false
 | `remote-authority-readiness.json` | `1766dbd9aad124fc9cd01030456bfa1cb1f4611a19ea4455a2d6f766cf53f812` |
 | `RAP-0001 remote-authority-policy.json` | `61d67c86c9417d660e23c3b12cf3dbd48337d875cc6f9185231d873c76532f67` |
 
-这些摘要证明当前本地规范化输出的内容，不证明 publisher identity、外部可取回性、不可变留存、漏洞/许可证合规或生产部署资格。
+这些摘要只证明旧 revision 当时的本地规范化输出内容，不证明当前 revision、publisher identity、外部可取回性、不可变留存、漏洞/许可证合规或生产部署资格。
 
 ## 6. 信任边界与失效条件
 
