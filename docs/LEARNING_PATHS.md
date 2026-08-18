@@ -77,8 +77,14 @@
 | 时间、共识与协调 | 06 | 40 | ZooKeeper 3.9：从 znode、Watch 到 ZAB、一致性与工程配方 | `zookeeper-coordination-consistency-and-recipes` |
 | 分布式日志与消息连续性 | 07 | 50 | Kafka 4.3：从分区日志、ISR 与 KRaft 到消费语义、事务和生产运维 | `kafka-distributed-log-kraft-consumers-and-transactions` |
 | 分布式日志与消息连续性 | 08 | 60 | 分布式消息序列号：Gap 检测、乱序处理与 Aeron 实战 | `distributed-message-sequencing` |
+| 分布式日志与消息连续性 | 09 | 65 | 跨系统副作用：结果未知、幂等、Outbox/Inbox、2PC 与 Saga | `cross-system-side-effects-idempotency-outbox-inbox-2pc-saga` |
+| 分布式日志与消息连续性 | 10 | 70 | 过载也是故障：背压、Admission Control、Retry Budget 与 Load Shedding | `overload-backpressure-admission-control-retry-budget-load-shedding` |
+| 检查点、灾备与验证 | 11 | 80 | 分布式快照与一致检查点：从 Chandy–Lamport 到 Barrier、Checkpoint 与恢复位点 | `distributed-snapshots-consistent-checkpoints-barriers-recovery-cursors` |
+| 检查点、灾备与验证 | 12 | 90 | 备份不是副本：PITR、RPO/RTO、灾难恢复与恢复演练 | `backup-pitr-disaster-recovery-and-restore-drills` |
+| 检查点、灾备与验证 | 13 | 100 | 有状态系统如何滚动升级：协议版本、快照迁移、双版本执行与安全回滚 | `stateful-system-rolling-upgrades-protocol-snapshot-migration-safe-rollback` |
+| 检查点、灾备与验证 | 14 | 110 | 如何证明恢复协议真的可靠：Failpoint、确定性模拟、历史检查与故障注入 | `recovery-protocol-verification-failpoints-simulation-history-checking` |
 
-本路径先建立单写者有状态服务的复制与恢复全景，再用 WAL 说明单机如何建立可恢复的持久前缀；随后区分墙钟、单调时钟、逻辑时钟、超时与 Lease，避免把时间戳误作共识，并用 operation history 精确定义线性一致、可串行化和实时顺序。接着由 Raft 原论文构造多数派共识、日志提交和安全性证明的标准模型，并转入 ZooKeeper/ZAB 暴露给应用的协调接口；最后进入 Kafka/KRaft 的分布式日志工程和应用级序列号、Gap 检测与恢复协议。本地 WAL、时间顺序、一致性合同、复制提交、备份/PITR 和外部副作用是不同保证；Raft 也是分析框架，不代表 ZooKeeper、Kafka 或 Aeron Cluster 与标准 Raft 使用相同协议，现代 Kafka 更不依赖 ZooKeeper。
+本路径先建立单写者有状态服务的复制与恢复全景，再用 WAL 说明单机如何建立可恢复的持久前缀；随后区分墙钟、逻辑顺序、超时与 Lease，并用 operation history 精确定义一致性合同。接着由 Raft、ZooKeeper/ZAB 与 Kafka/KRaft 分别展示复制共识、协调接口和分布式日志，再以应用序列号检测消息连续性。完成这条基础链后，路径继续处理最容易跨边界失真的问题：结果未知与外部副作用、过载反馈环、一致检查点、PITR 与灾难恢复、混合版本升级，以及怎样用历史检查和确定性故障注入产生恢复证据。本地 WAL、复制提交、业务幂等、全局快照、备份和 exactly-once 始终是不同保证；Raft 也是分析框架，不代表 ZooKeeper、Kafka 或 Aeron Cluster 与标准 Raft 使用相同协议，现代 Kafka 更不依赖 ZooKeeper。
 
 ## Java 低延迟工程
 

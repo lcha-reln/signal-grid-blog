@@ -2,7 +2,7 @@
 title: 分布式消息序列号：Gap 检测、乱序处理与 Aeron 实战
 description: 从序列域、接收窗口和故障恢复出发，讲清消息 Gap、重复与乱序的检测边界，并给出 Aeron 中可落地的发送、接收、持久化与监控方案。
 date: 2026-03-11T12:00:00+08:00
-updated: 2026-08-17T17:45:00+08:00
+updated: 2026-08-18T14:10:00+08:00
 categories:
   - 高可用架构
 tags:
@@ -383,6 +383,8 @@ flowchart TB
 - 接收游标必须和业务状态处于同一提交边界。
 
 回到 [有状态系统可靠性总览](/signal-grid-blog/posts/high-availability-stateful-service/) 看，这套协议正好连接了主从切换、快照、重放、幂等和 fencing：只有这些环节共同闭环，“发现 Gap”才会真正变成“恢复正确状态”。
+
+下一章 [《跨系统副作用》](/signal-grid-blog/posts/cross-system-side-effects-idempotency-outbox-inbox-2pc-saga/) 会沿着这里的 `eventId`、持久发送与接收 checkpoint 继续向外推进：当数据库提交、消息发布、HTTP 调用和人工动作不在同一个原子边界内时，怎样表示结果未知、约束重试，并用 Outbox、Inbox、2PC 或 Saga 选择能够真实兑现的副作用合同。
 
 ## 官方参考
 
