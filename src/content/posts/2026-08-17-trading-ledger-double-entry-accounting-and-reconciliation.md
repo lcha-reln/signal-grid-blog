@@ -2,7 +2,7 @@
 title: "交易账本与双重记账：从成交入账、余额预占到冲正与对账"
 description: "以中心化交易所为背景，从账户类型、借贷方向和多资产账簿出发，讲清订单预占、现货成交、手续费与返佣、不可变分录、幂等、余额投影、冲正、外部对账和故障恢复。"
 date: 2026-08-17T12:20:00+08:00
-updated: 2026-08-17T17:45:00+08:00
+updated: 2026-08-18T11:05:00+08:00
 tags:
   - 交易账本
   - 双重记账
@@ -23,7 +23,7 @@ draft: false
 
 账本就是为这些问题存在的。它不是订单表的附属字段，也不是给财务月底导出 CSV 的日志；它是把成交、充值、提现、资金费用和清算结果转换为**不可变经济事实**的核心状态机。
 
-本文是“交易系统”学习路径的 Chapter 10。前面的 [Chapter 06：撮合机制](/signal-grid-blog/posts/matching-engine-and-auctions/) 解释订单怎样产生 fill，[Chapter 07：行情数据管线](/signal-grid-blog/posts/market-data-pipeline-and-order-book-reconstruction/) 划清公开行情投影与资金事实的边界，[Chapter 08：合约仓位生命周期](/signal-grid-blog/posts/position-lifecycle-and-pnl/) 与 [Chapter 09：永续资金费率](/signal-grid-blog/posts/perpetual-funding-rate/) 则给出仓位、盈亏和资金费用这些具体现金流；本文把它们统一成可验证的账本模型。下一章 [保证金风险引擎](/signal-grid-blog/posts/margin-metrics-and-mark-price/) 再说明余额与仓位估值怎样进入风险计算。
+本文是“交易系统”学习路径的 Chapter 13。前面的 [Chapter 07：撮合机制](/signal-grid-blog/posts/matching-engine-and-auctions/) 解释订单怎样产生 fill，[Chapter 09：行情数据管线](/signal-grid-blog/posts/market-data-pipeline-and-order-book-reconstruction/) 划清公开行情投影与资金事实的边界，[Chapter 10：合约仓位生命周期](/signal-grid-blog/posts/position-lifecycle-and-pnl/)、[Chapter 11：期货结算与交割](/signal-grid-blog/posts/futures-settlement-variation-margin-and-delivery/) 与 [Chapter 12：永续资金费率](/signal-grid-blog/posts/perpetual-funding-rate/) 则给出仓位、结算盈亏和资金费用这些具体现金流；本文把它们统一成可验证的账本模型。下一章 [保证金风险引擎](/signal-grid-blog/posts/margin-metrics-and-mark-price/) 再说明余额与仓位估值怎样进入风险计算。
 
 > 本文讨论产品账本与交易系统工程，不构成会计、审计、法律、税务或监管意见。真实交易所还必须按法律实体、客户资产隔离、适用会计准则和当地监管要求设计总账及报表；本文的账户分类是可验证的工程模型，不替代持牌会计师和审计师的判断。
 

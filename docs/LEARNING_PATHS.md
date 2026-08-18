@@ -41,18 +41,21 @@
 | 市场与产品 | 01 | 10 | CEX 交易系统全景：从产品、订单到清算账本 | `cex-trading-system-overview` |
 | 市场与产品 | 02 | 15 | 交易品种主数据与市场状态：合约规格、交易日、停牌、价格带与规则版本 | `trading-instrument-master-market-state-and-rule-versioning` |
 | 市场与产品 | 03 | 20 | 现货、期货与永续合约：基差、收敛与对冲 | `derivatives-contracts-and-basis` |
-| 订单、撮合与行情 | 04 | 30 | 交易订单语义：Market、Limit、TIF、Post-Only 与条件单 | `order-types-and-execution-strategies` |
-| 订单、撮合与行情 | 05 | 40 | 订单簿与自成交保护：从队列结构到 STP | `order-book-and-self-trade-prevention` |
-| 订单、撮合与行情 | 06 | 50 | 撮合机制：价格时间优先、连续竞价与集合竞价 | `matching-engine-and-auctions` |
-| 订单、撮合与行情 | 07 | 55 | 行情数据管线与订单簿重建：权威事件、快照、增量与 Gap 恢复 | `market-data-pipeline-and-order-book-reconstruction` |
-| 仓位、账本与定价 | 08 | 60 | 合约仓位生命周期：开仓、减仓、平仓与盈亏 | `position-lifecycle-and-pnl` |
-| 仓位、账本与定价 | 09 | 70 | 永续合约资金费率：溢价、结算与基差交易 | `perpetual-funding-rate` |
-| 仓位、账本与定价 | 10 | 75 | 交易账本与双重记账：从成交入账、余额预占到冲正与对账 | `trading-ledger-double-entry-accounting-and-reconciliation` |
-| 仓位、账本与定价 | 11 | 80 | 保证金风险引擎：权益、维持保证金与标记价格 | `margin-metrics-and-mark-price` |
-| 保证金与清算 | 12 | 90 | 逐仓与全仓：风险隔离、共享权益与风险传播 | `isolated-and-cross-margin` |
-| 保证金与清算 | 13 | 100 | 强平风险瀑布：部分清算、保险基金与 ADL | `liquidation-and-adl` |
-| 保证金与清算 | 14 | 110 | 统一账户与组合保证金：抵押品折扣、净额与压力测试 | `unified-account-and-portfolio-margin` |
-| 系统综合 | 15 | 120 | 订单簿做市：价差、库存、逆向选择与合规边界 | `market-making-mechanics-and-strategies` |
+| 订单、风控、撮合与行情 | 04 | 30 | 交易订单语义：Market、Limit、TIF、Post-Only 与条件单 | `order-types-and-execution-strategies` |
+| 订单、风控、撮合与行情 | 05 | 35 | 交易前风控与订单准入：资金预占、信用限额、Fat Finger、价格带与 Kill Switch | `pre-trade-risk-and-order-admission` |
+| 订单、风控、撮合与行情 | 06 | 40 | 订单簿与自成交保护：从队列结构到 STP | `order-book-and-self-trade-prevention` |
+| 订单、风控、撮合与行情 | 07 | 50 | 撮合机制：价格时间优先、连续竞价与集合竞价 | `matching-engine-and-auctions` |
+| 订单、风控、撮合与行情 | 08 | 52 | OMS 与私有执行回报：订单身份、Cancel/Replace、Drop Copy 与断线对账 | `oms-private-execution-reports-and-reconciliation` |
+| 订单、风控、撮合与行情 | 09 | 55 | 行情数据管线与订单簿重建：权威事件、快照、增量与 Gap 恢复 | `market-data-pipeline-and-order-book-reconstruction` |
+| 仓位、结算与账本 | 10 | 60 | 合约仓位生命周期：开仓、减仓、平仓与盈亏 | `position-lifecycle-and-pnl` |
+| 仓位、结算与账本 | 11 | 65 | 期货结算与交割：每日盯市、Variation Margin、最终结算与实物交割 | `futures-settlement-variation-margin-and-delivery` |
+| 仓位、结算与账本 | 12 | 70 | 永续合约资金费率：溢价、结算与基差交易 | `perpetual-funding-rate` |
+| 仓位、结算与账本 | 13 | 75 | 交易账本与双重记账：从成交入账、余额预占到冲正与对账 | `trading-ledger-double-entry-accounting-and-reconciliation` |
+| 仓位、结算与账本 | 14 | 80 | 保证金风险引擎：权益、维持保证金与标记价格 | `margin-metrics-and-mark-price` |
+| 保证金与清算 | 15 | 90 | 逐仓与全仓：风险隔离、共享权益与风险传播 | `isolated-and-cross-margin` |
+| 保证金与清算 | 16 | 100 | 强平风险瀑布：部分清算、保险基金与 ADL | `liquidation-and-adl` |
+| 保证金与清算 | 17 | 110 | 统一账户与组合保证金：抵押品折扣、净额与压力测试 | `unified-account-and-portfolio-margin` |
+| 系统综合 | 18 | 120 | 订单簿做市：价差、库存、逆向选择与合规边界 | `market-making-mechanics-and-strategies` |
 
 阶段边界和首页主线维护在 `src/config.ts`。新增或移动章节时，应同时检查：
 
