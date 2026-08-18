@@ -9,7 +9,7 @@
 
 ## 0. 失效记录
 
-本 artifact 的观察对象固定为实现 commit `ad461b3bd0cfdeddedac2fa93a37c5cba1c203ea`。2026-08-19，项目在新 commit 中加入 qualification Profile/schema/Set、validator、门禁与 bundle 内容，命中了本证据声明的 HEAD、policy、脚本和 bundle 失效条件。因此本证据当前 verdict 为 `stale`，以下结果只保留为旧 revision 的不可变历史观察；当前 revision 由 `EVD-0010 partial` 承接。
+本 artifact 的观察对象固定为实现 commit `ad461b3bd0cfdeddedac2fa93a37c5cba1c203ea`。2026-08-19，项目在新 commit 中加入 qualification Profile/schema/Set、validator、门禁与 bundle 内容，命中了本证据声明的 HEAD、policy、脚本和 bundle 失效条件。因此本证据当前 verdict 为 `stale`，以下结果只保留为旧 revision 的不可变历史观察；后继 revision 曾由 `EVD-0010`（现为 `stale`）承接，当前 revision 由 `EVD-0011 partial` 承接。
 
 ## 1. Verdict 的准确边界
 
@@ -50,7 +50,7 @@
 
 ### 期望
 
-当前 revision 必须在精确历史复现 runtime 上通过 build-contract；全部 repository/authority 负例必须由各自稳定错误码拒绝；online、offline、不同路径/缓存与解包重建必须得到相同规范化输出；bundle 不得夹带未声明 evidence；`RAP-0001` 状态必须保持 remote/artifact authority=`not_established`、Hosted CI=`not_observed`，readiness 对应三个布尔值必须均为 `false`，qualification 必须为 `not_proven`。
+被观察的旧 revision 当时必须在精确历史复现 runtime 上通过 build-contract；全部 repository/authority 负例必须由各自稳定错误码拒绝；online、offline、不同路径/缓存与解包重建必须得到相同规范化输出；bundle 不得夹带未声明 evidence；`RAP-0001` 状态必须保持 remote/artifact authority=`not_established`、Hosted CI=`not_observed`，readiness 对应三个布尔值必须均为 `false`，qualification 必须为 `not_proven`。
 
 ### 实际
 

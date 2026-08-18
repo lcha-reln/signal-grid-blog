@@ -1,17 +1,21 @@
-# EVD-0010：当前构建与 Qualification Profile 合同框架
+# EVD-0010：历史构建与 Qualification Profile 合同框架
 
 - 证据 ID：`EVD-0010`
 - 证明对象：`TASK-P0-002`、`TASK-P0-003`、`ADR-0001`、`ADR-0002`、`WORKLOAD_PROFILE-001`、`HARDWARE_PROFILE-001`、`DURABILITY_PROFILE-001`、`FAILURE_PROFILE-001`、`PROFILE_SET-001`、`QUALIFICATION_SET-001`、`RISK-013`、`RISK-014`、`RISK-016`
 - 关联控制：`REQ-QUAL-001`、`REQ-QUAL-002`、`REQ-OPS-006`、`GATE-001`；不闭合任何业务 `INV` 或生产 Gate
 - Observation cutoff：2026-08-19T02:35:35+08:00
 - 实现对象：local-only repository commit `bca54470699d69dc609686927c46563492ff7c47`，tree `c7ace600668756cbf0cfee3e4406874d48211fde`
-- Verdict：`partial`
+- Verdict：`stale`
+
+## 0. 失效记录
+
+本 artifact 的观察对象固定为实现 commit `bca54470699d69dc609686927c46563492ff7c47`。2026-08-19，项目在后继 commit `6c1bdfc856de0681211cbd134a97cabcae13c7f5` 中加入 19 个 v2 intake/lifecycle 合同、外部 authority 与 production acceptance 的默认拒绝边界、更多门禁及新的 bundle/evidence 输出，命中了本证据声明的 HEAD、schema、validator、脚本、policy、bundle 和 generated evidence 失效条件。因此本证据当前 verdict 为 `stale`，以下结果只保留为旧 revision 的不可变历史观察；当前 revision 由 `EVD-0011 partial` 承接。
 
 ## 1. 期望与实际
 
 ### 期望
 
-当前 revision 必须同时满足以下条件：
+被观察的旧 revision 当时必须同时满足以下条件：
 
 - 四类 atomic Profile、`PROFILE_SET-001` 与 `QUALIFICATION_SET-001` 使用 canonical JSON、固定相对路径和精确 SHA-256 绑定；
 - 未知 owner、source、目标、决策、证据与有效期只能保持 `null` 或空集合，并由 `unresolved` JSON Pointer 覆盖，不得从笔记本、产品默认值或示例推导生产数值；
@@ -92,11 +96,11 @@ env \
 | `profile-readiness.json` | `2cb205d2f8f13563ef6f97ff688d860a0b9ff70277463fecf021a1dbc6796493` |
 | `remote-authority-readiness.json` | `1766dbd9aad124fc9cd01030456bfa1cb1f4611a19ea4455a2d6f766cf53f812` |
 
-这些摘要证明本地规范化输出的内容一致性，不证明 publisher identity、外部可取回性、不可变留存、漏洞/许可证合规、目标硬件性能或生产部署资格。
+这些摘要只证明该旧 revision 当时的本地规范化输出内容一致性，不证明当前 revision、publisher identity、外部可取回性、不可变留存、漏洞/许可证合规、目标硬件性能或生产部署资格。
 
 ## 5. Verdict 边界与失效条件
 
-`partial` 只表示当前 revision 的 draft 合同、否定资格状态和本地 fail-closed 门禁已观察。它不使任何 atomic Profile、Profile Set 或 Qualification Set 变为 `accepted/verified`，不接受 `ADR-0001/0002`，不解除 `TASK-P0-002 blocked`，不完成 `TASK-P0-003`，也不把 `GATE-001` 或 `claim_status` 提升。
+本证据原先的 `partial` 只表示旧 revision 的 draft 合同、否定资格状态和本地 fail-closed 门禁曾被观察；当前已因后继实现变化转为 `stale`。它从未使任何 atomic Profile、Profile Set 或 Qualification Set 变为 `accepted/verified`，从未接受 `ADR-0001/0002`、解除 `TASK-P0-002 blocked`、完成 `TASK-P0-003`，也从未把 `GATE-001` 或 `claim_status` 提升。
 
 以下任一变化会使本证据 `stale`：
 
