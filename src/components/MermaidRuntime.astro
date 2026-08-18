@@ -460,6 +460,11 @@
   });
 
   viewer.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      closeViewer();
+      return;
+    }
     if (event.ctrlKey || event.metaKey || event.altKey) return;
     if (event.key === "+" || event.key === "=") {
       event.preventDefault();
@@ -487,6 +492,10 @@
 
   viewer.addEventListener("click", (event) => {
     if (event.target === viewer) closeViewer();
+  });
+  viewer.addEventListener("cancel", (event) => {
+    event.preventDefault();
+    closeViewer();
   });
   viewer.addEventListener("close", () => {
     ++viewerRequest;

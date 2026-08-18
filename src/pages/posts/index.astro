@@ -8,7 +8,7 @@ const posts = sortPosts(await getCollection("posts", ({ data }) => !data.draft))
 const activeSeries = getActiveSeries(posts);
 ---
 
-<BaseLayout title="文章归档" description="Aeron、交易系统、有状态系统可靠性、Java 低延迟与 AI Agent 后端工程文章归档。">
+<BaseLayout title="文章归档" description="Aeron、交易系统、有状态系统可靠性、Java 低延迟、AI Agent 后端工程与生产系统实战文章归档。">
   <header class="page-hero">
     <span class="eyebrow">ALL TRANSMISSIONS / {String(posts.length).padStart(2, "0")}</span>
     <h1>文章归档</h1>

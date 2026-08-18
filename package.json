@@ -6,9 +6,10 @@
   "packageManager": "pnpm@10.30.3",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro check && astro build && pagefind --site dist",
+    "build": "pnpm check && astro build && pagefind --site dist",
     "preview": "astro preview",
-    "check": "astro check"
+    "check": "node scripts/verify-project-record.mjs && astro check",
+    "check:project-record": "node scripts/verify-project-record.mjs"
   },
   "dependencies": {
     "@astrojs/markdown-satteri": "^0.3.5",

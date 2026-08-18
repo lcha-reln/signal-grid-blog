@@ -3,7 +3,7 @@ import { glob } from "astro/loaders";
 import { z } from "astro/zod";
 
 const stringList = z.union([z.string(), z.array(z.string())]).optional();
-const seriesKey = z.enum(["aeron", "trading", "availability", "performance", "agent", "meta"]);
+const seriesKey = z.enum(["aeron", "trading", "availability", "performance", "agent", "production", "meta"]);
 
 const posts = defineCollection({
   loader: glob({ pattern: "**/*.md", base: "./src/content/posts" }),
@@ -18,6 +18,7 @@ const posts = defineCollection({
     draft: z.boolean().optional().default(false),
     featured: z.boolean().optional().default(false),
     series: seriesKey,
+    seriesStage: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/).optional(),
     seriesOrder: z.coerce.number().int().positive(),
     cover: z.string().optional(),
     coverAlt: z.string().optional(),

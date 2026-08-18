@@ -2,7 +2,12 @@
 import { getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import LearningPathItem from "../../components/LearningPathItem.astro";
-import { getActiveSeries, readingMinutes } from "../../lib/content";
+import {
+  getActiveSeries,
+  getPostSeriesStage,
+  getValidatedSeriesStages,
+  readingMinutes,
+} from "../../lib/content";
 
 export async function getStaticPaths() {
   const posts = await getCollection("posts", ({ data }) => !data.draft);
@@ -15,18 +20,15 @@ export async function getStaticPaths() {
 const { series, posts } = Astro.props;
 const totalMinutes = posts.reduce((sum, post) => sum + readingMinutes(post), 0);
 const globalIndexes = new Map(posts.map((post, index) => [post.id, index]));
-const stages = series.stages ?? [];
-for (let index = 0; index < stages.length; index += 1) {
-  const previous = stages[index - 1];
-  if (previous && stages[index].fromOrder <= previous.fromOrder) {
-    throw new Error(`Stages for ${series.key} must use strictly increasing fromOrder values.`);
-  }
-}
+const stages = getValidatedSeriesStages(series);
+const assignedStages = new Map(posts.map((post) => [post.id, getPostSeriesStage(series, post)]));
 const stageGroups = stages.map((stage, index) => {
   const nextOrder = stages[index + 1]?.fromOrder ?? Number.POSITIVE_INFINITY;
   return {
     stage,
-    posts: posts.filter((post) => post.data.seriesOrder >= stage.fromOrder && post.data.seriesOrder < nextOrder),
+    posts: posts.filter((post) => series.chapterScope === "stage"
+      ? assignedStages.get(post.id)?.key === stage.key
+      : post.data.seriesOrder >= stage.fromOrder && post.data.seriesOrder < nextOrder),
   };
 }).filter(({ posts: stagePosts }) => stagePosts.length > 0);
 const stagedPostIds = new Set(stageGroups.flatMap((group) => group.posts.map((post) => post.id)));
@@ -42,7 +44,7 @@ if (ungroupedPosts.length > 0) {
     <h1>{series.title}</h1>
     <p>{series.description}</p>
     <div class="page-hero-meta">
-      <span>{String(posts.length).padStart(2, "0")} CHAPTERS</span>
+      <span>{String(posts.length).padStart(2, "0")} {posts.length === 1 ? "CHAPTER" : "CHAPTERS"}</span>
       <span>{posts.length > 0 ? `≈ ${totalMinutes} MIN TOTAL` : "READING TIME TBD"}</span>
       <span>{posts.length > 0 ? "CURATED PATH" : "PLANNED"}</span>
     </div>
@@ -54,30 +56,32 @@ if (ungroupedPosts.length > 0) {
         <div class="path-brief" aria-label="学习路径说明">
           <div><span>PREREQUISITE</span><p>{series.prerequisite}</p></div>
           <div><span>OUTCOME</span><p>{series.outcome}</p></div>
-          <div><span>ORDER</span><p>建议按章节顺序阅读；每一章都建立在前一章的模型之上。</p></div>
+          <div><span>ORDER</span><p>{series.chapterScope === "stage"
+            ? "各 Project 独立编号；先选择 Project，再按该 Project 内的章节顺序推进。不同 Project 之间不构成前后依赖。"
+            : "建议按章节顺序阅读；每一章都建立在前一章的模型之上。"}</p></div>
         </div>
         <div class="path-section-head">
-          <span class="eyebrow">READING ROUTE / 从基础到实战</span>
+          <span class="eyebrow">{series.chapterScope === "stage" ? "PROJECT ROUTES / 持续交付" : "READING ROUTE / 从基础到实战"}</span>
           <p>{String(posts.length).padStart(2, "0")} 个章节 · 约 {totalMinutes} 分钟</p>
         </div>
         {stages.length > 0 ? (
           <div class="path-stages">
             {stageGroups.map(({ stage, posts: stagePosts }) => (
-              <section class="path-stage" aria-labelledby={`stage-${stage.index}`}>
+              <section class="path-stage" aria-labelledby={`stage-${stage.key}`}>
                 <header class="path-stage-head">
                   <span class="path-stage-index">{stage.index}</span>
                   <div>
                     <span class="eyebrow">{stage.eyebrow}</span>
-                    <h2 id={`stage-${stage.index}`}>{stage.title}</h2>
+                    <h2 id={`stage-${stage.key}`}>{stage.title}</h2>
                   </div>
                   <p>{stage.description}</p>
                 </header>
                 <div class="learning-path">
-                  {stagePosts.map((post) => (
+                  {stagePosts.map((post, stagePostIndex) => (
                     <LearningPathItem
                       post={post}
-                      index={globalIndexes.get(post.id) ?? 0}
-                      total={posts.length}
+                      index={series.chapterScope === "stage" ? stagePostIndex : (globalIndexes.get(post.id) ?? 0)}
+                      total={series.chapterScope === "stage" ? stagePosts.length : posts.length}
                       headingLevel={3}
                     />
                   ))}

@@ -1,5 +1,12 @@
 import type { CollectionEntry } from "astro:content";
-import { META_SERIES, SERIES, sitePath, type SeriesKey } from "../config";
+import {
+  META_SERIES,
+  SERIES,
+  sitePath,
+  type SeriesDefinition,
+  type SeriesKey,
+  type SeriesStage,
+} from "../config";
 
 export type Post = CollectionEntry<"posts">;
 
@@ -95,9 +102,101 @@ export function getPostsInSeries(posts: Post[], key: SeriesKey): Post[] {
   });
 }
 
+export function getValidatedSeriesStages(series: SeriesDefinition): readonly SeriesStage[] {
+  const stages = series.stages ?? [];
+  if (series.chapterScope === "stage" && stages.length === 0) {
+    throw new Error(`Series ${series.key} uses stage-scoped chapters but defines no stages.`);
+  }
+
+  const keys = new Set<string>();
+  const indexes = new Set<string>();
+  for (let index = 0; index < stages.length; index += 1) {
+    const stage = stages[index];
+    const previous = stages[index - 1];
+    if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(stage.key)) {
+      throw new Error(`Invalid stage key "${stage.key}" in ${series.key}.`);
+    }
+    if (!stage.index.trim()) {
+      throw new Error(`Stage "${stage.key}" in ${series.key} must define a non-empty index.`);
+    }
+    if (keys.has(stage.key)) {
+      throw new Error(`Duplicate stage key "${stage.key}" in ${series.key}.`);
+    }
+    if (indexes.has(stage.index)) {
+      throw new Error(`Duplicate stage index "${stage.index}" in ${series.key}.`);
+    }
+    if (previous && stage.fromOrder <= previous.fromOrder) {
+      throw new Error(`Stages for ${series.key} must use strictly increasing fromOrder values.`);
+    }
+    keys.add(stage.key);
+    indexes.add(stage.index);
+  }
+
+  return stages;
+}
+
+export function getPostSeriesStage(series: SeriesDefinition, post: Post): SeriesStage | undefined {
+  const stages = getValidatedSeriesStages(series);
+  if (series.chapterScope !== "stage") {
+    if (post.data.seriesStage) {
+      throw new Error(
+        `Post ${post.id} declares seriesStage "${post.data.seriesStage}", but ${series.key} is not stage-scoped.`,
+      );
+    }
+    return undefined;
+  }
+
+  const stageKey = post.data.seriesStage;
+  if (!stageKey) {
+    throw new Error(`Post ${post.id} must declare seriesStage because ${series.key} is stage-scoped.`);
+  }
+
+  const stageIndex = stages.findIndex((stage) => stage.key === stageKey);
+  if (stageIndex === -1) {
+    throw new Error(`Post ${post.id} references unknown seriesStage "${stageKey}" in ${series.key}.`);
+  }
+
+  const stage = stages[stageIndex];
+  const nextOrder = stages[stageIndex + 1]?.fromOrder ?? Number.POSITIVE_INFINITY;
+  if (post.data.seriesOrder < stage.fromOrder || post.data.seriesOrder >= nextOrder) {
+    throw new Error(
+      `Post ${post.id} uses seriesOrder ${post.data.seriesOrder}, outside seriesStage "${stage.key}" ` +
+      `[${stage.fromOrder}, ${Number.isFinite(nextOrder) ? nextOrder : "infinity"}).`,
+    );
+  }
+
+  return stage;
+}
+
+export function getChapterContext(posts: Post[], post: Post) {
+  const series = getSeries(post);
+  const seriesPosts = getPostsInSeries(posts, series.key);
+  let chapterPosts = seriesPosts;
+  const stage = getPostSeriesStage(series, post);
+
+  if (stage) {
+    chapterPosts = seriesPosts.filter(
+      (entry) => getPostSeriesStage(series, entry)?.key === stage.key,
+    );
+  }
+
+  const index = chapterPosts.findIndex((entry) => entry.id === post.id);
+  return {
+    index,
+    total: chapterPosts.length,
+    stage,
+    previous: index > 0 ? chapterPosts[index - 1] : undefined,
+    next: index >= 0 && index < chapterPosts.length - 1 ? chapterPosts[index + 1] : undefined,
+  };
+}
+
 export function getActiveSeries(posts: Post[]) {
-  return SERIES.map((series) => ({
-    series,
-    posts: getPostsInSeries(posts, series.key),
-  })).filter(({ posts: seriesPosts }) => seriesPosts.length > 0);
+  return SERIES.map((series) => {
+    getValidatedSeriesStages(series);
+    const seriesPosts = getPostsInSeries(posts, series.key);
+    for (const post of seriesPosts) {
+      getPostSeriesStage(series, post);
+    }
+    return { series, posts: seriesPosts };
+  }).filter(({ posts: seriesPosts }) => seriesPosts.length > 0);
 }
