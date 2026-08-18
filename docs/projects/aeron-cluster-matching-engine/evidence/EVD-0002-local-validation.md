@@ -3,8 +3,8 @@
 - 证据 ID：`EVD-0002`
 - 关联任务：`TASK-P0-001`
 - 关联 Gate：`GATE-001`（只覆盖项目合同与站点框架的局部条件）
-- 验收时间：2026-08-18T22:17:10+08:00
-- 验收对象：Project 01 框架 release `afe7e6cafe8d716d9f6e12751d3b8beb33ab1fb9`
+- 验收时间：2026-08-18T22:34:56+08:00
+- 验收对象：Project 01 最终框架 release `70ee0bca3bba8975c45c1f06c314b907bba498b2`
 - Verdict：`pass`——本地结构、构建与浏览器验收，以及 GitHub Pages build/deploy 和生产 URL 烟测均通过
 
 ## 1. 权威构建门禁
@@ -26,7 +26,7 @@ npx --yes --offline -p node@24 -c '/Users/reln/.codex/skills/maintain-signal-gri
 - `pnpm build` 先执行同一个项目记录 linter，Pages 默认构建入口无法绕过记录门禁；
 - full verifier 结论：`Full verification passed`。
 
-上述 118 个定义是被验收 release `afe7e6cafe8d716d9f6e12751d3b8beb33ab1fb9` 的观察值。审计 follow-up 新增 `CHG-20260818-003` 后，Node 24 full verifier 再次通过：119 个定义、8 个任务、10 个 Gate，Astro 仍为 0 diagnostics，76 pages 与 65 个 Pagefind 页面均成功生成。该计数变化来自审计元数据，不改变被验收的站点运行行为。
+初始公开 release `afe7e6cafe8d716d9f6e12751d3b8beb33ab1fb9` 的观察值是 118 个定义。被本证据最终接受的 release `70ee0bca3bba8975c45c1f06c314b907bba498b2` 已包含 `CHG-20260818-003` 和长期稳定文章表述，Node 24 full verifier 再次通过：119 个定义、8 个任务、10 个 Gate，Astro 仍为 0 diagnostics，76 pages 与 65 个 Pagefind 页面均成功生成。纯审计回填新增 `CHG-20260818-004` 后，当前记录以 120 个定义、8 个任务、10 个 Gate 再次通过同一 full verifier。
 
 ## 2. 项目记录 linter 的变异验证
 
@@ -72,14 +72,16 @@ npx --yes --offline -p node@24 -c '/Users/reln/.codex/skills/maintain-signal-gri
 
 ## 4. GitHub Pages 发布与生产 URL
 
-- 发布 commit：`afe7e6cafe8d716d9f6e12751d3b8beb33ab1fb9`（`content: start production Aeron matching project`）；
-- GitHub Pages：[run `32146500240`](https://github.com/lcha-reln/signal-grid-blog/actions/runs/32146500240)，build job 成功，deploy job 成功；
+- 初始公开 commit：`afe7e6cafe8d716d9f6e12751d3b8beb33ab1fb9`（`content: start production Aeron matching project`），[Pages run `32146500240`](https://github.com/lcha-reln/signal-grid-blog/actions/runs/32146500240) 成功；
+- 最终验收 commit：`70ee0bca3bba8975c45c1f06c314b907bba498b2`（`docs: record production project framework release`）；
+- 最终 GitHub Pages：[run `32148371343`](https://github.com/lcha-reln/signal-grid-blog/actions/runs/32148371343)，build 34 秒、deploy 5 分 11 秒，均成功；
 - 生产专题：<https://lcha-reln.github.io/signal-grid-blog/series/production/>；
 - 生产文章：<https://lcha-reln.github.io/signal-grid-blog/posts/production-aeron-cluster-matching-engine-project/>。
 
 线上干净浏览器烟测结果：
 
 - 文章 H1、canonical、Open Graph、Project 面包屑和 GitHub 项目记录链接正确；
+- 文章开头“本章只交付项目框架”和结尾“本章交付 P0 的第一个任务”已上线，实时进度链接指向 canonical PROJECT_RECORD；
 - 4/4 Mermaid 均渲染为 SVG，4 个大图按钮可用，浏览器 console 为空；
 - 390px 下无页面级横向溢出，Project fragment 未被 sticky header 遮挡；
 - Mermaid dialog 的滚动锁、`Escape` 关闭与焦点恢复正确；
@@ -93,6 +95,6 @@ npx --yes --offline -p node@24 -c '/Users/reln/.codex/skills/maintain-signal-gri
 
 ## 6. 证据边界与失效条件
 
-本证据不证明任何撮合代码、Aeron Cluster 故障切换、TPS、p99/p99.9、RPO、RTO、掉电持久性或生产资格。它只证明 Project 01 的记录、公开框架和首篇文章在 release `afe7e6cafe8d716d9f6e12751d3b8beb33ab1fb9` 上的本地与线上行为，并闭合 `TASK-P0-001`。`GATE-001` 仍为 `partial`，`claim_status` 仍为 `not_proven`。
+本证据不证明任何撮合代码、Aeron Cluster 故障切换、TPS、p99/p99.9、RPO、RTO、掉电持久性或生产资格。它只证明 Project 01 的记录、公开框架和首篇文章在 release `70ee0bca3bba8975c45c1f06c314b907bba498b2` 上的本地与线上行为，并闭合 `TASK-P0-001`。`GATE-001` 仍为 `partial`，`claim_status` 仍为 `not_proven`。
 
-本审计 follow-up 回填被验收 release SHA、Pages run、生产 URL 及其直接派生的任务/章节/Resume 状态，并把首篇的进度句改成不随时间漂移的等义表述；这些变化不改变技术合同或站点运行行为，不会使该 release 的既有证据自失效。若文章或记录发生实质语义变化，或者 linter、站点配置、运行依赖、浏览器行为发生变化，则本证据必须重新验证或标记为 `stale`。
+本次最终审计 follow-up 只把被验收 release `70ee0bca3bba8975c45c1f06c314b907bba498b2`、Pages run 和生产观察固化到控制账本，不改变文章、技术合同或站点运行行为，因此不会使该 release 的既有证据自失效。若文章或记录发生实质语义变化，或者 linter、站点配置、运行依赖、浏览器行为发生变化，则本证据必须重新验证或标记为 `stale`。

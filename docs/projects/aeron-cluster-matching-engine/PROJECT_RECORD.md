@@ -9,9 +9,9 @@ qualification_profile: none
 current_phase: P0
 current_task: TASK-P0-002
 created_at: 2026-08-18T21:03:38+08:00
-updated_at: 2026-08-18T22:25:13+08:00
-last_reconciled_at: 2026-08-18T22:25:13+08:00
-reconciliation_base_git_sha: afe7e6cafe8d716d9f6e12751d3b8beb33ab1fb9
+updated_at: 2026-08-18T22:34:56+08:00
+last_reconciled_at: 2026-08-18T22:34:56+08:00
+reconciliation_base_git_sha: 70ee0bca3bba8975c45c1f06c314b907bba498b2
 next_review_due: 2026-08-25T21:03:38+08:00
 ---
 
@@ -43,7 +43,7 @@ next_review_due: 2026-08-25T21:03:38+08:00
 - `FACT-005`：Aeron `1.52.2` 是 2026-08-18 已复核的最新正式发行版；它只是候选项目基线，仍需 ADR 接受并锁定制品摘要。
 - `FACT-006`：SBE `1.39.0`、Agrona `2.5.0` 是 2026-08-18 已复核的最新正式发行版；它们仍是候选项目基线。
 - `FACT-007`：开源 `ClusterBackup` 复制已提交日志和快照，可用于冷灾备或节点重建；它不是 active voter，也不是自动热切换节点。
-- `FACT-011`：Project 01 框架已由 commit `afe7e6cafe8d716d9f6e12751d3b8beb33ab1fb9` 发布；GitHub Pages run `32146500240` 的 build 与 deploy 均成功，生产 URL 已完成干净浏览器烟测。
+- `FACT-011`：Project 01 最终框架 release 是 `70ee0bca3bba8975c45c1f06c314b907bba498b2`；GitHub Pages run `32148371343` 的 build 与 deploy 均成功，生产 URL 已完成轻量在线复验。
 
 ### 最近完成
 
@@ -54,7 +54,7 @@ next_review_due: 2026-08-25T21:03:38+08:00
 - 让 `production` 专题按显式 `seriesStage` 隔离 Project，Project 内独立编号与导航；缺失、未知或越界配置会使构建失败。
 - 用恶意变异验证项目记录 linter 会拒绝伪 SHA、空 ADR、错绑 EVD、未闭合任务和无证据的生产资格声明。
 - 完成 Node 24 full verifier 与 1440/621/620/390 明暗主题、Mermaid 大图及键盘交互验收，并把本地结果固化到 `EVD-0002` artifact。
-- 发布框架 commit `afe7e6cafe8d716d9f6e12751d3b8beb33ab1fb9`，观察 Pages build/deploy 成功，并在线复验专题、文章、RSS、sitemap、搜索、SEO、响应式布局和 Mermaid 交互。
+- 发布初始框架 commit `afe7e6cafe8d716d9f6e12751d3b8beb33ab1fb9` 并完成完整线上矩阵；随后发布最终审计 release `70ee0bca3bba8975c45c1f06c314b907bba498b2`，观察 Pages build/deploy 成功并复验长期稳定文案、总账链接、canonical 和 Mermaid。
 
 ### 阻塞项
 
@@ -76,8 +76,8 @@ next_review_due: 2026-08-25T21:03:38+08:00
 
 | 项目 | 当前值 |
 | --- | --- |
-| 博客框架 release | `afe7e6cafe8d716d9f6e12751d3b8beb33ab1fb9` |
-| EVD-0002 框架验收 | `pass`；Node 24 full、linter 变异、本地浏览器矩阵、Pages run `32146500240` 与线上烟测均通过 |
+| 博客框架 release | `70ee0bca3bba8975c45c1f06c314b907bba498b2` |
+| EVD-0002 框架验收 | `pass`；Node 24 full、linter 变异、本地浏览器矩阵、Pages run `32148371343` 与最终线上烟测均通过 |
 | 项目实现 commit | 不存在 |
 | 可复现构建 | 不存在 |
 | 确定性测试 | 不存在 |
@@ -88,7 +88,7 @@ next_review_due: 2026-08-25T21:03:38+08:00
 
 ### 预期工作树
 
-`TASK-P0-001` 已由框架 release 和 `EVD-0002` 闭合。本审计 follow-up 预期只修改本记录、`EVD-0002` artifact，以及首篇文章中两处不随项目进度漂移的等义表述；完成后博客工作树应干净，且仍不存在撮合实现代码。若发现密钥、真实客户数据、生产系统地址、未登记的实现源码或外部制品，立即停止并把 `record_health` 改为 `needs_reconciliation`。
+`TASK-P0-001` 已由最终框架 release 和 `EVD-0002` 闭合。本次最终审计回填只应修改本记录与 `EVD-0002` artifact；完成后博客工作树应干净，且仍不存在撮合实现代码。若发现密钥、真实客户数据、生产系统地址、未登记的实现源码或外部制品，立即停止并把 `record_health` 改为 `needs_reconciliation`。
 
 ### 恢复工作前必须阅读
 
@@ -270,7 +270,7 @@ ID 永不重排、删除或复用。语义发生实质变化时创建新 ID，�
 | FACT-008 | Cluster 业务逻辑稳定吞吐上界受单一有序执行的平均命令成本制约 | Performance Limits | 2026-08-18 | 架构模型变化 |
 | FACT-009 | 跨 symbol 的强信用约束使按 symbol 分片不再是局部决定 | On Sharding | 2026-08-18 | 风险边界改变 |
 | FACT-010 | Cluster 客户端本地视图一致性必须由应用协议建立 | Client Consistency | 2026-08-18 | API/协议变化 |
-| FACT-011 | Project 01 框架 release `afe7e6cafe8d716d9f6e12751d3b8beb33ab1fb9` 已由 Pages run `32146500240` 成功部署并通过线上烟测 | [GitHub Actions](https://github.com/lcha-reln/signal-grid-blog/actions/runs/32146500240)、GitHub Pages | 2026-08-18 | 被验收 release 的语义/运行行为被后续版本改变，或线上结果出现无法解释的差异 |
+| FACT-011 | Project 01 最终框架 release `70ee0bca3bba8975c45c1f06c314b907bba498b2` 已由 Pages run `32148371343` 成功部署并通过线上烟测 | [GitHub Actions](https://github.com/lcha-reln/signal-grid-blog/actions/runs/32148371343)、GitHub Pages | 2026-08-18 | 被验收 release 的语义/运行行为被后续版本改变，或线上结果出现无法解释的差异 |
 
 ### 4.2 假设注册表
 
@@ -782,7 +782,7 @@ Archive segment 只有在所有引用者都越过它之后才可清理：active 
 | ID | 证明对象 | Artifact/命令 | 环境/版本 | 结果 | 状态 | 失效触发条件 |
 | --- | --- | --- | --- | --- | --- | --- |
 | EVD-0001 | FACT-005/006 版本复核 | 官方 Releases/Javadoc 链接 | 2026-08-18 | Aeron 1.52.2、SBE 1.39.0、Agrona 2.5.0 | pass | 新正式 release |
-| EVD-0002 | TASK-P0-001/GATE-001 项目框架 | [本地与发布验收 artifact](./evidence/EVD-0002-local-validation.md)；release `afe7e6cafe8d716d9f6e12751d3b8beb33ab1fb9`；[Pages run 32146500240](https://github.com/lcha-reln/signal-grid-blog/actions/runs/32146500240) | Node 24.19.0；pnpm 10.30.3；本地与 GitHub Pages 真实浏览器 | linter 变异、full verifier、5 组视口/主题、4/4 Mermaid、Project 导航、Pages build/deploy 与线上烟测通过 | pass | 被验收 release 的技术合同或运行行为实质变化；发布事实、其派生的任务/章节/Resume 状态及不改变合同的等义编辑不失效 |
+| EVD-0002 | TASK-P0-001/GATE-001 项目框架 | [本地与发布验收 artifact](./evidence/EVD-0002-local-validation.md)；release `70ee0bca3bba8975c45c1f06c314b907bba498b2`；[Pages run 32148371343](https://github.com/lcha-reln/signal-grid-blog/actions/runs/32148371343) | Node 24.19.0；pnpm 10.30.3；本地与 GitHub Pages 真实浏览器 | linter 变异、full verifier、5 组视口/主题、4/4 Mermaid、Project 导航、Pages build/deploy 与最终线上烟测通过 | pass | 被验收 release 的技术合同或运行行为实质变化；发布事实及其派生的控制账本审计元数据不失效 |
 | EVD-0003 | GATE-002 确定性 | 实现仓库 deterministic replay report | 不存在 | 未执行 | planned | 核心/schema/JDK 变化 |
 | EVD-0004 | GATE-004 HA | 三主机 leader failure trace | 不存在 | 未执行 | planned | 拓扑/Aeron/config 变化 |
 | EVD-0005 | GATE-006 容量 | open-loop workload + histograms | 不存在 | 未执行 | planned | profile/实现/硬件变化 |
@@ -790,14 +790,14 @@ Archive segment 只有在所有引用者都越过它之后才可清理：active 
 
 证据记录必须包含：关联 REQ/INV/GATE、artifact URI/sha256、命令、workload、fault schedule、硬件、配置、版本/commit、期望、实际、时间、verdict 和失效条件。大日志不粘进本文件。
 
-`EVD-0002` 必须绑定实际被验收并发布的 release SHA，而不是要求回填 commit 自我引用。后续 follow-up commit 可以记录该 release 的 SHA、Pages run、生产 URL，以及由这些事实直接派生的任务/章节/Resume 状态；本次还把首篇的进度句改成不随时间漂移的等义表述。这些控制账本元数据和等义编辑不改变被验收的技术合同与站点运行行为，因此不会让该 release evidence 自动 stale；一旦记录、文章、站点行为或依赖发生实质语义变化，新 revision 必须重新验证并登记新的证据关系。
+`EVD-0002` 绑定实际被验收并发布的 release `70ee0bca3bba8975c45c1f06c314b907bba498b2`，而不是要求本次纯审计回填 commit 自我引用。该 release 已包含派生任务/章节/Resume 状态和首篇的长期稳定表述；本次只回填它的 SHA、Pages run 与生产观察，不改变技术合同或站点运行行为，因此不会让该 release evidence 自动 stale。一旦记录、文章、站点行为或依赖发生实质语义变化，新 revision 必须重新验证并登记新的证据关系。
 
 #### EVD-0002 当前详细记录
 
 - Artifact：[Project 01 框架本地与发布验收](./evidence/EVD-0002-local-validation.md)。
 - 本地结论：项目记录结构、11 类正反变异、Node 24 full gate、响应式明暗主题、Mermaid 渲染/放大/Esc 关闭、Project 锚点与 base-aware 回链均通过。
-- 发布结论：被验收 release 为 `afe7e6cafe8d716d9f6e12751d3b8beb33ab1fb9`；[Pages run `32146500240`](https://github.com/lcha-reln/signal-grid-blog/actions/runs/32146500240) 的 build/deploy 成功；[专题](https://lcha-reln.github.io/signal-grid-blog/series/production/)和[首篇文章](https://lcha-reln.github.io/signal-grid-blog/posts/production-aeron-cluster-matching-engine-project/)已完成线上干净浏览器烟测，RSS、sitemap、搜索、canonical/OG、4/4 Mermaid 与 390px 键盘交互均通过。
-- 审计回填复验：新增 `CHG-20260818-003` 后再次运行 Node 24 full verifier，当前记录为 119 definitions、8 tasks、10 gates，Astro 仍为 0 diagnostics，76 pages 与 65 个 Pagefind 页面均成功生成。
+- 发布结论：被验收 release 为 `70ee0bca3bba8975c45c1f06c314b907bba498b2`；[Pages run `32148371343`](https://github.com/lcha-reln/signal-grid-blog/actions/runs/32148371343) 的 build 34 秒、deploy 5 分 11 秒，均成功；[专题](https://lcha-reln.github.io/signal-grid-blog/series/production/)和[首篇文章](https://lcha-reln.github.io/signal-grid-blog/posts/production-aeron-cluster-matching-engine-project/)已完成最终线上烟测，长期稳定文案、总账链接、canonical、4/4 Mermaid 与页面宽度均正确。
+- 最终 release 本地证据：Node 24 full verifier 为 119 definitions、8 tasks、10 gates，Astro 0 diagnostics，76 pages 与 65 个 Pagefind 页面；本次纯审计回填新增 `CHG-20260818-004` 后，当前记录以 120 definitions、8 tasks、10 gates 再次通过同一 Node 24 full verifier。
 - 当前 verdict：`pass`，只闭合 `TASK-P0-001` 并为 `GATE-001` 提供项目框架这一局部证据；`GATE-001` 仍是 `partial`，`claim_status` 仍是 `not_proven`。
 - 当前边界：没有撮合实现仓库、Aeron Cluster 运行证据、HA/容量/持久性/DR 证据，也没有任何生产资格声明。
 
@@ -927,7 +927,7 @@ Archive segment 只有在所有引用者都越过它之后才可清理：active 
 
 | ID | Phase | 交付物 | 验收 | 证据 | 状态 | 下一动作 |
 | --- | --- | --- | --- | --- | --- | --- |
-| TASK-P0-001 | P0 | production 专题、PROJECT_RECORD、结构 linter、首篇地图 | 独立技术/记录/集成审校，Node24 full，浏览器、链接/SEO/路由 | EVD-0002 | done | 已由 release `afe7e6cafe8d716d9f6e12751d3b8beb33ab1fb9` 发布并验收 |
+| TASK-P0-001 | P0 | production 专题、PROJECT_RECORD、结构 linter、首篇地图 | 独立技术/记录/集成审校，Node24 full，浏览器、链接/SEO/路由 | EVD-0002 | done | 已由 release `70ee0bca3bba8975c45c1f06c314b907bba498b2` 发布并验收 |
 | TASK-P0-002 | P0 | 实现仓库与可复现构建合同 | ADR-0001/0002 accepted，wrapper/lock/CI | 待分配 | doing | 确认仓库边界并接受或修改 ADR-0001/0002 |
 | TASK-P0-003 | P0 | WORKLOAD/HARDWARE/DURABILITY/FAILURE profiles v1 | 所有单位、来源、owner、版本明确 | 待分配 | todo | 收集真实目标和限制 |
 | TASK-P0-004 | P0 | V1 订单、TIF、STP、风险和错误语义 | 产品合同+状态机表 | 待分配 | todo | 业务语义评审 |
@@ -993,7 +993,7 @@ Chapter 01 只绑定博客框架 release、项目记录和验收证据。从开�
 
 ### 工作已停在哪里
 
-Phase 0 的记录和站点框架已由 release `afe7e6cafe8d716d9f6e12751d3b8beb33ab1fb9` 发布并验收。当前停在 `TASK-P0-002`：尚未创建实现仓库，尚未接受版本/拓扑/协议 ADR，也没有任何撮合、Cluster 或性能代码。
+Phase 0 的记录和站点框架已由 release `70ee0bca3bba8975c45c1f06c314b907bba498b2` 发布并验收。当前停在 `TASK-P0-002`：尚未创建实现仓库，尚未接受版本/拓扑/协议 ADR，也没有任何撮合、Cluster 或性能代码。
 
 ### 下一位执行者应做什么
 
@@ -1016,6 +1016,7 @@ Phase 0 的记录和站点框架已由 release `afe7e6cafe8d716d9f6e12751d3b8beb
 | CHG-20260818-001 | 2026-08-18T21:03:38+08:00 | 创建 canonical 项目记录、初始需求/不变量/ADR/风险/Gate/路线 | 防止长期项目在上下文压缩后丢失技术细节 | 全项目 | pending first framework commit | 完成 EVD-0002 |
 | CHG-20260818-002 | 2026-08-18T22:06:45+08:00 | 完成技术/记录/集成终审，显式 Project 归属、linter 变异门禁、Pages build 强制校验、Node 24 full 与浏览器矩阵 | 让长期控制账本和站点框架在首发前 fail closed | TASK-P0-001、EVD-0002、GATE-001 | [本地验收 artifact](./evidence/EVD-0002-local-validation.md)；release SHA 待提交 | 发布后用审计 follow-up 回填 release/Pages 证据 |
 | CHG-20260818-003 | 2026-08-18T22:17:10+08:00 | 回填首个框架 release、Pages run 与生产 URL，把 EVD-0002 升为 pass，将唯一主任务推进到 TASK-P0-002，并把首篇进度句改成不随时间漂移的等义表述 | 让长期记录准确反映已经观察到的发布事实，同时保持生产资格边界和教程的长期可读性 | TASK-P0-001、TASK-P0-002、EVD-0002、GATE-001、FACT-011、Chapter 01 | release `afe7e6cafe8d716d9f6e12751d3b8beb33ab1fb9`；[Pages run 32146500240](https://github.com/lcha-reln/signal-grid-blog/actions/runs/32146500240)；[验收 artifact](./evidence/EVD-0002-local-validation.md) | 接受或修改 ADR-0001/0002，创建可复现实现仓库 |
+| CHG-20260818-004 | 2026-08-18T22:34:56+08:00 | 回填包含最终总账状态与长期稳定文章表述的审计 release、Pages run 和线上轻量烟测 | 让 canonical 记录绑定最终被部署 revision，而不是停在初始框架 release | FACT-011、EVD-0002、TASK-P0-001、Chapter 01 | release `70ee0bca3bba8975c45c1f06c314b907bba498b2`；[Pages run 32148371343](https://github.com/lcha-reln/signal-grid-blog/actions/runs/32148371343)；[验收 artifact](./evidence/EVD-0002-local-validation.md) | 进入 TASK-P0-002，接受或修改 ADR-0001/0002 |
 
 ## 24. 一手资料索引
 
