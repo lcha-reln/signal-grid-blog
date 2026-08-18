@@ -26,7 +26,7 @@ draft: false
 
 这份合同要先回答：谁拥有订单和成交事实，客户端超时后到底发生了什么，三节点怎样才算高可用，快照漏掉去重表会造成什么后果，慢行情消费者能不能拖死撮合，节点恢复和整站灾备分别保证什么，以及我们要怎样证明目标流量下的 p99.9 不是一个漂亮但无效的数字。
 
-项目当前只有框架，**还没有实现，更没有获得生产上线资格**。完整需求、不变量、ADR、风险、任务和证据状态保存在持续更新的 [PROJECT_RECORD](https://github.com/lcha-reln/signal-grid-blog/blob/main/docs/projects/aeron-cluster-matching-engine/PROJECT_RECORD.md) 中。本文只负责把这条交付路线讲清楚。
+本章只交付项目框架，**不包含撮合实现，也不授予生产上线资格**。完整需求、不变量、ADR、风险、任务和实时证据状态保存在持续更新的 [PROJECT_RECORD](https://github.com/lcha-reln/signal-grid-blog/blob/main/docs/projects/aeron-cluster-matching-engine/PROJECT_RECORD.md) 中；本文只负责把这条交付路线讲清楚。
 
 ## 1. “生产级”不是功能数量，而是一条证据链
 
@@ -296,11 +296,11 @@ Aeron Cluster 的业务状态机必须以同一顺序处理命令，业务逻辑
 | P8 | mixed-version、Snapshot 迁移、Feature Gate 与回滚 | 带流量升级失败时还能回到哪里？ |
 | P9 | soak、完整故障矩阵和生产资格审查 | 所有声明是否有仍然有效的证据？ |
 
-每章都会绑定同一个实现仓库的 commit/tag、配置摘要、测试、故障 seed/trace、证据和未关闭风险。文章发布后才进入公开学习路径；未发布路线只保存在 PROJECT_RECORD，避免“规划标题”在首页假装成已经交付的课程。
+本章只绑定博客框架 release、项目记录和验收证据。从开始交付实现代码的章节起，每章都会绑定同一个实现仓库的 commit/tag、配置摘要、测试、故障 seed/trace、证据和未关闭风险。文章发布后才进入公开学习路径；未发布路线只保存在 PROJECT_RECORD，避免“规划标题”在首页假装成已经交付的课程。
 
 项目记录的前 100 行还有一份 Resume Capsule。上下文被压缩、工作中断或换人以后，下一位执行者先核对 branch、HEAD、工作树、当前任务和证据有效期，再继续工作。这能让长期项目的关键决定不依赖某次聊天记录，也防止旧 benchmark 在代码、配置或硬件已经变化后继续被引用。
 
-当前我们停在 P0 的第一个任务：框架已经建立，撮合实现尚未开始。下一步不是直接写一个 `TreeMap` 订单簿，而是确认实现仓库、V1 业务语义，以及第一版 Workload、Hardware、Durability 和 Failure Profile。只有这些合同冻结以后，代码和测试才知道自己究竟要证明什么。
+本章交付 P0 的第一个任务：建立长期记录、站点框架和交付边界，尚不包含撮合实现。完成本章后，下一步不是直接写一个 `TreeMap` 订单簿，而是确认实现仓库、V1 业务语义，以及第一版 Workload、Hardware、Durability 和 Failure Profile。只有这些合同冻结以后，代码和测试才知道自己究竟要证明什么；实时进度始终以 [PROJECT_RECORD](https://github.com/lcha-reln/signal-grid-blog/blob/main/docs/projects/aeron-cluster-matching-engine/PROJECT_RECORD.md) 的 Resume Capsule 为准。
 
 ## 一手资料
 

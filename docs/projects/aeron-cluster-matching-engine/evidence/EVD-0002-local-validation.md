@@ -1,11 +1,11 @@
-# EVD-0002：Project 01 框架本地验收
+# EVD-0002：Project 01 框架本地与发布验收
 
 - 证据 ID：`EVD-0002`
 - 关联任务：`TASK-P0-001`
 - 关联 Gate：`GATE-001`（只覆盖项目合同与站点框架的局部条件）
-- 验收时间：2026-08-18T22:06:45+08:00
-- 验收对象：待提交的 Project 01 框架 release candidate；正式 commit SHA 与 Pages run 在发布后的审计 commit 中回填
-- Verdict：`partial`——本地结构、构建与浏览器验收通过；GitHub Pages 部署和生产 URL 尚待验证
+- 验收时间：2026-08-18T22:17:10+08:00
+- 验收对象：Project 01 框架 release `afe7e6cafe8d716d9f6e12751d3b8beb33ab1fb9`
+- Verdict：`pass`——本地结构、构建与浏览器验收，以及 GitHub Pages build/deploy 和生产 URL 烟测均通过
 
 ## 1. 权威构建门禁
 
@@ -25,6 +25,8 @@ npx --yes --offline -p node@24 -c '/Users/reln/.codex/skills/maintain-signal-gri
 - 新文章、新专题、RSS、search、sitemap 均生成；
 - `pnpm build` 先执行同一个项目记录 linter，Pages 默认构建入口无法绕过记录门禁；
 - full verifier 结论：`Full verification passed`。
+
+上述 118 个定义是被验收 release `afe7e6cafe8d716d9f6e12751d3b8beb33ab1fb9` 的观察值。审计 follow-up 新增 `CHG-20260818-003` 后，Node 24 full verifier 再次通过：119 个定义、8 个任务、10 个 Gate，Astro 仍为 0 diagnostics，76 pages 与 65 个 Pagefind 页面均成功生成。该计数变化来自审计元数据，不改变被验收的站点运行行为。
 
 ## 2. 项目记录 linter 的变异验证
 
@@ -68,12 +70,29 @@ npx --yes --offline -p node@24 -c '/Users/reln/.codex/skills/maintain-signal-gri
 - 390px 专题索引显示 6 个专题卡片且无页面级横向溢出；
 - 浏览器 console 日志为空；测试后已恢复默认视口。
 
-## 4. 独立审校结论
+## 4. GitHub Pages 发布与生产 URL
+
+- 发布 commit：`afe7e6cafe8d716d9f6e12751d3b8beb33ab1fb9`（`content: start production Aeron matching project`）；
+- GitHub Pages：[run `32146500240`](https://github.com/lcha-reln/signal-grid-blog/actions/runs/32146500240)，build job 成功，deploy job 成功；
+- 生产专题：<https://lcha-reln.github.io/signal-grid-blog/series/production/>；
+- 生产文章：<https://lcha-reln.github.io/signal-grid-blog/posts/production-aeron-cluster-matching-engine-project/>。
+
+线上干净浏览器烟测结果：
+
+- 文章 H1、canonical、Open Graph、Project 面包屑和 GitHub 项目记录链接正确；
+- 4/4 Mermaid 均渲染为 SVG，4 个大图按钮可用，浏览器 console 为空；
+- 390px 下无页面级横向溢出，Project fragment 未被 sticky header 遮挡；
+- Mermaid dialog 的滚动锁、`Escape` 关闭与焦点恢复正确；
+- RSS、sitemap、Pagefind 搜索索引均包含新文章 permalink。
+
+部署刚完成时曾观察到 HTML 与 Mermaid 模块的短暂 CDN 传播先后差异；模块随后返回 200，新开的干净浏览器会话通过上述 4/4 检查。最终 verdict 依据传播完成后的稳定结果。
+
+## 5. 独立审校结论
 
 技术合同、项目记录/linter 与站点集成分别独立复核。发布前发现的 Gateway 状态、跨 Gateway 幂等身份、Outbox GC、Snapshot 恢复 Oracle、显式 Project 归属和 qualification 绕过问题均已修复；当前剩余 P0/P1 为 0。
 
-## 5. 证据边界与失效条件
+## 6. 证据边界与失效条件
 
-本证据不证明任何撮合代码、Aeron Cluster 故障切换、TPS、p99/p99.9、RPO、RTO、掉电持久性或生产资格。它只证明 Project 01 的记录、公开框架和首篇文章在本候选版本上的本地行为。
+本证据不证明任何撮合代码、Aeron Cluster 故障切换、TPS、p99/p99.9、RPO、RTO、掉电持久性或生产资格。它只证明 Project 01 的记录、公开框架和首篇文章在 release `afe7e6cafe8d716d9f6e12751d3b8beb33ab1fb9` 上的本地与线上行为，并闭合 `TASK-P0-001`。`GATE-001` 仍为 `partial`，`claim_status` 仍为 `not_proven`。
 
-正式发布后，审计 follow-up 只回填被验收 release SHA、Pages run 与生产 URL，不会使该 release 的既有证据自失效。若文章语义、项目记录合同、linter、站点配置、运行依赖或浏览器行为发生变化，则本证据必须重新验证或标记为 `stale`。
+本审计 follow-up 回填被验收 release SHA、Pages run、生产 URL 及其直接派生的任务/章节/Resume 状态，并把首篇的进度句改成不随时间漂移的等义表述；这些变化不改变技术合同或站点运行行为，不会使该 release 的既有证据自失效。若文章或记录发生实质语义变化，或者 linter、站点配置、运行依赖、浏览器行为发生变化，则本证据必须重新验证或标记为 `stale`。
