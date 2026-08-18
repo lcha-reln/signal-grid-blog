@@ -10,9 +10,9 @@ qualification_evidence_set: none
 current_phase: P0
 current_task: TASK-P0-003
 created_at: 2026-08-18T21:03:38+08:00
-updated_at: 2026-08-19T05:47:31+08:00
-last_reconciled_at: 2026-08-19T05:47:31+08:00
-reconciliation_base_git_sha: 3d26f9be195637f57ade061d6de02f0e5323e819
+updated_at: 2026-08-19T07:06:17+08:00
+last_reconciled_at: 2026-08-19T07:06:17+08:00
+reconciliation_base_git_sha: aa473b6831cde359ea8ef9c44a10ac88c98ad8b7
 next_review_due: 2026-08-25T21:03:38+08:00
 ---
 
@@ -32,7 +32,7 @@ next_review_due: 2026-08-25T21:03:38+08:00
 
 - 当前阶段：`P0`——项目合同、边界、工作负载、SLO、故障模型和生产定义。
 - 唯一主任务：`TASK-P0-003`——把已建立的 workload/hardware/durability/failure Profile 合同骨架补成有真实 owner、来源、目标与审批的首个 accepted baseline（document revision 2+，绑定 immutable v1 draft predecessor），并接受精确绑定它们的 `PROFILE_SET-001`；`QUALIFICATION_SET-001` 必须继续保持 `draft/not_qualified`。
-- 当前代码状态：`/Users/reln/aeron-cluster-matching-engine` 为 local-only provisional 仓库，当前固定提交为 `6c1bdfc856de0681211cbd134a97cabcae13c7f5`（tree `76f4b7a4c316cfb9ecf23cdfdb5c56193b0108db`）。仓库已有 `deployable=false` 构建/供应链合同、proposed remote-authority readiness、14 个 legacy v1 bootstrap draft 合同，以及 19 个 v2 intake/lifecycle 合同文件；生产 catalog 仍是 0-entry draft，policy 仍是 proposed，仍没有撮合、Cluster、Gateway、镜像或其他产品实现。本博客仓库仍只承载项目记录和教程。
+- 当前代码状态：`/Users/reln/aeron-cluster-matching-engine` 为 local-only provisional 仓库，当前固定提交为 `667a859c8dc1f3e72d4ddea1391113c3d2d1c860`（tree `34d3d97b2309f3d5dc4fd50278ba28a751e60e37`）。仓库已有 `deployable=false` 构建/供应链合同、proposed remote-authority readiness、14 个 legacy v1 bootstrap draft 合同，以及 19 个 v2 intake/lifecycle 合同文件；RFC 8785/JCS build-contract primitive 已由固定引擎、官方向量、严格输入包装和 runtime 隔离门禁核验。生产 catalog 仍是 0-entry draft，policy 仍是 proposed，仍没有撮合、Cluster、Gateway、镜像或其他产品实现。本博客仓库仍只承载项目记录和教程。
 - 当前生产声明：`not_proven`。
 
 ### 已确认事实
@@ -61,7 +61,8 @@ next_review_due: 2026-08-25T21:03:38+08:00
 - commit `ad461b3bd0cfdeddedac2fa93a37c5cba1c203ea` 的 remote-authority readiness 历史观察原记录为 `EVD-0008 partial`；实现 HEAD、policy 和 Profile 合同已变化，现将其降为 `EVD-0008 stale`，不再代表当前 revision。
 - 复核 Oracle 2026-08-18 CSPU 与 JDK 25.0.4.1+1，并确认 observation cutoff 上尚无适用的同 vendor Temurin 替代 GA；旧 Temurin 25.0.4+7 只保留为历史复现输入，Oracle 版本只登记为未接受的 vendor-change candidate，记录为 `EVD-0009 pass`。
 - 在实现 commit `bca54470699d69dc609686927c46563492ff7c47` 建立四类 atomic Profile、`PROFILE_SET-001`、`QUALIFICATION_SET-001` 的 legacy v1 bootstrap draft、readiness 与 fail-closed validator；该 revision 的历史观察保留为 `EVD-0010 stale`。
-- 在实现 commit `6c1bdfc856de0681211cbd134a97cabcae13c7f5` 增加 19 个 v2 source/intake/approval/change/Profile lifecycle 合同、61+42+58+20 个负例、双 bundle 精确清单和 10 项跨路径/离线/解包复现输出。生产 policy 仍 proposed、catalog 仍为空；外部 verifier、受审 RFC 8785、兼容公式与真实输入均不存在，因此 Profile Set 接受入口稳定以 `PROFILESET-E901` 拒绝，记录为 `EVD-0011 partial`。
+- 在实现 commit `6c1bdfc856de0681211cbd134a97cabcae13c7f5` 增加 19 个 v2 source/intake/approval/change/Profile lifecycle 合同、61+42+58+20 个负例、双 bundle 精确清单和 10 项跨路径/离线/解包复现输出；该 revision 的历史观察现为 `EVD-0011 stale`。
+- 在实现 commit `667a859c8dc1f3e72d4ddea1391113c3d2d1c860` 固定 RFC 8785/JCS 1.1 的制品、源码与官方 corpus，加入严格 UTF-8/surrogate/duplicate/negative-zero/resource guard、26 条 Appendix B、6 组官方 corpus、全配置 runtime/outgoing 隔离和 manifest/SBOM/readiness/properties 精确绑定。B009 仅在 build-contract canonical-byte primitive 边界闭合；B008、B010、B011、外部 authority、真实输入与生产资格仍未闭合，记录为 `EVD-0012 partial`。
 
 ### 阻塞项
 
@@ -78,7 +79,7 @@ next_review_due: 2026-08-25T21:03:38+08:00
 ### 接下来三个动作
 
 1. 按 `OQ-012` 选择仓库外 trust/identity/artifact authority，接入可验证的 observation/refetch 适配器；在此以前 production accepted graph 必须继续以 `INTAKE-P084`/`PROFILESET-E901` fail closed。
-2. 实现并审计 RFC 8785 摘要器、workload↔hardware 与 durability↔failure 兼容公式，以及 production revision/change/stale 闭包；然后为四类 atomic Profile 与 `PROFILE_SET-001` 分配真实 owner/审批人并接收首批权威输入。`QUALIFICATION_SET-001` 留到 P9。
+2. 实现并审计 workload↔hardware 与 durability↔failure 兼容公式，以及 production revision/change/stale 闭包；然后为四类 atomic Profile 与 `PROFILE_SET-001` 分配真实 owner/审批人并接收首批权威输入。RFC 8785 只闭合了 canonical-byte primitive，不替代这些工作；`QUALIFICATION_SET-001` 留到 P9。
 3. 由用户确认 owner、访问模型、license、principals 与安全有效的 JDK vendor/build/license/support；授权后建立受保护 remote、Hosted CI、artifact/backup authority，并分别评审 `ADR-0001/0002`。在所有这些边界闭合前不接受任何 TPS、延迟、RPO、RTO 或生产资格目标。
 
 ### 最近可信证据
@@ -87,12 +88,13 @@ next_review_due: 2026-08-25T21:03:38+08:00
 | --- | --- |
 | 博客框架 release | `70ee0bca3bba8975c45c1f06c314b907bba498b2` |
 | EVD-0002 框架验收 | `pass`；Node 24 full、linter 变异、本地浏览器矩阵、Pages run `32148371343` 与最终线上烟测均通过 |
-| 项目实现 commit | local-only `6c1bdfc856de0681211cbd134a97cabcae13c7f5`，tree `76f4b7a4c316cfb9ecf23cdfdb5c56193b0108db`；`main`、clean、无 remote/upstream/tag、无产品源码 |
+| 项目实现 commit | local-only `667a859c8dc1f3e72d4ddea1391113c3d2d1c860`，tree `34d3d97b2309f3d5dc4fd50278ba28a751e60e37`；`main`、clean、无 remote/upstream/tag、无产品源码 |
 | 历史 bootstrap 证据 | `EVD-0007 stale`；仅保留 commit `9dbe8e9f8578ad8fa27da54ca494c8e9a092c379` 的历史观察，不适用于当前 HEAD/JDK 状态 |
 | 历史 authority readiness | `EVD-0008 stale`；仅保留 commit `ad461b3bd0cfdeddedac2fa93a37c5cba1c203ea` 的历史观察，已因实现 HEAD/profile/policy 变化失效 |
 | JDK 安全发行观察 | `EVD-0009 pass`；只证明 Oracle/Temurin 有日期边界的官方事实，不代表选定 Oracle 或接受 `ADR-0001` |
 | 历史 Profile draft 合同 | `EVD-0010 stale`；只保留 commit `bca54470699d69dc609686927c46563492ff7c47` 的 14-file/51-file ZIP 历史观察，不代表当前 revision |
-| 当前 intake/lifecycle 合同 | `EVD-0011 partial`；19 个 v2 source contract、0-entry draft catalog、proposed policy、11 个 blocker；61+42+58+20 个负例与 10 项复现输出通过，不证明任何 Profile/Profile Set/Qualification 已接受 |
+| 历史 intake/lifecycle 合同 | `EVD-0011 stale`；只保留 commit `6c1bdfc856de0681211cbd134a97cabcae13c7f5` 的 11-blocker 历史观察，已因实现 HEAD、JCS/locks/validator/证据变化失效 |
+| 当前 RFC 8785/JCS 边界 | `EVD-0012 partial`；commit `667a859c8dc1f3e72d4ddea1391113c3d2d1c860`，B009 已在 build-contract primitive 边界闭合；B001–B008/B010/B011、accepted Profile/Profile Set 与 qualification 仍未证明 |
 | 确定性测试 | 不存在 |
 | 三节点故障测试 | 不存在 |
 | 容量报告 | 不存在 |
@@ -101,7 +103,7 @@ next_review_due: 2026-08-25T21:03:38+08:00
 
 ### 预期工作树
 
-本次记录回填只应修改本记录、把 `EVD-0010` artifact 与登记表统一改为历史 `stale`、更新 `EVD-0008` 的后继证据说明，并新增 `EVD-0011` artifact；实现仓库必须保持在 clean commit `6c1bdfc856de0681211cbd134a97cabcae13c7f5` 且无 remote/upstream/tag。该仓库不得出现撮合/Cluster/Gateway 产品源码，博客仓库不得出现实现源码。若发现密钥、真实客户数据、生产系统地址、未登记源码或外部制品，立即停止并把 `record_health` 改为 `needs_reconciliation`。
+本次记录回填只应修改本记录、把 `EVD-0011` artifact 与登记表统一改为历史 `stale`，并新增 `EVD-0012` artifact；实现仓库必须保持在 clean commit `667a859c8dc1f3e72d4ddea1391113c3d2d1c860` 且无 remote/upstream/tag。该仓库不得出现撮合/Cluster/Gateway 产品源码，博客仓库不得出现实现源码。若发现密钥、真实客户数据、生产系统地址、未登记源码或外部制品，立即停止并把 `record_health` 改为 `needs_reconciliation`。
 
 ### 恢复工作前必须阅读
 
@@ -109,7 +111,7 @@ next_review_due: 2026-08-25T21:03:38+08:00
 - `INV-001` 至 `INV-015`
 - `ADR-0001` 至 `ADR-0010`
 - `RISK-001` 至 `RISK-017`，尤其是证据漂移 `RISK-012`、local-only authority `RISK-013`、readiness 误读 `RISK-014`、JDK 安全/vendor 漂移 `RISK-015`、draft Profile 被误当真实目标 `RISK-016` 与 intake authority/变更传播 `RISK-017`
-- 当前 `TASK-*` 与所有关联 `EVD-*`，尤其是 `EVD-0008/0009/0010/0011`
+- 当前 `TASK-*` 与所有关联 `EVD-*`，尤其是 `EVD-0008/0009/0010/0011/0012`
 
 ### 不得当成事实的事项
 
@@ -120,7 +122,7 @@ next_review_due: 2026-08-25T21:03:38+08:00
 - “Aeron Cluster 很快”不能替代本项目在目标硬件和开放负载下的证据。
 - 本地 readiness、candidate Workflow/CODEOWNERS 和 clean commit 不等于 remote enforcement、provider-hosted CI、branch protection 或持久 artifact authority。
 - 在安全基线已过期的历史 JDK 上完成字节复现，不等于该 JDK 可用于生产；Oracle candidate 也没有被自动选择或验证。
-- Profile schema、draft instance、TEST_ONLY structural graph、exact binding 和 validator 通过，不等于其中已有真实生产输入，也不等于 `PROFILE_SET-001` 或 `QUALIFICATION_SET-001` 已 accepted/verified。当前 RFC 8785、兼容公式、外部 authority verifier 和 production change/stale 闭包都仍是显式 blocker。
+- Profile schema、draft instance、TEST_ONLY structural graph、exact binding 和 validator 通过，不等于其中已有真实生产输入，也不等于 `PROFILE_SET-001` 或 `QUALIFICATION_SET-001` 已 accepted/verified。RFC 8785 只在 build-contract canonical-byte primitive 边界完成核验；兼容公式、外部 authority verifier 和 production change/stale 闭包仍是显式 blocker。
 
 ## 1. Canonicality 与记录协议
 
@@ -323,11 +325,12 @@ ID 永不重排、删除或复用。语义发生实质变化时创建新 ID，�
 
 | 组件 | 候选版本 | 当前状态 | 证据 | 接受前必须完成 |
 | --- | --- | --- | --- | --- |
-| Aeron | 1.52.2 | proposed | `EVD-0011`：current lock、artifact SHA、tag `5b62f21d917af027cdf5a3241aa5f355149b04fa`；`EVD-0007/0008/0010` 只保留旧 revision 历史 | hosted CI、兼容/故障回归、供应链 authority |
-| SBE | 1.39.0 | proposed | `EVD-0011`：current 独立 `sbeCodegen` lock、artifact SHA、tag `e773b57cac6b2008ce30dd219a33de49766c6013`；`EVD-0007/0008/0010` 为历史 | generator/runtime fixture、hosted CI、供应链 authority |
-| Agrona | 2.5.0 | proposed | `EVD-0011`：current 显式 runtime dependency、lock、artifact SHA、tag `eaaa178c2bc47d7c03ab45403e24d95d83c89152`；`EVD-0007/0008/0010` 为历史 | API/性能核对、hosted CI、供应链 authority |
-| JDK | Temurin 25.0.4+7-LTS historical-only；Oracle 25.0.4.1+1 vendor-change candidate | proposed | `EVD-0011`：旧 Temurin exact historical runtime gate；`EVD-0009`：Oracle release/security baseline 与同 vendor 缺口观察；`EVD-0008/0010` 为历史 | 选择并接受 vendor/build/license/support，重锁完整平台制品，在安全有效 runtime 上重跑构建、兼容、GC/JIT/故障矩阵 |
-| Gradle | 9.7.0，revision `3defbfc59d757b873d787b2261de5c7f8a00970a` | proposed | `EVD-0011`：current distribution/wrapper SHA、strict locks、offline/repro/round-trip；`EVD-0007/0008/0010` 为历史 | hosted CI、远端保护与持久 artifact authority |
+| Aeron | 1.52.2 | proposed | `EVD-0012`：current lock、artifact SHA、tag `5b62f21d917af027cdf5a3241aa5f355149b04fa`；`EVD-0007/0008/0010/0011` 只保留旧 revision 历史 | hosted CI、兼容/故障回归、供应链 authority |
+| SBE | 1.39.0 | proposed | `EVD-0012`：current 独立 `sbeCodegen` lock、artifact SHA、tag `e773b57cac6b2008ce30dd219a33de49766c6013`；`EVD-0007/0008/0010/0011` 为历史 | generator/runtime fixture、hosted CI、供应链 authority |
+| Agrona | 2.5.0 | proposed | `EVD-0012`：current 显式 runtime dependency、lock、artifact SHA、tag `eaaa178c2bc47d7c03ab45403e24d95d83c89152`；`EVD-0007/0008/0010/0011` 为历史 | API/性能核对、hosted CI、供应链 authority |
+| JDK | Temurin 25.0.4+7-LTS historical-only；Oracle 25.0.4.1+1 vendor-change candidate | proposed | `EVD-0012`：旧 Temurin exact historical runtime gate；`EVD-0009`：Oracle release/security baseline 与同 vendor 缺口观察；`EVD-0008/0010/0011` 为历史 | 选择并接受 vendor/build/license/support，重锁完整平台制品，在安全有效 runtime 上重跑构建、兼容、GC/JIT/故障矩阵 |
+| Gradle | 9.7.0，revision `3defbfc59d757b873d787b2261de5c7f8a00970a` | proposed | `EVD-0012`：current distribution/wrapper SHA、strict locks、offline/repro/round-trip；`EVD-0007/0008/0010/0011` 为历史 | hosted CI、远端保护与持久 artifact authority |
+| Java JSON Canonicalization | 1.1；tag commit `571f10dcc0c9531164795c38b934a58cf7172722` | proposed | `EVD-0012`：build-contract conformance verified；JAR `ed12a01f28d147898312963a1f704e90290b67a61f34fa3a761f41c134f4e691`；官方 corpus commit `19d51d7fe467d4706a3ff08adf8a748f29fc21e0` | ADR-0001、Hosted CI、供应链/许可证 authority；不得进入产品 runtime/outgoing configuration |
 | Linux | TBD | proposed | 目标镜像 | kernel/NIC/NVMe/clock/NUMA 证据 |
 
 禁止 SNAPSHOT、浮动版本和未登记的 transitive override 进入 release 构建。每次升级都让依赖该版本的 EVD 变为 `stale`，直到完整回归。
@@ -335,9 +338,9 @@ ID 永不重排、删除或复用。语义发生实质变化时创建新 ID，�
 实现仓库恢复账本：
 
 - 逻辑仓库 ID：`aeron-cluster-matching-engine`；绝对路径：`/Users/reln/aeron-cluster-matching-engine`。
-- 默认分支：`main`；最近核对 HEAD：`6c1bdfc856de0681211cbd134a97cabcae13c7f5`；tree：`76f4b7a4c316cfb9ecf23cdfdb5c56193b0108db`；工作树：`clean`；核对时间：2026-08-19T05:29:00+08:00。
+- 默认分支：`main`；最近核对 HEAD：`667a859c8dc1f3e72d4ddea1391113c3d2d1c860`；tree：`34d3d97b2309f3d5dc4fd50278ba28a751e60e37`；工作树：`clean`；核对时间：2026-08-19T07:06:17+08:00。
 - Remote：`none`；可见性：`local-only provisional`；`RAP-0001`：`proposed`；hosted CI：`not_observed`；license：`undecided`；持久 artifact/backup authority：`not_established`；qualification：`not_proven`。
-- 当前制品只是一份 `deployable=false` 的 build-contract ZIP：包含 33 个 qualification source files 与 7 个规范化 evidence files；另有一份仅含 19 个 v2 contract files 和 `profile-readiness-v2.json` 的 input-contract ZIP。两者都只有本地 ignored 输出，没有 artifact authority，也不是撮合实现、部署包或生产 release。
+- 当前制品只是一份 `deployable=false` 的 build-contract ZIP：包含显式 allowlist 的合同、受保护构建输入与 7 个规范化 evidence files；另有一份仅含 19 个 v2 contract files 和 `profile-readiness-v2.json` 的 input-contract ZIP。两者都只有本地 ignored 输出，没有 artifact authority，也不是撮合实现、部署包或生产 release。JCS 只属于不可消费的 `jcsCanonicalizer` 构建配置，门禁会拒绝它进入任何 runtime、outgoing 或隐藏配置。
 
 ## 5. 术语、候选身份、数值、时间与顺序模型
 
@@ -632,21 +635,21 @@ Archive segment 只有在所有引用者都越过它之后才可清理：active 
 
 | ID | 类型 | 状态 | Owner | 当前来源 | 下一动作 |
 | --- | --- | --- | --- | --- | --- |
-| WORKLOAD_PROFILE-001 | 业务到达、产品和消息组合 | draft | unassigned | 实现 commit `6c1bdfc856de0681211cbd134a97cabcae13c7f5` 的 legacy v1 draft + v2 schema；生产 catalog 中无真实 Profile/source/claim | 配置外部 authority，分配 owner，收集目标流量与历史分布，创建 revision 2+ candidate |
-| HARDWARE_PROFILE-001 | 主机、CPU、NUMA、NIC、网络、NVMe、OS | draft | unassigned | 实现 commit `6c1bdfc856de0681211cbd134a97cabcae13c7f5` 的 legacy v1 draft + v2 schema；生产 catalog 中无真实 Profile/source/claim | 分配 owner，冻结首个多机验收环境与镜像，创建 revision 2+ candidate |
-| DURABILITY_PROFILE-001 | ACK、sync、snapshot、backup 与故障承诺 | draft | unassigned | 实现 commit `6c1bdfc856de0681211cbd134a97cabcae13c7f5` 的 legacy v1 draft + v2 schema；生产 catalog 中无真实 Profile/source/claim | 分配 owner，决定候选承诺并设计 crash/power-loss 实验 |
-| FAILURE_PROFILE-001 | 故障范围、持续时间、组合方式与环境假设 | draft | unassigned | 实现 commit `6c1bdfc856de0681211cbd134a97cabcae13c7f5` 的 legacy v1 draft + v2 schema；生产 catalog 中无真实 Profile/source/claim | 分配 owner，冻结 scenario/response 边界与恢复目标，创建 revision 2+ candidate |
-| PROFILE_SET-001 | 四类 atomic Profile 的精确 revision/path/SHA 绑定 | draft | unassigned | 实现 commit `6c1bdfc856de0681211cbd134a97cabcae13c7f5` 的 legacy v1 draft + v2 schema；兼容公式与 accepted report 未建立 | 在四类 Profile、外部 authority、受审兼容算法闭合后生成并评审 revision 2+ |
-| QUALIFICATION_SET-001 | Profile Set、判定、证据与有效期绑定 | draft | unassigned | 实现 commit `6c1bdfc856de0681211cbd134a97cabcae13c7f5` 保留的 negative boundary；`claimed=false/not_qualified` | 只在 Profile Set verified 且全部生产 Gate 有效通过后的 `TASK-P9-001` 评审 |
+| WORKLOAD_PROFILE-001 | 业务到达、产品和消息组合 | draft | unassigned | 实现 commit `667a859c8dc1f3e72d4ddea1391113c3d2d1c860` 的 legacy v1 draft + v2 schema；生产 catalog 中无真实 Profile/source/claim | 配置外部 authority，分配 owner，收集目标流量与历史分布，创建 revision 2+ candidate |
+| HARDWARE_PROFILE-001 | 主机、CPU、NUMA、NIC、网络、NVMe、OS | draft | unassigned | 实现 commit `667a859c8dc1f3e72d4ddea1391113c3d2d1c860` 的 legacy v1 draft + v2 schema；生产 catalog 中无真实 Profile/source/claim | 分配 owner，冻结首个多机验收环境与镜像，创建 revision 2+ candidate |
+| DURABILITY_PROFILE-001 | ACK、sync、snapshot、backup 与故障承诺 | draft | unassigned | 实现 commit `667a859c8dc1f3e72d4ddea1391113c3d2d1c860` 的 legacy v1 draft + v2 schema；生产 catalog 中无真实 Profile/source/claim | 分配 owner，决定候选承诺并设计 crash/power-loss 实验 |
+| FAILURE_PROFILE-001 | 故障范围、持续时间、组合方式与环境假设 | draft | unassigned | 实现 commit `667a859c8dc1f3e72d4ddea1391113c3d2d1c860` 的 legacy v1 draft + v2 schema；生产 catalog 中无真实 Profile/source/claim | 分配 owner，冻结 scenario/response 边界与恢复目标，创建 revision 2+ candidate |
+| PROFILE_SET-001 | 四类 atomic Profile 的精确 revision/path/SHA 绑定 | draft | unassigned | 实现 commit `667a859c8dc1f3e72d4ddea1391113c3d2d1c860` 的 legacy v1 draft + v2 schema；兼容公式与 accepted report 未建立 | 在四类 Profile、外部 authority、受审兼容算法闭合后生成并评审 revision 2+ |
+| QUALIFICATION_SET-001 | Profile Set、判定、证据与有效期绑定 | draft | unassigned | 实现 commit `667a859c8dc1f3e72d4ddea1391113c3d2d1c860` 保留的 negative boundary；`claimed=false/not_qualified` | 只在 Profile Set verified 且全部生产 Gate 有效通过后的 `TASK-P9-001` 评审 |
 
 ### 12.1.1 Profile Set 追踪矩阵
 
 | Set | 绑定 | 证据 |
 | --- | --- | --- |
-| `PROFILE_SET-001` | `WORKLOAD_PROFILE-001`<br>`HARDWARE_PROFILE-001`<br>`DURABILITY_PROFILE-001`<br>`FAILURE_PROFILE-001` | `EVD-0011` |
-| `QUALIFICATION_SET-001` | `PROFILE_SET-001` | `EVD-0011` |
+| `PROFILE_SET-001` | `WORKLOAD_PROFILE-001`<br>`HARDWARE_PROFILE-001`<br>`DURABILITY_PROFILE-001`<br>`FAILURE_PROFILE-001` | `EVD-0012` |
+| `QUALIFICATION_SET-001` | `PROFILE_SET-001` | `EVD-0012` |
 
-`EVD-0011` 在这里仅证明当前 fail-closed 框架和 `draft/not_qualified` 否定边界；它没有接受或验证任何 atomic Profile、Profile Set 或 Qualification Set。
+`EVD-0012` 在这里仅证明当前 fail-closed 框架、RFC 8785 canonical-byte primitive 和 `draft/not_qualified` 否定边界；它没有接受或验证任何 atomic Profile、Profile Set 或 Qualification Set。
 
 `WORKLOAD_PROFILE-001` 至少包含：
 
@@ -782,7 +785,7 @@ Archive segment 只有在所有引用者都越过它之后才可清理：active 
 
 | Gate | 主要需求 | 主要不变量 | 计划证据 |
 | --- | --- | --- | --- |
-| `GATE-001` | REQ-QUAL-001/007/008、REQ-OPS-001、REQ-SEC-004/005 | INV-011、INV-013 | EVD-0002、EVD-0011；后续真实 profile/合同评审证据 |
+| `GATE-001` | REQ-QUAL-001/007/008、REQ-OPS-001、REQ-SEC-004/005 | INV-011、INV-013 | EVD-0002、EVD-0012；后续真实 profile/合同评审证据 |
 | `GATE-002` | REQ-FUNC-001–005、REQ-QUAL-002 | INV-001–009 | EVD-0003 |
 | `GATE-003` | REQ-OPS-003、REQ-OPS-006 | INV-005、INV-008、INV-012 | 后续 SBE fixture/fuzz/兼容报告 |
 | `GATE-004` | REQ-QUAL-005、REQ-OPS-001/002 | INV-008、INV-011、INV-014 | EVD-0004 |
@@ -830,11 +833,12 @@ Archive segment 只有在所有引用者都越过它之后才可清理：active 
 | EVD-0004 | GATE-004 HA | 三主机 leader failure trace | 不存在 | 未执行 | planned | 拓扑/Aeron/config 变化 |
 | EVD-0005 | GATE-006 容量 | open-loop workload + histograms | 不存在 | 未执行 | planned | profile/实现/硬件变化 |
 | EVD-0006 | GATE-007 DR | immutable artifacts + restore drill | 不存在 | 未执行 | planned | backup/schema/key/runtime 变化 |
-| EVD-0007 | TASK-P0-002/ADR-0001/ADR-0002 本地实现仓库 bootstrap 与构建合同 | [历史 bootstrap 验收 artifact](./evidence/EVD-0007-implementation-repository-bootstrap.md)；实现 commit `9dbe8e9f8578ad8fa27da54ca494c8e9a092c379` | Eclipse Temurin 25.0.4+7-LTS HotSpot；Gradle 9.7.0；macOS 26.0.1 (25A362)、Darwin 25.0.0、arm64/Apple M2；local-only repo | 旧 revision 的 33 个负向变异、依赖篡改和字节复现观察仍作为历史事实保留；实现 HEAD、policy/脚本与 JDK 安全状态已经变化，不能用于当前 revision | stale | 已于 2026-08-19 命中原失效条件；后继 revision 曾由 `EVD-0010 stale` 承接，当前 revision 由 `EVD-0011 partial` 承接；JDK 日期事实由 `EVD-0009 pass` 承接 |
-| EVD-0008 | TASK-P0-002/ADR-0001/ADR-0002/RISK-013/RISK-014 历史构建与 remote-authority readiness | [历史 readiness 验收 artifact](./evidence/EVD-0008-remote-authority-readiness.md)；实现 commit `ad461b3bd0cfdeddedac2fa93a37c5cba1c203ea` | Temurin 25.0.4+7 historical-reproduction runtime；Gradle 9.7.0；macOS 26.0.1 (25A362)、Darwin 25.0.0、arm64/Apple M2；local-only repo | 原 partial 观察的 39+20 个负例、篡改、双路径/双缓存 online/offline 与解包 round-trip 作为历史保留；实现已推进且 profile/policy 合同改变，不得用于当前 revision | stale | 已于 2026-08-19 因实现 HEAD、profile/schema、policy/脚本与 bundle 变化命中原失效条件；后继 revision 曾由 `EVD-0010 stale` 承接，当前 revision 由 `EVD-0011 partial` 承接 |
+| EVD-0007 | TASK-P0-002/ADR-0001/ADR-0002 本地实现仓库 bootstrap 与构建合同 | [历史 bootstrap 验收 artifact](./evidence/EVD-0007-implementation-repository-bootstrap.md)；实现 commit `9dbe8e9f8578ad8fa27da54ca494c8e9a092c379` | Eclipse Temurin 25.0.4+7-LTS HotSpot；Gradle 9.7.0；macOS 26.0.1 (25A362)、Darwin 25.0.0、arm64/Apple M2；local-only repo | 旧 revision 的 33 个负向变异、依赖篡改和字节复现观察仍作为历史事实保留；实现 HEAD、policy/脚本与 JDK 安全状态已经变化，不能用于当前 revision | stale | 已于 2026-08-19 命中原失效条件；后继 revision 曾由 `EVD-0010/0011 stale` 承接，当前 revision 由 `EVD-0012 partial` 承接；JDK 日期事实由 `EVD-0009 pass` 承接 |
+| EVD-0008 | TASK-P0-002/ADR-0001/ADR-0002/RISK-013/RISK-014 历史构建与 remote-authority readiness | [历史 readiness 验收 artifact](./evidence/EVD-0008-remote-authority-readiness.md)；实现 commit `ad461b3bd0cfdeddedac2fa93a37c5cba1c203ea` | Temurin 25.0.4+7 historical-reproduction runtime；Gradle 9.7.0；macOS 26.0.1 (25A362)、Darwin 25.0.0、arm64/Apple M2；local-only repo | 原 partial 观察的 39+20 个负例、篡改、双路径/双缓存 online/offline 与解包 round-trip 作为历史保留；实现已推进且 profile/policy 合同改变，不得用于当前 revision | stale | 已于 2026-08-19 因实现 HEAD、profile/schema、policy/脚本与 bundle 变化命中原失效条件；后继 revision 曾由 `EVD-0010/0011 stale` 承接，当前 revision 由 `EVD-0012 partial` 承接 |
 | EVD-0009 | FACT-012/OQ-004 JDK 25 安全基线刷新 | [JDK 安全刷新 artifact](./evidence/EVD-0009-jdk-security-refresh.md)；Oracle release notes/CSPU；Eclipse Adoptium GA API | 2026-08-19 official-source observation；未下载或运行 Oracle candidate | 确认 Oracle 25.0.4.1+1、安全 baseline、版本化 archive size/SHA；确认 cutoff 上尚无同 vendor Temurin 替代 GA；只通过外部事实观察，不接受 JDK 选型 | pass | 新 Oracle/Temurin/OpenJDK 发行或 advisory、制品元数据变化、`ADR-0001` 状态或实际 runtime 变化 |
-| EVD-0010 | TASK-P0-002/TASK-P0-003/ADR-0001/ADR-0002/WORKLOAD_PROFILE-001/HARDWARE_PROFILE-001/DURABILITY_PROFILE-001/FAILURE_PROFILE-001/PROFILE_SET-001/QUALIFICATION_SET-001/RISK-013/RISK-014/RISK-016 历史构建与 qualification Profile draft 框架 | [历史 qualification Profile framework artifact](./evidence/EVD-0010-qualification-profile-framework.md)；实现 commit `bca54470699d69dc609686927c46563492ff7c47` | Temurin 25.0.4+7 historical-reproduction runtime；Gradle 9.7.0；macOS 26.0.1 build 25A362、Darwin 25、arm64/Apple M2；local-only repo | 旧 revision 的 14 个 qualification contract、6 个 evidence 输出、51 个 ZIP 精确文件与 50+42+20 个门禁负例作为历史保留；实现已推进，不能用于当前 revision | stale | 已于 2026-08-19 因实现 HEAD、v2 schema/intake/policy、validator/脚本、bundle 与 generated evidence 变化命中原失效条件；当前 revision 由 `EVD-0011 partial` 承接 |
-| EVD-0011 | TASK-P0-002/TASK-P0-003/ADR-0001/ADR-0002/REQ-QUAL-007/REQ-QUAL-008/REQ-SEC-005/WORKLOAD_PROFILE-001/HARDWARE_PROFILE-001/DURABILITY_PROFILE-001/FAILURE_PROFILE-001/PROFILE_SET-001/QUALIFICATION_SET-001/OQ-011/OQ-012/RISK-013/RISK-014/RISK-016/RISK-017 Profile intake/lifecycle 默认拒绝框架 | [Profile intake/lifecycle 验收 artifact](./evidence/EVD-0011-profile-intake-lifecycle-framework.md)；实现 commit `6c1bdfc856de0681211cbd134a97cabcae13c7f5`，tree `76f4b7a4c316cfb9ecf23cdfdb5c56193b0108db` | Temurin 25.0.4+7 historical-reproduction runtime；Gradle 9.7.0；macOS 26.0.1 build 25A362、Darwin 25、arm64/Apple M2；local-only repo | 19 个 v2 合同、0-entry draft catalog、proposed policy、11 个显式 blocker；61+42+58+20 个门禁负例、dependency tamper 与 10 项 online/offline/跨路径/解包复现输出通过；Profile Set 入口 `E901`、Qualification 入口 `E900`；Artifact URI `none` | partial | 实现 HEAD、v1/v2 合同、policy/catalog、validator/脚本、locks、bundle/evidence、外部 authority/RFC 8785/compatibility/revision-stale 实现、任一真实输入/审批/Profile/Set、JDK/依赖/环境或 remote/artifact authority 变化 |
+| EVD-0010 | TASK-P0-002/TASK-P0-003/ADR-0001/ADR-0002/WORKLOAD_PROFILE-001/HARDWARE_PROFILE-001/DURABILITY_PROFILE-001/FAILURE_PROFILE-001/PROFILE_SET-001/QUALIFICATION_SET-001/RISK-013/RISK-014/RISK-016 历史构建与 qualification Profile draft 框架 | [历史 qualification Profile framework artifact](./evidence/EVD-0010-qualification-profile-framework.md)；实现 commit `bca54470699d69dc609686927c46563492ff7c47` | Temurin 25.0.4+7 historical-reproduction runtime；Gradle 9.7.0；macOS 26.0.1 build 25A362、Darwin 25、arm64/Apple M2；local-only repo | 旧 revision 的 14 个 qualification contract、6 个 evidence 输出、51 个 ZIP 精确文件与 50+42+20 个门禁负例作为历史保留；实现已推进，不能用于当前 revision | stale | 已于 2026-08-19 因实现 HEAD、v2 schema/intake/policy、validator/脚本、bundle 与 generated evidence 变化命中原失效条件；后继 revision 曾由 `EVD-0011 stale` 承接，当前 revision 由 `EVD-0012 partial` 承接 |
+| EVD-0011 | TASK-P0-002/TASK-P0-003/ADR-0001/ADR-0002/REQ-QUAL-007/REQ-QUAL-008/REQ-SEC-005/WORKLOAD_PROFILE-001/HARDWARE_PROFILE-001/DURABILITY_PROFILE-001/FAILURE_PROFILE-001/PROFILE_SET-001/QUALIFICATION_SET-001/OQ-011/OQ-012/RISK-013/RISK-014/RISK-016/RISK-017 历史 Profile intake/lifecycle 默认拒绝框架 | [历史 Profile intake/lifecycle 验收 artifact](./evidence/EVD-0011-profile-intake-lifecycle-framework.md)；实现 commit `6c1bdfc856de0681211cbd134a97cabcae13c7f5`，tree `76f4b7a4c316cfb9ecf23cdfdb5c56193b0108db` | Temurin 25.0.4+7 historical-reproduction runtime；Gradle 9.7.0；macOS 26.0.1 build 25A362、Darwin 25、arm64/Apple M2；local-only repo | 原 partial 观察的 19 个 v2 合同、11 个 blocker、61+42+58+20 个门禁负例与 10 项复现输出作为历史保留；实现 HEAD、JCS/locks/validator/scripts 与生成证据已变化，不能用于当前 revision | stale | 已于 2026-08-19 因实现 HEAD、RFC 8785/JCS、locks、validator/脚本、bundle 与 generated evidence 变化命中原失效条件；当前 revision 由 `EVD-0012 partial` 承接 |
+| EVD-0012 | TASK-P0-002/TASK-P0-003/ADR-0001/ADR-0002/REQ-QUAL-007/REQ-QUAL-008/REQ-SEC-005/WORKLOAD_PROFILE-001/HARDWARE_PROFILE-001/DURABILITY_PROFILE-001/FAILURE_PROFILE-001/PROFILE_SET-001/QUALIFICATION_SET-001/OQ-011/OQ-012/RISK-013/RISK-014/RISK-016/RISK-017 RFC 8785/JCS build-contract canonical-byte primitive | [RFC 8785/JCS 边界验收 artifact](./evidence/EVD-0012-rfc8785-canonicalization-boundary.md)；实现 commit `667a859c8dc1f3e72d4ddea1391113c3d2d1c860`，tree `34d3d97b2309f3d5dc4fd50278ba28a751e60e37` | Temurin 25.0.4+7 historical-reproduction runtime；Gradle 9.7.0；macOS 26.0.1 build 25A362、Darwin 25、arm64/Apple M2；local-only repo | 固定 JCS 1.1 JAR/source/corpus；26 条 Appendix B、6 组官方 corpus、strict UTF-8/surrogate/duplicate/negative-zero/resource guard、runtime/outgoing isolation 与 manifest/SBOM/readiness/properties 精确绑定通过；62+42+58+20 个门禁负例、dependency tamper 与 10 项复现输出通过；B009 仅在 build-contract primitive 边界闭合，B001–B008/B010/B011、E901/E900 与 `not_proven` 保留；Artifact URI `none` | partial | 实现 HEAD、JCS engine/tag/JAR/source/corpus、strict wrapper/limits、v1/v2 合同、policy/catalog、validator/脚本、locks、bundle/evidence、外部 authority/compatibility/revision-stale、任一真实输入/审批/Profile/Set、JDK/依赖/环境或 remote/artifact authority 变化 |
 
 证据记录必须包含：关联 REQ/INV/GATE、artifact URI/sha256、命令、workload、fault schedule、硬件、配置、版本/commit、期望、实际、时间、verdict 和失效条件。大日志不粘进本文件。
 
@@ -857,7 +861,7 @@ Archive segment 只有在所有引用者都越过它之后才可清理：active 
 - 本地结论：精确 runtime/self-test、依赖锁与 verification metadata、源码/tag/制品摘要、规范化 graph/SBOM、33 个负向变异、依赖篡改、两条绝对路径/两套独立 Gradle Home 的 online/offline 构建，以及解包 ZIP 后的 offline byte-for-byte round-trip 均通过。
 - 不可变输出：build-contract ZIP SHA-256 `e8e83fbafd36671f4205534476943d7a16a962823f3cff180683aac91ade6db5`；resolved manifest `8043e45adbcda0f75c7082a5cb0b1280dcbbc3ba1e80667e4a8ac120ebc47a71`；dependency graph `ba0211e62e416bf6445c5c44ec9c194a933ffa844425ddba7072a7c7e50d428d`；CycloneDX SBOM `8a1f7c496d7f306a8d40b1b0d4434efd7dd64d2b434f5db91053c07689caa2f8`；contract properties `c62c40f2d69c7fab4d11bfaa99a5b835c798e06103bd318f6af05f4b8bd0be9c`。
 - 失效事实：实现仓库已推进到 `ad461b3bd0cfdeddedac2fa93a37c5cba1c203ea`，policy/schema/验证脚本与规范化输出均变化；Oracle 2026-08-18 CSPU/JDK 25.0.4.1+1 也改变了旧 JDK 的安全适用性。这些变化命中了本证据原先列出的失效条件。
-- 结论：本证据只保留旧 commit 的不可变历史观察；后继 Profile draft revision 曾由 `EVD-0010 stale` 承接，当前构建/intake revision 由 `EVD-0011 partial` 承接，JDK 外部事实由 `EVD-0009 pass` 承接。任何一份都不证明远端供应链信任、撮合正确性、Cluster HA、容量、持久性、DR 或生产资格。
+- 结论：本证据只保留旧 commit 的不可变历史观察；后继 Profile draft/intake revision 曾由 `EVD-0010/0011 stale` 承接，当前构建/intake revision 由 `EVD-0012 partial` 承接，JDK 外部事实由 `EVD-0009 pass` 承接。任何一份都不证明远端供应链信任、撮合正确性、Cluster HA、容量、持久性、DR 或生产资格。
 
 #### EVD-0008 历史详细记录（stale）
 
@@ -868,7 +872,7 @@ Archive segment 只有在所有引用者都越过它之后才可清理：active 
 - Authority 结论：`RAP-0001` 仍为 `proposed`；`remoteAuthorityEstablished=false`、`hostedCiObserved=false`、`artifactAuthorityEstablished=false`、`authorityQualification=not_proven`。缺少 observation 时以 `AUTHORITY-E900` 拒绝；普通文件加 proposed policy 以 `AUTHORITY-E902` 拒绝；完整 observation validator 尚未实现。
 - Validator 边界：两个 JSON Schema 文件作为固定摘要制品进入合同，但当前没有通用 JSON Schema runtime；实际执行的是 canonical JSON 与更窄的 exact proposed-policy Kotlin validator。
 - 历史摘要：ZIP `12707bef7348ccb8e5c8fec972d55df9038a5afcbb23d006dc66e3f5bb751f1f`；manifest `8043e45adbcda0f75c7082a5cb0b1280dcbbc3ba1e80667e4a8ac120ebc47a71`；graph `ba0211e62e416bf6445c5c44ec9c194a933ffa844425ddba7072a7c7e50d428d`；SBOM `8a1f7c496d7f306a8d40b1b0d4434efd7dd64d2b434f5db91053c07689caa2f8`；properties `33e2cb9af7435d8a68047e6a4f70763f1691e707cd26085d6e266e0b6f9686cf`；readiness `1766dbd9aad124fc9cd01030456bfa1cb1f4611a19ea4455a2d6f766cf53f812`；policy `61d67c86c9417d660e23c3b12cf3dbd48337d875cc6f9185231d873c76532f67`。
-- 失效与未闭合边界：实现先推进到 `bca54470699d69dc609686927c46563492ff7c47`，现已推进到 `6c1bdfc856de0681211cbd134a97cabcae13c7f5`；profile/schema、policy/脚本与 bundle 均已变化，命中本 EVD 原失效条件。当前仍没有 remote、provider enforcement、Hosted CI observation、license、持久 artifact/backup authority、外部 production verifier、产品源码或安全有效的生产 JDK；当前 revision 由 `EVD-0011 partial` 承接。
+- 失效与未闭合边界：实现先推进到 `bca54470699d69dc609686927c46563492ff7c47`、`6c1bdfc856de0681211cbd134a97cabcae13c7f5`，现已推进到 `667a859c8dc1f3e72d4ddea1391113c3d2d1c860`；profile/schema、policy/脚本、JCS boundary 与 bundle 均已变化，命中本 EVD 原失效条件。当前仍没有 remote、provider enforcement、Hosted CI observation、license、持久 artifact/backup authority、外部 production verifier、产品源码或安全有效的生产 JDK；当前 revision 由 `EVD-0012 partial` 承接。
 
 #### EVD-0010 历史详细记录（stale）
 
@@ -879,18 +883,29 @@ Archive segment 只有在所有引用者都越过它之后才可清理：active 
 - 门禁结论：50 个 repository mutants、42 个 Profile exact mutants、20 个 authority mutants、dependency tamper、online/offline、双绝对路径/双 Gradle Home 与 unpacked rebuild 全部通过；这些 fault schedule 是合同门禁负例，不是 Cluster/HA 故障实验。
 - 历史边界：六个 Profile/Set 当时全是 `draft`，owner、权威 source、真实目标、审批与 qualification decision 全部 unresolved；profile readiness 为 false/not qualified，`claim_status` 为 `not_proven`，`GATE-001` 为 `partial`。
 - 历史摘要：ZIP `c1a16c132d2065c2bd46f678a1b62d30b35d5dbcdc42d387b3097820c588b631`；manifest `8043e45adbcda0f75c7082a5cb0b1280dcbbc3ba1e80667e4a8ac120ebc47a71`；graph `ba0211e62e416bf6445c5c44ec9c194a933ffa844425ddba7072a7c7e50d428d`；SBOM `8a1f7c496d7f306a8d40b1b0d4434efd7dd64d2b434f5db91053c07689caa2f8`；properties `4d77dfd9e6bf336de2e232491e37128c55d2533048c34229d4a0cc76e9486889`；profile readiness `2cb205d2f8f13563ef6f97ff688d860a0b9ff70277463fecf021a1dbc6796493`；remote readiness `1766dbd9aad124fc9cd01030456bfa1cb1f4611a19ea4455a2d6f766cf53f812`。
-- 失效与未闭合边界：实现已推进到 `6c1bdfc856de0681211cbd134a97cabcae13c7f5`，v2 intake/lifecycle schema、policy/catalog、validator、脚本、bundle 与 generated evidence 均已变化，命中原失效条件。Artifact URI 始终为 `none`；该旧 revision 没有持久 authority、真实 workload/HA 实验或生产资格证据，当前 revision 由 `EVD-0011 partial` 承接。
+- 失效与未闭合边界：实现已先后推进到 `6c1bdfc856de0681211cbd134a97cabcae13c7f5` 与 `667a859c8dc1f3e72d4ddea1391113c3d2d1c860`，v2 intake/lifecycle schema、policy/catalog、validator、脚本、JCS boundary、bundle 与 generated evidence 均已变化，命中原失效条件。Artifact URI 始终为 `none`；该旧 revision 没有持久 authority、真实 workload/HA 实验或生产资格证据，当前 revision 由 `EVD-0012 partial` 承接。
 
-#### EVD-0011 当前详细记录
+#### EVD-0011 历史详细记录（stale）
 
 - Artifact：[Profile intake 与 lifecycle 默认拒绝框架](./evidence/EVD-0011-profile-intake-lifecycle-framework.md)。
-- 证明对象：`TASK-P0-002`、`TASK-P0-003`、`ADR-0001/0002`、`REQ-QUAL-007/008`、`REQ-SEC-005`、四类 atomic Profile、`PROFILE_SET-001`、`QUALIFICATION_SET-001` 的否定边界、`OQ-011/012`、`RISK-013/014/016/017`；verdict 为 `partial`。
+- 证明对象：`TASK-P0-002`、`TASK-P0-003`、`ADR-0001/0002`、`REQ-QUAL-007/008`、`REQ-SEC-005`、四类 atomic Profile、`PROFILE_SET-001`、`QUALIFICATION_SET-001` 的否定边界、`OQ-011/012`、`RISK-013/014/016/017`；原 verdict 为 `partial`，当前 verdict 为 `stale`。
 - 实现仓库：`/Users/reln/aeron-cluster-matching-engine`，`main`，commit `6c1bdfc856de0681211cbd134a97cabcae13c7f5`，tree `76f4b7a4c316cfb9ecf23cdfdb5c56193b0108db`，工作树 clean，无 remote、upstream 或 tag，无产品源码。
 - 合同结论：19 个 v2 文件定义 source receipt、availability、exact claim、derivation、owner/maker-checker、approval、change/result、revision/stale、catalog、安全 bundle、四类 Profile 与 Profile Set 生命周期；只有 proposed policy 和 0-entry draft catalog 是实例，没有真实 source/owner/claim/approval/change/Profile/Profile Set 或 raw telemetry。
 - 门禁结论：61 个 repository mutants、42 个 v1 Profile mutants、58 个 v2 intake mutants、20 个 authority mutants、dependency tamper、online/offline、双路径/双 Gradle Home 与 unpacked rebuild 全部通过；十项输出逐字节一致。TEST_ONLY 只有 1 个 structural positive、4 Profile/160 datum/160 claim/1 derivation，accepted positive 为 0，未生成 compatibility report 或 accepted Profile Set。
 - 默认拒绝：`PROFILESET-E901` 拒绝 Profile Set accepted，`PROFILESET-E900` 拒绝 Qualification，缺少 production authority verifier 时 `INTAKE-P084` 拒绝。readiness 保留 B001–B011：proposed policy、空 catalog、Profile 缺失、Set 未接受、verification/qualification/external verifier/compatibility operands/RFC 8785/production change/revision-stale 均未闭合。
-- 当前摘要：主 ZIP `46443abf82b7f64866146ee8abfd1bdf94356c5d14a815c2057d7ba8b80751b0`；v2 ZIP `9548b73dd449e17a1d0dbc51e457c069a965049f6e06478e76ea5f431b754656`；manifest `8043e45adbcda0f75c7082a5cb0b1280dcbbc3ba1e80667e4a8ac120ebc47a71`；graph `ba0211e62e416bf6445c5c44ec9c194a933ffa844425ddba7072a7c7e50d428d`；SBOM `8a1f7c496d7f306a8d40b1b0d4434efd7dd64d2b434f5db91053c07689caa2f8`；properties `a1db4f3098d60a05b84f5029b8feeac2cc2b2d9864dd48eb9277489c735fb870`；v1 readiness `2cb205d2f8f13563ef6f97ff688d860a0b9ff70277463fecf021a1dbc6796493`；v2 readiness `5349b63b79bb8c2af33cc1701d697b6196684e249b3cebaf4768128085628f3c`；v2 selftest `75e894b271efdfab107706b1115b54555a80125639b7c40d73391879799b5359`；remote readiness `1766dbd9aad124fc9cd01030456bfa1cb1f4611a19ea4455a2d6f766cf53f812`。
-- 当前边界：Artifact URI 为 `none`，输出只在本地 ignored `build/`；JSON Schema 只证明 local shape，Kotlin 是 cross-document 语义子集。外部 authority verifier、受审 RFC 8785、兼容公式、production change/revision/stale 闭包、真实输入和持久 artifact authority 均不存在；因此任何 Profile/Set 接受、Gate pass 或生产资格声明都不成立。
+- 历史摘要：主 ZIP `46443abf82b7f64866146ee8abfd1bdf94356c5d14a815c2057d7ba8b80751b0`；v2 ZIP `9548b73dd449e17a1d0dbc51e457c069a965049f6e06478e76ea5f431b754656`；manifest `8043e45adbcda0f75c7082a5cb0b1280dcbbc3ba1e80667e4a8ac120ebc47a71`；graph `ba0211e62e416bf6445c5c44ec9c194a933ffa844425ddba7072a7c7e50d428d`；SBOM `8a1f7c496d7f306a8d40b1b0d4434efd7dd64d2b434f5db91053c07689caa2f8`；properties `a1db4f3098d60a05b84f5029b8feeac2cc2b2d9864dd48eb9277489c735fb870`；v1 readiness `2cb205d2f8f13563ef6f97ff688d860a0b9ff70277463fecf021a1dbc6796493`；v2 readiness `5349b63b79bb8c2af33cc1701d697b6196684e249b3cebaf4768128085628f3c`；v2 selftest `75e894b271efdfab107706b1115b54555a80125639b7c40d73391879799b5359`；remote readiness `1766dbd9aad124fc9cd01030456bfa1cb1f4611a19ea4455a2d6f766cf53f812`。
+- 失效边界：实现推进到 `667a859c8dc1f3e72d4ddea1391113c3d2d1c860` 后，JCS/locks/validator/scripts、bundle 与 generated evidence 均变化，命中原失效条件；当前 revision 由 `EVD-0012 partial` 承接。旧 11-blocker 观察不改写成当前 10-blocker 状态。
+
+#### EVD-0012 当前详细记录
+
+- Artifact：[RFC 8785 canonicalization build-contract boundary](./evidence/EVD-0012-rfc8785-canonicalization-boundary.md)；Artifact URI 为 `none`，生成输出只存在于本地 ignored `build/`。
+- 证明对象：`TASK-P0-002`、`TASK-P0-003`、`ADR-0001/0002`、`REQ-QUAL-007/008`、`REQ-SEC-005`、四类 atomic Profile、`PROFILE_SET-001`、`QUALIFICATION_SET-001` 的否定边界、`OQ-011/012`、`RISK-013/014/016/017`；verdict 为 `partial`。
+- 实现仓库：`/Users/reln/aeron-cluster-matching-engine`，`main`，commit `667a859c8dc1f3e72d4ddea1391113c3d2d1c860`，tree `34d3d97b2309f3d5dc4fd50278ba28a751e60e37`，工作树 clean，无 remote、upstream 或 tag，无产品源码。
+- 固定输入：`io.github.erdtman:java-json-canonicalization:1.1`；JAR SHA-256 `ed12a01f28d147898312963a1f704e90290b67a61f34fa3a761f41c134f4e691`；POM SHA-256 `37114938a89def00596ff5541b794abc6be626b4c73e988d5a5bd457a3f38477`；source tag commit `571f10dcc0c9531164795c38b934a58cf7172722`；sources SHA-256 `98de9b4ee9e220da0a8b4338f0612924c36612d060ca71064a9f56422e7e2068`；官方 corpus commit `19d51d7fe467d4706a3ff08adf8a748f29fc21e0`。
+- RFC 门禁：Appendix B 26 行和官方 corpus 6 组逐字节/fixed-point 通过；非法 UTF-8、lone surrogate、duplicate key、negative zero、non-finite、byte/depth/node 越界均 fail closed。`jcsCanonicalizer` 只允许一个 declaration/artifact/root edge，且必须 resolvable、non-consumable、无 `extendsFrom`；所有 resolvable 与 consumable/outgoing configuration 均禁止 JCS 泄漏，稳定负例为 `JCS-P008`。
+- 总门禁：23-task `buildContractCheck`、62 个 repository-policy mutants、42 个 v1 Profile mutants、58 个 v2 intake mutants、20 个 authority mutants、dependency artifact tamper，以及 online/offline、双 checkout、双 Gradle Home、unpacked rebuild 十项复现均通过；主 ZIP 为 87 total/71 file entries，v2 ZIP 为 27 total/20 file entries。
+- 当前摘要：主 ZIP `43b27abe07ff3a4f84a9eee192280718ef85e7c4b57ab7825d5d7f94d55ea9c8`；v2 ZIP `2131a971b672258478f0b24a13b5a687a98e7f9bf309266d91c68b035f38a7e1`；manifest `be6dc201247c147cbe57145f5fcbcf0ced53895850bce7967ddce7c54bbfba52`；graph `6c324872cedb4c9890ea0237653e28228c3c9fe09bdef69dc8d6949424363c1c`；SBOM `fd7ad5ac29b7170ae56bcf8b7ecf845dcb9968b5fe1552e86631a7d3b84fbfd6`；properties `cb1aeb92e8646dd31b5af9afbdc8d69a7accc5c96346ef94f41f139bad9031d2`；v1 readiness `2cb205d2f8f13563ef6f97ff688d860a0b9ff70277463fecf021a1dbc6796493`；v2 readiness `98657ab671215d1e572c1e46b8e4fd2e3613801d3b4eec63617678087db653ae`；v2 selftest `1a3ee090c457b543aa9ab0feafe85f51c8d94ed590da0e1cea46a9e765183704`；remote readiness `1766dbd9aad124fc9cd01030456bfa1cb1f4611a19ea4455a2d6f766cf53f812`。
+- 当前边界：本轮只闭合 `INTAKE-B009_RFC8785_CANONICALIZER_NOT_IMPLEMENTED`。B001–B008、B010、B011 共十项、`PROFILESET-E901/E900` 与 `INTAKE-P084` 继续 fail closed；policy 为 proposed、catalog 为 0-entry draft，且没有真实 SOURCE/OWNER/CLAIM/DERIVATION/APPROVAL/CHANGE/Profile/Profile Set/raw telemetry。它不接受 `ADR-0001/0002`，不完成 `TASK-P0-002/003`，不把 `GATE-001` 提升为 pass，也不改变 `claim_status: not_proven` 或 `qualification_profile: none`。
 
 #### EVD-0009 当前详细记录
 
@@ -911,7 +926,7 @@ Archive segment 只有在所有引用者都越过它之后才可清理：active 
 - 实际：Aeron 1.52.2、SBE 1.39.0、Agrona 2.5.0 满足该范围内的期望。
 - 核对时间：2026-08-18T20:30:00+08:00。
 - Verdict：`pass`；新 release、tag 删除/重指、官方安全公告或 ADR-0001 状态变化时立即 `stale`。
-- 后续：当前下载、checksum、SBOM 与 resolved dependency graph 由 `EVD-0011 partial` 记录；JDK 安全发行观察由 `EVD-0009 pass` 记录。最终 vendor/build 仍未选择，`ADR-0001` 接受前还需在安全有效 runtime 上重跑合同、建立 hosted CI/远端保护与持久 artifact authority，并补齐兼容和故障验证。本 EVD 不替代这些证据。
+- 后续：当前下载、checksum、SBOM 与 resolved dependency graph 由 `EVD-0012 partial` 记录；JDK 安全发行观察由 `EVD-0009 pass` 记录。最终 vendor/build 仍未选择，`ADR-0001` 接受前还需在安全有效 runtime 上重跑合同、建立 hosted CI/远端保护与持久 artifact authority，并补齐兼容和故障验证。本 EVD 不替代这些证据。
 
 ## 17. ADR 决策日志
 
@@ -920,15 +935,15 @@ Archive segment 只有在所有引用者都越过它之后才可清理：active 
 ### ADR-0001：依赖与运行时版本基线
 
 - 状态：`proposed`
-- 候选：`EVD-0011` 在当前 revision 锁定 Aeron 1.52.2、SBE 1.39.0、Agrona 2.5.0 与 Gradle 9.7.0；Temurin 25.0.4+7 只保留为安全基线已过期的历史复现 runtime。`EVD-0009` 已观察到 Oracle 25.0.4.1+1，但它只是 vendor-change candidate，observation cutoff 上没有同 vendor Temurin 替代 GA。
+- 候选：`EVD-0012` 在当前 revision 锁定 Aeron 1.52.2、SBE 1.39.0、Agrona 2.5.0、Gradle 9.7.0 与 build-only JCS 1.1；Temurin 25.0.4+7 只保留为安全基线已过期的历史复现 runtime。`EVD-0009` 已观察到 Oracle 25.0.4.1+1，但它只是 vendor-change candidate，observation cutoff 上没有同 vendor Temurin 替代 GA。
 - 必须满足：REQ-QUAL-002、REQ-OPS-006。
-- 接受前证据：明确 JDK vendor/build/license/support，固定安全有效的所有平台制品摘要并重跑依赖锁、制品 SHA、fixed-tag 源码审计、hosted CI、兼容/故障测试计划；`EVD-0007/0008/0010 stale` 只是旧 revision 历史，`EVD-0011 partial` 与 `EVD-0009 pass` 也不等于选型接受。
+- 接受前证据：明确 JDK vendor/build/license/support，固定安全有效的所有平台制品摘要并重跑依赖锁、制品 SHA、fixed-tag 源码审计、hosted CI、兼容/故障测试计划；`EVD-0007/0008/0010/0011 stale` 只是旧 revision 历史，`EVD-0012 partial` 与 `EVD-0009 pass` 也不等于选型接受。
 - 重开触发：新正式 release、安全修复、JDK 生命周期、不可接受缺陷。
 
 ### ADR-0002：实现代码仓库与博客边界
 
 - 状态：`proposed`
-- 候选决定：实现放独立代码仓库；当前 local-only provisional authority 为 `/Users/reln/aeron-cluster-matching-engine` 的 `main`/`6c1bdfc856de0681211cbd134a97cabcae13c7f5`，博客只放项目控制记录和教程。`RAP-0001` 冻结 private-first 的 proposed readiness 候选，但不声称远端已存在或 enforcement 已生效。
+- 候选决定：实现放独立代码仓库；当前 local-only provisional authority 为 `/Users/reln/aeron-cluster-matching-engine` 的 `main`/`667a859c8dc1f3e72d4ddea1391113c3d2d1c860`，博客只放项目控制记录和教程。`RAP-0001` 冻结 private-first 的 proposed readiness 候选，但不声称远端已存在或 enforcement 已生效。
 - 原因：生产代码需要独立 CI、release/tag、镜像、权限和大体积证据；静态站点不应混入运行密钥与部署状态。
 - 待决定：remote URI、实际 owner/principals/visibility、license、访问/审核/provider ruleset、backup/recovery、release/tag、Hosted CI observation、artifact authority/retention 和跨仓链接；本地 readiness 不能替代这些控制或接受本 ADR。
 - 重开触发：用户指定已有仓库或组织策略。
@@ -1005,8 +1020,8 @@ Archive segment 只有在所有引用者都越过它之后才可清理：active 
 | RISK-013 | local-only provisional implementation authority 没有远端保护且可能丢失或漂移 | 源码/证据不可恢复，或出现多个互相冲突的 authority | 对照双仓恢复账本、固定 commit、工作树与备份恢复演练 | 用户确认访问模型并授权后建立受保护 remote、最小权限/ruleset、独立备份和持久 artifact authority | unassigned | 未接受；`TASK-P0-002` 闭合前必须缓解 | 2026-08-26 | open |
 | RISK-014 | 把本地 proposed readiness、candidate Workflow/CODEOWNERS 或规范化摘要误当作远端 enforcement、Hosted CI 或 artifact authority | 在没有独立 trust root 时错误接受 ADR/任务或发布资格声明 | readiness 否定字段、外部 observation 缺失时 `AUTHORITY-E900`、provider API/restore 交叉核对 | policy 与 observation 分离；只有 accepted policy、真实 provider-hosted run、外部 artifact/backup restore 证据才能进入资格门禁 | unassigned | 未接受；`TASK-P0-002` 闭合前必须缓解 | 2026-08-26 | open |
 | RISK-015 | 继续把 Temurin 25.0.4+7 当当前生产安全基线，或未经 ADR 自动切换到 Oracle vendor | 带已知安全适用性缺口上线，或引入未经评审的许可/支持/兼容变化 | `EVD-0009`、JDK baseline gate、vendor/build/license 审计 | 旧 runtime 只作历史复现；明确选择安全有效 vendor/build，重锁平台制品并重跑全部合同与运行证据 | unassigned | 未接受；`ADR-0001` 接受前必须缓解 | 2026-08-26 | open |
-| RISK-016 | 把 schema-valid draft、空/`null` 值、TEST_ONLY structural fixture 或绑定摘要误当真实生产 Profile 与 qualification | 在没有 owner、来源、审批和真实目标时运行容量/故障验证或发布上线声明 | `EVD-0011`、B001–B011、`PROFILESET-E901/E900`、production catalog/Profile/Set 状态与 unresolved 字段审计 | proposed policy、空 catalog、TEST_ONLY 与 schema-valid 文件必须 fail closed；分配真实 input/approval owner，固定外部权威 source，经独立证据、兼容报告和有效期评审后才能升级 | unassigned | 未接受；`TASK-P0-003` 闭合和生产资格前必须缓解 | 2026-08-26 | open |
-| RISK-017 | repository-local policy、自报 URI/SHA、未受审 canonicalizer/兼容公式或不完整 change/stale 图被冒充为 authority；source metadata 被冒充为具体值来源，approval 跨 payload/revision 复用，或原始/机密 telemetry 被带入仓库/bundle | 错误接受生产 Profile、错误资格声明、跨实现摘要分歧或敏感数据泄露 | `EVD-0011`、外部 verifier 缺失时 `INTAKE-P084`、source/identity/digest/revision/stale/catalog/path/symlink/classification/bundle 负例 | 外部 trust observation/refetch 与 maker-checker；受审 RFC 8785 和 compatibility registry；receipt/exact claim 分离；不可变 revision 与自动 stale；显式 bundle allowlist；原始数据留在外部 authority | unassigned | 未接受；`TASK-P0-003` 和生产资格闭合前必须缓解 | 2026-08-26 | open |
+| RISK-016 | 把 schema-valid draft、空/`null` 值、TEST_ONLY structural fixture 或绑定摘要误当真实生产 Profile 与 qualification | 在没有 owner、来源、审批和真实目标时运行容量/故障验证或发布上线声明 | `EVD-0012`、B001–B008/B010/B011、`PROFILESET-E901/E900`、production catalog/Profile/Set 状态与 unresolved 字段审计 | proposed policy、空 catalog、TEST_ONLY 与 schema-valid 文件必须 fail closed；分配真实 input/approval owner，固定外部权威 source，经独立证据、兼容报告和有效期评审后才能升级 | unassigned | 未接受；`TASK-P0-003` 闭合和生产资格前必须缓解 | 2026-08-26 | open |
+| RISK-017 | repository-local policy、自报 URI/SHA、未固定替代 canonicalizer/兼容公式或不完整 change/stale 图被冒充为 authority；已核验的 build-contract canonical-byte primitive 被误扩张为 authority、compatibility、revision/stale 或 qualification proof；source metadata 被冒充为具体值来源，approval 跨 payload/revision 复用，或原始/机密 telemetry 被带入仓库/bundle | 错误接受生产 Profile、错误资格声明、跨实现摘要分歧或敏感数据泄露 | `EVD-0012`、外部 verifier 缺失时 `INTAKE-P084`、B001–B008/B010/B011、source/identity/digest/revision/stale/catalog/path/symlink/classification/bundle 负例 | JCS pin、官方 corpus 与严格 wrapper 已闭合 build-contract primitive；仍须建立外部 trust observation/refetch 与 maker-checker、compatibility registry、receipt/exact claim、不变 revision 与自动 stale、显式 bundle allowlist，并把原始数据留在外部 authority | unassigned | 未接受；`TASK-P0-003` 和生产资格闭合前必须缓解 | 2026-08-26 | open |
 
 ## 19. 阶段、任务与里程碑
 
@@ -1032,8 +1047,8 @@ Archive segment 只有在所有引用者都越过它之后才可清理：active 
 | ID | Phase | 交付物 | 验收 | 证据 | 状态 | 下一动作 |
 | --- | --- | --- | --- | --- | --- | --- |
 | TASK-P0-001 | P0 | production 专题、PROJECT_RECORD、结构 linter、首篇地图 | 独立技术/记录/集成审校，Node24 full，浏览器、链接/SEO/路由 | EVD-0002 | done | 已由 release `70ee0bca3bba8975c45c1f06c314b907bba498b2` 发布并验收 |
-| TASK-P0-002 | P0 | 实现仓库与可复现构建合同 | ADR-0001/0002 accepted，wrapper/lock/verification、hosted CI、远端权限与 artifact retention 闭合 | EVD-0007、EVD-0008、EVD-0009、EVD-0010、EVD-0011 | blocked | 等待用户确认/授权 remote 治理与 JDK vendor/build/license/support；再建立外部 observation 并评审两项 ADR |
-| TASK-P0-003 | P0 | 四类 atomic Profile 的首个 accepted baseline（document revision 2+，绑定 immutable v1 draft predecessor）与 `PROFILE_SET-001` accepted 绑定；`QUALIFICATION_SET-001` 保持 draft/not_qualified | 四类 Profile 的单位、来源、exact claim、owner、maker-checker 审批、版本与真实目标明确；Profile Set 精确绑定其 path/revision/SHA 且有独立审批；不授予生产资格 | EVD-0010、EVD-0011 | doing | 建立外部 trust/identity/artifact verifier，落地受审 RFC 8785 与兼容公式、production change/revision/stale 闭包；再分配真实 owner 并收集权威输入。Qualification grant 留给 `TASK-P9-001` |
+| TASK-P0-002 | P0 | 实现仓库与可复现构建合同 | ADR-0001/0002 accepted，wrapper/lock/verification、hosted CI、远端权限与 artifact retention 闭合 | EVD-0007、EVD-0008、EVD-0009、EVD-0010、EVD-0011、EVD-0012 | blocked | 等待用户确认/授权 remote 治理与 JDK vendor/build/license/support；再建立外部 observation 并评审两项 ADR |
+| TASK-P0-003 | P0 | 四类 atomic Profile 的首个 accepted baseline（document revision 2+，绑定 immutable v1 draft predecessor）与 `PROFILE_SET-001` accepted 绑定；`QUALIFICATION_SET-001` 保持 draft/not_qualified | 四类 Profile 的单位、来源、exact claim、owner、maker-checker 审批、版本与真实目标明确；Profile Set 精确绑定其 path/revision/SHA 且有独立审批；不授予生产资格 | EVD-0010、EVD-0011、EVD-0012 | doing | 建立外部 trust/identity/artifact verifier与 compatibility formula/operand registry，闭合 production change/revision/stale 图；再分配真实 owner 并收集权威输入。Qualification grant 留给 `TASK-P9-001` |
 | TASK-P0-004 | P0 | V1 订单、TIF、STP、风险和错误语义 | 产品合同+状态机表 | 待分配 | todo | 业务语义评审 |
 | TASK-P1-001 | P1 | 纯 Java 参考撮合模型 | trace/属性/差分 Oracle | EVD-0003 | todo | 等 P0 Gate |
 | TASK-P2-001 | P2 | 三 schema 与黄金 fixture | 兼容/fuzz | 待分配 | todo | 等领域模型 |
@@ -1055,7 +1070,7 @@ Archive segment 只有在所有引用者都越过它之后才可清理：active 
 
 | order | Phase | working title | 连续代码交付 | 关键 REQ/INV/EVD |
 | ---: | --- | --- | --- | --- |
-| 1010 | P0 | 生产合同不是 TPS 数字：用四类 Profile 冻结撮合系统的验收边界 | source intake + Profile lifecycle + config validation | TASK-P0-003, REQ-QUAL-001/007/008, REQ-SEC-005, EVD-0011, GATE-001 |
+| 1010 | P0 | 生产合同不是 TPS 数字：用四类 Profile 冻结撮合系统的验收边界 | source intake + Profile lifecycle + config validation | TASK-P0-003, REQ-QUAL-001/007/008, REQ-SEC-005, EVD-0012, GATE-001 |
 | 1020 | P0 | 业务语义合同：订单、TIF、STP、风险准入与错误状态 | product contract + state-transition tables | TASK-P0-004, REQ-FUNC-001/002/003 |
 | 1100 | P1 | 从参考模型开始：确定性订单状态机与价格时间优先 | domain/reference-model module | INV-001–004 |
 | 1110 | P1 | Cancel/Replace、TIF、STP 与 Kill Switch 的状态语义 | model traces/properties | REQ-FUNC-002/003 |
@@ -1085,10 +1100,11 @@ Chapter 01 只绑定博客框架 release、项目记录和验收证据。从开�
 | --- | --- | --- | --- |
 | 项目总记录 | 本文件 | 项目控制面 | 全部 ID |
 | 对外教程 | `src/content/posts/` | 已发布叙述 | Chapter/REQ/INV/EVD/commit |
-| 实现仓库（当前仅构建与 qualification 合同） | local provisional `/Users/reln/aeron-cluster-matching-engine`；remote none/TBD | local-only commit `6c1bdfc856de0681211cbd134a97cabcae13c7f5`，tree `76f4b7a4c316cfb9ecf23cdfdb5c56193b0108db`，RAP-0001 proposed，尚非持久 authority | ADR、release tag、build SHA、`EVD-0007/0008/0009/0010/0011`、Profile/Set ID |
-| Legacy Qualification Profile bootstrap contracts | 实现仓库 `qualification/README.md`、`qualification/profiles/`、`qualification/sets/` 与 `qualification/schemas/`；14 个精确文件 | immutable v1 draft predecessor；六个 Profile/Set 全未 accepted/verified | `TASK-P0-003`、`OQ-002/003/004/011`、`RISK-016`、`EVD-0010 stale`、`EVD-0011 partial` |
-| v2 Profile intake/lifecycle contracts | 实现仓库 `qualification/v2/`、`qualification/schemas/v2/`、`qualification/policies/`、`qualification/intake/`；19 个精确文件 | proposed policy + 0-entry draft catalog + default-deny schema/validator；无 production authority | `REQ-QUAL-007/008`、`REQ-SEC-005`、`OQ-011/012`、`RISK-016/017`、`EVD-0011` |
-| TEST_ONLY structural fixture | 实现仓库 ignored `build/tmp/TEST_ONLY/` | 非 authority、非 catalog input、非 bundle input；不得提升为 accepted evidence | `EVD-0011`、`PROFILESET-E901/E900`、B001–B011 |
+| 实现仓库（当前仅构建与 qualification 合同） | local provisional `/Users/reln/aeron-cluster-matching-engine`；remote none/TBD | local-only commit `667a859c8dc1f3e72d4ddea1391113c3d2d1c860`，tree `34d3d97b2309f3d5dc4fd50278ba28a751e60e37`，RAP-0001 proposed，尚非持久 authority | ADR、release tag、build SHA、`EVD-0007/0008/0009/0010/0011/0012`、Profile/Set ID |
+| Legacy Qualification Profile bootstrap contracts | 实现仓库 `qualification/README.md`、`qualification/profiles/`、`qualification/sets/` 与 `qualification/schemas/`；14 个精确文件 | immutable v1 draft predecessor；六个 Profile/Set 全未 accepted/verified | `TASK-P0-003`、`OQ-002/003/004/011`、`RISK-016`、`EVD-0010/0011 stale`、`EVD-0012 partial` |
+| v2 Profile intake/lifecycle contracts | 实现仓库 `qualification/v2/`、`qualification/schemas/v2/`、`qualification/policies/`、`qualification/intake/`；19 个精确文件 | proposed policy + 0-entry draft catalog + default-deny schema/validator；无 production authority | `REQ-QUAL-007/008`、`REQ-SEC-005`、`OQ-011/012`、`RISK-016/017`、`EVD-0012` |
+| RFC 8785/JCS build-only primitive | 实现仓库 `jcsCanonicalizer` configuration、锁/verification/source ledger 与 conformance gate | 固定 JCS 1.1、Appendix B/官方 corpus/strict wrapper；只证明 canonical bytes，不是产品 runtime 或 production authority | `REQ-QUAL-007/008`、`REQ-SEC-005`、`RISK-017`、`EVD-0012` |
+| TEST_ONLY structural fixture | 实现仓库 ignored `build/tmp/TEST_ONLY/` | 非 authority、非 catalog input、非 bundle input；不得提升为 accepted evidence | `EVD-0012`、`PROFILESET-E901/E900`、B001–B008/B010/B011 |
 | Protocol schema/fixtures | 实现仓库 | wire contract | schema version/compat report |
 | Test trace/seed | artifact store TBD | 故障复现 | commit/config/fault schedule |
 | Benchmark histogram/report | artifact store TBD | 性能观察 | workload/hardware/durability profile |
@@ -1102,12 +1118,12 @@ Chapter 01 只绑定博客框架 release、项目记录和验收证据。从开�
 
 ### 工作已停在哪里
 
-Phase 0 的记录和站点框架已由 release `70ee0bca3bba8975c45c1f06c314b907bba498b2` 发布并验收。当前唯一主任务是 `TASK-P0-003`：implementation commit `6c1bdfc856de0681211cbd134a97cabcae13c7f5` 的 v2 source/intake/approval/change/Profile lifecycle 框架由 `EVD-0011 partial` 记录；生产 policy 仍 proposed，catalog 为 0-entry draft，真实 owner/source/claim/approval/change/Profile/Profile Set 均不存在，接受入口按设计以 `PROFILESET-E901` 拒绝。旧 `EVD-0010` 已 stale；`QUALIFICATION_SET-001` 必须保持 `draft/not_qualified` 直到 `TASK-P9-001`。`TASK-P0-002` 因 remote/JDK/ADR 需要用户决策而 `blocked`；`EVD-0007/0008/0010` 均为历史 stale，`EVD-0009 pass` 仍只是有日期边界的 JDK 外部事实。当前仍没有 remote、provider enforcement、Hosted CI observation、license、持久 artifact/backup authority、外部 production verifier、安全有效的生产 JDK 或产品实现，也没有任何撮合、Cluster、HA 或性能代码。
+Phase 0 的记录和站点框架已由 release `70ee0bca3bba8975c45c1f06c314b907bba498b2` 发布并验收。当前唯一主任务是 `TASK-P0-003`：implementation commit `667a859c8dc1f3e72d4ddea1391113c3d2d1c860` 的 v2 source/intake/approval/change/Profile lifecycle 框架与 RFC 8785/JCS build-contract primitive 由 `EVD-0012 partial` 记录；B009 已闭合，但生产 policy 仍 proposed、catalog 为 0-entry draft，真实 owner/source/claim/approval/change/Profile/Profile Set 均不存在，接受入口继续以 `PROFILESET-E901` 拒绝。旧 `EVD-0010/0011` 已 stale；`QUALIFICATION_SET-001` 必须保持 `draft/not_qualified` 直到 `TASK-P9-001`。`TASK-P0-002` 因 remote/JDK/ADR 需要用户决策而 `blocked`；`EVD-0007/0008/0010/0011` 均为历史 stale，`EVD-0009 pass` 仍只是有日期边界的 JDK 外部事实。当前仍没有 remote、provider enforcement、Hosted CI observation、license、持久 artifact/backup authority、外部 production verifier、安全有效的生产 JDK 或产品实现，也没有任何撮合、Cluster、HA 或性能代码。
 
 ### 下一位执行者应做什么
 
-1. 先核对 `reconciliation_base_git_sha`、双仓恢复账本、当前任务和 `EVD-0002/0008/0009/0010/0011`；框架 release、schema-valid draft、TEST_ONLY fixture、本地 readiness 与历史 JDK 复现都不得误读为撮合实现、accepted Profile 或生产资格。
-2. 先按 `OQ-012` 建立仓库外 trust/identity/artifact authority，接入 production verifier，并实现受审 RFC 8785、compatibility formula/operand registry 与 production change/revision/stale closure；再按 `OQ-011` 分配 Profile input/approval owner，从权威数据和真实环境创建四类 atomic Profile 与 `PROFILE_SET-001` 的 revision 2+ candidate。`QUALIFICATION_SET-001` 继续保持 draft/not_qualified，不得为了通过 validator 或提前发布文章而伪造数值、证据或资格。
+1. 先核对 `reconciliation_base_git_sha`、双仓恢复账本、当前任务和 `EVD-0002/0008/0009/0010/0011/0012`；框架 release、schema-valid draft、TEST_ONLY fixture、本地 readiness、JCS primitive 与历史 JDK 复现都不得误读为撮合实现、accepted Profile 或生产资格。
+2. 保留已核验的 RFC 8785 primitive；先按 `OQ-012` 建立仓库外 trust/identity/artifact authority并接入 production verifier，再实现 compatibility formula/operand registry 与 production change/revision/stale closure；随后按 `OQ-011` 分配 Profile input/approval owner，从权威数据和真实环境创建四类 atomic Profile 与 `PROFILE_SET-001` 的 revision 2+ candidate。`QUALIFICATION_SET-001` 继续保持 draft/not_qualified，不得为了通过 validator 或提前发布文章而伪造数值、证据或资格。
 3. 保留 `TASK-P0-002 blocked`，直到用户确认/授权 remote 治理、license/principals 并决定安全有效的 JDK vendor/build；那之后重跑合同、采集外部 observation，再评审 `ADR-0002` 与 `ADR-0001`。
 
 ### 绝对不要做什么
@@ -1130,6 +1146,7 @@ Phase 0 的记录和站点框架已由 release `70ee0bca3bba8975c45c1f06c314b907
 | CHG-20260819-006 | 2026-08-19T01:27:53+08:00 | 在实现 commit `ad461b3bd0cfdeddedac2fa93a37c5cba1c203ea` 加入 proposed remote-authority readiness、39+20 个负向门禁和显式 authority 否定状态；复核 Oracle/Temurin JDK 安全事实；把旧 EVD-0007 降为 stale并新增 EVD-0008/0009 | 让当前构建 revision、远端信任缺口与 JDK 安全适用性各由独立证据承载，防止本地 readiness、历史 runtime 或 vendor candidate 被误写成生产资格 | TASK-P0-002、ADR-0001、ADR-0002、FACT-012、OQ-001、OQ-004、RISK-014、RISK-015、EVD-0007、EVD-0008、EVD-0009 | implementation commit `ad461b3bd0cfdeddedac2fa93a37c5cba1c203ea`；[EVD-0008 artifact](./evidence/EVD-0008-remote-authority-readiness.md)；[EVD-0009 artifact](./evidence/EVD-0009-jdk-security-refresh.md) | 用户确认并授权 remote 治理与 license/principals，建立外部 observation；选择安全有效 JDK 并重跑后再评审 ADR，任务保持 doing |
 | CHG-20260819-007 | 2026-08-19T03:12:13+08:00 | 在实现 commit `bca54470699d69dc609686927c46563492ff7c47` 建立四类 atomic Profile、`PROFILE_SET-001`、`QUALIFICATION_SET-001`、readiness 与 fail-closed 门禁；扩展项目记录 linter 的四元组、两级 Set、唯一来源和项目内资格 artifact 五字段精确绑定门禁；新增 EVD-0010，将命中失效条件的 EVD-0008 降为 stale，把唯一主任务转为 TASK-P0-003 | 先建立不可伪造数值、不可借用旧 EVD 自证的机器合同与追踪链，同时把 remote/JDK 用户决策缺口与 Profile 真实输入工作分开 | TASK-P0-002、TASK-P0-003、OQ-002、OQ-003、OQ-004、OQ-011、RISK-016、PROFILE_SET-001、QUALIFICATION_SET-001、EVD-0008、EVD-0010 | implementation commit `bca54470699d69dc609686927c46563492ff7c47`；[EVD-0010 artifact](./evidence/EVD-0010-qualification-profile-framework.md) | 分配 Profile input/approval owner 并收集真实输入；TASK-P0-002 保持 blocked，等待 remote/JDK/ADR 用户决策 |
 | CHG-20260819-008 | 2026-08-19T05:47:31+08:00 | 在实现 commit `6c1bdfc856de0681211cbd134a97cabcae13c7f5` 增加 19 个 v2 source/intake/approval/change/Profile lifecycle 合同、默认拒绝 readiness、双 ZIP 精确清单、61+42+58+20 个负例与十项复现输出；新增 REQ-QUAL-007/008、REQ-SEC-005、OQ-012、RISK-017 和 EVD-0011，并把命中失效条件的 EVD-0010 降为 stale | 让真实 Profile 输入拥有不可变 source、exact claim、外部 authority、maker-checker、revision/stale 与安全 bundle 协议，同时明确 TEST_ONLY、proposed policy、空 catalog 和本地复现绝不构成 production accepted 或 qualification | TASK-P0-002、TASK-P0-003、REQ-QUAL-007、REQ-QUAL-008、REQ-SEC-005、OQ-011、OQ-012、RISK-016、RISK-017、PROFILE_SET-001、QUALIFICATION_SET-001、EVD-0010、EVD-0011 | implementation commit `6c1bdfc856de0681211cbd134a97cabcae13c7f5`；[EVD-0011 artifact](./evidence/EVD-0011-profile-intake-lifecycle-framework.md)；Node 24 full `143 definitions/9 tasks/10 gates` | 先建立外部 trust/identity/artifact verifier、受审 RFC 8785 和兼容/变更闭包，再收集真实 Profile 输入；TASK-P0-002 继续等待 remote/JDK/ADR 用户决策 |
+| CHG-20260819-009 | 2026-08-19T07:06:17+08:00 | 在实现 commit `667a859c8dc1f3e72d4ddea1391113c3d2d1c860` 建立固定 JCS 1.1 build-only 边界、RFC 8785 Appendix B/官方 corpus/严格输入包装与全配置依赖隔离门禁；把 B009 从 readiness 移除，新增 EVD-0012，并将命中失效条件的 EVD-0011 降为 stale | 把跨文档摘要从未实现 blocker 提升为可复核 canonical-byte primitive，同时防止 JCS 泄漏到产品 runtime 或被误读为 authority/qualification | TASK-P0-002、TASK-P0-003、REQ-QUAL-007、REQ-QUAL-008、REQ-SEC-005、RISK-016、RISK-017、PROFILE_SET-001、QUALIFICATION_SET-001、EVD-0011、EVD-0012、GATE-001 | implementation commit `667a859c8dc1f3e72d4ddea1391113c3d2d1c860`；[EVD-0012 artifact](./evidence/EVD-0012-rfc8785-canonicalization-boundary.md)；Node 24 full `145 definitions/9 tasks/10 gates`、25 files 0 diagnostics、76 pages/65 indexed | 闭合 B007/B008/B010/B011，再接收真实输入；TASK-P0-002 继续等待 remote/JDK/ADR 决策 |
 
 ## 24. 一手资料索引
 
@@ -1137,6 +1154,10 @@ Phase 0 的记录和站点框架已由 release `70ee0bca3bba8975c45c1f06c314b907
 - [Aeron 1.52.2 Javadoc](https://javadoc.io/doc/io.aeron/aeron-all/1.52.2)
 - [Gradle 9.7.0 release notes](https://docs.gradle.org/9.7.0/release-notes.html)
 - [Gradle release checksums](https://gradle.org/release-checksums/)
+- [RFC 8785 JSON Canonicalization Scheme](https://www.rfc-editor.org/rfc/rfc8785)
+- [RFC 8785 errata 7920](https://www.rfc-editor.org/errata/eid7920)
+- [RFC 8785 official development corpus at commit 19d51d7](https://github.com/cyberphone/json-canonicalization/tree/19d51d7fe467d4706a3ff08adf8a748f29fc21e0)
+- [Java JSON Canonicalization 1.1 source tag](https://github.com/erdtman/java-json-canonicalization/tree/571f10dcc0c9531164795c38b934a58cf7172722)
 - [Eclipse Temurin 25.0.4+7 release](https://github.com/adoptium/temurin25-binaries/releases/tag/jdk-25.0.4%2B7)
 - [Eclipse Adoptium JDK 25 macOS aarch64 HotSpot GA API](https://api.adoptium.net/v3/assets/latest/25/hotspot?architecture=aarch64&heap_size=normal&image_type=jdk&jvm_impl=hotspot&os=mac&vendor=eclipse)
 - [Oracle Java 安全更新节奏公告](https://blogs.oracle.com/java/transitioning-java-to-more-frequent-security-updates)

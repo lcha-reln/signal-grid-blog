@@ -1,11 +1,13 @@
-# EVD-0011：Profile intake 与 lifecycle 默认拒绝框架
+# EVD-0011（历史/stale）：Profile intake 与 lifecycle 默认拒绝框架
 
 - 证据 ID：`EVD-0011`
 - 证明对象：`TASK-P0-002`、`TASK-P0-003`、`ADR-0001`、`ADR-0002`、`REQ-QUAL-007`、`REQ-QUAL-008`、`REQ-SEC-005`、`WORKLOAD_PROFILE-001`、`HARDWARE_PROFILE-001`、`DURABILITY_PROFILE-001`、`FAILURE_PROFILE-001`、`PROFILE_SET-001`、`QUALIFICATION_SET-001`、`OQ-011`、`OQ-012`、`RISK-013`、`RISK-014`、`RISK-016`、`RISK-017`
 - 关联控制：`GATE-001`；不闭合任何业务不变量、运行时 Gate 或生产资格 Gate
 - Observation cutoff：2026-08-19T05:47:31+08:00
 - 实现对象：local-only repository commit `6c1bdfc856de0681211cbd134a97cabcae13c7f5`，tree `76f4b7a4c316cfb9ecf23cdfdb5c56193b0108db`
-- Verdict：`partial`
+- Verdict：`stale`
+
+> 本证据原 verdict 为 `partial`。实现仓库已推进到 commit `667a859c8dc1f3e72d4ddea1391113c3d2d1c860`，JCS/locks/validator/scripts/bundle 与 generated evidence 均变化，命中本文件第 7 节的失效条件；当前 revision 由 `EVD-0012 partial` 承接。本文件以下内容只保留 commit `6c1bdfc856de0681211cbd134a97cabcae13c7f5` observation cutoff 上的不可变历史观察。
 
 ## 1. 期望与实际
 
@@ -166,7 +168,7 @@ TEST_ONLY fixture 只验证 validator 的结构分支和负例。它不在 Git t
 
 ## 7. Verdict、失效条件与下一步
 
-`partial` 只证明当前 revision 的 v2 合同字节、否定 readiness、结构测试、负向门禁和本地复现结果。它不证明 production accepted graph 可达，不使任何 atomic Profile 或 Profile Set 变为 `accepted/verified`，不接受 `ADR-0001/0002`，不解除 `TASK-P0-002 blocked`，不完成 `TASK-P0-003`，不把 `GATE-001` 提升为 pass，也不改变 `claim_status: not_proven` 或 `qualification_profile: none`。
+原 `partial` verdict 只证明该历史 revision 的 v2 合同字节、否定 readiness、结构测试、负向门禁和本地复现结果；当前 verdict 为 `stale`。它不证明 production accepted graph 可达，不使任何 atomic Profile 或 Profile Set 变为 `accepted/verified`，不接受 `ADR-0001/0002`，不解除 `TASK-P0-002 blocked`，不完成 `TASK-P0-003`，不把 `GATE-001` 提升为 pass，也不改变 `claim_status: not_proven` 或 `qualification_profile: none`。
 
 以下任一变化会使本证据 `stale`：
 
@@ -177,4 +179,4 @@ TEST_ONLY fixture 只验证 validator 的结构分支和负例。它不在 Git t
 - remote、Hosted CI、license、artifact/backup authority 被建立，或发现 TEST_ONLY/raw telemetry/secret 能进入 production graph 或 bundle；
 - 发现任一默认拒绝、identity、digest、revision、stale、path、symlink、catalog 或 ZIP 清单规则可绕过。
 
-下一步不是填一组猜测值，而是先按 `OQ-012` 建立仓库外 trust root、identity/approval authority 与 artifact availability verifier，并实现受审 RFC 8785 和兼容公式；随后按 `OQ-011` 分配真实 input/approval owner、接收权威来源并创建 revision 2+ candidate。`QUALIFICATION_SET-001` 与任何 production qualification 仍留给 `TASK-P9-001`。
+当时的下一步不是填一组猜测值，而是先按 `OQ-012` 建立仓库外 trust root、identity/approval authority 与 artifact availability verifier，并实现受审 RFC 8785 和兼容公式；RFC 8785 primitive 后续由 `EVD-0012 partial` 承接，其余边界仍未闭合。随后仍须按 `OQ-011` 分配真实 input/approval owner、接收权威来源并创建 revision 2+ candidate。`QUALIFICATION_SET-001` 与任何 production qualification 仍留给 `TASK-P9-001`。
