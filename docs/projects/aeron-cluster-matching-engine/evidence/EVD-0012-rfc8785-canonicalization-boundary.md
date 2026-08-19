@@ -1,13 +1,15 @@
-# EVD-0012：RFC 8785 canonicalization build-contract boundary
+# EVD-0012：历史 RFC 8785 canonicalization build-contract boundary（stale）
 
 - 证据 ID：`EVD-0012`
 - 证明对象：`TASK-P0-002`、`TASK-P0-003`、`ADR-0001`、`ADR-0002`、`REQ-QUAL-007`、`REQ-QUAL-008`、`REQ-SEC-005`、`WORKLOAD_PROFILE-001`、`HARDWARE_PROFILE-001`、`DURABILITY_PROFILE-001`、`FAILURE_PROFILE-001`、`PROFILE_SET-001`、`QUALIFICATION_SET-001`、`OQ-011`、`OQ-012`、`RISK-013`、`RISK-014`、`RISK-016`、`RISK-017`
 - 关联控制：`GATE-001`；只闭合 `INTAKE-B009_RFC8785_CANONICALIZER_NOT_IMPLEMENTED`，不闭合任何业务不变量、运行时 Gate、Profile 接受或生产资格 Gate
 - Observation cutoff：2026-08-19T06:52:37+08:00
 - 实现对象：local-only repository commit `667a859c8dc1f3e72d4ddea1391113c3d2d1c860`，tree `34d3d97b2309f3d5dc4fd50278ba28a751e60e37`
-- Verdict：`partial`
+- Verdict：`stale`
 
-## 1. 本 revision 证明什么
+> 本 artifact 只保留实现 commit `667a859c8dc1f3e72d4ddea1391113c3d2d1c860` 的不可变历史观察。当前实现已推进到 `e4482a4ddd445cc5065af1ea9f2cac993ce80121`（tree `13f4e29a5e2a748da16bf42cbc2945baa5be47e9`），并增加 v3 source contracts、修改 validator、四个脚本、bundle 与 generated evidence，已命中本证据原失效条件。旧 `build/` 仍是 40-case revision 的 stale 输出，不得用于当前提交或发布；当前源码边界由 `EVD-0013 partial` 承接。JCS primitive 的历史结论没有因此被反证。
+
+## 1. 该历史 revision 证明过什么
 
 本 revision 为 Profile intake 与 change contract 增加一个受固定依赖、固定源码和固定测试向量约束的 RFC 8785/JCS canonical-byte primitive。它证明：
 
@@ -16,9 +18,9 @@
 - 官方 `json-canonicalization` corpus 固定到一个 upstream commit，6 组 input/output 同时核验 input digest、output digest、实际 canonical bytes 与 canonical fixed point；
 - 严格包装层在调用所选 JCS engine 前拒绝非法 UTF-8、escaped 或 in-memory lone surrogate、重复对象键、负零、非有限数字以及 byte/depth/node resource limit 越界；
 - Profile value、approval decision payload、change proposed payload 与 compatibility input 后续可以共享同一个可执行 canonicalization/digest primitive；生成的 manifest、dependency graph、SBOM、properties 与 readiness 精确绑定该 primitive；
-- B009 从当前 readiness blocker 列表中移除，且 readiness 明确输出 `verified_for_build_contract` 和精确 engine/corpus tuple。
+- B009 从该历史 revision 的 readiness blocker 列表中移除，且 readiness 明确输出 `verified_for_build_contract` 和精确 engine/corpus tuple。
 
-这里的“已验证”只适用于当前 build-contract canonical-byte primitive。它不意味着任一 source、claim、approval、Profile、Profile Set 或 Qualification Set 已具备生产 authority，也不证明 compatibility、change application、revision/stale graph 或产品运行时语义。
+这里的“已验证”只适用于该历史 revision 的 build-contract canonical-byte primitive。它不意味着任一 source、claim、approval、Profile、Profile Set 或 Qualification Set 已具备生产 authority，也不证明 compatibility、change application、revision/stale graph 或产品运行时语义。
 
 ## 2. 固定实现与供应链边界
 
@@ -40,7 +42,7 @@
 3. artifact 文件名、coordinate、版本和 JAR SHA-256 必须完全匹配；
 4. manifest、CycloneDX component、root dependency edge、configuration property、contract properties 和 v2 readiness 必须给出同一精确 tuple。
 
-SHA-256 仍只证明观察到的内容相同，不证明 publisher identity、provenance、许可证、漏洞状态或持久可取回性。当前没有 remote、upstream、tag、签名、外部 artifact authority 或 retention 保证。
+SHA-256 仍只证明观察到的内容相同，不证明 publisher identity、provenance、许可证、漏洞状态或持久可取回性。该历史 revision 在观察时没有 remote、upstream、tag、签名、外部 artifact authority 或 retention 保证。
 
 ## 3. RFC 8785 与严格包装层
 
@@ -84,7 +86,7 @@ env \
 
 观察到：
 
-- online 与 offline `clean buildContractCheck` 均通过，当前合同共 23 个任务；
+- online 与 offline `clean buildContractCheck` 均通过，该历史合同共 23 个任务；
 - 62 个 repository-policy mutants、42 个 legacy Profile mutants、58 个 v2 intake/lifecycle mutants 与 20 个 remote-authority mutants 全部按各自稳定错误码通过；
 - dependency artifact tamper gate 通过；不同绝对 checkout、独立 Gradle Home、offline 与 unpacked rebuild 的十项输出逐字节一致；
 - RFC gate 报告 26 个 Appendix B rows、6 个 pinned corpus pairs，以及 strict UTF-8/surrogate/duplicate/-0/resource guards 全部通过；
@@ -93,9 +95,9 @@ env \
 
 这些 mutants 是 build-contract 与输入合同的负向测试，不是撮合、Aeron Cluster、HA、容量、故障切换或恢复实验。
 
-## 5. 当前 readiness 与未闭合边界
+## 5. 该历史 revision 的 readiness 与未闭合边界
 
-当前 `profile-readiness-v2.json` 不再包含 B009，并精确记录：
+该历史 revision 的 `profile-readiness-v2.json` 不再包含 B009，并精确记录：
 
 ```json
 {
@@ -137,7 +139,7 @@ env \
 - 路径 `/Users/reln/aeron-cluster-matching-engine`，分支 `main`；HEAD 与 tree 如机器字段所列；
 - `git status --porcelain=v2` 无输出；remote、upstream 与 tag 均不存在；
 - tracked tree 仍没有 `src/`、`services/`、`apps/`、`deploy/`、`docker/`、`k8s/`、`helm/` 或 `infra/` 产品目录；
-- 当前 commit 只交付 canonicalization/build-contract slice，没有撮合、Aeron Cluster、Gateway、容器、部署或生产数据实现。
+- 该历史 commit 只交付 canonicalization/build-contract slice，没有撮合、Aeron Cluster、Gateway、容器、部署或生产数据实现。
 
 观察环境沿用前一 revision 的冻结基线：
 
@@ -164,7 +166,7 @@ env \
 
 主 ZIP 仍为 87 个总 entries、71 个 file entries；v2 input ZIP 为 27 个总 entries、20 个 file entries。最终清单中不得包含 TEST_ONLY、raw telemetry、symlink、路径逃逸、重复条目或未声明文件。
 
-这些摘要证明当前 local-only commit 在上述冻结 runtime、已缓存依赖和构建语义下可逐字节复现。它们不是外部 artifact authority，也不能证明未来 JDK/Gradle/依赖、不同平台或生产环境的结果。
+这些摘要证明该历史 local-only commit 在上述冻结 runtime、已缓存依赖和构建语义下可逐字节复现。它们不是外部 artifact authority，也不能证明未来 JDK/Gradle/依赖、不同平台或生产环境的结果。
 
 ## 8. 失效条件与下一步
 
