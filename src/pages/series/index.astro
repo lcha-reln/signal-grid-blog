@@ -8,7 +8,7 @@ const posts = await getCollection("posts", ({ data }) => !data.draft);
 const activeSeries = getActiveSeries(posts);
 ---
 
-<BaseLayout title="技术专题" description="围绕 Aeron、交易系统、有状态系统可靠性、Java 低延迟、AI Agent 后端工程与生产系统实战组织的学习路径。">
+<BaseLayout title="技术专题" description="围绕 Aeron、交易系统、有状态系统可靠性、Java 低延迟与 AI Agent 后端工程组织的学习路径。">
   <header class="page-hero">
     <span class="eyebrow">STRUCTURED KNOWLEDGE / {String(activeSeries.length).padStart(2, "0")}</span>
     <h1>技术专题</h1>

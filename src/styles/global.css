@@ -1168,7 +1168,6 @@ a {
 
 .path-stage-head h2 {
   margin: 7px 0 0;
-  scroll-margin-top: 100px;
   color: var(--text-strong);
   font-size: clamp(1.45rem, 2.5vw, 2rem);
   letter-spacing: -0.035em;

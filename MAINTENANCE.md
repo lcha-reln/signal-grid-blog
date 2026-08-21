@@ -166,29 +166,22 @@ flowchart LR
 
 Mermaid 只在实际存在图表的页面加载。语法问题不一定让 Astro 构建失败，因此发布前要在浏览器中检查图表，并分别看一次深色和浅色主题。移动端为保留节点文字可读性，图表会保持约 620px 的内部画布并允许横向滚动；文章页面本身不应出现横向溢出。
 
-`pnpm check` 还会遍历 `docs/projects/*/PROJECT_RECORD.md` 并校验每个长期项目记录：ID 定义不能重复或悬空，必须只有一个 `doing` 主任务，当前任务必须与 frontmatter 一致；无 pass 证据的任务不能标为 `done`，字段不完整的 ADR 不能标为 `accepted`，任一生产 Gate 尚未通过时也不能提升生产声明。`pnpm build` 会先执行同一个 check，因此 GitHub Pages 的默认构建入口也不能绕过长期项目门禁。
-
-长期项目每次开工前还必须执行项目恢复协议：先读 Resume Capsule 与当前主任务，再检查真实 HEAD、工作树、CI/部署状态和 review due；从 `reconciliation_base_git_sha` 起把所有变化映射到 Change Log、任务或证据。无法解释的差异必须把记录降为 `needs_reconciliation`，不得继续实现。收工前必须回填 Resume Capsule、任务状态、EVD、风险/ADR 变化和 Append-only Change Log；发布产生的 commit、Pages run 与生产 URL 用后续审计 commit 记录，不能制造自引用 SHA，也不能只留在聊天上下文里。
-
 ### 学习路径归类
 
-`series`、`seriesOrder`，以及实战专题使用的 `seriesStage`，共同构成正式学习路径。公开主线包括：
+`series` 与 `seriesOrder` 是正式学习路径的唯一依据。公开主线包括：
 
 - `aeron`：Aeron 系统工程
 - `trading`：交易系统
 - `availability`：有状态系统可靠性
 - `performance`：Java 低延迟工程
 - `agent`：AI Agent 后端工程
-- `production`：生产系统实战
 - `meta`：站点指南，仅用于站点说明类内容
 
-`seriesOrder` 只负责排序：数值越小越靠前，页面会自动显示连续的 Chapter 编号。使用 10、20、30 这样的间隔值，便于中途插入章节；同一路径内不要重复。它不再承担实战 Project 的身份识别。
+`seriesOrder` 只负责排序：数值越小越靠前，页面会自动显示连续的 Chapter 编号。使用 10、20、30 这样的间隔值，便于中途插入章节；同一路径内不要重复。
 
 标签描述具体产品、组件与概念，例如 Media Driver、Replay、Raft、Kafka、ZooKeeper、Disruptor、STP；标签不决定专题归属。`categories` 仅为兼容早期 Markdown 保留，不在 Pages CMS 或前台导航中展示，新文章不要再填写。若增加新的顶层主线，需要同时修改站点配置、内容 schema、Pages CMS 选项和专题页面。
 
-首页“推荐阅读顺序”由 `src/config.ts` 中的 `PRIMARY_SERIES_KEY` 指定。较长的普通知识专题可在同一文件的专题配置中维护 `stages`，用 `fromOrder` 将文章分成若干阅读阶段；这类文章仍只填写 `series` 和 `seriesOrder`，不要在 frontmatter 重复阶段名称。
-
-若一个顶层专题承载多个相互独立的实战 Project，可在专题配置中设置 `chapterScope: "stage"`。每个 stage 必须有稳定且唯一的 `key`；文章必须显式填写相同的 `seriesStage`，且 `seriesOrder` 必须落在该 stage 与下一 stage 的 `fromOrder` 区间内。每个 Project 内 Chapter 从 01 重新编号，上一篇/下一篇也只在该 Project 内导航。缺少、未知或区间不匹配的 `seriesStage` 都会让构建失败，避免新 Project 被静默并入旧 Project。普通知识专题保持默认的 `chapterScope: "series"` 语义，跨 stage 连续编号。
+首页“推荐阅读顺序”由 `src/config.ts` 中的 `PRIMARY_SERIES_KEY` 指定。较长专题可在同一文件的专题配置中维护 `stages`，用 `fromOrder` 将文章分成若干阅读阶段；文章本身仍只填写 `series` 和 `seriesOrder`，不要在 frontmatter 重复阶段名称。
 
 ## 6. 构建、预览与验收
 
@@ -206,7 +199,7 @@ pnpm build
 
 `pnpm build` 会依次执行：
 
-1. `pnpm check`：先校验所有长期项目记录，再执行 `astro check`
+1. `astro check`
 2. `astro build`
 3. `pagefind --site dist`
 

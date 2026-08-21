@@ -17,7 +17,7 @@ content:
       template: "{year}-{month}-{day}-{primary}.md"
       field: create
     view:
-      fields: [title, series, seriesStage, seriesOrder, date, draft]
+      fields: [title, series, seriesOrder, date, draft]
       primary: title
       sort: [series, seriesOrder, date, title]
       default:
@@ -60,23 +60,15 @@ content:
             - { name: availability, label: 有状态系统可靠性 }
             - { name: performance, label: Java 低延迟工程 }
             - { name: agent, label: AI Agent 后端工程 }
-            - { name: production, label: 生产系统实战 }
             - { name: meta, label: 站点指南 }
         description: 选择文章所属的顶层知识主线；具体组件与概念继续使用标签表示。
-      - name: seriesStage
-        label: Project / 阶段 Key
-        type: string
-        pattern:
-          regex: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
-          message: 请使用专题配置中的小写英文 Key，例如 aeron-cluster-matching-engine。
-        description: 仅 chapterScope 为 stage 的专题必填；必须与 src/config.ts 中的 stage.key 完全一致。普通专题留空。
       - name: seriesOrder
         label: 路径排序
         type: number
         required: true
         options:
           min: 1
-        description: 数值越小越靠前；普通专题连续编号，stage 专题在各 Project 内连续编号。
+        description: 数值越小越靠前；页面会按顺序自动显示连续章节号。
       - name: permalink
         label: 文章地址
         type: string

@@ -9,7 +9,7 @@ export function sitePath(path = ""): string {
 export const SITE = {
   title: "RE-LN / Signal Grid",
   shortTitle: "RE/LN",
-  description: "从 Aeron、交易系统与有状态服务，到 Java 低延迟、生产级 AI Agent 后端工程和可验证的生产系统实战。",
+  description: "从 Aeron、交易系统与有状态服务，到 Java 低延迟和生产级 AI Agent 后端工程。",
   author: "lcha-reln",
   locale: "zh-CN",
   url: "https://lcha-reln.github.io/signal-grid-blog/",
@@ -23,11 +23,9 @@ export type SeriesKey =
   | "availability"
   | "performance"
   | "agent"
-  | "production"
   | "meta";
 
 export interface SeriesStage {
-  key: string;
   index: string;
   eyebrow: string;
   title: string;
@@ -44,7 +42,6 @@ export interface SeriesDefinition {
   outcome: string;
   color: string;
   index: string;
-  chapterScope?: "series" | "stage";
   stages?: readonly SeriesStage[];
 }
 
@@ -73,7 +70,6 @@ export const SERIES: readonly SeriesDefinition[] = [
     index: "01",
     stages: [
       {
-        key: "transport",
         index: "01",
         eyebrow: "AERON TRANSPORT",
         title: "可靠低延迟传输",
@@ -81,7 +77,6 @@ export const SERIES: readonly SeriesDefinition[] = [
         fromOrder: 5,
       },
       {
-        key: "archive",
         index: "02",
         eyebrow: "AERON ARCHIVE",
         title: "录制、回放与可恢复服务",
@@ -89,7 +84,6 @@ export const SERIES: readonly SeriesDefinition[] = [
         fromOrder: 70,
       },
       {
-        key: "cluster",
         index: "03",
         eyebrow: "AERON CLUSTER",
         title: "确定性集群与恢复",
@@ -97,7 +91,6 @@ export const SERIES: readonly SeriesDefinition[] = [
         fromOrder: 120,
       },
       {
-        key: "evolution-failure-lab",
         index: "04",
         eyebrow: "EVOLUTION & FAILURE LAB",
         title: "升级与故障验收",
@@ -117,7 +110,6 @@ export const SERIES: readonly SeriesDefinition[] = [
     index: "02",
     stages: [
       {
-        key: "market-map",
         index: "01",
         eyebrow: "MARKET MAP",
         title: "市场与产品",
@@ -125,7 +117,6 @@ export const SERIES: readonly SeriesDefinition[] = [
         fromOrder: 10,
       },
       {
-        key: "order-flow-risk-market-data",
         index: "02",
         eyebrow: "ORDER FLOW, RISK & MARKET DATA",
         title: "订单、风控、撮合与行情",
@@ -133,7 +124,6 @@ export const SERIES: readonly SeriesDefinition[] = [
         fromOrder: 30,
       },
       {
-        key: "position-settlement-ledger",
         index: "03",
         eyebrow: "POSITION, SETTLEMENT & LEDGER",
         title: "仓位、结算与账本",
@@ -141,7 +131,6 @@ export const SERIES: readonly SeriesDefinition[] = [
         fromOrder: 60,
       },
       {
-        key: "risk-capital",
         index: "04",
         eyebrow: "RISK & CAPITAL",
         title: "保证金与清算",
@@ -149,7 +138,6 @@ export const SERIES: readonly SeriesDefinition[] = [
         fromOrder: 90,
       },
       {
-        key: "synthesis",
         index: "05",
         eyebrow: "SYNTHESIS",
         title: "系统综合",
@@ -169,7 +157,6 @@ export const SERIES: readonly SeriesDefinition[] = [
     index: "03",
     stages: [
       {
-        key: "durability-foundations",
         index: "01",
         eyebrow: "DURABILITY FOUNDATIONS",
         title: "故障模型与本地恢复",
@@ -177,7 +164,6 @@ export const SERIES: readonly SeriesDefinition[] = [
         fromOrder: 10,
       },
       {
-        key: "time-consensus-coordination",
         index: "02",
         eyebrow: "TIME, CONSENSUS & COORDINATION",
         title: "时间、共识与协调",
@@ -185,7 +171,6 @@ export const SERIES: readonly SeriesDefinition[] = [
         fromOrder: 25,
       },
       {
-        key: "logs-continuity",
         index: "03",
         eyebrow: "LOGS & CONTINUITY",
         title: "分布式日志与消息连续性",
@@ -193,7 +178,6 @@ export const SERIES: readonly SeriesDefinition[] = [
         fromOrder: 50,
       },
       {
-        key: "recovery-evolution-proof",
         index: "04",
         eyebrow: "RECOVERY, EVOLUTION & PROOF",
         title: "检查点、灾备与验证",
@@ -213,7 +197,6 @@ export const SERIES: readonly SeriesDefinition[] = [
     index: "04",
     stages: [
       {
-        key: "correctness-evidence",
         index: "01",
         eyebrow: "CORRECTNESS & EVIDENCE",
         title: "并发正确性与性能证据",
@@ -221,7 +204,6 @@ export const SERIES: readonly SeriesDefinition[] = [
         fromOrder: 10,
       },
       {
-        key: "jvm-linux-runtime",
         index: "02",
         eyebrow: "JVM & LINUX RUNTIME",
         title: "机器、JVM 与 Linux 运行时",
@@ -229,7 +211,6 @@ export const SERIES: readonly SeriesDefinition[] = [
         fromOrder: 30,
       },
       {
-        key: "data-path-toolkit",
         index: "03",
         eyebrow: "DATA PATH TOOLKIT",
         title: "事件通路与执行模型",
@@ -249,7 +230,6 @@ export const SERIES: readonly SeriesDefinition[] = [
     index: "05",
     stages: [
       {
-        key: "engineering-foundations",
         index: "01",
         eyebrow: "ENGINEERING FOUNDATIONS",
         title: "系统边界与后端基础",
@@ -257,7 +237,6 @@ export const SERIES: readonly SeriesDefinition[] = [
         fromOrder: 100,
       },
       {
-        key: "model-contracts",
         index: "02",
         eyebrow: "MODEL CONTRACTS",
         title: "模型接口与结构化契约",
@@ -265,7 +244,6 @@ export const SERIES: readonly SeriesDefinition[] = [
         fromOrder: 200,
       },
       {
-        key: "tool-runtime",
         index: "03",
         eyebrow: "TOOL RUNTIME",
         title: "工具调用与权限边界",
@@ -273,7 +251,6 @@ export const SERIES: readonly SeriesDefinition[] = [
         fromOrder: 300,
       },
       {
-        key: "retrieval-grounding",
         index: "04",
         eyebrow: "RETRIEVAL & GROUNDING",
         title: "RAG 与知识治理",
@@ -281,7 +258,6 @@ export const SERIES: readonly SeriesDefinition[] = [
         fromOrder: 400,
       },
       {
-        key: "orchestration-durability",
         index: "05",
         eyebrow: "ORCHESTRATION & DURABILITY",
         title: "编排、状态与持久化",
@@ -289,7 +265,6 @@ export const SERIES: readonly SeriesDefinition[] = [
         fromOrder: 500,
       },
       {
-        key: "evaluation",
         index: "06",
         eyebrow: "EVALUATION",
         title: "Agent Eval 与回归判断",
@@ -297,7 +272,6 @@ export const SERIES: readonly SeriesDefinition[] = [
         fromOrder: 600,
       },
       {
-        key: "security-interoperability",
         index: "07",
         eyebrow: "SECURITY & INTEROPERABILITY",
         title: "安全、Policy 与 MCP",
@@ -305,33 +279,11 @@ export const SERIES: readonly SeriesDefinition[] = [
         fromOrder: 700,
       },
       {
-        key: "production-systems",
         index: "08",
         eyebrow: "PRODUCTION SYSTEMS",
         title: "可观测、可靠性与平台化",
         description: "建立 Trace、SLO、容量、发布、隔离和事故恢复能力，并抽取稳定的平台边界。",
         fromOrder: 800,
-      },
-    ],
-  },
-  {
-    key: "production",
-    title: "生产系统实战",
-    eyebrow: "PRODUCTION BUILDS",
-    description: "不以能启动的 Demo 为终点，而是沿同一套代码持续交付可部署、可压测、可恢复、可升级并能用证据判断是否具备上线资格的生产系统。",
-    prerequisite: "先完成对应概念主线中的关键章节；Project 01 建议具备 Java、Linux、Aeron Cluster、交易订单语义、状态机可靠性与低延迟测量基础。",
-    outcome: "能够把需求、不变量、协议、代码、部署、SLO、故障实验和恢复证据串成一条完整交付链，并明确区分“可以运行”与“已经证明可以上线”。",
-    color: "lime",
-    index: "06",
-    chapterScope: "stage",
-    stages: [
-      {
-        key: "aeron-cluster-matching-engine",
-        index: "01",
-        eyebrow: "PROJECT 01 / AERON CLUSTER",
-        title: "Aeron Cluster 高可用撮合系统",
-        description: "从生产合同和代码骨架出发，逐步构建确定性撮合、Gateway、三节点复制、Snapshot、事件出口、故障恢复、容量验证与上线门禁。",
-        fromOrder: 1000,
       },
     ],
   },

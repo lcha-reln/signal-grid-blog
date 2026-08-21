@@ -1,8 +1,8 @@
 # Signal Grid 学习路径
 
-这份文件记录专题的 canonical 阅读顺序。普通知识专题按 `seriesOrder` 生成跨阶段连续的 Chapter 编号；`chapterScope: "stage"` 的实战专题则按显式 `seriesStage` 归入 Project，并在每个 Project 内从 Chapter 01 重新编号。修改标题或文件名时，不应同时改变已经发布的 `permalink`。
+这份文件记录专题的 canonical 阅读顺序。页面中的连续 Chapter 编号由 `seriesOrder` 排序后生成；修改标题或文件名时，不应同时改变已经发布的 `permalink`。
 
-顶层专题只表达已经形成系统课程的稳定知识主线：`aeron`、`trading`、`availability`、`performance`、`agent`、`production`。普通产品或组件名仍使用 `tags` 表示；Aeron 因同时覆盖 Transport、Archive 与 Cluster 的完整系统栈，单独形成顶层学习路径；`production` 则只收录沿同一代码库交付、带明确上线证据门禁的长期实战项目。`categories` 仅为兼容早期文章保留，不参与前台导航。
+顶层专题只表达已经形成系统课程的稳定知识主线：`aeron`、`trading`、`availability`、`performance`、`agent`。普通产品或组件名仍使用 `tags` 表示；Aeron 因同时覆盖 Transport、Archive 与 Cluster 的完整系统栈，单独形成顶层学习路径。`categories` 仅为兼容早期文章保留，不参与前台导航。
 
 ## Aeron 系统工程
 
@@ -108,13 +108,3 @@
 | 系统边界与后端基础 | 01 | 100 | AI Agent 后端工程地图：概率模型与确定性系统的边界 | `ai-agent-backend-engineering-map` |
 
 这条路径研究的不是怎样把更多 Prompt 和工具堆进循环，而是怎样把概率模型放进一个状态明确、权限受控、可以恢复、能够评测并且便于审计的后端系统。Chapter 01 先划清模型、Workflow、Agent Runtime、Tool Gateway、领域系统和生产治理的职责；后续章节会沿模型契约、工具运行时、RAG、持久化编排、Eval、安全与平台化逐层展开。完整的 42 篇 canonical 规划记录在 [AI Agent 后端工程博客系列规划](./AI_AGENT_BACKEND_SERIES_PLAN.md)。
-
-## 生产系统实战
-
-| 项目 | Chapter | `seriesStage` | `seriesOrder` | 标题 | `permalink` |
-| --- | ---: | --- | ---: | --- | --- |
-| Project 01 · Aeron Cluster 高可用撮合 | 01 | `aeron-cluster-matching-engine` | 1000 | 生产级 Aeron Cluster 高可用撮合实战：项目合同、系统边界与交付路线 | `production-aeron-cluster-matching-engine-project` |
-
-这条路径不重复讲一遍 Aeron、交易系统、可靠性或 Java 性能原理，而是把它们作为前置知识，沿同一个版本化代码库交付真实系统。每篇实战文章必须显式声明表中的 `seriesStage`；`seriesOrder` 只负责在对应 Project 的数值区间内排序，不能代替 Project 身份。不同 Project 独立编号，也不会互相生成上一篇/下一篇导航。
-
-Project 01 以 Aeron Cluster 为复制与高可用核心，目标是构建能够接受明确工作负载、经受节点与网络故障、恢复到可证明状态，并在目标硬件上通过容量、尾延迟、安全、升级和灾备门禁的撮合系统。当前只建立了项目合同与实施框架，尚未宣称实现具备生产上线资格；未发布章节、需求、不变量、ADR、风险和证据状态统一记录在 [PROJECT_RECORD](./projects/aeron-cluster-matching-engine/PROJECT_RECORD.md)。
