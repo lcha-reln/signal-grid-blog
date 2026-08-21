@@ -1,4 +1,4 @@
-# EVD-0013：change/revision/effective-state 源码结构边界
+# EVD-0013：change/revision/effective-state 源码结构边界（历史，stale）
 
 - 证据 ID：`EVD-0013`
 - 证明对象：`TASK-P0-002`、`TASK-P0-003`、`ADR-0001`、`ADR-0002`、`REQ-QUAL-007`、`REQ-QUAL-008`、`REQ-SEC-005`、`WORKLOAD_PROFILE-001`、`HARDWARE_PROFILE-001`、`DURABILITY_PROFILE-001`、`FAILURE_PROFILE-001`、`PROFILE_SET-001`、`QUALIFICATION_SET-001`、`OQ-011`、`OQ-012`、`RISK-013`、`RISK-014`、`RISK-016`、`RISK-017`
@@ -6,7 +6,9 @@
 - Observation cutoff：2026-08-19T09:14:09+08:00
 - 实现对象：local-only repository commit `e4482a4ddd445cc5065af1ea9f2cac993ce80121`，tree `13f4e29a5e2a748da16bf42cbc2945baa5be47e9`
 - Artifact URI：`none`
-- Verdict：`partial`
+- Verdict：`stale`
+- Stale at：2026-08-21T10:40:43+08:00
+- 失效事实：当前实现 commit 未变化，但最终一次 `bash scripts/verify-all.sh` 已在固定 Temurin 25.0.4+7 环境完整返回 0，并产生与本 artifact 当时未执行状态不同的 2/7/42 与复现输出。该事件命中本证据第 7 节的失效条件；当前运行观察由 `EVD-0014 partial` 承接。以下内容保留 2026-08-19 observation cutoff 上的原始历史边界，不回写成后见之明。
 
 ## 1. 本 revision 静态证明什么
 
