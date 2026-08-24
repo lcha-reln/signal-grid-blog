@@ -2,7 +2,7 @@
 title: "AI Agent 后端工程地图：概率模型与确定性系统的边界"
 description: "从模型调用、RAG、Workflow 到 Agent Runtime，系统拆解概率模型进入确定性后端时的架构分层、状态归属、工具信任边界、副作用恢复、评测与生产治理。"
 date: 2026-08-17T15:22:25+08:00
-updated: 2026-08-17T17:45:00+08:00
+updated: 2026-08-24T11:30:00+08:00
 tags:
   - AI Agent
   - Agent Runtime
@@ -757,6 +757,8 @@ Maker-Checker 的 Checker 必须拥有独立规则、证据和否决权。对于
 AI Agent 的价值来自概率能力：它能在自然语言、开放证据和难以穷举的路径里工作。生产后端的价值来自确定性边界：它知道谁能做什么，状态属于哪里，失败意味着什么，怎样恢复，以及用什么证据证明系统仍然可信。
 
 真正成熟的 Agent 系统，不是让模型变成无所不能的控制器，而是让它在清晰、狭窄、可观察的边界中发挥长处。
+
+下一篇：[Python AI 后端：类型、Pydantic、精确数值与可复现工程](/signal-grid-blog/posts/python-ai-backend-typing-pydantic/)，把本章的“确定性外壳”落实为可执行的类型、运行时 Schema、领域不变量和环境证据。
 
 ## 附录：42 篇教程怎样展开这张地图
 

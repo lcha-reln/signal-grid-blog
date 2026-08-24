@@ -106,5 +106,6 @@
 | 阶段 | Chapter | `seriesOrder` | 标题 | `permalink` |
 | --- | ---: | ---: | --- | --- |
 | 系统边界与后端基础 | 01 | 100 | AI Agent 后端工程地图：概率模型与确定性系统的边界 | `ai-agent-backend-engineering-map` |
+| 系统边界与后端基础 | 02 | 110 | Python AI 后端：类型、Pydantic、精确数值与可复现工程 | `python-ai-backend-typing-pydantic` |
 
-这条路径研究的不是怎样把更多 Prompt 和工具堆进循环，而是怎样把概率模型放进一个状态明确、权限受控、可以恢复、能够评测并且便于审计的后端系统。Chapter 01 先划清模型、Workflow、Agent Runtime、Tool Gateway、领域系统和生产治理的职责；后续章节会沿模型契约、工具运行时、RAG、持久化编排、Eval、安全与平台化逐层展开。完整的 42 篇 canonical 规划记录在 [AI Agent 后端工程博客系列规划](./AI_AGENT_BACKEND_SERIES_PLAN.md)。
+这条路径研究的不是怎样把更多 Prompt 和工具堆进循环，而是怎样把概率模型放进一个状态明确、权限受控、可以恢复、能够评测并且便于审计的后端系统。Chapter 01 先划清模型、Workflow、Agent Runtime、Tool Gateway、领域系统和生产治理的职责；Chapter 02 再把确定性边界落实为 Python 类型关系、Pydantic 运行时 Schema、精确领域值、事务约束与可复现环境。后续章节会沿可靠异步、模型契约、工具运行时、RAG、持久化编排、Eval、安全与平台化逐层展开。完整的 42 篇 canonical 规划记录在 [AI Agent 后端工程博客系列规划](./AI_AGENT_BACKEND_SERIES_PLAN.md)。
