@@ -51,6 +51,7 @@ export interface PracticeCase {
   plannedRepositories: number;
   stack: readonly string[];
   theoryPath: string;
+  theoryLabel: string;
   currentUnit?: PracticeCurrentUnit;
   currentAction: string;
   trackNarrative: string;
@@ -81,6 +82,7 @@ export const PRACTICE_CASES: readonly PracticeCase[] = [
     plannedRepositories: 3,
     stack: ["Java", "Aeron Cluster", "Gradle", "Docker", "Astro Labs"],
     theoryPath: "series/trading/",
+    theoryLabel: "查看交易系统理论",
     currentUnit: {
       code: "M00",
       trackCode: "M",

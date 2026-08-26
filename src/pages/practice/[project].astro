@@ -151,7 +151,7 @@ const startUrl = currentTrack?.repositoryUrl && currentUnit?.startRef
     </p>
     <div class="hero-actions">
       {startUrl && <a class="button primary" href={startUrl} target="_blank" rel="noreferrer">查看不可移动起点 <span>↗</span></a>}
-      <a class="button ghost" href={sitePath(practiceCase.theoryPath)}>查看交易系统理论</a>
+      <a class="button ghost" href={sitePath(practiceCase.theoryPath)}>{practiceCase.theoryLabel}</a>
     </div>
   </section>
 </BaseLayout>

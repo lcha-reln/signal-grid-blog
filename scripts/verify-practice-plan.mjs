@@ -25,6 +25,7 @@ function assertIncludes(haystack, needle, context) {
 }
 
 const slugs = new Set();
+const caseIndexes = new Set();
 const designDocuments = new Set();
 const repositoryUrls = new Set();
 
@@ -32,6 +33,9 @@ for (const practiceCase of PRACTICE_CASES) {
   assert(/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(practiceCase.slug), `${practiceCase.slug}: invalid slug`);
   assert(!slugs.has(practiceCase.slug), `${practiceCase.slug}: duplicate slug`);
   slugs.add(practiceCase.slug);
+  assert(/^\d+$/.test(practiceCase.index), `${practiceCase.slug}: invalid case index`);
+  assert(!caseIndexes.has(practiceCase.index), `${practiceCase.slug}: duplicate case index`);
+  caseIndexes.add(practiceCase.index);
 
   const validDesignDocument =
     /^docs\/[A-Za-z0-9_./-]+\.md$/.test(practiceCase.designDocument) &&
@@ -54,17 +58,32 @@ for (const practiceCase of PRACTICE_CASES) {
   const trackCodes = new Set();
   const milestoneVersions = new Set();
 
+  assert(practiceCase.tracks.length > 0, `${practiceCase.slug}: no tracks`);
+  assert(Number.isInteger(practiceCase.totalUnits) && practiceCase.totalUnits > 0, `${practiceCase.slug}: invalid totalUnits`);
   assert(practiceCase.totalUnits === unitTotal, `${practiceCase.slug}: totalUnits does not equal track units`);
   assert(
     Number.isInteger(practiceCase.plannedRepositories) && practiceCase.plannedRepositories >= createdRepositories,
     `${practiceCase.slug}: plannedRepositories is smaller than the visible repository count`,
   );
-  assert(practiceCase.publishedUnits >= 0, `${practiceCase.slug}: publishedUnits is negative`);
+  assert(Number.isInteger(practiceCase.publishedUnits) && practiceCase.publishedUnits >= 0, `${practiceCase.slug}: invalid publishedUnits`);
   assert(practiceCase.publishedUnits <= practiceCase.totalUnits, `${practiceCase.slug}: publishedUnits exceeds totalUnits`);
   assert(/^\d+\.\d+$/.test(practiceCase.planVersion), `${practiceCase.slug}: invalid planVersion`);
+  assert(typeof practiceCase.statusLabel === "string" && practiceCase.statusLabel.trim(), `${practiceCase.slug}: empty statusLabel`);
+  assert(typeof practiceCase.currentAction === "string" && practiceCase.currentAction.trim(), `${practiceCase.slug}: empty currentAction`);
+  assert(typeof practiceCase.trackNarrative === "string" && practiceCase.trackNarrative.trim(), `${practiceCase.slug}: empty trackNarrative`);
+  assert(typeof practiceCase.theoryLabel === "string" && practiceCase.theoryLabel.trim(), `${practiceCase.slug}: empty theoryLabel`);
 
   if (practiceCase.status === "PLANNED") {
     assert(activeTracks.length === 0, `${practiceCase.slug}: PLANNED cannot expose an ACTIVE track`);
+    if (currentUnit) {
+      assert(
+        currentUnit.lifecycle === "CANDIDATE" ||
+          currentUnit.lifecycle === "CONTRACTED" ||
+          currentUnit.lifecycle === "READY",
+        `${practiceCase.slug}: PLANNED has an implementation lifecycle`,
+      );
+      assert(currentTrack?.status === "NEXT", `${practiceCase.slug}: PLANNED current track is not NEXT`);
+    }
   }
   if (practiceCase.status === "BUILDING") {
     assert(activeTracks.length === 1, `${practiceCase.slug}: BUILDING requires exactly one ACTIVE track`);
@@ -78,14 +97,21 @@ for (const practiceCase of PRACTICE_CASES) {
         currentUnit?.lifecycle === "PUBLISHED",
       `${practiceCase.slug}: BUILDING has an invalid current unit lifecycle`,
     );
+    assert(practiceCase.statusLabel.includes(currentUnit?.code ?? ""), `${practiceCase.slug}: BUILDING statusLabel omits current unit`);
   }
   if (practiceCase.status === "VERIFIED") {
     assert(activeTracks.length === 0, `${practiceCase.slug}: VERIFIED cannot expose an ACTIVE track`);
     assert(completeTracks.length === practiceCase.tracks.length, `${practiceCase.slug}: VERIFIED requires complete tracks`);
     assert(practiceCase.publishedUnits === practiceCase.totalUnits, `${practiceCase.slug}: VERIFIED requires all units published`);
+    if (currentUnit) {
+      assert(currentUnit.lifecycle === "PUBLISHED", `${practiceCase.slug}: VERIFIED current unit is not PUBLISHED`);
+      assert(currentTrack?.status === "COMPLETE", `${practiceCase.slug}: VERIFIED current track is not COMPLETE`);
+    }
   }
 
   if (currentUnit) {
+    assert(typeof currentUnit.code === "string" && currentUnit.code.trim(), `${practiceCase.slug}: empty current unit code`);
+    assert(typeof currentUnit.title === "string" && currentUnit.title.trim(), `${practiceCase.slug}: empty current unit title`);
     assert(currentTrack, `${practiceCase.slug}: currentUnit points to an unknown track`);
     assert(currentUnit.code.startsWith(currentUnit.trackCode), `${practiceCase.slug}: current unit and track codes disagree`);
     if (lifecyclesRequiringStartRef.has(currentUnit.lifecycle)) {
@@ -94,22 +120,31 @@ for (const practiceCase of PRACTICE_CASES) {
       assert(!currentUnit.startRef, `${practiceCase.slug}: ${currentUnit.lifecycle} cannot expose a startRef`);
     }
     if (currentUnit.startRef) {
+      assert(/^course\/[a-z0-9]+(?:\.[0-9]+)?-start$/.test(currentUnit.startRef), `${practiceCase.slug}: invalid startRef`);
       assert(currentTrack?.repositoryUrl, `${practiceCase.slug}: startRef has no current repository`);
     }
+    const supersededRefs = new Set();
     for (const superseded of currentUnit.supersededStartRefs ?? []) {
       assert(currentUnit.startRef, `${practiceCase.slug}: superseded start ref has no canonical startRef`);
       assert(superseded.ref && superseded.reason, `${practiceCase.slug}: incomplete superseded start ref`);
       assert(superseded.ref !== currentUnit.startRef, `${practiceCase.slug}: canonical start ref supersedes itself`);
+      assert(!supersededRefs.has(superseded.ref), `${practiceCase.slug}: duplicate superseded start ref`);
+      supersededRefs.add(superseded.ref);
       assertIncludes(design, superseded.ref, `${practiceCase.slug} superseded start ref`);
       assertIncludes(design, superseded.reason, `${practiceCase.slug} superseded start reason`);
     }
   }
 
   for (const track of practiceCase.tracks) {
+    assert(typeof track.code === "string" && track.code.trim(), `${practiceCase.slug}: empty track code`);
+    assert(Number.isInteger(track.units) && track.units > 0, `${practiceCase.slug}/${track.code}: invalid unit count`);
     assert(!trackCodes.has(track.code), `${practiceCase.slug}: duplicate track code ${track.code}`);
     trackCodes.add(track.code);
     if (track.status === "LOCKED") {
       assert(!track.repositoryUrl, `${practiceCase.slug}/${track.code}: LOCKED track exposes a repository`);
+    }
+    if (track.status === "ACTIVE" || track.status === "COMPLETE") {
+      assert(track.repositoryUrl, `${practiceCase.slug}/${track.code}: ${track.status} track has no repository`);
     }
     if (track.repositoryUrl) {
       assert(/^https:\/\/github\.com\/[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(track.repositoryUrl), `${practiceCase.slug}/${track.code}: invalid GitHub repository URL`);

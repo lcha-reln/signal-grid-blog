@@ -190,7 +190,7 @@ Mermaid 只在实际存在图表的页面加载。语法问题不一定让 Astro
 - 实战案例元数据暂时维护在 `src/practice/config.ts`；每个案例通过自己的 `designDocument` 指向设计稿，不共享某一案例的硬编码路径。
 - 高可用 CEX 的范围、课程含义和治理维护在 `docs/HIGH_AVAILABILITY_CEX_PRACTICE_PLAN.md`；`src/practice/config.ts` 维护带 `planVersion` 的机器可读公开状态、规划数量与里程碑。两者必须在同一次变更中同步。规划仓库数是独立项目决策，不从 track 数量推导。
 - 只有范围、单元合同或课程语义变化才提高 `planVersion`；生命周期、仓库 URL、固定 tag 和 evidence 链接属于实施状态，不单独制造计划版本。
-- `PLANNED` 案例可以没有 `currentUnit`；只有进入 `READY` 或更晚生命周期的单元才必须公开 `startRef`，页面和 verifier 都必须支持这种未开工状态。
+- `PLANNED` 案例可以没有 `currentUnit`；若有，只能处于 `CANDIDATE`、`CONTRACTED` 或 `READY`。`BUILDING` 必须对应唯一 `ACTIVE` track 和实施中单元，`VERIFIED` 只能保留已 `PUBLISHED` 的末单元。只有进入 `READY` 或更晚生命周期的单元才必须公开 `startRef`。
 - `scripts/verify-practice-plan.mjs` 按案例校验各自的设计稿、配置和可选静态产物。它不得读取、checkout 或联网访问课程代码仓库；跨仓 tag 的存在性只在发布前独立核验。
 - 案例总入口为 `src/pages/practice/index.astro`。
 - 项目驾驶舱由 `src/pages/practice/[project].astro` 静态生成。

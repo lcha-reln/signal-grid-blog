@@ -38,10 +38,10 @@ const repositoryCount = PRACTICE_CASES.reduce((sum, practiceCase) => sum + pract
         <li><span>01</span><div><strong>READ</strong><small>机制与可执行规格</small></div></li>
         <li><span>02</span><div><strong>PREDICT</strong><small>先判断事件与故障结果</small></div></li>
         <li><span>03</span><div><strong>BUILD</strong><small>在独立仓库完成累计实现</small></div></li>
-        <li><span>04</span><div><strong>VERIFY</strong><small>本地测试、Cluster 与故障门禁</small></div></li>
+        <li><span>04</span><div><strong>VERIFY</strong><small>本地测试、集群与故障门禁</small></div></li>
         <li><span>05</span><div><strong>REVIEW</strong><small>导出证据并复盘边界</small></div></li>
       </ol>
-      <p>网页负责解释和确定性模拟；Java、Aeron 与故障实验只在读者本机运行。</p>
+      <p>网页负责解释和确定性模拟；真实编译、集群与故障实验只在读者本机运行。</p>
     </div>
   </header>
 
@@ -104,7 +104,7 @@ const repositoryCount = PRACTICE_CASES.reduce((sum, practiceCase) => sum + pract
         <span class="practice-plane">IN BROWSER</span>
         <h3>理解与推演</h3>
         <ul>
-          <li>订单簿、账务和故障时间线的确定性可视化</li>
+          <li>状态、事件和故障时间线的确定性可视化</li>
           <li>预测检查点、边界题和反例重放</li>
           <li>轻量状态保存在本机，必要时导入实验结果</li>
         </ul>
@@ -113,8 +113,8 @@ const repositoryCount = PRACTICE_CASES.reduce((sum, practiceCase) => sum + pract
         <span class="practice-plane">ON YOUR MACHINE</span>
         <h3>实现与证明</h3>
         <ul>
-          <li>Gradle Wrapper 编译、测试与基准</li>
-          <li>本地三节点 Aeron Cluster 和 Docker Compose</li>
+          <li>项目自带构建工具的编译、测试与基准</li>
+          <li>本地多进程或多节点拓扑与容器环境</li>
           <li>受控故障脚本、状态摘要与证据导出</li>
         </ul>
       </article>
