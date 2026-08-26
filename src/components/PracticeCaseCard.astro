@@ -1,0 +1,38 @@
+---
+import { sitePath } from "../config";
+import type { PracticeCase } from "../practice/config";
+
+interface Props {
+  practiceCase: PracticeCase;
+  headingLevel?: 2 | 3;
+}
+
+const { practiceCase, headingLevel = 2 } = Astro.props;
+---
+
+<article class:list={["practice-case-card", `status-${practiceCase.status.toLowerCase()}`]}>
+  <a href={sitePath(`practice/${practiceCase.slug}/`)}>
+    <header class="practice-case-card-head">
+      <span>CASE {practiceCase.index}</span>
+      <span class="practice-status"><i aria-hidden="true"></i>{practiceCase.statusLabel}</span>
+    </header>
+
+    <div class="practice-case-card-copy">
+      <span class="eyebrow">{practiceCase.eyebrow}</span>
+      {headingLevel === 2 ? <h2>{practiceCase.title}</h2> : <h3>{practiceCase.title}</h3>}
+      <p>{practiceCase.summary}</p>
+      <ul class="practice-stack" aria-label="主要技术栈">
+        {practiceCase.stack.map((item) => <li>{item}</li>)}
+      </ul>
+    </div>
+
+    <footer class="practice-case-card-footer">
+      <dl>
+        <div><dt>{String(practiceCase.repositories).padStart(2, "0")}</dt><dd>规划仓库</dd></div>
+        <div><dt>{String(practiceCase.totalUnits).padStart(2, "0")}</dt><dd>候选单元</dd></div>
+        <div><dt>{String(practiceCase.publishedUnits).padStart(2, "0")}</dt><dd>已经发布</dd></div>
+      </dl>
+      <span>打开项目驾驶舱 <i aria-hidden="true">→</i></span>
+    </footer>
+  </a>
+</article>

@@ -1,0 +1,139 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { sitePath } from "../../config";
+import { PRACTICE_CASES, type PracticeCase } from "../../practice/config";
+import "../../styles/practice.css";
+
+export function getStaticPaths() {
+  return PRACTICE_CASES.map((practiceCase) => ({
+    params: { project: practiceCase.slug },
+    props: { practiceCase },
+  }));
+}
+
+interface Props {
+  practiceCase: PracticeCase;
+}
+
+const { practiceCase } = Astro.props;
+const progressLabel = `${practiceCase.publishedUnits} / ${practiceCase.totalUnits}`;
+---
+
+<BaseLayout title={practiceCase.title} description={practiceCase.summary}>
+  <header class="case-hero shell">
+    <div class="case-hero-main">
+      <a class="case-back" href={sitePath("practice/")}>← 返回实战案例</a>
+      <span class="eyebrow">CASE {practiceCase.index} / {practiceCase.eyebrow}</span>
+      <h1>{practiceCase.title}</h1>
+      <p>{practiceCase.summary}</p>
+      <ul class="practice-stack" aria-label="主要技术栈">
+        {practiceCase.stack.map((item) => <li>{item}</li>)}
+      </ul>
+    </div>
+    <aside class="case-status-card" aria-label="项目当前状态">
+      <span>PROJECT STATUS · PLAN v{practiceCase.planVersion}</span>
+      <strong><i aria-hidden="true"></i>{practiceCase.statusLabel}</strong>
+      <dl>
+        <div><dt>{progressLabel}</dt><dd>已发布 / 当前规划</dd></div>
+        <div><dt>{practiceCase.repositories}</dt><dd>规划仓库</dd></div>
+        <div><dt>LOCAL</dt><dd>工程执行</dd></div>
+      </dl>
+      <p>{practiceCase.currentAction}</p>
+    </aside>
+  </header>
+
+  <section class="section case-profile" aria-labelledby="case-profile-heading">
+    <div class="case-section-head">
+      <span class="section-index">01</span>
+      <div>
+        <span class="eyebrow">COMMERCIAL PROFILE</span>
+        <h2 id="case-profile-heading">{practiceCase.profile}</h2>
+      </div>
+      <p>终局能力可以完整规划，但代码和教程永远只推进当前一个交付单元。</p>
+    </div>
+    <div class="case-scope-grid">
+      <article>
+        <span>IN SCOPE</span>
+        <ul>{practiceCase.included.map((item) => <li>{item}</li>)}</ul>
+      </article>
+      <article>
+        <span>NOT IN THIS PROFILE</span>
+        <ul>{practiceCase.excluded.map((item) => <li>{item}</li>)}</ul>
+      </article>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="case-tracks-heading">
+    <div class="case-section-head">
+      <span class="section-index">02</span>
+      <div>
+        <span class="eyebrow">DEPENDENCY ROUTE</span>
+        <h2 id="case-tracks-heading">Matching → Counter → Rest</h2>
+      </div>
+      <p>三个项目分别建仓、顺序出现；没有巨型单仓，也没有预建空服务。</p>
+    </div>
+    <div class="case-track-grid">
+      {practiceCase.tracks.map((track, index) => (
+        <article class:list={["case-track", `track-${track.status.toLowerCase()}`]}>
+          <header><span>{track.code}</span><small>{track.status}</small></header>
+          <h3>{track.title}</h3>
+          <p>{track.description}</p>
+          <footer><strong>{String(track.units).padStart(2, "0")} CANDIDATE UNITS</strong><span>{track.unlock}</span></footer>
+          {index < practiceCase.tracks.length - 1 && <i class="track-arrow" aria-hidden="true">→</i>}
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="case-milestones-heading">
+    <div class="case-section-head">
+      <span class="section-index">03</span>
+      <div>
+        <span class="eyebrow">STOP POINTS</span>
+        <h2 id="case-milestones-heading">每一段都能独立交付</h2>
+      </div>
+      <p>停止点必须公开当前具备什么，也必须公开还不具备什么。</p>
+    </div>
+    <ol class="case-milestones">
+      {practiceCase.milestones.map((milestone, index) => (
+        <li>
+          <span>{String(index + 1).padStart(2, "0")}</span>
+          <div><small>{milestone.version}</small><h3>{milestone.title}</h3><p>{milestone.description}</p></div>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <section class="section" aria-labelledby="case-labs-heading">
+    <div class="case-section-head">
+      <span class="section-index">04</span>
+      <div>
+        <span class="eyebrow">HYBRID LABS</span>
+        <h2 id="case-labs-heading">网页推演，本地实证</h2>
+      </div>
+      <p>网站不上传源码、不连接远程 Judge，也不会用动画冒充真实系统正确性。</p>
+    </div>
+    <div class="case-lab-grid">
+      <article>
+        <span>WEB / DETERMINISTIC</span>
+        <h3>浏览器互动</h3>
+        <ul>{practiceCase.browserLabs.map((item) => <li>{item}</li>)}</ul>
+      </article>
+      <article>
+        <span>LOCAL / AUTHORITATIVE</span>
+        <h3>本地工程实验</h3>
+        <ul>{practiceCase.localLabs.map((item) => <li>{item}</li>)}</ul>
+      </article>
+    </div>
+  </section>
+
+  <section class="section case-next" aria-labelledby="case-next-heading">
+    <span class="eyebrow">NEXT VERIFIED MOVE</span>
+    <h2 id="case-next-heading">从 M00 的可执行规格开始</h2>
+    <p>M00 只建立命令输入、验证与确定性历史；M01 是下一候选。M02 以后只保留可调整的能力地图，不提前冻结实现。</p>
+    <div class="hero-actions">
+      <span class="button primary button-disabled" aria-disabled="true">首个单元准备中</span>
+      <a class="button ghost" href={sitePath(practiceCase.theoryPath)}>查看交易系统理论</a>
+    </div>
+  </section>
+</BaseLayout>

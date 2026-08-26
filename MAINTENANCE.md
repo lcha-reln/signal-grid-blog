@@ -183,6 +183,25 @@ Mermaid 只在实际存在图表的页面加载。语法问题不一定让 Astro
 
 首页“推荐阅读顺序”由 `src/config.ts` 中的 `PRIMARY_SERIES_KEY` 指定。较长专题可在同一文件的专题配置中维护 `stages`，用 `fromOrder` 将文章分成若干阅读阶段；文章本身仍只填写 `series` 和 `seriesOrder`，不要在 frontmatter 重复阶段名称。
 
+### 实战案例专区
+
+`/signal-grid-blog/practice/` 是独立于文章归档和理论专题的项目制教学入口。它回答“如何从零交付一个经过验证的完整系统”，不应伪装成新的 `series` 或继续塞进 `posts`。
+
+- 实战案例元数据暂时维护在 `src/practice/config.ts`。
+- 高可用 CEX 的范围、课程含义和治理维护在 `docs/HIGH_AVAILABILITY_CEX_PRACTICE_PLAN.md`；`src/practice/config.ts` 维护带 `planVersion` 的机器可读公开状态、规划数量与里程碑。两者必须在同一次变更中同步。
+- 案例总入口为 `src/pages/practice/index.astro`。
+- 项目驾驶舱由 `src/pages/practice/[project].astro` 静态生成。
+- 当前只发布已经确认的案例和阶段地图，不为未来章节创建空 Markdown、空模块或虚假完成度。
+- 第一篇实战教程开始编写时，应新增独立的实战内容 collection 和 CMS 表单；不要让实战章节进入博客文章归档与主 RSS。
+
+互动采用本地优先的混合模式：
+
+- 网页负责讲解、预测题、确定性模拟、事件回放和本地证据展示。
+- Java 编译、Aeron Cluster、Docker、性能测试和故障注入由读者在独立代码仓库本地运行。
+- 站点不上传学习者源码，不连接远程 Judge，也不使用网页动画冒充真实工程验收。
+
+实战页面、实验资源和 Worker URL 同样必须遵守 `/signal-grid-blog/` base；组件链接使用 `sitePath()`，按需加载的资源使用 `import.meta.env.BASE_URL` 或 `new URL(..., import.meta.url)`。
+
 ## 6. 构建、预览与验收
 
 快速检查：
@@ -409,9 +428,14 @@ astro.config.mjs                   Astro site/base、Markdown、sitemap
 src/config.ts                      站点信息、base 路径工具、专题配置
 src/content.config.ts              文章 frontmatter schema
 src/content/posts/                 Markdown 文章
+docs/HIGH_AVAILABILITY_CEX_PRACTICE_PLAN.md  高可用 CEX 实战课程设计单一事实源
 src/lib/content.ts                 URL、排序、摘要、专题归类
 src/components/SignalHero.astro    首页信号拓扑
+src/components/PracticeCaseCard.astro  实战案例卡片
+src/practice/config.ts             实战案例与阶段元数据
+src/pages/practice/                实战门户与项目驾驶舱
 src/styles/global.css              全站与首页主题样式
+src/styles/practice.css            实战页面与响应式样式
 src/styles/prose.css               文章正文样式
 public/images/posts/               文章图片
 ```

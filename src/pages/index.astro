@@ -2,10 +2,13 @@
 import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import SignalHero from "../components/SignalHero.astro";
+import PracticeCaseCard from "../components/PracticeCaseCard.astro";
 import SeriesCard from "../components/SeriesCard.astro";
 import PostCard from "../components/PostCard.astro";
 import { PRIMARY_SERIES_KEY, SERIES, sitePath } from "../config";
 import { getActiveSeries, getPostsInSeries, sortPosts } from "../lib/content";
+import { PRACTICE_CASES } from "../practice/config";
+import "../styles/practice.css";
 
 const posts = sortPosts(await getCollection("posts", ({ data }) => !data.draft));
 const primaryPosts = getPostsInSeries(posts, PRIMARY_SERIES_KEY);
@@ -17,10 +20,26 @@ const activeSeries = getActiveSeries(posts);
 <BaseLayout>
   <SignalHero postCount={posts.length} seriesCount={activeSeries.length} />
 
-  <section class="section" aria-labelledby="series-heading">
+  <section class="section" aria-labelledby="practice-heading">
     <div class="section-head">
       <div class="section-heading">
         <span class="section-index">01</span>
+        <div>
+          <span class="eyebrow">BUILD TRACKS</span>
+          <h2 id="practice-heading">实战案例</h2>
+        </div>
+      </div>
+      <a href={sitePath("practice/")}>进入实战门户 →</a>
+    </div>
+    <div class="practice-case-grid">
+      {PRACTICE_CASES.map((practiceCase) => <PracticeCaseCard practiceCase={practiceCase} headingLevel={3} />)}
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="series-heading">
+    <div class="section-head">
+      <div class="section-heading">
+        <span class="section-index">02</span>
         <div>
           <span class="eyebrow">KNOWLEDGE SYSTEMS</span>
           <h2 id="series-heading">选择一条学习路径</h2>
@@ -38,7 +57,7 @@ const activeSeries = getActiveSeries(posts);
   <section class="section" aria-labelledby="latest-heading">
     <div class="section-head">
       <div class="section-heading">
-        <span class="section-index">02</span>
+        <span class="section-index">03</span>
         <div>
           <span class="eyebrow">START HERE</span>
           <h2 id="latest-heading">{primarySeries?.title ?? "主线专题"} · 推荐阅读顺序</h2>

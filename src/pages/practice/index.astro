@@ -1,0 +1,123 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PracticeCaseCard from "../../components/PracticeCaseCard.astro";
+import { PRACTICE_CASES } from "../../practice/config";
+import { sitePath } from "../../config";
+import "../../styles/practice.css";
+
+const totalUnits = PRACTICE_CASES.reduce((sum, practiceCase) => sum + practiceCase.totalUnits, 0);
+const repositoryCount = PRACTICE_CASES.reduce((sum, practiceCase) => sum + practiceCase.repositories, 0);
+---
+
+<BaseLayout
+  title="实战案例"
+  description="从可执行规格、累计代码仓库和本地实验出发，逐步交付经过正确性、恢复、性能与故障门禁验证的完整系统。"
+>
+  <header class="practice-hero shell">
+    <div class="practice-hero-copy">
+      <span class="eyebrow">BUILD SYSTEMS / PROVE BEHAVIOR</span>
+      <h1>实战案例</h1>
+      <p>这里不是另一份文章归档。每个案例都从一条最小可运行纵切开始，沿不可移动版本、真实代码仓库和证据门禁，逐步长成可以独立停止、恢复和运营的系统。</p>
+      <div class="hero-actions">
+        <a class="button primary" href="#practice-cases">查看案例 <span>→</span></a>
+        <a class="button ghost" href={sitePath("series/")}>先读理论专题</a>
+      </div>
+      <dl class="practice-hero-stats">
+        <div><dt>{String(PRACTICE_CASES.length).padStart(2, "0")}</dt><dd>旗舰案例</dd></div>
+        <div><dt>{String(repositoryCount).padStart(2, "0")}</dt><dd>规划仓库</dd></div>
+        <div><dt>{String(totalUnits).padStart(2, "0")}</dt><dd>候选单元</dd></div>
+      </dl>
+    </div>
+
+    <div class="practice-terminal" aria-label="实战学习链路示意图">
+      <div class="practice-terminal-head">
+        <span>LOCAL-FIRST LAB</span>
+        <span class="practice-terminal-state"><i aria-hidden="true"></i> NO REMOTE JUDGE</span>
+      </div>
+      <ol class="practice-terminal-flow">
+        <li><span>01</span><div><strong>READ</strong><small>机制与可执行规格</small></div></li>
+        <li><span>02</span><div><strong>PREDICT</strong><small>先判断事件与故障结果</small></div></li>
+        <li><span>03</span><div><strong>BUILD</strong><small>在独立仓库完成累计实现</small></div></li>
+        <li><span>04</span><div><strong>VERIFY</strong><small>本地测试、Cluster 与故障门禁</small></div></li>
+        <li><span>05</span><div><strong>REVIEW</strong><small>导出证据并复盘边界</small></div></li>
+      </ol>
+      <p>网页负责解释和确定性模拟；Java、Aeron 与故障实验只在读者本机运行。</p>
+    </div>
+  </header>
+
+  <section class="section practice-boundary" aria-labelledby="practice-boundary-heading">
+    <div class="section-head">
+      <div class="section-heading">
+        <span class="section-index">01</span>
+        <div>
+          <span class="eyebrow">CONTENT CONTRACT</span>
+          <h2 id="practice-boundary-heading">与纯博客内容的分界</h2>
+        </div>
+      </div>
+    </div>
+    <div class="practice-boundary-grid">
+      <article>
+        <span>THEORY</span>
+        <h3>专题文章</h3>
+        <p>解释机制、边界和设计权衡，允许按主题独立阅读。</p>
+      </article>
+      <article>
+        <span>BUILD</span>
+        <h3>项目实战</h3>
+        <p>以累计仓库、阶段版本和交付物推进；后一单元建立在前一单元之上。</p>
+      </article>
+      <article>
+        <span>EVIDENCE</span>
+        <h3>本地验收</h3>
+        <p>用测试、随机 seed、状态摘要、故障时间线和基准结果证明完成，而不是网页打勾。</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="section" id="practice-cases" aria-labelledby="practice-cases-heading">
+    <div class="section-head">
+      <div class="section-heading">
+        <span class="section-index">02</span>
+        <div>
+          <span class="eyebrow">FLAGSHIP CASES</span>
+          <h2 id="practice-cases-heading">从一条真实纵切开始</h2>
+        </div>
+      </div>
+    </div>
+    <div class="practice-case-grid">
+      {PRACTICE_CASES.map((practiceCase) => <PracticeCaseCard practiceCase={practiceCase} />)}
+    </div>
+  </section>
+
+  <section class="section practice-execution" aria-labelledby="practice-execution-heading">
+    <div class="section-head">
+      <div class="section-heading">
+        <span class="section-index">03</span>
+        <div>
+          <span class="eyebrow">EXECUTION POLICY</span>
+          <h2 id="practice-execution-heading">互动，但不把博客变成在线 IDE</h2>
+        </div>
+      </div>
+    </div>
+    <div class="practice-execution-grid">
+      <article>
+        <span class="practice-plane">IN BROWSER</span>
+        <h3>理解与推演</h3>
+        <ul>
+          <li>订单簿、账务和故障时间线的确定性可视化</li>
+          <li>预测检查点、边界题和反例重放</li>
+          <li>轻量状态保存在本机，必要时导入实验结果</li>
+        </ul>
+      </article>
+      <article>
+        <span class="practice-plane">ON YOUR MACHINE</span>
+        <h3>实现与证明</h3>
+        <ul>
+          <li>Gradle Wrapper 编译、测试与基准</li>
+          <li>本地三节点 Aeron Cluster 和 Docker Compose</li>
+          <li>受控故障脚本、状态摘要与证据导出</li>
+        </ul>
+      </article>
+    </div>
+  </section>
+</BaseLayout>
