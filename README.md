@@ -28,6 +28,10 @@ pnpm preview
 
 Pages CMS 的字段与媒体规则位于 `.pages.yml`。
 
+实战教程是独立内容类型，不是博客文章或理论学习路径。案例级状态位于 `src/practice/config.ts`，已签约单元位于 `src/practice/units.ts`，教程 Markdown 位于 `src/content/practice/`。只登记真正已签约的单元，不为候选地图创建空文章。
+
+教程必须通过 `project / profileVersion / unitCode` 指向已登记案例和单元，同单元的 `lessonOrder` 与 `permalink` 必须唯一，源码和证据必须引用不可移动的 tag。在单元达到 `PUBLISHED` 之前教程必须保持 `draft: true`；草稿不生成生产路由，不进入 Pagefind、sitemap 或 RSS。
+
 ## 发布
 
 `.github/workflows/deploy.yml` 会在 `main` 分支更新后构建并发布 GitHub Pages。首次启用时，在仓库 **Settings → Pages → Build and deployment → Source** 中选择 **GitHub Actions**。
@@ -42,9 +46,13 @@ src/
   layouts/          全局页面框架
   lib/content.ts    路由、摘要、专题与排序的唯一逻辑入口
   pages/            首页、专题、归档、文章、RSS
+  practice/         实战案例与已签约单元注册表
   styles/           Signal Grid 主题与长文排版
 src/content/posts/  新博客的 Markdown 内容源
+src/content/practice/  独立实战教程内容源
 public/images/posts Pages CMS 图片目录
 ```
+
+实战路由按 `practice/<project>/<unit>/<lesson>/` 分层。本地先运行 `pnpm verify:practice`；发布前必须再运行完整 `pnpm build` 和站点验收。验证脚本只检查本仓配置与静态产物，不会网络读取或 checkout 课程代码仓库。
 
 旧 Hexo 博客继续由 `lcha-reln.github.io` 仓库独立维护，本仓库不包含也不迁移旧文章。

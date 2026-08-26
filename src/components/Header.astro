@@ -29,7 +29,7 @@ const nav = [
     </nav>
 
     <div class="header-actions">
-      <button class="icon-button search-trigger" type="button" data-search-open aria-label="搜索文章">
+      <button class="icon-button search-trigger" type="button" data-search-open aria-label="搜索内容">
         <span aria-hidden="true">⌕</span>
         <kbd>⌘ K</kbd>
       </button>
@@ -61,7 +61,7 @@ const nav = [
       <span aria-hidden="true">⌕</span>
       <input type="search" data-search-input placeholder="输入 Aeron、Agent、Raft、保证金…" autocomplete="off" />
     </label>
-    <p class="search-hint" data-search-hint>输入关键词，搜索全部文章的标题、摘要与标签。</p>
+    <p class="search-hint" data-search-hint>输入关键词，搜索文章与已发布实战教程。</p>
     <ol class="search-results" data-search-results></ol>
   </div>
 </dialog>
@@ -150,7 +150,7 @@ const nav = [
     const query = input.value.trim().toLocaleLowerCase("zh-CN");
     results.replaceChildren();
     if (!query) {
-      hint.textContent = "输入关键词，搜索全部文章的标题、摘要与标签。";
+      hint.textContent = "输入关键词，搜索文章与已发布实战教程。";
       return;
     }
 
@@ -187,7 +187,7 @@ const nav = [
 
     if (input.value.trim().toLocaleLowerCase("zh-CN") !== query) return;
 
-    hint.textContent = matches.length ? `找到 ${matches.length} 个匹配结果` : "没有找到匹配文章，换个关键词试试。";
+    hint.textContent = matches.length ? `找到 ${matches.length} 个匹配结果` : "没有找到匹配内容，换个关键词试试。";
     for (const { entry } of matches) {
       const item = document.createElement("li");
       const link = document.createElement("a");

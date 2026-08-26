@@ -800,12 +800,17 @@ R06 不用 Mock 证明商用 Profile。它消费三个仓库的固定 release �
 signal-grid-blog
 ├── docs/HIGH_AVAILABILITY_CEX_PRACTICE_PLAN.md  范围、课程含义和治理来源
 ├── src/practice/config.ts                       planVersion、Profile 路线、公开状态和当前规划计数
-├── src/content/practice/                        M00 开始时才建立
+├── src/practice/units.ts                        只登记已签约及之后的真实单元
+├── src/content/practice/                        独立 practiceLessons collection
 ├── src/pages/practice/                          项目门户、单元页、实验页
 └── public/...                                   Golden scenario 和已发布证据
 ```
 
 - 实战章节使用独立 `practiceLessons` collection，不进入 `posts`、文章归档和主 RSS；
+- `config.ts` 管案例与 Profile，`units.ts` 管已签约单元，Markdown 只管一篇教程；当前注册表只有 M00，不为 M01 和其余候选地图创建空内容；
+- 教程用 `project / profileVersion / unitCode` 关联单元，同单元的 `lessonOrder` 和 `permalink` 必须唯一；路由为 `/practice/<project>/<unit>/<lesson>/`；
+- 教程一律从 `draft: true` 开始。单元达到 `PUBLISHED` 前不得公开；草稿不生成生产路由，不进入搜索、sitemap、文章统计或主 RSS；`CODE_VERIFIED` 冻结仓库内 evidence 路径，`PUBLISHED` 必须另有生产可访问的 HTTPS evidence URL；
+- `pnpm verify:practice` 拒绝缺失或 `LOCKED` 单元、重复排序/地址、未 `PUBLISHED` 非草稿和 `main`、`unit/*` 等浮动 ref。它不联网读取课程仓；跨仓 tag/evidence 在发布前独立核验；
 - 案例驾驶舱把 Profile 路线与项目路线分层展示，把“真实已发布数”和“当前 Profile 候选规划数”分开显示，并只给出一个当前推荐动作；
 - `LOCKED` Profile 只展示能力增量和解锁门禁，不创建单元、仓库、起点 tag、空教程或虚假进度；
 - 未开始单元只显示候选能力摘要，不创建空教程；

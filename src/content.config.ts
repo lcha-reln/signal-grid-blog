@@ -24,4 +24,21 @@ const posts = defineCollection({
   }),
 });
 
-export const collections = { posts };
+const practiceLessons = defineCollection({
+  loader: glob({ pattern: "**/*.md", base: "./src/content/practice" }),
+  schema: z.object({
+    title: z.string().min(1),
+    description: z.string().min(1),
+    date: z.coerce.date(),
+    updated: z.coerce.date().optional(),
+    project: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
+    profileVersion: z.string().min(1),
+    unitCode: z.string().regex(/^[A-Z][0-9]{2}$/),
+    lessonOrder: z.coerce.number().int().positive(),
+    permalink: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
+    tags: z.array(z.string()).optional().default([]),
+    draft: z.boolean().optional().default(true),
+  }),
+});
+
+export const collections = { posts, practiceLessons };

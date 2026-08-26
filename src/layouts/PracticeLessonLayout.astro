@@ -1,0 +1,127 @@
+---
+import type { MarkdownHeading } from "astro";
+import type { CollectionEntry } from "astro:content";
+import BaseLayout from "./BaseLayout.astro";
+import MermaidRuntime from "../components/MermaidRuntime.astro";
+import TableOfContents from "../components/TableOfContents.astro";
+import { formatDate } from "../lib/content";
+import type { PracticeCase } from "../practice/config";
+import {
+  getPracticeLessonPath,
+  getPracticeLessonReadingMinutes,
+  getPracticeRepositoryUrl,
+} from "../practice/content";
+import type { PracticeUnit } from "../practice/units";
+import { sitePath } from "../config";
+import "../styles/prose.css";
+import "../styles/practice.css";
+
+interface Props {
+  lesson: CollectionEntry<"practiceLessons">;
+  practiceCase: PracticeCase;
+  unit: PracticeUnit;
+  headings: MarkdownHeading[];
+  lessonIndex: number;
+  lessonCount: number;
+  previous?: CollectionEntry<"practiceLessons">;
+  next?: CollectionEntry<"practiceLessons">;
+}
+
+const {
+  lesson,
+  practiceCase,
+  unit,
+  headings,
+  lessonIndex,
+  lessonCount,
+  previous,
+  next,
+} = Astro.props;
+const repositoryUrl = getPracticeRepositoryUrl(practiceCase, unit);
+const completeUrl = repositoryUrl && unit.completeRef
+  ? `${repositoryUrl}/tree/${unit.completeRef}`
+  : undefined;
+const editUrl = `https://github.com/lcha-reln/signal-grid-blog/edit/main/src/content/practice/${lesson.id}.md`;
+const canonical = new URL(getPracticeLessonPath(lesson), Astro.site).toString();
+---
+
+<BaseLayout title={lesson.data.title} description={lesson.data.description} canonical={canonical} article>
+  <div class="reading-progress" data-reading-progress aria-hidden="true"></div>
+
+  <header class="article-hero practice-lesson-hero">
+    <div class="article-crumbs">
+      <a href={sitePath(`practice/${practiceCase.slug}/`)}>{practiceCase.title}</a>
+      <span>/</span>
+      <a href={sitePath(`practice/${practiceCase.slug}/${unit.code.toLowerCase()}/`)}>{unit.code}</a>
+      <span>/</span>
+      <span>LESSON {String(lessonIndex + 1).padStart(2, "0")} OF {String(lessonCount).padStart(2, "0")}</span>
+    </div>
+    <span class="eyebrow">{unit.profileVersion} / LOCAL-FIRST PRACTICE</span>
+    <h1>{lesson.data.title}</h1>
+    <p class="article-lead">{lesson.data.description}</p>
+    <div class="article-meta practice-lesson-meta">
+      <span><i></i> 发布于 <time datetime={lesson.data.date.toISOString()}>{formatDate(lesson.data.date)}</time></span>
+      {lesson.data.updated && <span>更新于 {formatDate(lesson.data.updated)}</span>}
+      <span>{getPracticeLessonReadingMinutes(lesson)} 分钟阅读</span>
+      <span>{headings.filter((heading) => heading.depth === 2).length} 个阶段</span>
+    </div>
+  </header>
+
+  <div class="article-shell">
+    <TableOfContents headings={headings} />
+
+    <article class="article-body practice-lesson-body">
+      <slot />
+    </article>
+
+    <aside class="article-aside practice-lesson-aside" aria-label="实战教程信息">
+      <dl>
+        <div><dt>PROFILE</dt><dd>{unit.profileVersion}</dd></div>
+        <div><dt>UNIT</dt><dd>{unit.code} · {unit.lifecycle}</dd></div>
+        <div><dt>LESSON</dt><dd>{String(lessonIndex + 1).padStart(2, "0")} / {String(lessonCount).padStart(2, "0")}</dd></div>
+        <div><dt>EXECUTION</dt><dd>LOCAL</dd></div>
+        {completeUrl && <div><dt>CODE</dt><dd><a href={completeUrl} target="_blank" rel="noreferrer">PINNED TAG ↗</a></dd></div>}
+        <div><dt>SOURCE</dt><dd><a href={editUrl} target="_blank" rel="noreferrer">EDIT ON GITHUB ↗</a></dd></div>
+      </dl>
+    </aside>
+
+    <footer class="article-footer">
+      {lesson.data.tags.length > 0 && (
+        <div class="article-tags" aria-label="教程标签">
+          {lesson.data.tags.map((tag) => <span>#{tag}</span>)}
+        </div>
+      )}
+      {(previous || next) && (
+        <nav class="article-nav practice-lesson-nav" aria-label="本单元上一篇与下一篇教程">
+          {previous ? (
+            <a class="previous" href={getPracticeLessonPath(previous)}><small>← PREVIOUS LESSON</small><strong>{previous.data.title}</strong></a>
+          ) : <span></span>}
+          {next && (
+            <a class="next" href={getPracticeLessonPath(next)}><small>NEXT LESSON →</small><strong>{next.data.title}</strong></a>
+          )}
+        </nav>
+      )}
+    </footer>
+  </div>
+
+  <MermaidRuntime />
+
+  <script>
+    const progress = document.querySelector<HTMLElement>("[data-reading-progress]");
+    function updateProgress() {
+      if (!progress) return;
+      const article = document.querySelector<HTMLElement>(".article-body");
+      if (!article) return;
+      const start = article.offsetTop;
+      const distance = article.offsetHeight - window.innerHeight;
+      const value = distance > 0
+        ? Math.min(1, Math.max(0, (window.scrollY - start + 120) / distance))
+        : 1;
+      progress.style.width = `${value * 100}%`;
+    }
+    updateProgress();
+    window.addEventListener("scroll", updateProgress, { passive: true });
+    window.addEventListener("resize", updateProgress);
+  </script>
+</BaseLayout>
+

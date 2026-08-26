@@ -187,17 +187,20 @@ Mermaid 只在实际存在图表的页面加载。语法问题不一定让 Astro
 
 `/signal-grid-blog/practice/` 是独立于文章归档和理论专题的项目制教学入口。它回答“如何从零交付一个经过验证的完整系统”，不应伪装成新的 `series` 或继续塞进 `posts`。
 
-- 实战案例元数据暂时维护在 `src/practice/config.ts`；每个案例通过自己的 `designDocument` 指向设计稿，不共享某一案例的硬编码路径。
+- 案例元数据维护在 `src/practice/config.ts`；每个案例通过自己的 `designDocument` 指向设计稿，不共享某一案例的硬编码路径。
+- 已签约及之后的交付单元维护在 `src/practice/units.ts`。候选地图和 `LOCKED` Profile 不得进入注册表；案例的 `units` 只存单元代码，已发布数由注册表中的 `PUBLISHED` 生命周期推导，不手填第二份进度。
 - 高可用 CEX 的范围、课程含义和治理维护在 `docs/HIGH_AVAILABILITY_CEX_PRACTICE_PLAN.md`；`src/practice/config.ts` 维护带 `planVersion` 的机器可读 Profile 路线、公开状态、当前 Profile 规划数量与里程碑。两者必须在同一次变更中同步。规划仓库数是独立项目决策，不从 track 或 Profile 数量推导。
 - 只有范围、单元合同或课程语义变化才提高 `planVersion`；生命周期、仓库 URL、固定 tag 和 evidence 链接属于实施状态，不单独制造计划版本。
 - Profile 是案例层的产品演进轴，不是 Matching、Counter、Rest 项目 track。Profile 配置只允许 `version / title / description / status / gate` 五个字段；新增字段必须先按计划治理评审。`LOCKED` Profile 只能记录能力增量和解锁门禁，不得携带单元、仓库、起点 tag 或当前实施状态；页面上的单元与仓库数量只描述当前 Profile。
 - 已签订或启动的单元必须记录自己的 `contractPlanVersion`。若案例计划随后升版而当前单元合同语义未变，保留冻结合同版本，并用 `planCompatibility` 明确解释差异；不得移动 tag 或回写课程仓库来伪造版本一致。
-- `PLANNED` 案例可以没有 `currentUnit`；若有，只能处于 `CANDIDATE`、`CONTRACTED` 或 `READY`。`BUILDING` 必须对应唯一 `ACTIVE` track 和实施中单元，`VERIFIED` 只能保留已 `PUBLISHED` 的末单元。只有进入 `READY` 或更晚生命周期的单元才必须公开 `startRef`。
-- `scripts/verify-practice-plan.mjs` 按案例校验各自的设计稿、配置和可选静态产物。它不得读取、checkout 或联网访问课程代码仓库；跨仓 tag 的存在性只在发布前独立核验。
+- `PLANNED` 案例可以没有 `currentUnitCode`；`BUILDING` 必须对应唯一 `ACTIVE` track 和注册表中的实施单元，`VERIFIED` 的所有单元都必须已 `PUBLISHED`。单元引用的 `startRef` 和发布后的 `completeRef` 必须是不可移动的课程 tag。
+- 每个案例最多一个单元占用活跃交付窗口（`IN_PROGRESS / CODE_VERIFIED / CONTENT_VERIFIED`），最多一个下一单元处于 `READY`；存在活跃单元时，它必须与 `currentUnitCode` 完全一致。只有当前单元 `PUBLISHED` 后，下一单元才能进入实施窗口。
+- `scripts/verify-practice-plan.mjs` 按案例校验设计稿、案例配置、单元注册表、教程 frontmatter 和可选静态产物。它拒绝缺失或锁定单元、重复 `lessonOrder`/`permalink`、未达 `PUBLISHED` 却公开的教程和浮动源码 ref。它不读取、checkout 或联网访问课程代码仓库；跨仓 tag 的存在性只在发布前独立核验。
 - 案例总入口为 `src/pages/practice/index.astro`。
-- 项目驾驶舱由 `src/pages/practice/[project].astro` 静态生成。
+- 项目驾驶舱由 `src/pages/practice/[project]/index.astro` 生成，已开始的单元页使用 `src/pages/practice/[project]/[unit]/index.astro`，已发布教程使用 `src/pages/practice/[project]/[unit]/[lesson].astro`。
 - 当前只发布已经确认的案例和阶段地图，不为未来章节创建空 Markdown、空模块或虚假完成度。
-- 第一篇实战教程开始编写时，应新增独立的实战内容 collection 和 CMS 表单；不要让实战章节进入博客文章归档与主 RSS。
+- 实战教程使用独立 `practiceLessons` collection，Markdown 位于 `src/content/practice/<project>/<unit>/`。Frontmatter 使用 `project / profileVersion / unitCode / lessonOrder / permalink / draft`，不重复单元合同。
+- 教程一律以 `draft: true` 开始。只有单元达到 `PUBLISHED` 后才能改为非草稿；草稿不生成生产路由，不进入搜索、sitemap、博客文章统计或主 RSS。`CODE_VERIFIED` 冻结仓库内 evidence 路径，`PUBLISHED` 还必须提供生产可访问的 HTTPS evidence URL。发布教程必须引用固定 complete tag 和可复核 evidence，不引用 `main`、`unit/*` 等浮动分支。
 
 互动采用本地优先的混合模式：
 
@@ -212,6 +215,7 @@ Mermaid 只在实际存在图表的页面加载。语法问题不一定让 Astro
 快速检查：
 
 ```bash
+pnpm verify:practice
 pnpm check
 ```
 
@@ -224,7 +228,7 @@ pnpm build
 `pnpm build` 会依次执行：
 
 1. `astro check`
-2. 实战设计稿与 `src/practice/config.ts` 一致性检查
+2. 实战设计稿、案例配置、单元注册表与教程发布门禁
 3. `astro build`
 4. 实战静态产物链接与状态检查
 5. `pagefind --site dist`
@@ -244,6 +248,7 @@ pnpm preview
 - 明暗主题
 - 图片、代码块、表格和 Mermaid
 - 搜索结果能否进入 `/signal-grid-blog/posts/.../`
+- 实战单元驾驶舱路由可访问，草稿教程路由为 404，且不出现在搜索、sitemap 或 RSS
 - RSS 与 sitemap
 
 关键产物应存在：

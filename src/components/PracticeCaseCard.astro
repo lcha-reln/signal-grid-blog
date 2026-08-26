@@ -1,6 +1,7 @@
 ---
 import { sitePath } from "../config";
 import type { PracticeCase } from "../practice/config";
+import { getPracticePublishedUnitCount } from "../practice/content";
 
 interface Props {
   practiceCase: PracticeCase;
@@ -8,6 +9,7 @@ interface Props {
 }
 
 const { practiceCase, headingLevel = 2 } = Astro.props;
+const publishedUnits = getPracticePublishedUnitCount(practiceCase.slug);
 ---
 
 <article class:list={["practice-case-card", `status-${practiceCase.status.toLowerCase()}`]}>
@@ -30,7 +32,7 @@ const { practiceCase, headingLevel = 2 } = Astro.props;
       <dl>
         <div><dt>{String(practiceCase.plannedRepositories).padStart(2, "0")}</dt><dd>规划仓库</dd></div>
         <div><dt>{String(practiceCase.totalUnits).padStart(2, "0")}</dt><dd>候选单元</dd></div>
-        <div><dt>{String(practiceCase.publishedUnits).padStart(2, "0")}</dt><dd>已经发布</dd></div>
+        <div><dt>{String(publishedUnits).padStart(2, "0")}</dt><dd>已经发布</dd></div>
       </dl>
       <span>打开项目驾驶舱 <i aria-hidden="true">→</i></span>
     </footer>

@@ -1,0 +1,60 @@
+---
+import { getCollection, render, type CollectionEntry } from "astro:content";
+import PracticeLessonLayout from "../../../../layouts/PracticeLessonLayout.astro";
+import {
+  getPracticeLessonContext,
+  getPracticeLessonsForUnit,
+  getPublishedPracticeLessons,
+} from "../../../../practice/content";
+
+export async function getStaticPaths() {
+  const publishedLessons = getPublishedPracticeLessons(
+    await getCollection("practiceLessons"),
+  );
+
+  return publishedLessons.map((lesson) => {
+    const { practiceCase, unit } = getPracticeLessonContext(lesson);
+    const unitLessons = getPracticeLessonsForUnit(
+      publishedLessons,
+      lesson.data.project,
+      lesson.data.unitCode,
+    );
+    return {
+      params: {
+        project: lesson.data.project,
+        unit: lesson.data.unitCode.toLowerCase(),
+        lesson: lesson.data.permalink,
+      },
+      props: { lesson, practiceCase, unit, unitLessons },
+    };
+  });
+}
+
+interface Props {
+  lesson: CollectionEntry<"practiceLessons">;
+  practiceCase: ReturnType<typeof getPracticeLessonContext>["practiceCase"];
+  unit: ReturnType<typeof getPracticeLessonContext>["unit"];
+  unitLessons: CollectionEntry<"practiceLessons">[];
+}
+
+const { lesson, practiceCase, unit, unitLessons } = Astro.props;
+const { Content, headings } = await render(lesson);
+const lessonIndex = unitLessons.findIndex((candidate) => candidate.id === lesson.id);
+if (lessonIndex < 0) throw new Error(`Practice lesson ${lesson.id} is missing from its unit`);
+const previous = lessonIndex > 0 ? unitLessons[lessonIndex - 1] : undefined;
+const next = lessonIndex < unitLessons.length - 1 ? unitLessons[lessonIndex + 1] : undefined;
+---
+
+<PracticeLessonLayout
+  {lesson}
+  {practiceCase}
+  {unit}
+  {headings}
+  {lessonIndex}
+  lessonCount={unitLessons.length}
+  {previous}
+  {next}
+>
+  <Content />
+</PracticeLessonLayout>
+

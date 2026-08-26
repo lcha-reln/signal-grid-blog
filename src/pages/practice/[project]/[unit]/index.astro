@@ -1,0 +1,150 @@
+---
+import { getCollection, type CollectionEntry } from "astro:content";
+import BaseLayout from "../../../../layouts/BaseLayout.astro";
+import { sitePath } from "../../../../config";
+import { getPracticeCase, type PracticeCase } from "../../../../practice/config";
+import {
+  getPracticeLessonPath,
+  getPracticeLessonsForUnit,
+  getPracticeRepositoryUrl,
+  getPublishedPracticeLessons,
+} from "../../../../practice/content";
+import {
+  getPracticeUnitSegment,
+  isPracticeUnitAtLeast,
+  PRACTICE_UNITS,
+  type PracticeUnit,
+} from "../../../../practice/units";
+import "../../../../styles/practice.css";
+
+export async function getStaticPaths() {
+  const lessons = getPublishedPracticeLessons(await getCollection("practiceLessons"));
+  return PRACTICE_UNITS.filter((unit) =>
+    isPracticeUnitAtLeast(unit.lifecycle, "IN_PROGRESS")
+  ).map((unit) => {
+    const practiceCase = getPracticeCase(unit.projectSlug);
+    if (!practiceCase) throw new Error(`Missing practice case for ${unit.projectSlug}/${unit.code}`);
+    return {
+      params: { project: unit.projectSlug, unit: getPracticeUnitSegment(unit) },
+      props: { practiceCase, unit, lessons },
+    };
+  });
+}
+
+interface Props {
+  practiceCase: PracticeCase;
+  unit: PracticeUnit;
+  lessons: CollectionEntry<"practiceLessons">[];
+}
+
+const { practiceCase, unit, lessons: allLessons } = Astro.props;
+const lessons = getPracticeLessonsForUnit(allLessons, unit.projectSlug, unit.code);
+const repositoryUrl = getPracticeRepositoryUrl(practiceCase, unit);
+const startUrl = repositoryUrl && unit.startRef
+  ? `${repositoryUrl}/tree/${unit.startRef}`
+  : undefined;
+const completeUrl = repositoryUrl && unit.completeRef
+  ? `${repositoryUrl}/tree/${unit.completeRef}`
+  : undefined;
+const evidenceUrl = unit.evidenceUrl;
+---
+
+<BaseLayout title={`${unit.code} · ${unit.title}`} description={unit.summary}>
+  <header class="unit-hero shell">
+    <div>
+      <a class="unit-back" href={sitePath(`practice/${practiceCase.slug}/`)}>← 返回项目驾驶舱</a>
+      <span class="eyebrow">{unit.profileVersion} / {unit.trackCode} TRACK</span>
+      <h1>{unit.code} · {unit.title}</h1>
+      <p>{unit.summary}</p>
+    </div>
+    <aside class="unit-status-card" aria-label="交付单元状态">
+      <span>UNIT LIFECYCLE</span>
+      <strong class:list={["unit-lifecycle", `lifecycle-${unit.lifecycle.toLowerCase()}`]}>{unit.lifecycle}</strong>
+      <dl>
+        <div><dt>PLAN</dt><dd>v{unit.contractPlanVersion}</dd></div>
+        <div><dt>{String(lessons.length).padStart(2, "0")}</dt><dd>已发布教程</dd></div>
+        <div><dt>LOCAL</dt><dd>权威执行环境</dd></div>
+      </dl>
+    </aside>
+  </header>
+
+  <section class="section" aria-labelledby="unit-contract-heading">
+    <div class="case-section-head">
+      <span class="section-index">01</span>
+      <div>
+        <span class="eyebrow">EXECUTABLE CONTRACT</span>
+        <h2 id="unit-contract-heading">这一单元改变什么</h2>
+      </div>
+      <p>合同版本独立冻结；案例路线升版不会回写已经启动的单元。</p>
+    </div>
+    <div class="unit-contract-grid">
+      <article><span>ADDS</span><ul>{unit.adds.map((item) => <li>{item}</li>)}</ul></article>
+      <article><span>DELIVERS</span><ul>{unit.delivers.map((item) => <li>{item}</li>)}</ul></article>
+      <article><span>EXCLUDES</span><ul>{unit.excludes.map((item) => <li>{item}</li>)}</ul></article>
+      <article><span>GATE</span><ul>{unit.gate.map((item) => <li>{item}</li>)}</ul></article>
+      <article><span>EVIDENCE</span><ul>{unit.evidence.map((item) => <li>{item}</li>)}</ul></article>
+    </div>
+    {unit.planCompatibility && <p class="unit-plan-compatibility">{unit.planCompatibility}</p>}
+  </section>
+
+  <section class="section" aria-labelledby="unit-source-heading">
+    <div class="case-section-head">
+      <span class="section-index">02</span>
+      <div>
+        <span class="eyebrow">PINNED SOURCE & LOCAL PROOF</span>
+        <h2 id="unit-source-heading">固定源码，本地执行</h2>
+      </div>
+      <p>网站解释合同，Java 编译、裁判和 evidence 仍由课程仓库在读者本机完成。</p>
+    </div>
+    <div class="unit-contract-grid">
+      <article>
+        <span>REFS</span>
+        <dl>
+          <div><dt>START</dt><dd>{unit.startRef ? <code>{unit.startRef}</code> : "等待 READY 门禁"}</dd></div>
+          <div><dt>COMPLETE</dt><dd>{unit.completeRef ? <code>{unit.completeRef}</code> : "等待代码门禁"}</dd></div>
+          <div><dt>RELEASE</dt><dd>{unit.productRelease ?? "NOT_APPLICABLE"}</dd></div>
+        </dl>
+        <div class="hero-actions">
+          {startUrl && <a class="button primary" href={startUrl} target="_blank" rel="noreferrer">查看起点 <span>↗</span></a>}
+          {completeUrl && <a class="button ghost" href={completeUrl} target="_blank" rel="noreferrer">查看完成点 <span>↗</span></a>}
+          {evidenceUrl && <a class="button ghost" href={evidenceUrl} target="_blank" rel="noreferrer">查看证据 <span>↗</span></a>}
+        </div>
+        {unit.evidencePath && <p class="unit-evidence-path">本地 evidence：<code>{unit.evidencePath}</code></p>}
+      </article>
+      <article>
+        <span>COMMANDS</span>
+        {unit.localCommands.map((command) => <pre><code>{command}</code></pre>)}
+      </article>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="unit-lessons-heading">
+    <div class="case-section-head">
+      <span class="section-index">03</span>
+      <div>
+        <span class="eyebrow">PUBLISHED LESSONS</span>
+        <h2 id="unit-lessons-heading">教程只在完整门禁之后出现</h2>
+      </div>
+      <p>草稿不会生成页面、搜索记录或 sitemap 条目。</p>
+    </div>
+    {lessons.length > 0 ? (
+      <ol class="unit-lesson-grid">
+        {lessons.map((lesson, index) => (
+          <li class="unit-lesson-card">
+            <a href={getPracticeLessonPath(lesson)}>
+              <span>LESSON {String(index + 1).padStart(2, "0")}</span>
+              <h3>{lesson.data.title}</h3>
+              <p>{lesson.data.description}</p>
+              <small>开始学习 →</small>
+            </a>
+          </li>
+        ))}
+      </ol>
+    ) : (
+      <div class="unit-empty-state">
+        <strong>{unit.lifecycle}</strong>
+        <p>教程尚未发布。当前可以审阅冻结合同和不可移动起点，但这不等于单元已经完成。</p>
+      </div>
+    )}
+  </section>
+</BaseLayout>

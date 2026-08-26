@@ -1,22 +1,44 @@
 ---
-import BaseLayout from "../../layouts/BaseLayout.astro";
-import { sitePath } from "../../config";
-import { PRACTICE_CASES, type PracticeCase } from "../../practice/config";
-import "../../styles/practice.css";
+import { getCollection, type CollectionEntry } from "astro:content";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { sitePath } from "../../../config";
+import { PRACTICE_CASES, type PracticeCase } from "../../../practice/config";
+import {
+  getPracticeLessonPath,
+  getPracticeLessonsForUnit,
+  getPracticePublishedUnitCount,
+  getPracticeRepositoryUrl,
+  getPracticeUnitPath,
+  getPublishedPracticeLessons,
+} from "../../../practice/content";
+import {
+  getPracticeUnit,
+  getPracticeUnits,
+  isPracticeUnitAtLeast,
+} from "../../../practice/units";
+import "../../../styles/practice.css";
 
-export function getStaticPaths() {
+export async function getStaticPaths() {
+  const lessons = getPublishedPracticeLessons(await getCollection("practiceLessons"));
   return PRACTICE_CASES.map((practiceCase) => ({
     params: { project: practiceCase.slug },
-    props: { practiceCase },
+    props: { practiceCase, lessons },
   }));
 }
 
 interface Props {
   practiceCase: PracticeCase;
+  lessons: CollectionEntry<"practiceLessons">[];
 }
 
-const { practiceCase } = Astro.props;
-const progressLabel = `${practiceCase.publishedUnits} / ${practiceCase.totalUnits}`;
+const { practiceCase, lessons } = Astro.props;
+const units = getPracticeUnits(practiceCase.slug);
+const unitCards = units.map((unit) => ({
+  unit,
+  lessons: getPracticeLessonsForUnit(lessons, practiceCase.slug, unit.code),
+  routeAvailable: isPracticeUnitAtLeast(unit.lifecycle, "IN_PROGRESS"),
+}));
+const progressLabel = `${getPracticePublishedUnitCount(practiceCase.slug)} / ${practiceCase.totalUnits}`;
 const currentProfile = practiceCase.profileRoadmap.find((profile) => profile.status === "CURRENT");
 const scopeProfile = currentProfile ?? (
   practiceCase.status === "VERIFIED"
@@ -38,13 +60,15 @@ const profileStageKeyword = currentProfile
   : practiceCase.status === "VERIFIED"
     ? "FINAL"
     : "TARGET";
-const currentUnit = practiceCase.currentUnit;
-const currentTrack = currentUnit
-  ? practiceCase.tracks.find((track) => track.code === currentUnit.trackCode)
+const currentUnit = practiceCase.currentUnitCode
+  ? getPracticeUnit(practiceCase.slug, practiceCase.currentUnitCode)
   : undefined;
 const createdRepositories = practiceCase.tracks.filter((track) => track.repositoryUrl).length;
-const startUrl = currentTrack?.repositoryUrl && currentUnit?.startRef
-  ? `${currentTrack.repositoryUrl}/tree/${currentUnit.startRef}`
+const currentRepositoryUrl = currentUnit
+  ? getPracticeRepositoryUrl(practiceCase, currentUnit)
+  : undefined;
+const startUrl = currentRepositoryUrl && currentUnit?.startRef
+  ? `${currentRepositoryUrl}/tree/${currentUnit.startRef}`
   : undefined;
 ---
 
@@ -68,11 +92,47 @@ const startUrl = currentTrack?.repositoryUrl && currentUnit?.startRef
         <div><dt>LOCAL</dt><dd>工程执行</dd></div>
       </dl>
     </aside>
-  </header>
+</header>
+
+  <section class="section" aria-labelledby="case-units-heading">
+    <div class="case-section-head">
+      <span class="section-index">01</span>
+      <div>
+        <span class="eyebrow">CONTRACTED DELIVERY UNITS</span>
+        <h2 id="case-units-heading">已经签约，才进入课程目录</h2>
+      </div>
+      <p>这里不展示候选章节。单元先冻结合同，再逐步完成代码、证据和教程门禁。</p>
+    </div>
+    <div class="case-unit-list">
+      {unitCards.map(({ unit, lessons: unitLessons, routeAvailable }) => (
+        <article class="case-unit-card">
+          <header>
+            <span>{unit.code} · {unit.profileVersion}</span>
+            <strong class:list={["unit-lifecycle", `lifecycle-${unit.lifecycle.toLowerCase()}`]}>{unit.lifecycle}</strong>
+          </header>
+          <h3>{routeAvailable ? <a href={getPracticeUnitPath(unit)}>{unit.title}</a> : unit.title}</h3>
+          <p>{unit.summary}</p>
+          <dl>
+            <div><dt>PLAN</dt><dd>v{unit.contractPlanVersion}</dd></div>
+            <div><dt>LESSONS</dt><dd>{unitLessons.length} PUBLISHED</dd></div>
+            <div><dt>TRACK</dt><dd>{unit.trackCode}</dd></div>
+          </dl>
+          {unitLessons.length > 0 && (
+            <ol class="unit-lesson-list">
+              {unitLessons.map((lesson) => (
+                <li><a href={getPracticeLessonPath(lesson)}>{lesson.data.title}</a></li>
+              ))}
+            </ol>
+          )}
+          {routeAvailable && <a href={getPracticeUnitPath(unit)}>打开单元驾驶舱 <span aria-hidden="true">→</span></a>}
+        </article>
+      ))}
+    </div>
+  </section>
 
   <section class="section case-profile" aria-labelledby="case-profile-heading">
     <div class="case-section-head">
-      <span class="section-index">01</span>
+      <span class="section-index">02</span>
       <div>
         <span class="eyebrow">{profileStageKeyword} COMMERCIAL PROFILE</span>
         <h2 id="case-profile-heading">{scopeProfile?.title ?? "尚未定义目标 Profile"}</h2>
@@ -93,7 +153,7 @@ const startUrl = currentTrack?.repositoryUrl && currentUnit?.startRef
 
   <section class="section" aria-labelledby="case-profile-roadmap-heading">
     <div class="case-section-head">
-      <span class="section-index">02</span>
+      <span class="section-index">03</span>
       <div>
         <span class="eyebrow">PRODUCT PROFILE ROADMAP</span>
         <h2 id="case-profile-roadmap-heading">{practiceCase.profileRoadmapTitle}</h2>
@@ -121,7 +181,7 @@ const startUrl = currentTrack?.repositoryUrl && currentUnit?.startRef
 
   <section class="section" aria-labelledby="case-tracks-heading">
     <div class="case-section-head">
-      <span class="section-index">03</span>
+      <span class="section-index">04</span>
       <div>
         <span class="eyebrow">DEPENDENCY ROUTE</span>
         <h2 id="case-tracks-heading">{practiceCase.tracks.map((track) => track.title).join(" → ")}</h2>
@@ -148,7 +208,7 @@ const startUrl = currentTrack?.repositoryUrl && currentUnit?.startRef
 
   <section class="section" aria-labelledby="case-milestones-heading">
     <div class="case-section-head">
-      <span class="section-index">04</span>
+      <span class="section-index">05</span>
       <div>
         <span class="eyebrow">STOP POINTS</span>
         <h2 id="case-milestones-heading">{profileStageLabel} Profile 每一段都能独立交付</h2>
@@ -167,7 +227,7 @@ const startUrl = currentTrack?.repositoryUrl && currentUnit?.startRef
 
   <section class="section" aria-labelledby="case-labs-heading">
     <div class="case-section-head">
-      <span class="section-index">05</span>
+      <span class="section-index">06</span>
       <div>
         <span class="eyebrow">HYBRID LABS</span>
         <h2 id="case-labs-heading">网页推演，本地实证</h2>
@@ -193,7 +253,7 @@ const startUrl = currentTrack?.repositoryUrl && currentUnit?.startRef
     {currentUnit?.contractPlanVersion && (
       <small class="unit-contract-version">UNIT CONTRACT · PLAN v{currentUnit.contractPlanVersion}</small>
     )}
-    <h2 id="case-next-heading">{currentUnit?.title ?? "等待首个可执行单元"}</h2>
+    <h2 id="case-next-heading">{currentUnit ? `${currentUnit.code} · ${currentUnit.title}` : "等待首个可执行单元"}</h2>
     <p>
       {practiceCase.currentAction}
       {currentUnit?.startRef && <> 当前权威起点是 <code>{currentUnit.startRef}</code>。</>}

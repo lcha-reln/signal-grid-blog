@@ -5,6 +5,12 @@ media:
     output: /signal-grid-blog/images/posts
     extensions: [png, jpg, jpeg, webp, gif]
     rename: safe
+  - name: practice_images
+    label: 实战教程图片
+    input: public/images/practice
+    output: /signal-grid-blog/images/practice
+    extensions: [png, jpg, jpeg, webp, gif]
+    rename: safe
 
 content:
   - name: posts
@@ -92,6 +98,102 @@ content:
           format: markdown
           switcher: true
           media: post_images
+          rename: safe
+
+  - name: practice_lessons
+    label: 实战教程
+    type: collection
+    path: src/content/practice
+    format: yaml-frontmatter
+    subfolders: true
+    filename:
+      template: "{primary}.md"
+      field: create
+    view:
+      fields: [title, project, profileVersion, unitCode, lessonOrder, date, draft]
+      primary: title
+      sort: [project, unitCode, lessonOrder, date]
+      default:
+        sort: date
+        order: desc
+    fields:
+      - name: title
+        label: 标题
+        type: string
+        required: true
+      - name: description
+        label: 摘要
+        type: text
+        required: true
+        description: 说明本篇教程完成的具体任务，不要重复项目总介绍。
+      - name: date
+        label: 发布日期
+        type: date
+        required: true
+        options:
+          time: true
+          format: "yyyy-MM-dd'T'HH:mm:ssXXX"
+      - name: updated
+        label: 更新日期
+        type: date
+        options:
+          time: true
+          format: "yyyy-MM-dd'T'HH:mm:ssXXX"
+      - name: project
+        label: 实战案例 slug
+        type: string
+        required: true
+        pattern:
+          regex: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          message: 必须与已登记的实战案例 slug 完全一致。
+        description: 例如 high-availability-cex；发布门禁会拒绝未登记案例。
+      - name: profileVersion
+        label: 产品 Profile
+        type: string
+        required: true
+        pattern:
+          regex: "^[A-Z][A-Z0-9-]*-[0-9]+\\.[0-9]+$"
+          message: 使用 SPOT-CEX-1.0 形式的已登记 Profile 版本。
+        description: 必须与实战案例当前已展开的 Profile 一致。
+      - name: unitCode
+        label: 交付单元
+        type: string
+        required: true
+        pattern:
+          regex: "^[A-Z][0-9]{2}$"
+          message: 使用 M00、C01 或 R02 形式的已登记单元代码。
+        description: 只能指向 src/practice/units.ts 中已签约的单元，不得指向候选或锁定单元。
+      - name: lessonOrder
+        label: 单元内排序
+        type: number
+        required: true
+        options:
+          min: 1
+        description: 同一案例、同一单元内必须唯一；建议使用 10、20、30 预留插入间隔。
+      - name: permalink
+        label: 教程地址
+        type: string
+        required: true
+        pattern:
+          regex: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          message: 请使用小写英文、数字和连字符。
+        description: 决定 /signal-grid-blog/practice/案例/单元/教程/ 路由，发布后不要修改。
+      - name: tags
+        label: 标签
+        type: string
+        list: true
+      - name: draft
+        label: 草稿
+        type: boolean
+        default: true
+        description: 保持为草稿，直到对应单元达到 PUBLISHED；草稿不生成生产路由、搜索或 sitemap 记录。
+      - name: body
+        label: 正文
+        type: rich-text
+        options:
+          format: markdown
+          switcher: true
+          media: practice_images
           rename: safe
 
 settings:

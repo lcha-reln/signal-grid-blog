@@ -19,27 +19,6 @@ export interface PracticeTrack {
   repositoryUrl?: string;
 }
 
-export interface PracticeCurrentUnit {
-  code: string;
-  trackCode: string;
-  title: string;
-  lifecycle:
-    | "CANDIDATE"
-    | "CONTRACTED"
-    | "READY"
-    | "IN_PROGRESS"
-    | "CODE_VERIFIED"
-    | "CONTENT_VERIFIED"
-    | "PUBLISHED";
-  contractPlanVersion?: string;
-  planCompatibility?: string;
-  startRef?: string;
-  supersededStartRefs?: readonly {
-    ref: string;
-    reason: string;
-  }[];
-}
-
 export interface PracticeMilestone {
   version: string;
   title: string;
@@ -56,13 +35,13 @@ export interface PracticeCase {
   summary: string;
   status: PracticeCaseStatus;
   statusLabel: string;
-  publishedUnits: number;
   totalUnits: number;
   plannedRepositories: number;
   stack: readonly string[];
   theoryPath: string;
   theoryLabel: string;
-  currentUnit?: PracticeCurrentUnit;
+  units: readonly string[];
+  currentUnitCode?: string;
   currentAction: string;
   profileRoadmapTitle: string;
   profileRoadmapDescription: string;
@@ -89,31 +68,13 @@ export const PRACTICE_CASES: readonly PracticeCase[] = [
     summary: "从单交易对限价撮合起步，先交付高可用现货核心，再按门禁演进到杠杆、永续、交割与期权。",
     status: "BUILDING",
     statusLabel: "SPOT · M00 实施中",
-    publishedUnits: 0,
     totalUnits: 30,
     plannedRepositories: 3,
     stack: ["Java", "Aeron Cluster", "Gradle", "Docker", "Astro Labs"],
     theoryPath: "series/trading/",
     theoryLabel: "查看交易系统理论",
-    currentUnit: {
-      code: "M00",
-      trackCode: "M",
-      title: "M00 · 最小可执行规格",
-      lifecycle: "IN_PROGRESS",
-      contractPlanVersion: "0.1",
-      planCompatibility: "PLAN v0.2 只新增 SPOT 之后的锁定 Profile 路线；M00 输入、验证、canonical history 与 digest 合同不变。",
-      startRef: "course/m00.2-start",
-      supersededStartRefs: [
-        {
-          ref: "course/m00-start",
-          reason: "bootstrap 任务源码未进入 Git",
-        },
-        {
-          ref: "course/m00.1-start",
-          reason: "修复了任务源码，但仓内文档仍指向失败的原始起点",
-        },
-      ],
-    },
+    units: ["M00"],
+    currentUnitCode: "M00",
     currentAction: "当前只实现输入规范、确定性验证与 history digest；没有订单簿、持久化或 Aeron。",
     profileRoadmapTitle: "现货是第一份完整交付，不是专题终点",
     profileRoadmapDescription: "只有当前 Profile 展开单元、仓库与实施设计；LOCKED 只冻结产品方向和解锁门禁，不代表已经创建单元、仓库或服务；后续优先复用已发布的 Matching、Counter 与 Rest 边界，具体仓库拓扑在解锁时评审。",
