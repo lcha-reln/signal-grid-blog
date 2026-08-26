@@ -17,6 +17,27 @@ interface Props {
 
 const { practiceCase } = Astro.props;
 const progressLabel = `${practiceCase.publishedUnits} / ${practiceCase.totalUnits}`;
+const currentProfile = practiceCase.profileRoadmap.find((profile) => profile.status === "CURRENT");
+const scopeProfile = currentProfile ?? (
+  practiceCase.status === "VERIFIED"
+    ? practiceCase.profileRoadmap.at(-1)
+    : practiceCase.profileRoadmap[0]
+);
+const profileMetricLabel = currentProfile
+  ? "当前 Profile"
+  : practiceCase.status === "VERIFIED"
+    ? "最终 Profile"
+    : "目标 Profile";
+const profileStageLabel = currentProfile
+  ? "当前"
+  : practiceCase.status === "VERIFIED"
+    ? "最终"
+    : "目标";
+const profileStageKeyword = currentProfile
+  ? "CURRENT"
+  : practiceCase.status === "VERIFIED"
+    ? "FINAL"
+    : "TARGET";
 const currentUnit = practiceCase.currentUnit;
 const currentTrack = currentUnit
   ? practiceCase.tracks.find((track) => track.code === currentUnit.trackCode)
@@ -42,8 +63,8 @@ const startUrl = currentTrack?.repositoryUrl && currentUnit?.startRef
       <span>PROJECT STATUS · PLAN v{practiceCase.planVersion}</span>
       <strong><i aria-hidden="true"></i>{practiceCase.statusLabel}</strong>
       <dl>
-        <div><dt>{progressLabel}</dt><dd>已发布 / 当前规划</dd></div>
-        <div><dt>{createdRepositories} / {practiceCase.plannedRepositories}</dt><dd>已创建 / 规划仓库</dd></div>
+        <div><dt>{progressLabel}</dt><dd>{profileMetricLabel} 已发布 / 规划单元</dd></div>
+        <div><dt>{createdRepositories} / {practiceCase.plannedRepositories}</dt><dd>{profileMetricLabel} 已创建 / 规划仓库</dd></div>
         <div><dt>LOCAL</dt><dd>工程执行</dd></div>
       </dl>
     </aside>
@@ -53,26 +74,54 @@ const startUrl = currentTrack?.repositoryUrl && currentUnit?.startRef
     <div class="case-section-head">
       <span class="section-index">01</span>
       <div>
-        <span class="eyebrow">COMMERCIAL PROFILE</span>
-        <h2 id="case-profile-heading">{practiceCase.profile}</h2>
+        <span class="eyebrow">{profileStageKeyword} COMMERCIAL PROFILE</span>
+        <h2 id="case-profile-heading">{scopeProfile?.title ?? "尚未定义目标 Profile"}</h2>
       </div>
       <p>终局能力可以完整规划，但代码和教程永远只推进当前一个交付单元。</p>
     </div>
     <div class="case-scope-grid">
       <article>
-        <span>IN SCOPE</span>
+        <span>IN {profileStageKeyword} PROFILE</span>
         <ul>{practiceCase.included.map((item) => <li>{item}</li>)}</ul>
       </article>
       <article>
-        <span>NOT IN THIS PROFILE</span>
+        <span>NOT IN {profileStageKeyword} PROFILE</span>
         <ul>{practiceCase.excluded.map((item) => <li>{item}</li>)}</ul>
       </article>
     </div>
   </section>
 
-  <section class="section" aria-labelledby="case-tracks-heading">
+  <section class="section" aria-labelledby="case-profile-roadmap-heading">
     <div class="case-section-head">
       <span class="section-index">02</span>
+      <div>
+        <span class="eyebrow">PRODUCT PROFILE ROADMAP</span>
+        <h2 id="case-profile-roadmap-heading">{practiceCase.profileRoadmapTitle}</h2>
+      </div>
+      <p>{practiceCase.profileRoadmapDescription}</p>
+    </div>
+    <ol class="case-profile-route" aria-label="产品 Profile 路线" role="list">
+      {practiceCase.profileRoadmap.map((profile, index) => (
+        <li
+          class:list={["case-profile-step", `profile-${profile.status.toLowerCase()}`]}
+          aria-current={profile.status === "CURRENT" ? "step" : undefined}
+        >
+          <div class="case-profile-step-head">
+            <span>{String(index + 1).padStart(2, "0")}</span>
+            <small>{profile.status === "CURRENT" ? "CURRENT PROFILE" : profile.status}</small>
+          </div>
+          <code>{profile.version}</code>
+          <h3>{profile.title}</h3>
+          <p>{profile.description}</p>
+          <div class="case-profile-step-gate">{profile.gate}</div>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <section class="section" aria-labelledby="case-tracks-heading">
+    <div class="case-section-head">
+      <span class="section-index">03</span>
       <div>
         <span class="eyebrow">DEPENDENCY ROUTE</span>
         <h2 id="case-tracks-heading">{practiceCase.tracks.map((track) => track.title).join(" → ")}</h2>
@@ -99,10 +148,10 @@ const startUrl = currentTrack?.repositoryUrl && currentUnit?.startRef
 
   <section class="section" aria-labelledby="case-milestones-heading">
     <div class="case-section-head">
-      <span class="section-index">03</span>
+      <span class="section-index">04</span>
       <div>
         <span class="eyebrow">STOP POINTS</span>
-        <h2 id="case-milestones-heading">每一段都能独立交付</h2>
+        <h2 id="case-milestones-heading">{profileStageLabel} Profile 每一段都能独立交付</h2>
       </div>
       <p>停止点必须公开当前具备什么，也必须公开还不具备什么。</p>
     </div>
@@ -118,7 +167,7 @@ const startUrl = currentTrack?.repositoryUrl && currentUnit?.startRef
 
   <section class="section" aria-labelledby="case-labs-heading">
     <div class="case-section-head">
-      <span class="section-index">04</span>
+      <span class="section-index">05</span>
       <div>
         <span class="eyebrow">HYBRID LABS</span>
         <h2 id="case-labs-heading">网页推演，本地实证</h2>
@@ -141,6 +190,9 @@ const startUrl = currentTrack?.repositoryUrl && currentUnit?.startRef
 
   <section class="section case-next" aria-labelledby="case-next-heading">
     <span class="eyebrow">NEXT VERIFIED MOVE</span>
+    {currentUnit?.contractPlanVersion && (
+      <small class="unit-contract-version">UNIT CONTRACT · PLAN v{currentUnit.contractPlanVersion}</small>
+    )}
     <h2 id="case-next-heading">{currentUnit?.title ?? "等待首个可执行单元"}</h2>
     <p>
       {practiceCase.currentAction}
@@ -149,6 +201,7 @@ const startUrl = currentTrack?.repositoryUrl && currentUnit?.startRef
         <> 原 <code>{item.ref}</code> 因{item.reason}而保留为被替代的审计记录。</>
       ))}
     </p>
+    {currentUnit?.planCompatibility && <p class="unit-plan-compatibility">{currentUnit.planCompatibility}</p>}
     <div class="hero-actions">
       {startUrl && <a class="button primary" href={startUrl} target="_blank" rel="noreferrer">查看不可移动起点 <span>↗</span></a>}
       <a class="button ghost" href={sitePath(practiceCase.theoryPath)}>{practiceCase.theoryLabel}</a>

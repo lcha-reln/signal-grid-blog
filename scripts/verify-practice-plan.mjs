@@ -13,6 +13,16 @@ const lifecyclesRequiringStartRef = new Set([
   "CONTENT_VERIFIED",
   "PUBLISHED",
 ]);
+const lifecyclesRequiringContractPlanVersion = new Set([
+  "CONTRACTED",
+  "READY",
+  "IN_PROGRESS",
+  "CODE_VERIFIED",
+  "CONTENT_VERIFIED",
+  "PUBLISHED",
+]);
+const profileStatuses = new Set(["CURRENT", "LOCKED", "COMPLETE"]);
+const profileFields = new Set(["version", "title", "description", "status", "gate"]);
 
 const { PRACTICE_CASES } = await import(configUrl.href);
 
@@ -22,6 +32,16 @@ function assert(condition, message) {
 
 function assertIncludes(haystack, needle, context) {
   assert(haystack.includes(needle), `${context}: missing ${JSON.stringify(needle)}`);
+}
+
+function parsePlanVersion(value) {
+  const match = /^(\d+)\.(\d+)$/.exec(value ?? "");
+  return match ? [Number(match[1]), Number(match[2])] : undefined;
+}
+
+function comparePlanVersions(left, right) {
+  if (left[0] !== right[0]) return left[0] - right[0];
+  return left[1] - right[1];
 }
 
 const slugs = new Set();
@@ -57,6 +77,11 @@ for (const practiceCase of PRACTICE_CASES) {
     : undefined;
   const trackCodes = new Set();
   const milestoneVersions = new Set();
+  const profileVersions = new Set();
+  const profiles = Array.isArray(practiceCase.profileRoadmap) ? practiceCase.profileRoadmap : [];
+  const currentProfiles = profiles.filter((profile) => profile.status === "CURRENT");
+  const currentProfile = currentProfiles[0];
+  const deliveryProfile = currentProfile ?? (practiceCase.status === "VERIFIED" ? profiles.at(-1) : undefined);
 
   assert(practiceCase.tracks.length > 0, `${practiceCase.slug}: no tracks`);
   assert(Number.isInteger(practiceCase.totalUnits) && practiceCase.totalUnits > 0, `${practiceCase.slug}: invalid totalUnits`);
@@ -72,6 +97,9 @@ for (const practiceCase of PRACTICE_CASES) {
   assert(typeof practiceCase.currentAction === "string" && practiceCase.currentAction.trim(), `${practiceCase.slug}: empty currentAction`);
   assert(typeof practiceCase.trackNarrative === "string" && practiceCase.trackNarrative.trim(), `${practiceCase.slug}: empty trackNarrative`);
   assert(typeof practiceCase.theoryLabel === "string" && practiceCase.theoryLabel.trim(), `${practiceCase.slug}: empty theoryLabel`);
+  assert(typeof practiceCase.profileRoadmapTitle === "string" && practiceCase.profileRoadmapTitle.trim(), `${practiceCase.slug}: empty profileRoadmapTitle`);
+  assert(typeof practiceCase.profileRoadmapDescription === "string" && practiceCase.profileRoadmapDescription.trim(), `${practiceCase.slug}: empty profileRoadmapDescription`);
+  assert(profiles.length > 0, `${practiceCase.slug}: empty profileRoadmap`);
 
   if (practiceCase.status === "PLANNED") {
     assert(activeTracks.length === 0, `${practiceCase.slug}: PLANNED cannot expose an ACTIVE track`);
@@ -84,6 +112,7 @@ for (const practiceCase of PRACTICE_CASES) {
       );
       assert(currentTrack?.status === "NEXT", `${practiceCase.slug}: PLANNED current track is not NEXT`);
     }
+    assert(profiles.every((profile) => profile.status === "LOCKED"), `${practiceCase.slug}: PLANNED requires all profiles LOCKED`);
   }
   if (practiceCase.status === "BUILDING") {
     assert(activeTracks.length === 1, `${practiceCase.slug}: BUILDING requires exactly one ACTIVE track`);
@@ -98,6 +127,7 @@ for (const practiceCase of PRACTICE_CASES) {
       `${practiceCase.slug}: BUILDING has an invalid current unit lifecycle`,
     );
     assert(practiceCase.statusLabel.includes(currentUnit?.code ?? ""), `${practiceCase.slug}: BUILDING statusLabel omits current unit`);
+    assert(currentProfiles.length === 1, `${practiceCase.slug}: BUILDING requires exactly one CURRENT profile`);
   }
   if (practiceCase.status === "VERIFIED") {
     assert(activeTracks.length === 0, `${practiceCase.slug}: VERIFIED cannot expose an ACTIVE track`);
@@ -107,6 +137,7 @@ for (const practiceCase of PRACTICE_CASES) {
       assert(currentUnit.lifecycle === "PUBLISHED", `${practiceCase.slug}: VERIFIED current unit is not PUBLISHED`);
       assert(currentTrack?.status === "COMPLETE", `${practiceCase.slug}: VERIFIED current track is not COMPLETE`);
     }
+    assert(profiles.every((profile) => profile.status === "COMPLETE"), `${practiceCase.slug}: VERIFIED requires complete profiles`);
   }
 
   if (currentUnit) {
@@ -114,6 +145,33 @@ for (const practiceCase of PRACTICE_CASES) {
     assert(typeof currentUnit.title === "string" && currentUnit.title.trim(), `${practiceCase.slug}: empty current unit title`);
     assert(currentTrack, `${practiceCase.slug}: currentUnit points to an unknown track`);
     assert(currentUnit.code.startsWith(currentUnit.trackCode), `${practiceCase.slug}: current unit and track codes disagree`);
+    if (lifecyclesRequiringContractPlanVersion.has(currentUnit.lifecycle)) {
+      assert(currentUnit.contractPlanVersion, `${practiceCase.slug}: ${currentUnit.lifecycle} requires contractPlanVersion`);
+    }
+    if (currentUnit.contractPlanVersion) {
+      const casePlanVersion = parsePlanVersion(practiceCase.planVersion);
+      const contractPlanVersion = parsePlanVersion(currentUnit.contractPlanVersion);
+      assert(contractPlanVersion, `${practiceCase.slug}: invalid contractPlanVersion`);
+      if (casePlanVersion && contractPlanVersion) {
+        const planComparison = comparePlanVersions(casePlanVersion, contractPlanVersion);
+        assert(planComparison >= 0, `${practiceCase.slug}: contractPlanVersion is newer than planVersion`);
+        if (planComparison > 0) {
+          assert(
+            typeof currentUnit.planCompatibility === "string" && currentUnit.planCompatibility.trim(),
+            `${practiceCase.slug}: older unit contract has no planCompatibility`,
+          );
+          assertIncludes(
+            currentUnit.planCompatibility ?? "",
+            `PLAN v${practiceCase.planVersion}`,
+            `${practiceCase.slug}: planCompatibility does not cover the current plan`,
+          );
+        } else {
+          assert(!currentUnit.planCompatibility, `${practiceCase.slug}: current contract has redundant planCompatibility`);
+        }
+      }
+    } else {
+      assert(!currentUnit.planCompatibility, `${practiceCase.slug}: planCompatibility has no contractPlanVersion`);
+    }
     if (lifecyclesRequiringStartRef.has(currentUnit.lifecycle)) {
       assert(currentUnit.startRef, `${practiceCase.slug}: ${currentUnit.lifecycle} requires a startRef`);
     } else {
@@ -134,6 +192,30 @@ for (const practiceCase of PRACTICE_CASES) {
       assertIncludes(design, superseded.reason, `${practiceCase.slug} superseded start reason`);
     }
   }
+
+  let profilePhase = "COMPLETE";
+  for (const profile of profiles) {
+    assert(/^[A-Z][A-Z0-9-]*-\d+\.\d+$/.test(profile.version), `${practiceCase.slug}: invalid profile version ${profile.version}`);
+    assert(!profileVersions.has(profile.version), `${practiceCase.slug}: duplicate profile version ${profile.version}`);
+    profileVersions.add(profile.version);
+    assert(typeof profile.title === "string" && profile.title.trim(), `${practiceCase.slug}/${profile.version}: empty title`);
+    assert(typeof profile.description === "string" && profile.description.trim(), `${practiceCase.slug}/${profile.version}: empty description`);
+    assert(typeof profile.gate === "string" && profile.gate.trim(), `${practiceCase.slug}/${profile.version}: empty gate`);
+    for (const field of Object.keys(profile)) {
+      assert(profileFields.has(field), `${practiceCase.slug}/${profile.version}: profile exposes forbidden field ${field}`);
+    }
+    assert(profileStatuses.has(profile.status), `${practiceCase.slug}/${profile.version}: invalid status ${profile.status}`);
+
+    if (profile.status === "COMPLETE") {
+      assert(profilePhase === "COMPLETE", `${practiceCase.slug}: COMPLETE profile appears after an open profile`);
+    } else if (profile.status === "CURRENT") {
+      assert(profilePhase === "COMPLETE", `${practiceCase.slug}: CURRENT profile appears out of order`);
+      profilePhase = "CURRENT";
+    } else if (profile.status === "LOCKED") {
+      profilePhase = "LOCKED";
+    }
+  }
+  assert(currentProfiles.length <= 1, `${practiceCase.slug}: multiple CURRENT profiles`);
 
   for (const track of practiceCase.tracks) {
     assert(typeof track.code === "string" && track.code.trim(), `${practiceCase.slug}: empty track code`);
@@ -159,15 +241,34 @@ for (const practiceCase of PRACTICE_CASES) {
     milestoneVersions.add(milestone.version);
     assertIncludes(design, `\`${milestone.version}\``, `${practiceCase.slug} milestone`);
   }
+  if (deliveryProfile) {
+    assert(practiceCase.milestones.at(-1)?.version === deliveryProfile.version, `${practiceCase.slug}: final milestone is not the delivery profile`);
+  }
+  for (const profile of profiles.filter((item) => item.status === "LOCKED")) {
+    assert(!milestoneVersions.has(profile.version), `${practiceCase.slug}: LOCKED profile appears in current milestones`);
+  }
 
   assertIncludes(design, `> \`planVersion\`：\`${practiceCase.planVersion}\``, practiceCase.slug);
   assertIncludes(design, `> 案例 slug：\`${practiceCase.slug}\``, practiceCase.slug);
   assertIncludes(design, `${practiceCase.totalUnits} 个候选交付单元`, practiceCase.slug);
   assertIncludes(design, `${practiceCase.plannedRepositories} 个按门禁顺序创建的代码仓库`, practiceCase.slug);
+  assertIncludes(design, practiceCase.profileRoadmapTitle, practiceCase.slug);
+  assertIncludes(design, practiceCase.profileRoadmapDescription, practiceCase.slug);
+  for (const profile of profiles) {
+    assertIncludes(
+      design,
+      `| \`${profile.version}\` | \`${profile.status}\` | ${profile.title} | ${profile.description} | ${profile.gate} |`,
+      `${practiceCase.slug}/${profile.version}`,
+    );
+  }
   if (currentUnit) {
     assertIncludes(design, `> 状态：${currentUnit.code} 已启动，当前 \`${currentUnit.lifecycle}\``, practiceCase.slug);
     assertIncludes(design, `| ${currentUnit.code} | \`${currentUnit.lifecycle}\` |`, practiceCase.slug);
     if (currentUnit.startRef) assertIncludes(design, currentUnit.startRef, practiceCase.slug);
+    if (currentUnit.contractPlanVersion) {
+      assertIncludes(design, `> 当前单元合同 \`planVersion\`：\`${currentUnit.contractPlanVersion}\``, practiceCase.slug);
+    }
+    if (currentUnit.planCompatibility) assertIncludes(design, currentUnit.planCompatibility, practiceCase.slug);
   }
   for (const track of practiceCase.tracks.filter((item) => item.repositoryUrl)) {
     assertIncludes(design, track.repositoryUrl, `${practiceCase.slug}/${track.code}`);
@@ -182,7 +283,20 @@ for (const practiceCase of PRACTICE_CASES) {
 
     assertIncludes(projectHtml, `PLAN v${practiceCase.planVersion}`, `${practiceCase.slug} dist`);
     assertIncludes(projectHtml, practiceCase.statusLabel, `${practiceCase.slug} dist`);
+    assertIncludes(projectHtml, practiceCase.profileRoadmapTitle, `${practiceCase.slug} dist`);
+    assertIncludes(projectHtml, practiceCase.profileRoadmapDescription, `${practiceCase.slug} dist`);
+    for (const profile of profiles) {
+      assertIncludes(projectHtml, profile.version, `${practiceCase.slug}/${profile.version} dist`);
+      assertIncludes(projectHtml, profile.status === "CURRENT" ? "CURRENT PROFILE" : profile.status, `${practiceCase.slug}/${profile.version} dist`);
+      assertIncludes(projectHtml, profile.title, `${practiceCase.slug}/${profile.version} dist`);
+      assertIncludes(projectHtml, profile.description, `${practiceCase.slug}/${profile.version} dist`);
+      assertIncludes(projectHtml, profile.gate, `${practiceCase.slug}/${profile.version} dist`);
+    }
     if (currentUnit?.startRef) assertIncludes(projectHtml, currentUnit.startRef, `${practiceCase.slug} dist`);
+    if (currentUnit?.contractPlanVersion) {
+      assertIncludes(projectHtml, `UNIT CONTRACT · PLAN v${currentUnit.contractPlanVersion}`, `${practiceCase.slug} dist`);
+    }
+    if (currentUnit?.planCompatibility) assertIncludes(projectHtml, currentUnit.planCompatibility, `${practiceCase.slug} dist`);
     for (const superseded of currentUnit?.supersededStartRefs ?? []) {
       assertIncludes(projectHtml, superseded.ref, `${practiceCase.slug} dist`);
       assertIncludes(projectHtml, superseded.reason, `${practiceCase.slug} dist`);

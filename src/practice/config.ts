@@ -1,4 +1,13 @@
 export type PracticeCaseStatus = "PLANNED" | "BUILDING" | "VERIFIED";
+export type PracticeProfileStatus = "CURRENT" | "LOCKED" | "COMPLETE";
+
+export interface PracticeDeliveryProfile {
+  version: string;
+  title: string;
+  description: string;
+  status: PracticeProfileStatus;
+  gate: string;
+}
 
 export interface PracticeTrack {
   code: string;
@@ -22,6 +31,8 @@ export interface PracticeCurrentUnit {
     | "CODE_VERIFIED"
     | "CONTENT_VERIFIED"
     | "PUBLISHED";
+  contractPlanVersion?: string;
+  planCompatibility?: string;
   startRef?: string;
   supersededStartRefs?: readonly {
     ref: string;
@@ -43,7 +54,6 @@ export interface PracticeCase {
   eyebrow: string;
   title: string;
   summary: string;
-  profile: string;
   status: PracticeCaseStatus;
   statusLabel: string;
   publishedUnits: number;
@@ -54,6 +64,9 @@ export interface PracticeCase {
   theoryLabel: string;
   currentUnit?: PracticeCurrentUnit;
   currentAction: string;
+  profileRoadmapTitle: string;
+  profileRoadmapDescription: string;
+  profileRoadmap: readonly PracticeDeliveryProfile[];
   trackNarrative: string;
   tracks: readonly PracticeTrack[];
   milestones: readonly PracticeMilestone[];
@@ -69,14 +82,13 @@ export const PRACTICE_CASES: readonly PracticeCase[] = [
   {
     slug: "high-availability-cex",
     designDocument: "docs/HIGH_AVAILABILITY_CEX_PRACTICE_PLAN.md",
-    planVersion: "0.1",
+    planVersion: "0.2",
     index: "01",
     eyebrow: "FLAGSHIP BUILD / EXCHANGE SYSTEMS",
     title: "高可用 CEX 交易核心",
-    summary: "从单交易对限价撮合起步，逐步交付 Matching、Counter 与 Rest 三个可独立发布、可恢复、可验收的工程。",
-    profile: "单地域、高可用、现货 CEX 交易核心",
+    summary: "从单交易对限价撮合起步，先交付高可用现货核心，再按门禁演进到杠杆、永续、交割与期权。",
     status: "BUILDING",
-    statusLabel: "M00 · 实施中",
+    statusLabel: "SPOT · M00 实施中",
     publishedUnits: 0,
     totalUnits: 30,
     plannedRepositories: 3,
@@ -88,6 +100,8 @@ export const PRACTICE_CASES: readonly PracticeCase[] = [
       trackCode: "M",
       title: "M00 · 最小可执行规格",
       lifecycle: "IN_PROGRESS",
+      contractPlanVersion: "0.1",
+      planCompatibility: "PLAN v0.2 只新增 SPOT 之后的锁定 Profile 路线；M00 输入、验证、canonical history 与 digest 合同不变。",
       startRef: "course/m00.2-start",
       supersededStartRefs: [
         {
@@ -101,6 +115,45 @@ export const PRACTICE_CASES: readonly PracticeCase[] = [
       ],
     },
     currentAction: "当前只实现输入规范、确定性验证与 history digest；没有订单簿、持久化或 Aeron。",
+    profileRoadmapTitle: "现货是第一份完整交付，不是专题终点",
+    profileRoadmapDescription: "只有当前 Profile 展开单元、仓库与实施设计；LOCKED 只冻结产品方向和解锁门禁，不代表已经创建单元、仓库或服务；后续优先复用已发布的 Matching、Counter 与 Rest 边界，具体仓库拓扑在解锁时评审。",
+    profileRoadmap: [
+      {
+        version: "SPOT-CEX-1.0",
+        title: "单地域、高可用现货交易核心",
+        description: "现金资产交换在 Matching、Counter 与 Rest 之间形成可恢复闭环。",
+        status: "CURRENT",
+        gate: "当前从 M00 开始，只展开 SPOT 单元与仓库",
+      },
+      {
+        version: "MARGIN-SPOT-1.0",
+        title: "杠杆现货",
+        description: "以债务为核心，引入借贷、计息、抵押品、逐仓/全仓、风险率与强制减仓。",
+        status: "LOCKED",
+        gate: "SPOT-CEX-1.0 资格审查通过后再评审",
+      },
+      {
+        version: "PERP-CEX-1.0",
+        title: "永续合约",
+        description: "无到期日持仓按标记价持续重估，并引入资金费率、保险基金与 ADL。",
+        status: "LOCKED",
+        gate: "MARGIN-SPOT-1.0 资格审查通过后再评审",
+      },
+      {
+        version: "DELIVERY-FUTURES-1.0",
+        title: "交割合约",
+        description: "到期时刻驱动交易停止、结算价、交割或现金结算与终局对账。",
+        status: "LOCKED",
+        gate: "PERP-CEX-1.0 资格审查通过后再评审",
+      },
+      {
+        version: "OPTIONS-CEX-1.0",
+        title: "期权",
+        description: "非线性收益引入 Greeks、波动率、组合保证金、行权与指派。",
+        status: "LOCKED",
+        gate: "DELIVERY-FUTURES-1.0 资格审查通过后再评审",
+      },
+    ],
     trackNarrative: "三个项目分别建仓、顺序出现；没有巨型单仓，也没有预建空服务。",
     tracks: [
       {
@@ -181,7 +234,8 @@ export const PRACTICE_CASES: readonly PracticeCase[] = [
       "充值、提现、钱包和链节点",
       "KYC、AML、法币与监管报送",
       "在线代码判题、远程沙箱和云端学习档案",
-      "多地域 Active-Active 与第一季衍生品清算",
+      "多地域 Active-Active",
+      "当前 SPOT Profile 不实现杠杆现货、合约与期权交易及清算",
     ],
   },
 ];

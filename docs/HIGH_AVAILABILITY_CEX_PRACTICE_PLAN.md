@@ -4,13 +4,15 @@
 >
 > 规划日期：2026-08-26
 >
-> `planVersion`：`0.1`
+> `planVersion`：`0.2`
+>
+> 当前单元合同 `planVersion`：`0.1`
 >
 > 案例 slug：`high-availability-cex`
 >
 > 当前 Profile：`SPOT-CEX-1.0`
 >
-> 当前规划基线：30 个候选交付单元，3 个按门禁顺序创建的代码仓库
+> 当前规划基线：`SPOT-CEX-1.0` 的 30 个候选交付单元，3 个按门禁顺序创建的代码仓库
 >
 > 当前实施窗口：M00 是唯一 `IN_PROGRESS` 单元；M01 是下一候选；其余单元仅为可调整的课程地图
 
@@ -18,11 +20,11 @@
 
 这份文档是“高可用 CEX 交易核心”实战案例的范围、课程含义和治理规则单一事实源。它固定项目边界、演进顺序、候选能力地图、停止点、教学方法和验收制度，但不提前固定尚未进入实施窗口的类图、表结构、协议字段或依赖版本。
 
-网站中的 [实战案例配置](../src/practice/config.ts) 是公开状态、当前规划数量和页面里程碑的机器可读来源，并携带 `planVersion`。范围或课程语义变化必须先在本文评审，同一次变更再同步配置并提高 `planVersion`；生命周期、仓库 URL 和证据链接等实施状态也要同步，但不制造新的计划版本。轻量一致性门禁属于 `signal-grid-blog` verifier，至少校验案例 slug、三个项目的候选单元数和命名停止点；代码仓库只记录所对应的 `planVersion`，绝不反向 checkout 或解析博客源码。
+网站中的 [实战案例配置](../src/practice/config.ts) 是公开状态、当前规划数量和页面里程碑的机器可读来源，并携带 `planVersion`。范围或课程语义变化必须先在本文评审，同一次变更再同步配置并提高 `planVersion`；生命周期、仓库 URL 和证据链接等实施状态也要同步，但不制造新的计划版本。轻量一致性门禁属于 `signal-grid-blog` verifier，至少校验案例 slug、当前 SPOT Profile 三个项目的候选单元数和命名停止点；代码仓库只记录所对应的 `planVersion`，绝不反向 checkout 或解析博客源码。
 
-本课程要解决的不是“怎样快速拼出一个能下单的 Demo”，而是：
+本课程要解决的不是“怎样快速拼出一个能下单的 Demo”，也不是在首版里同时实现所有金融产品，而是：
 
-> 怎样从一个可证明正确的限价单撮合内核开始，逐次引入持久化、复制、跨系统一致性、异步投影和外部协议，最终交付一个边界清楚、可恢复、可运维、证据完整的单地域高可用 CEX 现货交易核心？
+> 怎样从一个可证明正确的限价单撮合内核开始，先交付边界清楚、可恢复、可运维、证据完整的高可用现货核心，再在每个前置 Profile 真正通过资格审查后，分别引入债务、持仓重估、到期结算和非线性风险？
 
 路线图可以完整，实施级设计只能覆盖当前和下一个单元；代码窗口永远只有当前单元。M01–M03 的教学顺序只是候选课程地图，不代表实现字段已经冻结。任何超出当前单元合同的能力，必须删除等量范围、拆分单元或进入 backlog。
 
@@ -34,15 +36,33 @@
 | --- | --- |
 | 所有项目集中在一个 Git 仓库，持续膨胀 | Matching、Counter、Rest 是三个独立仓库，并且只在前一个项目通过 1.0 门禁后创建下一个仓库 |
 | 试图第一天设计全部商用功能 | M00 只建立可执行规格，M01 只实现单交易对 GTC 限价单；每个单元只增加一个复杂度维度 |
-| 没有分步大纲，一股脑向前推进 | 30 个候选单元均有能力边界；只有进入窗口的单元才签订完整 `adds / delivers / excludes / gate / evidence` 合同 |
+| 没有分步大纲，一股脑向前推进 | 当前 SPOT Profile 的 30 个候选单元均有能力边界；只有进入窗口的单元才签订完整 `adds / delivers / excludes / gate / evidence` 合同 |
 | 过早引入 Aeron Cluster | Matching 先完成正确、可恢复、可度量的单机实现，M09 才接入 Aeron Cluster |
 | 页面或代码声称未来能力已经存在 | 未发布单元不创建空 Markdown、空模块、空服务或虚假完成度 |
 
-## 3. 商用 Profile 与范围
+## 3. 商用 Profile 路线与当前范围
 
-“商用”在这里不是“把所有交易所业务都塞进第一季”，而是选定一个可以完整验收的产品 Profile，并把其功能、故障语义、容量边界和运维证据做全。
+“商用”在这里不是把所有交易产品一次塞进同一个实现，而是每次选定一个可以完整验收的产品 Profile，把其功能、故障语义、容量边界和运维证据做全，再决定是否解锁下一个产品模型。
 
-### 3.1 `SPOT-CEX-1.0` 包含
+### 3.1 顶层产品 Profile 路线
+
+**现货是第一份完整交付，不是专题终点**
+
+只有当前 Profile 展开单元、仓库与实施设计；LOCKED 只冻结产品方向和解锁门禁，不代表已经创建单元、仓库或服务；后续优先复用已发布的 Matching、Counter 与 Rest 边界，具体仓库拓扑在解锁时评审。
+
+| Profile | 状态 | 标题 | 相对前一 Profile 唯一新增的领域复杂度 | 解锁门禁 |
+| --- | --- | --- | --- | --- |
+| `SPOT-CEX-1.0` | `CURRENT` | 单地域、高可用现货交易核心 | 现金资产交换在 Matching、Counter 与 Rest 之间形成可恢复闭环。 | 当前从 M00 开始，只展开 SPOT 单元与仓库 |
+| `MARGIN-SPOT-1.0` | `LOCKED` | 杠杆现货 | 以债务为核心，引入借贷、计息、抵押品、逐仓/全仓、风险率与强制减仓。 | SPOT-CEX-1.0 资格审查通过后再评审 |
+| `PERP-CEX-1.0` | `LOCKED` | 永续合约 | 无到期日持仓按标记价持续重估，并引入资金费率、保险基金与 ADL。 | MARGIN-SPOT-1.0 资格审查通过后再评审 |
+| `DELIVERY-FUTURES-1.0` | `LOCKED` | 交割合约 | 到期时刻驱动交易停止、结算价、交割或现金结算与终局对账。 | PERP-CEX-1.0 资格审查通过后再评审 |
+| `OPTIONS-CEX-1.0` | `LOCKED` | 期权 | 非线性收益引入 Greeks、波动率、组合保证金、行权与指派。 | DELIVERY-FUTURES-1.0 资格审查通过后再评审 |
+
+这五个 Profile 是产品教学顺序，不是五套已经承诺的实施大纲。后四个 Profile 目前没有单元、仓库、起点 tag 或发布日期；进入评审时必须重新建立自己的单元合同、停止点和商用资格证据。现货的 30 个单元和 3 个仓库也不能被解释成全路线总量。
+
+`MARGIN-SPOT-1.0` 单独存在，是因为杠杆现货的首要难题是债务生命周期，不是合约仓位；永续、交割和期权则依次引入持续重估、到期事件和非线性风险。这个顺序使每个新 Profile 只改变一个主要领域心智模型。
+
+### 3.2 `SPOT-CEX-1.0` 包含
 
 - 单地域部署，Matching 和 Counter 均能在单节点故障后恢复服务；
 - 多现货交易对，按版本化静态规则路由到 Matching shard；
@@ -54,23 +74,24 @@
 - PriAPI、OpenAPI、公共/私有 WebSocket、认证、签名、限流和协议兼容；
 - 过载、备份恢复、升级回滚、对账、故障演练、容量报告和 Runbook。
 
-### 3.2 `SPOT-CEX-1.0` 明确不做
+### 3.3 `SPOT-CEX-1.0` 明确不做
 
 - 充值、提现、钱包、链节点和托管侧对接；
 - KYC、AML、法币、监管报送和运营后台；
-- 期货、永续、期权、仓位、保证金、资金费率、强平和 ADL；
+- 杠杆现货的借贷、利息、抵押品、逐仓/全仓风险率与强制减仓；
+- 永续、交割和期权的仓位、保证金、资金费率、到期结算、行权、强平和 ADL；
 - 多地域 Active-Active、在线拆分活跃订单簿和自动再均衡；
 - FIX、托管专线、撮合共址和做市商专属通道；
 - 用户账号体系之外的完整 IAM 平台；
 - 在线代码判题、远程 Java 沙箱、云端学习档案和证书系统。
 
-用户仓位、保证金和合约公共数据的最终权威仍属于 Counter，但它们进入后续衍生品 Profile。第一季只冻结这个所有权决定，不预建 `Position`、`MarginSchedule`、强平服务或数据库表。这样既保留柜台的正确边界，也不让衍生品清算重新拖垮现货交付。
+用户债务、仓位、保证金和合约公共数据的最终权威仍属于 Counter，但它们进入对应的后续 Profile。当前 SPOT Profile 只冻结这个所有权决定，不预建 `Loan`、`Position`、`MarginSchedule`、强平服务或数据库表。这样既保留柜台的正确边界，也不让未来清算模型重新拖垮现货交付。
 
-### 3.3 “完整”不等于“没有边界”
+### 3.4 “完整”不等于“没有边界”
 
 `SPOT-CEX-1.0` 完成时，读者交付的是一个完整的交易核心 Profile，而不是整个交易所公司：入口能接收请求，Counter 能做准入和冻结，Matching 能形成成交，Counter 能结算和记账，查询与推送能恢复，节点故障、数据库中断、重复消息和升级回滚均有可复核证据。被排除的业务不会用占位接口伪装完成。
 
-### 3.4 读者前置与毕业能力
+### 3.5 读者前置与毕业能力
 
 目标读者是具备 Java 后端开发经验、愿意在本地运行多进程和 Docker 实验的工程师。开始 M00 前应能阅读 Java、使用 Git 与 Gradle、编写单元测试，并理解基本的数据结构、数据库事务、Linux 进程和网络超时。Aeron、复制状态机、低延迟测量和交易领域知识按单元提供前置理论链接，不要求开课前一次性学完。
 
@@ -114,7 +135,8 @@ flowchart LR
 | 历史订单、分页账本、查询视图 | Counter changefeed 可重建；数据库只是投影 | Rest 查询接口 |
 | API Key、权限策略和凭据生命周期 | Rest 的认证存储/KMS | Rest 实例缓存 |
 | HTTP 会话、限流桶、WS 连接 | Rest | 可丢失并重建的普通微服务状态 |
-| 仓位、保证金、资金费率、强平状态 | 后续 Profile 中的 Counter | 第一季不实现 |
+| 借贷、利息、抵押品和风险率 | `MARGIN-SPOT-1.0` 中的 Counter | 当前 SPOT Profile 不实现 |
+| 仓位、保证金、资金费率和强平状态 | 对应合约 Profile 中的 Counter | 当前 SPOT Profile 不实现 |
 
 ### 4.1 Matching 的演进结论
 
@@ -133,7 +155,7 @@ M00–M08 不允许生产代码依赖 Aeron。M09 接入 Cluster 时，撮合算
 
 ### 4.2 Counter 的演进结论
 
-Counter 是自己的复制状态机，不是“数据库前面的业务微服务”。第一季只有一个逻辑三节点 Counter Cluster group，maker/taker 双边账户在同一个状态机命令内结算；C09 只形成容量和未来分片证据，不实际分片。它仍先用纯 Java runner 证明账户、预占和账本内核的确定性，再在 C03 接入 Cluster runtime。
+Counter 是自己的复制状态机，不是“数据库前面的业务微服务”。当前 SPOT Profile 只有一个逻辑三节点 Counter Cluster group，maker/taker 双边账户在同一个状态机命令内结算；C09 只形成容量和未来分片证据，不实际分片。它仍先用纯 Java runner 证明账户、预占和账本内核的确定性，再在 C03 接入 Cluster runtime。
 
 Counter 与 Matching 是两个权威边界，不能假装存在跨 Cluster 原子事务：
 
@@ -187,7 +209,7 @@ Counter 在已提交并已 apply 的状态迁移中生成版本化领域 Changef
 - 查询响应暴露 `asOfVersion` 和 `projectionLag`，不把陈旧投影伪装成强一致状态；
 - 数据库长时间不可用时，系统按积压与磁盘预算进入查询降级、`CANCEL_ONLY` 或 `HALTED` 等受控模式，而不是无限积压。
 
-第一季的 Sync 是 Counter 仓库内的独立部署单元，不创建第四个 Git 仓库。
+当前 SPOT Profile 的 Sync 是 Counter 仓库内的独立部署单元，不创建第四个 Git 仓库。
 
 ### 4.5 Rest 的边界
 
@@ -204,6 +226,8 @@ Rest 是独立普通微服务项目，不加入 Aeron Cluster，也不拥有交�
 Rest 初期是一个仓库和一个部署应用，内部划分 PriAPI、OpenAPI、WS 等逻辑模块。只有真实容量、安全边界或长期独立发布节奏得到证据后，才允许拆成多个部署服务。
 
 ## 5. 仓库、版本与创建门禁
+
+本节的 3 个仓库、30 个候选单元和全部停止点只对应当前 `SPOT-CEX-1.0`。后续 Profile 解锁时优先复用已经稳定的 Matching、Counter 与 Rest 产品边界；只有领域所有权、容量隔离或独立发布节奏形成证据后才评审新仓或拆仓，不在这里预建空项目。
 
 | 顺序 | 仓库 | 创建条件 | 主要制品 |
 | ---: | --- | --- | --- |
@@ -266,7 +290,7 @@ rest     = rest-1.0.0
 | C00–C09 | `CANDIDATE` | `RISK_MAP` | `LOCKED` | 记录权威边界和关键故障；Matching 1.0 前不创建仓库 |
 | R00–R06 | `CANDIDATE` | `RISK_MAP` | `LOCKED` | 记录外部契约边界和关键故障；Counter 1.0 前不创建仓库 |
 
-任何时刻全专题最多一个 `IN_PROGRESS`，最多一个下一单元处于 `READY`。候选总数 30 只是课程容量基线；未进入 `CONTRACTED` 的候选单元可以在评审时拆分、合并或调整 ID，已签约或已发布的单元不能静默改变。
+任何时刻全专题最多一个 `IN_PROGRESS`，最多一个下一单元处于 `READY`。候选总数 30 只是当前 SPOT Profile 的课程容量基线；未进入 `CONTRACTED` 的候选单元可以在评审时拆分、合并或调整 ID，已签约或已发布的单元不能静默改变。LOCKED Profile 不进入这个计数，也不占用实施窗口。
 
 ### 6.2 单元状态机
 
@@ -693,17 +717,19 @@ NORMAL
 
 状态机不读取数据库健康状况。外部控制面根据版本差、积压、磁盘和恢复预算提交受审计的 `ChangeOperatingMode` 命令。是否进入下一状态必须在 C08/C09 用故障实验确定，不能凭感觉硬编码。
 
-### 9.5 衍生品扩展的保留边界
+### 9.5 后续产品 Profile 的保留边界
 
-完成 `SPOT-CEX-1.0` 后，如果开启新的衍生品 Profile，仍由 Counter 权威维护：
+完成 `SPOT-CEX-1.0` 后，如果按路线解锁后续产品，仍由 Counter 权威维护其用户实时状态和结算事实：
 
-- Contract、MarginSchedule、MarkPrice rule 等版本化公共规则；
-- Position、平均开仓价、已实现/未实现盈亏；
-- 初始/维持保证金、逐仓或全仓权益；
-- 强平订单、保险基金、ADL、资金费率和结算 Journal；
-- 上述实时状态对应的 Changefeed、Sync 投影和对账。
+- `MARGIN-SPOT-1.0`：Loan、Borrow/Lend Journal、利息累积、抵押品、逐仓/全仓风险率和减仓事实；
+- `PERP-CEX-1.0`：Contract、MarginSchedule、MarkPrice/Funding rule、Position、盈亏、保证金、强平、保险基金、ADL 和资金费率；
+- `DELIVERY-FUTURES-1.0`：到期日历、结算价、停止交易、交割或现金结算与最终结算 Journal；
+- `OPTIONS-CEX-1.0`：期权合约、Greeks/波动率输入、组合保证金、行权、指派和到期处理；
+- 上述实时状态对应的 Changefeed、Sync 投影、查询新鲜度和对账。
 
-这些只是所有权地图，不是当前实现计划。衍生品 Profile 必须重新建立单元、反例和停止点，不得插入 C00–C09。
+Matching 仍只拥有订单排序、执行和成交事实，但每个 Profile 都要重新评审订单模型、市场状态和执行规则；Rest 仍只是外部协议与连接边界，但要按产品暴露经过版本化的 API 与推送。已有边界可以复用，不等于已有实现自动适用于新产品。
+
+这些只是所有权和演进地图，不是当前实现计划。每个后续 Profile 必须在解锁时重新建立自己的单元、反例、容量模型、故障语义和停止点，不得把债务、持仓或期权风险单元插入现有 C00–C09，也不得修改已签约单元来偷偷承载新范围。
 
 ## 10. Project R：Rest（7 个单元）
 
@@ -773,14 +799,15 @@ R06 不用 Mock 证明商用 Profile。它消费三个仓库的固定 release �
 ```text
 signal-grid-blog
 ├── docs/HIGH_AVAILABILITY_CEX_PRACTICE_PLAN.md  范围、课程含义和治理来源
-├── src/practice/config.ts                       planVersion、公开状态和规划计数
+├── src/practice/config.ts                       planVersion、Profile 路线、公开状态和当前规划计数
 ├── src/content/practice/                        M00 开始时才建立
 ├── src/pages/practice/                          项目门户、单元页、实验页
 └── public/...                                   Golden scenario 和已发布证据
 ```
 
 - 实战章节使用独立 `practiceLessons` collection，不进入 `posts`、文章归档和主 RSS；
-- 案例驾驶舱把“真实已发布数”和“当前候选规划数”分开显示，并只给出一个当前推荐动作；
+- 案例驾驶舱把 Profile 路线与项目路线分层展示，把“真实已发布数”和“当前 Profile 候选规划数”分开显示，并只给出一个当前推荐动作；
+- `LOCKED` Profile 只展示能力增量和解锁门禁，不创建单元、仓库、起点 tag、空教程或虚假进度；
 - 未开始单元只显示候选能力摘要，不创建空教程；
 - 每个单元通常 2–4 篇教程，超过 5 篇时优先审查是否应拆单元；
 - 每个单元最多一个有语义价值的 L2 实验，其他内容使用 L0/L1；
@@ -840,6 +867,8 @@ signal-grid-blog
 
 M00 已在独立公开仓库 [`lcha-reln/cex-matching`](https://github.com/lcha-reln/cex-matching) 启动。当前权威起点是不可移动的 [`course/m00.2-start`](https://github.com/lcha-reln/cex-matching/tree/course/m00.2-start)，`unit/m00` 是全专题唯一实现分支，生命周期为 `IN_PROGRESS`。原 [`course/m00-start`](https://github.com/lcha-reln/cex-matching/tree/course/m00-start) 与[失败 CI](https://github.com/lcha-reln/cex-matching/actions/runs/32951874121)证明干净环境发现了文件遗漏；[`course/m00.1-start`](https://github.com/lcha-reln/cex-matching/tree/course/m00.1-start) 则保留“代码已修复、仓内文档仍错误自指”的第二次审计记录。两个旧 tag 都不能删除或移动来美化历史；[当前起点 CI](https://github.com/lcha-reln/cex-matching/actions/runs/32954218080) 已通过。
 
+PLAN v0.2 只新增 SPOT 之后的锁定 Profile 路线；M00 输入、验证、canonical history 与 digest 合同不变。因此 M00 的 `course.properties` 与不可移动起点继续记录合同 `planVersion=0.1`，网站另行公开当前计划版本和这条兼容说明，不改 tag、不回写冻结证据。
+
 Bootstrap 已冻结这些维护选择：
 
 - Adoptium Java 25 toolchain 与 Gradle Daemon JVM；
@@ -858,6 +887,7 @@ Bootstrap 已冻结这些维护选择：
 
 | 日期 | 版本 | 变更 |
 | --- | --- | --- |
+| 2026-08-26 | v0.2 | 新增 `SPOT → MARGIN SPOT → PERP → DELIVERY FUTURES → OPTIONS` 顶层 Profile 路线；后四个 Profile 保持 `LOCKED`，不改变当前 SPOT 的 30 单元、3 仓库和 M00 v0.1 合同 |
 | 2026-08-26 | v0.1 | 建立 30 个候选单元、三仓库门禁、Matching 单机到 Aeron Cluster、Counter Changefeed/Sync、独立 Rest 和本地优先互动教学的课程基线 |
 
 ### 15.2 实施状态记录（不改变 `planVersion`）
