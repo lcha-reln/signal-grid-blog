@@ -6,7 +6,7 @@ import { sitePath } from "../../config";
 import "../../styles/practice.css";
 
 const totalUnits = PRACTICE_CASES.reduce((sum, practiceCase) => sum + practiceCase.totalUnits, 0);
-const repositoryCount = PRACTICE_CASES.reduce((sum, practiceCase) => sum + practiceCase.repositories, 0);
+const repositoryCount = PRACTICE_CASES.reduce((sum, practiceCase) => sum + practiceCase.plannedRepositories, 0);
 ---
 
 <BaseLayout

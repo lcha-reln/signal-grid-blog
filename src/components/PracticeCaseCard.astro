@@ -28,7 +28,7 @@ const { practiceCase, headingLevel = 2 } = Astro.props;
 
     <footer class="practice-case-card-footer">
       <dl>
-        <div><dt>{String(practiceCase.repositories).padStart(2, "0")}</dt><dd>规划仓库</dd></div>
+        <div><dt>{String(practiceCase.plannedRepositories).padStart(2, "0")}</dt><dd>规划仓库</dd></div>
         <div><dt>{String(practiceCase.totalUnits).padStart(2, "0")}</dt><dd>候选单元</dd></div>
         <div><dt>{String(practiceCase.publishedUnits).padStart(2, "0")}</dt><dd>已经发布</dd></div>
       </dl>

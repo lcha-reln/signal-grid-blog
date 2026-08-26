@@ -1,22 +1,24 @@
 # 高可用 CEX 交易核心实战课程设计
 
-> 状态：课程基线已建立，准备 M00
+> 状态：M00 已启动，当前 `IN_PROGRESS`
 >
 > 规划日期：2026-08-26
 >
 > `planVersion`：`0.1`
 >
+> 案例 slug：`high-availability-cex`
+>
 > 当前 Profile：`SPOT-CEX-1.0`
 >
 > 当前规划基线：30 个候选交付单元，3 个按门禁顺序创建的代码仓库
 >
-> 当前实施窗口：M00 已签订合同；M01 是下一候选；其余单元仅为可调整的课程地图
+> 当前实施窗口：M00 是唯一 `IN_PROGRESS` 单元；M01 是下一候选；其余单元仅为可调整的课程地图
 
 ## 1. 这份文档决定什么
 
 这份文档是“高可用 CEX 交易核心”实战案例的范围、课程含义和治理规则单一事实源。它固定项目边界、演进顺序、候选能力地图、停止点、教学方法和验收制度，但不提前固定尚未进入实施窗口的类图、表结构、协议字段或依赖版本。
 
-网站中的 [实战案例配置](../src/practice/config.ts) 是公开状态、当前规划数量和页面里程碑的机器可读来源，并携带 `planVersion`。范围和课程语义先在本文评审；同一次变更再同步配置并提高 `planVersion`，不允许两者分开发布。轻量一致性门禁属于 `signal-grid-blog` verifier，至少校验案例 slug、三个项目的候选单元数和命名停止点；代码仓库只记录所对应的 `planVersion`，绝不反向 checkout 或解析博客源码。
+网站中的 [实战案例配置](../src/practice/config.ts) 是公开状态、当前规划数量和页面里程碑的机器可读来源，并携带 `planVersion`。范围或课程语义变化必须先在本文评审，同一次变更再同步配置并提高 `planVersion`；生命周期、仓库 URL 和证据链接等实施状态也要同步，但不制造新的计划版本。轻量一致性门禁属于 `signal-grid-blog` verifier，至少校验案例 slug、三个项目的候选单元数和命名停止点；代码仓库只记录所对应的 `planVersion`，绝不反向 checkout 或解析博客源码。
 
 本课程要解决的不是“怎样快速拼出一个能下单的 Demo”，而是：
 
@@ -205,7 +207,7 @@ Rest 初期是一个仓库和一个部署应用，内部划分 PriAPI、OpenAPI�
 
 | 顺序 | 仓库 | 创建条件 | 主要制品 |
 | ---: | --- | --- | --- |
-| 1 | `matching` | M00 已是 `CONTRACTED`，并明确开始 M00 实现时执行一次性 bootstrap | Matching core、testkit、runtime、协议、故障实验 |
+| 1 | [`cex-matching`](https://github.com/lcha-reln/cex-matching) | 已创建；M00 是唯一 `IN_PROGRESS` 单元 | Matching core、testkit、runtime、协议、故障实验 |
 | 2 | `counter` | `matching-1.0.0` 发布并从干净环境复验 | Counter core、Cluster runtime、bridge、sync、query |
 | 3 | `rest` | `counter-1.0.0` 发布并从干净环境复验 | PriAPI、OpenAPI、WS、system tests |
 
@@ -218,7 +220,9 @@ course/m00-start
 course/m00-complete
 ```
 
-发现错误时发布 `course/m00.1-complete`，不移动旧 tag。只有命名停止点才另外发布 `matching-0.1.0` 等产品 release；普通单元没有产品 release。
+发现错误时发布递增的补丁 tag，不移动旧 tag，例如 `course/m00.1-start`、`course/m00.2-start` 或 `course/m00.1-complete`。只有命名停止点才另外发布 `matching-0.1.0` 等产品 release；普通单元没有产品 release。
+
+M00 bootstrap 连续暴露了两个必须诚实保留的起点缺陷：`course/m00-start` 因 `.gitignore` 误将 `buildSrc` 包目录识别为构建产物，表现为“bootstrap 任务源码未进入 Git”；`course/m00.1-start` 修复了任务源码，但仓内文档仍指向失败的原始起点。两者及其 CI 记录均不可移动或删除；当前由不改变 M00 业务语义、且代码与文档自洽的 `course/m00.2-start` 替代。教程和页面只引用当前补丁起点，不能把被替代 tag 伪装成通过。
 
 M00 有一次 bootstrap 例外：先在 `main` 建立可正常构建但尚未完成 M00 目标的课程基线，再创建 `course/m00-start` 和 `unit/m00`。默认 `./gradlew build` 必须成功；单独运行 M00 课程验收命令时，应以结构化 `GOAL_NOT_IMPLEMENTED` 表示预期缺口，不能用编译错误、环境错误或整仓红 CI 充当教学起点。M00 完成后，`main` 才恢复为“最新完整通过单元”的常规含义。
 
@@ -256,9 +260,9 @@ rest     = rest-1.0.0
 
 | 范围 | 生命周期 | 设计深度 | 仓库门禁 | 允许的工作 |
 | --- | --- | --- | --- | --- |
-| M00 | `CONTRACTED` | `CONTRACT` | `NOT_CREATED` | 获准开始实现时执行一次 bootstrap，随后准备 start tag |
-| M01 | `CANDIDATE` | `NEXT_MAP` | 随 Matching 仓库 | 只保留下一候选的教学和边界假设，M00 发布后重新签约 |
-| M02–M12 | `CANDIDATE` | `RISK_MAP` | 随 Matching 仓库 | 记录能力、关键不变量和危险故障，不冻结类、Schema 字段编号、依赖版本或文章标题 |
+| M00 | `IN_PROGRESS` | `CONTRACT` | `CREATED` | 只实现输入规范、确定性验证与 history digest |
+| M01 | `CANDIDATE` | `NEXT_MAP` | 随 `cex-matching` 仓库 | 只保留下一候选的教学和边界假设，M00 发布后重新签约 |
+| M02–M12 | `CANDIDATE` | `RISK_MAP` | 随 `cex-matching` 仓库 | 记录能力、关键不变量和危险故障，不冻结类、Schema 字段编号、依赖版本或文章标题 |
 | C00–C09 | `CANDIDATE` | `RISK_MAP` | `LOCKED` | 记录权威边界和关键故障；Matching 1.0 前不创建仓库 |
 | R00–R06 | `CANDIDATE` | `RISK_MAP` | `LOCKED` | 记录外部契约边界和关键故障；Counter 1.0 前不创建仓库 |
 
@@ -832,32 +836,32 @@ signal-grid-blog
 
 不得先发布描述未来完成形态的教程，再让代码慢慢追赶文章。
 
-## 14. M00 的下一步
+## 14. M00 当前执行
 
-本文完成后仍不创建任何代码仓库、Counter、Rest 或 Aeron 模块。明确开始 M00 实现后，按唯一一次 bootstrap 顺序执行：
+M00 已在独立公开仓库 [`lcha-reln/cex-matching`](https://github.com/lcha-reln/cex-matching) 启动。当前权威起点是不可移动的 [`course/m00.2-start`](https://github.com/lcha-reln/cex-matching/tree/course/m00.2-start)，`unit/m00` 是全专题唯一实现分支，生命周期为 `IN_PROGRESS`。原 [`course/m00-start`](https://github.com/lcha-reln/cex-matching/tree/course/m00-start) 与[失败 CI](https://github.com/lcha-reln/cex-matching/actions/runs/32951874121)证明干净环境发现了文件遗漏；[`course/m00.1-start`](https://github.com/lcha-reln/cex-matching/tree/course/m00.1-start) 则保留“代码已修复、仓内文档仍错误自指”的第二次审计记录。两个旧 tag 都不能删除或移动来美化历史；[当前起点 CI](https://github.com/lcha-reln/cex-matching/actions/runs/32954218080) 已通过。
 
-1. 复核 `SPOT-CEX-1.0` 范围和 M00 已签订合同；
-2. 获准创建唯一的 `matching` 仓库，在初始 `main` 冻结 JDK toolchain、Gradle Wrapper、测试库和格式化版本；
-3. 建立默认 `./gradlew build` 为绿色的最小工程、合法/非法 fixture，以及能结构化报告 `GOAL_NOT_IMPLEMENTED` 的 `m00Check`；
-4. 在 `signal-grid-blog` verifier 中加入文档与 `src/practice/config.ts#planVersion` 的最小一致性门禁；Matching 只在课程元数据中记录版本号；
-5. 在初始 `main` 创建不可移动的 `course/m00-start` tag，再从该 tag 创建 `unit/m00`；
-6. 将 M00 从 `CONTRACTED` 推进到 `READY`，确认不是编译或基础设施错误后才进入 `IN_PROGRESS`；
-7. 只实现输入规范、验证和 history digest，不写订单簿，不加入 Aeron，不预建 Counter/Rest 协议；
-8. M00 达到 `PUBLISHED` 后，再重新签订或拆分 M01 候选地图。
+Bootstrap 已冻结这些维护选择：
 
-M00 开始时需要冻结、现在不提前决定的实现选项：
+- Adoptium Java 25 toolchain 与 Gradle Daemon JVM；
+- 带 SHA-256 分发校验的 Gradle Wrapper 9.7.1；
+- JUnit 6.1.3、Spotless 8.10.0 与 google-java-format 1.36.1；
+- Apache-2.0 许可证、GitHub Actions 和公开仓库坐标；
+- 只包含 `matching-core`、`matching-testkit` 与当前任务必需的 `buildSrc`，不预建 runtime、protocol、cluster 或 Counter/Rest 模块。
 
-- JDK、Gradle、测试库和代码格式化版本；
-- `PriceTicks`、`QuantityLots` 的具体单字段取值范围；
-- canonical command/validation history 的第一版内部表示；
-- history digest 的字段顺序和哈希算法；
-- `m00Check` 与 evidence 生成任务的 Gradle 边界；
-- 仓库地址、许可证、CI 平台和 release 制品坐标。
+精确输入域、错误优先级、canonical bytes、digest 与 fixture Schema 以 `course/m00.2-start` 中的 `docs/specs/m00.md`、`schemas/` 和 `course.properties` 为权威来源；本文只维护课程边界和索引，不复制第二份实现合同。
 
-这些选择由 M00 的可执行规格和维护成本驱动，不由后续 Aeron 或数据库预设反向污染。
+当前只允许实现 `PlaceLimitOrder` 的输入规范、确定性验证、canonical history 与 SHA-256 digest，并让 `m00Check` 从 `GOAL_NOT_IMPLEMENTED` 变为能杀死指定 semantic mutant 的业务门禁。订单簿、挂单、成交、Aeron、WAL、数据库和未来服务接口仍明确禁止。M00 达到 `PUBLISHED` 后，才重新签订或拆分 M01 候选地图。
 
 ## 15. 变更记录
+
+### 15.1 课程计划版本
 
 | 日期 | 版本 | 变更 |
 | --- | --- | --- |
 | 2026-08-26 | v0.1 | 建立 30 个候选单元、三仓库门禁、Matching 单机到 Aeron Cluster、Counter Changefeed/Sync、独立 Rest 和本地优先互动教学的课程基线 |
+
+### 15.2 实施状态记录（不改变 `planVersion`）
+
+| 日期 | 单元 | 生命周期 | 记录 |
+| --- | --- | --- | --- |
+| 2026-08-26 | M00 | `IN_PROGRESS` | 创建 `cex-matching`；保留 `course/m00-start` 的源码遗漏与 `course/m00.1-start` 的文档自指缺陷，以通过干净 CI 且自洽的 `course/m00.2-start` 作为权威起点；启动 `unit/m00` |

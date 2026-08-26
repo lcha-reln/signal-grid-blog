@@ -17,6 +17,14 @@ interface Props {
 
 const { practiceCase } = Astro.props;
 const progressLabel = `${practiceCase.publishedUnits} / ${practiceCase.totalUnits}`;
+const currentUnit = practiceCase.currentUnit;
+const currentTrack = currentUnit
+  ? practiceCase.tracks.find((track) => track.code === currentUnit.trackCode)
+  : undefined;
+const createdRepositories = practiceCase.tracks.filter((track) => track.repositoryUrl).length;
+const startUrl = currentTrack?.repositoryUrl && currentUnit?.startRef
+  ? `${currentTrack.repositoryUrl}/tree/${currentUnit.startRef}`
+  : undefined;
 ---
 
 <BaseLayout title={practiceCase.title} description={practiceCase.summary}>
@@ -35,10 +43,9 @@ const progressLabel = `${practiceCase.publishedUnits} / ${practiceCase.totalUnit
       <strong><i aria-hidden="true"></i>{practiceCase.statusLabel}</strong>
       <dl>
         <div><dt>{progressLabel}</dt><dd>已发布 / 当前规划</dd></div>
-        <div><dt>{practiceCase.repositories}</dt><dd>规划仓库</dd></div>
+        <div><dt>{createdRepositories} / {practiceCase.plannedRepositories}</dt><dd>已创建 / 规划仓库</dd></div>
         <div><dt>LOCAL</dt><dd>工程执行</dd></div>
       </dl>
-      <p>{practiceCase.currentAction}</p>
     </aside>
   </header>
 
@@ -68,9 +75,9 @@ const progressLabel = `${practiceCase.publishedUnits} / ${practiceCase.totalUnit
       <span class="section-index">02</span>
       <div>
         <span class="eyebrow">DEPENDENCY ROUTE</span>
-        <h2 id="case-tracks-heading">Matching → Counter → Rest</h2>
+        <h2 id="case-tracks-heading">{practiceCase.tracks.map((track) => track.title).join(" → ")}</h2>
       </div>
-      <p>三个项目分别建仓、顺序出现；没有巨型单仓，也没有预建空服务。</p>
+      <p>{practiceCase.trackNarrative}</p>
     </div>
     <div class="case-track-grid">
       {practiceCase.tracks.map((track, index) => (
@@ -79,6 +86,11 @@ const progressLabel = `${practiceCase.publishedUnits} / ${practiceCase.totalUnit
           <h3>{track.title}</h3>
           <p>{track.description}</p>
           <footer><strong>{String(track.units).padStart(2, "0")} CANDIDATE UNITS</strong><span>{track.unlock}</span></footer>
+          {track.repositoryUrl && (
+            <a class="track-repository" href={track.repositoryUrl} target="_blank" rel="noreferrer">
+              打开代码仓库 <span aria-hidden="true">↗</span>
+            </a>
+          )}
           {index < practiceCase.tracks.length - 1 && <i class="track-arrow" aria-hidden="true">→</i>}
         </article>
       ))}
@@ -129,10 +141,16 @@ const progressLabel = `${practiceCase.publishedUnits} / ${practiceCase.totalUnit
 
   <section class="section case-next" aria-labelledby="case-next-heading">
     <span class="eyebrow">NEXT VERIFIED MOVE</span>
-    <h2 id="case-next-heading">从 M00 的可执行规格开始</h2>
-    <p>M00 只建立命令输入、验证与确定性历史；M01 是下一候选。M02 以后只保留可调整的能力地图，不提前冻结实现。</p>
+    <h2 id="case-next-heading">{currentUnit?.title ?? "等待首个可执行单元"}</h2>
+    <p>
+      {practiceCase.currentAction}
+      {currentUnit?.startRef && <> 当前权威起点是 <code>{currentUnit.startRef}</code>。</>}
+      {currentUnit?.supersededStartRefs?.map((item) => (
+        <> 原 <code>{item.ref}</code> 因{item.reason}而保留为被替代的审计记录。</>
+      ))}
+    </p>
     <div class="hero-actions">
-      <span class="button primary button-disabled" aria-disabled="true">首个单元准备中</span>
+      {startUrl && <a class="button primary" href={startUrl} target="_blank" rel="noreferrer">查看不可移动起点 <span>↗</span></a>}
       <a class="button ghost" href={sitePath(practiceCase.theoryPath)}>查看交易系统理论</a>
     </div>
   </section>
