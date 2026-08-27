@@ -2,7 +2,7 @@
 title: "有状态系统的可观测性：从存活指标到 Epoch、Commit、Lag、Cursor 与恢复证据"
 description: "把可观测性从进程存活提升为协议证据：建立 Epoch 与 Owner、Durable/Commit/Applied/Published 位置、Cursor 与 Lag、结果未知残留、恢复阶段、Fencing 告警和可审计证据之间的决策闭环。"
 date: 2026-08-27T15:45:00+08:00
-updated: 2026-08-27T16:08:00+08:00
+updated: 2026-08-27T16:55:00+08:00
 tags:
   - 分布式系统
   - 可观测性
@@ -24,7 +24,7 @@ draft: false
 
 有状态系统的可观测性必须回答一组可执行的问题：**谁现在有权决定，权威历史推进到哪里，每个副本和投影追到哪里，哪些业务结果仍然未知，恢复处于什么阶段，以及哪份证据允许控制面执行下一步。** 指标、日志和 Trace 只是承载这些答案的媒介；如果它们没有映射到协议状态、不变量与决策规则，再漂亮的 Dashboard 也只是运行时装饰。
 
-本文是“有状态系统可靠性”学习路径的 Chapter 16，也是一篇协议观测与工程方法文章。它承接 [Raft 中的 term、commitIndex 与 lastApplied](/signal-grid-blog/posts/raft-consensus-leader-election-log-replication-and-safety/)、[应用序列号与恢复游标](/signal-grid-blog/posts/distributed-message-sequencing/)、[分布式快照中的 State + Cursor](/signal-grid-blog/posts/distributed-snapshots-consistent-checkpoints-barriers-recovery-cursors/)、[灾难恢复中的 RPO/RTO 证据](/signal-grid-blog/posts/backup-pitr-disaster-recovery-and-restore-drills/) 和 [恢复协议验证方法](/signal-grid-blog/posts/recovery-protocol-verification-failpoints-simulation-history-checking/)，把散落在各章的“应该观测什么”收束成一套统一模型。
+本文是“有状态系统可靠性”学习路径的 Chapter 18，也是一篇协议观测与工程方法文章。它承接 [Raft 中的 term、commitIndex 与 lastApplied](/signal-grid-blog/posts/raft-consensus-leader-election-log-replication-and-safety/)、[应用序列号与恢复游标](/signal-grid-blog/posts/distributed-message-sequencing/)、[分布式快照中的 State + Cursor](/signal-grid-blog/posts/distributed-snapshots-consistent-checkpoints-barriers-recovery-cursors/)、[灾难恢复中的 RPO/RTO 证据](/signal-grid-blog/posts/backup-pitr-disaster-recovery-and-restore-drills/) 和 [Recovery Frontier](/signal-grid-blog/posts/history-retention-recovery-frontier-log-truncation-dedup-gc/)，把散落在各章的“应该观测什么”收束成一套统一模型，并为后续形式化规格与实现验证提供可关联的状态证据。
 
 边界也先说清：本文不写 Prometheus、OpenTelemetry 或某个日志平台的安装教程，不讨论 JVM、GC、CPU Profiling 等性能观测，也不把某个产品的指标名冒充跨系统标准。示例字段是教学协议；落地时必须以自己的 ACK 合同、复制协议、分片模型与外部副作用边界为准。
 
@@ -521,7 +521,7 @@ Metrics 本身通常不是持久业务记录。etcd 官方文档就明确说明�
 
 这套方法能保证的是：在已声明的故障模型、ACK 合同、位置语义和证据保留窗口内，控制面不会仅凭“进程活着”就错误宣布权威、完成或恢复，并且每次开放、降级、fence 和恢复决策都可以追溯。
 
-它不能保证遥测没有实现 Bug，不能让采样 Trace 变成完整审计日志，也不能仅靠观测证明所有可能 History 都正确。最终可信度仍来自权威状态、协议不变量、故障注入、历史检查与真实恢复演练共同交叉。下一章 [恢复协议验证](/signal-grid-blog/posts/recovery-protocol-verification-failpoints-simulation-history-checking/) 会进一步说明，如何把这些字段变成 simulator、failpoint、History Checker 与 RPO/RTO Oracle 的输入。
+它不能保证遥测没有实现 Bug，不能让采样 Trace 变成完整审计日志，也不能仅靠观测证明所有可能 History 都正确。最终可信度仍来自权威状态、协议不变量、形式化模型、故障注入、历史检查与真实恢复演练共同交叉。下一章 [TLA+、Invariant、Counterexample 与 Refinement](/signal-grid-blog/posts/protocol-pseudocode-to-tla-invariants-counterexamples-refinement/) 会先把这些状态和转移压缩成可探索规格；最终的 [恢复协议验证](/signal-grid-blog/posts/recovery-protocol-verification-failpoints-simulation-history-checking/) 再把模型义务落回 simulator、failpoint、History Checker 与 RPO/RTO Oracle。
 
 ## 原始论文、规范与官方资料
 

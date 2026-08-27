@@ -2,7 +2,7 @@
 title: "备份不是副本：PITR、RPO/RTO、灾难恢复与恢复演练"
 description: "从威胁模型出发，区分在线副本、异地镜像与隔离备份，推导 base backup、连续日志、timeline、PITR、多组件一致恢复点、fencing、外部副作用对账，以及如何用恢复演练证明 RPO/RTO。"
 date: 2026-08-18T14:22:06+08:00
-updated: 2026-08-27T16:08:00+08:00
+updated: 2026-08-27T16:55:00+08:00
 tags:
   - 备份恢复
   - PITR
@@ -37,7 +37,7 @@ Leader 把一条误删除命令正确复制给两个 Follower，三个副本会�
   → 在目标时间内完成的恢复演练证据
 ```
 
-本文是“有状态系统可靠性”学习路径的 Chapter 14，承接 [WAL 到底保证什么](/signal-grid-blog/posts/write-ahead-log-durability-and-crash-recovery/) 与[分布式快照与一致检查点](/signal-grid-blog/posts/distributed-snapshots-consistent-checkpoints-barriers-recovery-cursors/)。前者解释单机崩溃后怎样重放日志，后者解释状态与输入 cursor 怎样形成 consistent cut；本文把故障范围扩展到磁盘永久损坏、整站丢失、误操作、静默损坏、凭证失陷和勒索软件。ZooKeeper 与 Kafka 只作为产品案例，协议结论保持通用。
+本文是“有状态系统可靠性”学习路径的 Chapter 15，承接 [WAL 到底保证什么](/signal-grid-blog/posts/write-ahead-log-durability-and-crash-recovery/)、[分布式快照与一致检查点](/signal-grid-blog/posts/distributed-snapshots-consistent-checkpoints-barriers-recovery-cursors/) 和 [Recovery Frontier](/signal-grid-blog/posts/history-retention-recovery-frontier-log-truncation-dedup-gc/)。它们分别解释单机怎样重放、状态与输入 cursor 怎样形成 consistent cut，以及哪些历史仍属于恢复依赖；本文把故障范围扩展到磁盘永久损坏、整站丢失、误操作、静默损坏、凭证失陷和勒索软件。ZooKeeper 与 Kafka 只作为产品案例，协议结论保持通用。
 
 ## 1. 先画威胁模型：Replica、DR Copy 与 Backup 回答不同问题
 
@@ -656,7 +656,7 @@ Restore Drill 把纸面 RPO/RTO 变成观测证据
 - 本地历史倒带后，现实世界里已经发生的付款、成交和消息怎样对账；
 - 在真实规模、真实限流和空环境里，最坏 RPO/RTO 证据是什么。
 
-如果这些问题只能由“备份任务昨晚是绿色”回答，系统拥有的是备份文件，不是恢复能力。备份真正完成的时刻，不是上传进度到 100%，而是另一套可信环境使用它恢复到明确位置、验证了业务不变量，并把失败边界与耗时留成可复核证据。
+如果这些问题只能由“备份任务昨晚是绿色”回答，系统拥有的是备份文件，不是恢复能力。备份真正完成的时刻，不是上传进度到 100%，而是另一套可信环境使用它恢复到明确位置、验证了业务不变量，并把失败边界与耗时留成可复核证据。下一章继续处理一种更隐蔽的失败：当所有副本都在线但内容已经损坏时，怎样用 [Checksum、Scrubbing、损坏隔离与权威修复](/signal-grid-blog/posts/silent-data-corruption-checksum-scrubbing-isolation-authoritative-repair/) 阻止坏数据扩散到复制链和备份链。
 
 ### 一手与官方资料
 

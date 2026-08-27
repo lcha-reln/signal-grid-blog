@@ -82,12 +82,15 @@
 | 分布式日志与消息连续性 |      11 |            70 | 过载也是故障：背压、Admission Control、Retry Budget 与 Load Shedding                       | `overload-backpressure-admission-control-retry-budget-load-shedding`         |
 | 分布式日志与消息连续性 |      12 |            75 | 状态所有权如何安全迁移：Shard、Catch-up、Handoff、Rebalancing 与 Fencing                   | `state-ownership-migration-shard-catchup-handoff-fencing`                    |
 | 检查点、灾备与验证     |      13 |            80 | 分布式快照与一致检查点：从 Chandy–Lamport 到 Barrier、Checkpoint 与恢复位点                | `distributed-snapshots-consistent-checkpoints-barriers-recovery-cursors`     |
-| 检查点、灾备与验证     |      14 |            90 | 备份不是副本：PITR、RPO/RTO、灾难恢复与恢复演练                                            | `backup-pitr-disaster-recovery-and-restore-drills`                           |
-| 检查点、灾备与验证     |      15 |           100 | 有状态系统如何滚动升级：协议版本、快照迁移、双版本执行与安全回滚                           | `stateful-system-rolling-upgrades-protocol-snapshot-migration-safe-rollback` |
-| 检查点、灾备与验证     |      16 |           105 | 有状态系统的可观测性：从存活指标到 Epoch、Commit、Lag、Cursor 与恢复证据                   | `stateful-system-observability-epoch-commit-lag-cursor-recovery`             |
-| 检查点、灾备与验证     |      17 |           110 | 如何证明恢复协议真的可靠：Failpoint、确定性模拟、历史检查与故障注入                        | `recovery-protocol-verification-failpoints-simulation-history-checking`      |
+| 检查点、灾备与验证     |      14 |            85 | 历史什么时候可以删除：Recovery Frontier、Log Truncation、Dedup 生命周期与安全回收          | `history-retention-recovery-frontier-log-truncation-dedup-gc`                |
+| 检查点、灾备与验证     |      15 |            90 | 备份不是副本：PITR、RPO/RTO、灾难恢复与恢复演练                                            | `backup-pitr-disaster-recovery-and-restore-drills`                           |
+| 检查点、灾备与验证     |      16 |            95 | 副本都在线，数据却已经错了：Checksum、Scrubbing、损坏隔离与权威修复                        | `silent-data-corruption-checksum-scrubbing-isolation-authoritative-repair`   |
+| 检查点、灾备与验证     |      17 |           100 | 有状态系统如何滚动升级：协议版本、快照迁移、双版本执行与安全回滚                           | `stateful-system-rolling-upgrades-protocol-snapshot-migration-safe-rollback` |
+| 检查点、灾备与验证     |      18 |           105 | 有状态系统的可观测性：从存活指标到 Epoch、Commit、Lag、Cursor 与恢复证据                   | `stateful-system-observability-epoch-commit-lag-cursor-recovery`             |
+| 检查点、灾备与验证     |      19 |           108 | 从协议伪代码到形式化规格：TLA+、Invariant、Counterexample 与 Refinement                    | `protocol-pseudocode-to-tla-invariants-counterexamples-refinement`           |
+| 检查点、灾备与验证     |      20 |           110 | 如何证明恢复协议真的可靠：Failpoint、确定性模拟、历史检查与故障注入                        | `recovery-protocol-verification-failpoints-simulation-history-checking`      |
 
-本路径先建立单写者有状态服务的复制与恢复全景，再用 WAL 说明单机如何建立可恢复的持久前缀；随后区分墙钟、逻辑顺序、超时与 Lease，并用 operation history 精确定义一致性合同。复制协议设计空间先把 Primary-Backup、同步与异步确认、Quorum、Chain Replication 和状态机复制放进同一张决策图，再由 Raft、ZooKeeper/ZAB 与 Kafka/KRaft 分别展示共识协议、协调接口和分布式日志。应用序列号与跨系统副作用继续处理消息连续性和结果未知，过载控制与状态所有权迁移则说明系统怎样在压力和在线重平衡中维持唯一权威。最后，一致检查点、PITR、混合版本升级与协议可观测性共同给出恢复位置、演进状态和运行证据，再由历史检查与确定性故障注入完成验证闭环。本地 WAL、复制提交、业务幂等、全局快照、备份和 exactly-once 始终是不同保证；Raft 也是分析框架，不代表 ZooKeeper、Kafka 或 Aeron Cluster 与标准 Raft 使用相同协议，现代 Kafka 更不依赖 ZooKeeper。
+本路径先建立单写者有状态服务的复制与恢复全景，再用 WAL 说明单机如何建立可恢复的持久前缀；随后区分墙钟、逻辑顺序、超时与 Lease，并用 operation history 精确定义一致性合同。复制协议设计空间先把 Primary-Backup、同步与异步确认、Quorum、Chain Replication 和状态机复制放进同一张决策图，再由 Raft、ZooKeeper/ZAB 与 Kafka/KRaft 分别展示共识协议、协调接口和分布式日志。应用序列号与跨系统副作用继续处理消息连续性和结果未知，过载控制与状态所有权迁移则说明系统怎样在压力和在线重平衡中维持唯一权威。最后，一致检查点先建立可恢复 cut，Recovery Frontier 再证明哪些历史与去重证据可以安全回收；PITR 与灾难恢复处理跨故障域的长期基线，Checksum、Scrubbing 与权威修复处理“副本仍在线但内容已经损坏”的静默故障。混合版本升级与协议可观测性给出演进状态和运行证据，TLA+ 把协议不变量、反例与 refinement 写成可探索规格，再由历史检查与确定性故障注入完成实现层验证闭环。本地 WAL、复制提交、业务幂等、全局快照、备份、完整性校验和 exactly-once 始终是不同保证；Raft 也是分析框架，不代表 ZooKeeper、Kafka 或 Aeron Cluster 与标准 Raft 使用相同协议，现代 Kafka 更不依赖 ZooKeeper。
 
 ## Java 低延迟工程
 

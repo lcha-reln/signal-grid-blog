@@ -2,7 +2,7 @@
 title: "分布式快照与一致检查点：从 Chandy–Lamport 到 Barrier、Checkpoint 与恢复位点"
 description: "从 consistent cut 与 Chandy–Lamport Marker 出发，推导流处理中的 Barrier、对齐与非对齐 Checkpoint，讲清状态、Source Cursor、Sink 事务、恢复代次和 Rescaling 必须怎样共同闭环。"
 date: 2026-08-18T14:12:58+08:00
-updated: 2026-08-27T16:08:00+08:00
+updated: 2026-08-27T16:55:00+08:00
 tags:
   - 分布式快照
   - Chandy-Lamport
@@ -473,7 +473,7 @@ consistent cut
 - **作业成功重启**不等于恢复无洞、无重效；
 - **最新文件**不等于最新可恢复 generation。
 
-当我们把恢复点视为一份带因果边界、完整成员和外部决议的证据，而不是一堆备份文件，Checkpoint 才从性能功能变成正确性协议。下一步要处理的是更长时间尺度的介质损坏、误删除和整站丢失：那需要备份、连续日志、PITR、隔离副本与恢复演练，而不是无限延长在线 checkpoint 的保留期。
+当我们把恢复点视为一份带因果边界、完整成员和外部决议的证据，而不是一堆备份文件，Checkpoint 才从性能功能变成正确性协议。下一章先用 [Recovery Frontier](/signal-grid-blog/posts/history-retention-recovery-frontier-log-truncation-dedup-gc/) 回答哪些旧日志、快照和去重证据已经失去恢复用途、可以安全删除；随后再进入[备份与 PITR](/signal-grid-blog/posts/backup-pitr-disaster-recovery-and-restore-drills/)，处理更长时间尺度的介质损坏、误删除和整站丢失，而不是无限延长在线 checkpoint 的保留期。
 
 ### 一手资料
 

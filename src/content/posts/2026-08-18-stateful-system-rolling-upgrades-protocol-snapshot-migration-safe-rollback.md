@@ -2,7 +2,7 @@
 title: "有状态系统如何滚动升级：协议版本、快照迁移、双版本执行与安全回滚"
 description: "从混跑版本的安全条件出发，建立 wire、日志、快照与状态机的兼容矩阵，讲清 capability gate、expand-contract、确定性影子执行、逐节点滚动顺序，以及 finalize 之后为何只能前进修复或恢复。"
 date: 2026-08-18T14:15:00+08:00
-updated: 2026-08-27T16:08:00+08:00
+updated: 2026-08-27T16:55:00+08:00
 tags:
   - 滚动升级
   - 协议兼容
@@ -24,7 +24,7 @@ draft: false
 
 本文把滚动升级视为一个受共识约束的状态迁移。核心方法是先扩展读取与执行能力，继续写旧格式；等所有可能接管权威角色的节点都证明兼容后，再通过有序日志激活新语义；最后才回收旧格式、旧快照和降级路径。`prepare → activate → finalize` 中，前两步仍应保留可逆条件，`finalize` 则必须被当成明确的不可逆边界。
 
-本文是“有状态系统可靠性”学习路径的 Chapter 15。阅读前建议先理解 [一致性模型](/signal-grid-blog/posts/consistency-models-linearizability-serializability-and-real-time-order/) 中的合法 History、[Raft](/signal-grid-blog/posts/raft-consensus-leader-election-log-replication-and-safety/) 的提交前缀与成员变更、[WAL](/signal-grid-blog/posts/write-ahead-log-durability-and-crash-recovery/) 的持久前沿，以及 [分布式快照](/signal-grid-blog/posts/distributed-snapshots-consistent-checkpoints-barriers-recovery-cursors/) 的状态—游标一致性。升级前的可恢复基线与灾难回退由 [备份、PITR 与恢复演练](/signal-grid-blog/posts/backup-pitr-disaster-recovery-and-restore-drills/) 负责，不能用在线副本代替。
+本文是“有状态系统可靠性”学习路径的 Chapter 17。阅读前建议先理解 [一致性模型](/signal-grid-blog/posts/consistency-models-linearizability-serializability-and-real-time-order/) 中的合法 History、[Raft](/signal-grid-blog/posts/raft-consensus-leader-election-log-replication-and-safety/) 的提交前缀与成员变更、[WAL](/signal-grid-blog/posts/write-ahead-log-durability-and-crash-recovery/) 的持久前沿，以及 [分布式快照](/signal-grid-blog/posts/distributed-snapshots-consistent-checkpoints-barriers-recovery-cursors/) 的状态—游标一致性。升级前的可恢复基线与灾难回退由 [备份、PITR 与恢复演练](/signal-grid-blog/posts/backup-pitr-disaster-recovery-and-restore-drills/) 负责，存量字节的可信度则由 [静默损坏检测与权威修复](/signal-grid-blog/posts/silent-data-corruption-checksum-scrubbing-isolation-authoritative-repair/) 负责；两者都不能用“在线副本数量正常”代替。
 
 本文讨论非拜占庭、崩溃恢复模型下的复制状态机、协调服务与分布式日志。产品是否正式支持某两个版本混跑，必须以该产品对应版本的升级文档为准；通用方法不能覆盖一个产品明确禁止的路径。
 
@@ -325,7 +325,7 @@ flowchart TB
 - 外部查询结果与响应顺序；
 - 异步回调的调度顺序。
 
-新逻辑若确实需要不同输出，shadow 的目标就不是“永远相等”，而是验证一个明确关系：例如余额总额守恒、旧响应映射到新响应、只有指定命令出现差异。下一章先进入[有状态系统的可观测性](/signal-grid-blog/posts/stateful-system-observability-epoch-commit-lag-cursor-recovery/)，把 activation、版本代际和恢复进度变成运行证据；Chapter 17 的[恢复协议验证](/signal-grid-blog/posts/recovery-protocol-verification-failpoints-simulation-history-checking/) 再把 reference model、metamorphic relation 与 trace replay 变成可重复实验。
+新逻辑若确实需要不同输出，shadow 的目标就不是“永远相等”，而是验证一个明确关系：例如余额总额守恒、旧响应映射到新响应、只有指定命令出现差异。下一章先进入 [有状态系统的可观测性](/signal-grid-blog/posts/stateful-system-observability-epoch-commit-lag-cursor-recovery/)，把 activation、版本代际和恢复进度变成运行证据；Chapter 19 的 [TLA+ 与 Refinement](/signal-grid-blog/posts/protocol-pseudocode-to-tla-invariants-counterexamples-refinement/) 再把协议义务写成可探索规格，最终由 Chapter 20 的 [恢复协议验证](/signal-grid-blog/posts/recovery-protocol-verification-failpoints-simulation-history-checking/) 把 reference model、metamorphic relation 与 trace replay 变成实现层的可重复实验。
 
 ## 滚动顺序必须维持法定人数、可接管状态与旧语义
 

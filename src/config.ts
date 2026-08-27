@@ -161,11 +161,11 @@ export const SERIES: readonly SeriesDefinition[] = [
     title: "有状态系统可靠性",
     eyebrow: "STATEFUL RESILIENCE",
     description:
-      "围绕单写者有状态服务，从 WAL、本地持久化与崩溃恢复，推进到时间、一致性、复制协议与 fencing，再连接消息连续性、跨系统副作用、过载控制、状态所有权迁移、一致检查点、灾备、滚动升级、协议可观测性与故障证明。",
+      "围绕单写者有状态服务，从 WAL、本地持久化与崩溃恢复，推进到时间、一致性、复制协议与 fencing，再连接消息连续性、跨系统副作用、过载控制、状态所有权迁移、一致检查点、安全回收、灾备、静默损坏修复、滚动升级、协议可观测性、形式化规格与故障证明。",
     prerequisite:
       "理解基础分布式系统与事件驱动概念；不要求预先掌握 WAL、Kafka、Aeron 或 ZooKeeper。",
     outcome:
-      "能够定义故障模型、确认点与持久化边界，比较 Primary-Backup、Quorum、Chain Replication 与状态机复制，区分墙钟、逻辑顺序与权威提交，设计幂等副作用、过载降级和所有权迁移协议，建立一致检查点、PITR 与安全升级边界，并用协议指标和可重放故障实验给出 RPO/RTO 与恢复正确性的证据。",
+      "能够定义故障模型、确认点与持久化边界，比较 Primary-Backup、Quorum、Chain Replication 与状态机复制，区分墙钟、逻辑顺序与权威提交，设计幂等副作用、过载降级和所有权迁移协议，建立一致检查点、Recovery Frontier、PITR、完整性修复与安全升级边界，并用协议指标、TLA+ 规格和可重放故障实验给出 RPO/RTO 与恢复正确性的证据。",
     color: "coral",
     index: "03",
     stages: [
@@ -197,7 +197,7 @@ export const SERIES: readonly SeriesDefinition[] = [
         eyebrow: "RECOVERY, EVOLUTION & PROOF",
         title: "检查点、灾备与验证",
         description:
-          "把一致检查点、PITR、灾难恢复、混合版本升级、协议可观测性和故障验证收敛为可演练、可回滚、可证明的恢复链。",
+          "把一致检查点、安全回收、PITR、静默损坏修复、混合版本升级、协议可观测性、形式化规格和故障验证收敛为可演练、可回滚、可证明的恢复链。",
         fromOrder: 80,
       },
     ],
