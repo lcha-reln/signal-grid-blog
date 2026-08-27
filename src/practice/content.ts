@@ -65,6 +65,23 @@ function validatePracticeUnits(): void {
     }
 
     const key = `${unit.projectSlug}/${unit.code}`;
+    if (!unit.objective.trim() || !unit.stopPoint.trim()) {
+      throw new Error(`Practice unit ${key} has an empty objective or stopPoint`);
+    }
+    for (const field of [
+      "adds",
+      "delivers",
+      "freezes",
+      "excludes",
+      "gate",
+      "interaction",
+      "evidence",
+      "localCommands",
+    ] as const) {
+      if (unit[field].length === 0 || unit[field].some((item) => !item.trim())) {
+        throw new Error(`Practice unit ${key} has an empty ${field} contract`);
+      }
+    }
     if (unitKeys.has(key)) throw new Error(`Duplicate practice unit ${key}`);
     unitKeys.add(key);
 
@@ -102,8 +119,15 @@ function validatePracticeUnits(): void {
       throw new Error(`Practice unit ${key} must not publish completion proof before CODE_VERIFIED`);
     }
     if (unit.evidenceContract) {
-      const { schemaVersion, project, publicManifestPath, manifestSha256, claimIds, limitations } =
-        unit.evidenceContract;
+      const {
+        schemaVersion,
+        project,
+        publicManifestPath,
+        manifestSha256,
+        claimIds,
+        limitations,
+        reportFacts,
+      } = unit.evidenceContract;
       if (
         !schemaVersion.trim() ||
         !project.trim() ||
@@ -122,6 +146,35 @@ function validatePracticeUnits(): void {
         limitations.some((limitation) => !limitation.trim())
       ) {
         throw new Error(`Practice unit ${key} evidenceContract is empty or ambiguous`);
+      }
+      const reportFactKeys = new Set<string>();
+      if (!Array.isArray(reportFacts) || reportFacts.length === 0) {
+        throw new Error(`Practice unit ${key} evidenceContract has no semantic report facts`);
+      }
+      for (const fact of reportFacts) {
+        const factKey = `${fact.artifactPath}\0${fact.field}`;
+        const validPrimitive =
+          fact.equals === null ||
+          typeof fact.equals === "string" ||
+          typeof fact.equals === "number" ||
+          typeof fact.equals === "boolean";
+        if (
+          !fact.artifactPath.startsWith("reports/") ||
+          !fact.artifactPath.endsWith(".json") ||
+          fact.artifactPath
+            .split("/")
+            .some((segment: string) => !segment || segment === "." || segment === "..") ||
+          !/^[A-Za-z0-9_-]+(?:\.[A-Za-z0-9_-]+)*$/.test(fact.field) ||
+          !validPrimitive ||
+          reportFactKeys.has(factKey) ||
+          Boolean(fact.claimId) !== Boolean(fact.observationField) ||
+          (fact.claimId !== undefined && !claimIds.includes(fact.claimId)) ||
+          (fact.observationField !== undefined &&
+            !/^[A-Za-z0-9_-]+(?:\.[A-Za-z0-9_-]+)*$/.test(fact.observationField))
+        ) {
+          throw new Error(`Practice unit ${key} evidenceContract has an invalid report fact`);
+        }
+        reportFactKeys.add(factKey);
       }
     }
     if (isPracticeUnitAtLeast(unit.lifecycle, "CONTENT_VERIFIED") && !unit.expectedLessons) {

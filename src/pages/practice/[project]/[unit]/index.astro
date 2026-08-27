@@ -3,13 +3,16 @@ import { getCollection, type CollectionEntry } from "astro:content";
 import BaseLayout from "../../../../layouts/BaseLayout.astro";
 import { sitePath } from "../../../../config";
 import { getPracticeCase, type PracticeCase } from "../../../../practice/config";
+import { getPracticeLab } from "../../../../practice/labs";
 import {
   getPracticeLessonPath,
   getPracticeLessonsForUnit,
   getPracticeRepositoryUrl,
+  getPracticeUnitPath,
   getPublishedPracticeLessons,
 } from "../../../../practice/content";
 import {
+  getPracticeUnit,
   getPracticeUnitSegment,
   isPracticeUnitAtLeast,
   PRACTICE_UNITS,
@@ -39,6 +42,11 @@ interface Props {
 
 const { practiceCase, unit, lessons: allLessons } = Astro.props;
 const lessons = getPracticeLessonsForUnit(allLessons, unit.projectSlug, unit.code);
+const prerequisites = unit.prerequisiteUnitCodes.map((code) => {
+  const prerequisite = getPracticeUnit(unit.projectSlug, code);
+  if (!prerequisite) throw new Error(`Missing prerequisite ${unit.projectSlug}/${code}`);
+  return prerequisite;
+});
 const repositoryUrl = getPracticeRepositoryUrl(practiceCase, unit);
 const startUrl = repositoryUrl && unit.startRef
   ? `${repositoryUrl}/tree/${unit.startRef}`
@@ -47,6 +55,9 @@ const completeUrl = repositoryUrl && unit.completeRef
   ? `${repositoryUrl}/tree/${unit.completeRef}`
   : undefined;
 const evidenceUrl = unit.evidenceUrl;
+const lab = unit.lifecycle === "PUBLISHED"
+  ? getPracticeLab(unit.projectSlug, unit.code)
+  : undefined;
 ---
 
 <BaseLayout title={`${unit.code} · ${unit.title}`} description={unit.summary}>
@@ -56,6 +67,21 @@ const evidenceUrl = unit.evidenceUrl;
       <span class="eyebrow">{unit.profileVersion} / {unit.trackCode} TRACK</span>
       <h1>{unit.code} · {unit.title}</h1>
       <p>{unit.summary}</p>
+      <nav class="unit-prerequisites" aria-label="前置交付单元">
+        <span>PREREQUISITES</span>
+        {prerequisites.length > 0 ? (
+          <ul>
+            {prerequisites.map((prerequisite) => (
+              <li>
+                <a href={getPracticeUnitPath(prerequisite)}>
+                  {prerequisite.code} · {prerequisite.title}
+                  <small>{prerequisite.lifecycle}</small>
+                </a>
+              </li>
+            ))}
+          </ul>
+        ) : <strong>NONE · FIRST CONTRACT</strong>}
+      </nav>
     </div>
     <aside class="unit-status-card" aria-label="交付单元状态">
       <span>UNIT LIFECYCLE</span>
@@ -78,11 +104,15 @@ const evidenceUrl = unit.evidenceUrl;
       <p>合同版本独立冻结；案例路线升版不会回写已经启动的单元。</p>
     </div>
     <div class="unit-contract-grid">
+      <article class="unit-contract-wide"><span>OBJECTIVE</span><p>{unit.objective}</p></article>
       <article><span>ADDS</span><ul>{unit.adds.map((item) => <li>{item}</li>)}</ul></article>
       <article><span>DELIVERS</span><ul>{unit.delivers.map((item) => <li>{item}</li>)}</ul></article>
+      <article><span>FREEZES</span><ul>{unit.freezes.map((item) => <li>{item}</li>)}</ul></article>
       <article><span>EXCLUDES</span><ul>{unit.excludes.map((item) => <li>{item}</li>)}</ul></article>
       <article><span>GATE</span><ul>{unit.gate.map((item) => <li>{item}</li>)}</ul></article>
+      <article><span>INTERACTION</span><ul>{unit.interaction.map((item) => <li>{item}</li>)}</ul></article>
       <article><span>EVIDENCE</span><ul>{unit.evidence.map((item) => <li>{item}</li>)}</ul></article>
+      <article class="unit-contract-wide"><span>STOP POINT</span><p>{unit.stopPoint}</p></article>
     </div>
     {unit.planCompatibility && <p class="unit-plan-compatibility">{unit.planCompatibility}</p>}
   </section>
@@ -109,6 +139,18 @@ const evidenceUrl = unit.evidenceUrl;
           {startUrl && <a class="button primary" href={startUrl} target="_blank" rel="noreferrer">查看起点 <span>↗</span></a>}
           {completeUrl && <a class="button ghost" href={completeUrl} target="_blank" rel="noreferrer">查看完成点 <span>↗</span></a>}
           {evidenceUrl && <a class="button ghost" href={evidenceUrl} target="_blank" rel="noreferrer">查看证据 <span>↗</span></a>}
+          {
+            lab && (
+              <a
+                class="button ghost"
+                href={sitePath(
+                  `practice/${lab.projectSlug}/${lab.unitCode.toLowerCase()}/lab/`,
+                )}
+              >
+                打开 Matching Lab <span>→</span>
+              </a>
+            )
+          }
         </div>
         {unit.evidencePath && <p class="unit-evidence-path">本地 evidence：<code>{unit.evidencePath}</code></p>}
       </article>

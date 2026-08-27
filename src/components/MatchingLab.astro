@@ -1,0 +1,322 @@
+---
+import { sitePath } from "../config";
+import type { PracticeCase } from "../practice/config";
+import type { MatchingLabDefinition, MatchingLabMode } from "../practice/labs";
+import { getPracticeUnitPath } from "../practice/content";
+import type { PracticeUnit } from "../practice/units";
+import "../styles/matching-lab.css";
+
+interface Props {
+  practiceCase: PracticeCase;
+  unit: PracticeUnit;
+  lab: MatchingLabDefinition;
+}
+
+const { practiceCase, unit, lab } = Astro.props;
+const instanceId = `matching-lab-${practiceCase.slug}-${unit.code.toLowerCase()}`;
+const modeLabels: Readonly<Record<MatchingLabMode, { title: string; description: string }>> = {
+  JAVA_GOLDEN_REPLAY: {
+    title: "权威证据回放",
+    description: "只读展示由固定 Java 源码、scenario pack 与本地裁判生成的静态证据。",
+  },
+  BROWSER_MODEL: {
+    title: "浏览器预测模型",
+    description: "在隔离的有界 BigInt 模型里先预测，再揭示一条命令的事件与盘口。",
+  },
+};
+const publicEvidence = {
+  manifest: sitePath(lab.goldenReplay.manifestPath),
+  scenarios: sitePath(lab.goldenReplay.scenarioPackPath),
+  events: sitePath(lab.goldenReplay.eventBatchesPath),
+  canonical: sitePath(lab.goldenReplay.canonicalHistoryPath),
+};
+const clientConfig = JSON.stringify({
+  goldenReplay: {
+    scenarioPackUrl: publicEvidence.scenarios,
+    eventBatchesUrl: publicEvidence.events,
+    scenarios: lab.goldenReplay.scenarios,
+  },
+  browserModel: lab.browserModel,
+}).replaceAll("<", "\\u003c");
+const seedSequences = lab.browserModel.seedOrders.map((seed, index) => ({
+  ...seed,
+  sequence: String(index + 1),
+}));
+const goldenScenarioCount = lab.goldenReplay.scenarios.length;
+const goldenCommandCount = lab.goldenReplay.scenarios.reduce(
+  (total, scenario) => total + scenario.commands,
+  0,
+);
+---
+
+<div class="matching-lab" id={instanceId} data-matching-lab>
+  <header class="matching-lab-hero shell">
+    <div>
+      <a class="matching-lab-back" href={getPracticeUnitPath(unit)}>← 返回 {unit.code} 单元驾驶舱</a>
+      <span class="eyebrow">{practiceCase.title} / {unit.code} / LOCAL-FIRST LAB</span>
+      <h1>{lab.title}</h1>
+      <p>{lab.summary}</p>
+    </div>
+    <aside class="matching-lab-boundary" aria-label="实验边界">
+      <span>EXECUTION BOUNDARY</span>
+      <strong>STATIC EVIDENCE + LOCAL MODEL</strong>
+      <ul>
+        <li>不上传源码，不编译或执行 Java</li>
+        <li>不连接远程裁判、账户或外部服务</li>
+        <li>浏览器反馈只用于推演，不构成课程验收</li>
+      </ul>
+    </aside>
+  </header>
+
+  <div class="matching-lab-main shell">
+    <section class="matching-lab-intro" aria-labelledby={`${instanceId}-how-heading`}>
+      <div>
+        <span class="eyebrow">TWO ISOLATED MODES</span>
+        <h2 id={`${instanceId}-how-heading`}>把“看证据”和“做预测”明确分开</h2>
+      </div>
+      <p>
+        权威结果来自固定 complete tag 下的 Java evidence；浏览器模型拥有独立状态，刷新或重置即可清除，且不会写回证据回放。
+      </p>
+    </section>
+
+    <noscript>
+      <div class="matching-lab-noscript">
+        JavaScript 关闭时仍可阅读证据摘要、场景目录和边界说明；逐步回放与预测模型需要在浏览器中启用 JavaScript。Java 编译和课程验收始终在本地课程仓库完成。
+      </div>
+    </noscript>
+
+    <nav class="matching-lab-tabs" aria-label="Matching Lab 模式">
+      {lab.modes.map((mode, index) => (
+        <button
+          type="button"
+          class="matching-lab-tab"
+          data-lab-mode={mode}
+          aria-controls={`${instanceId}-${mode.toLowerCase()}`}
+          aria-selected={index === 0 ? "true" : "false"}
+        >
+          <code>{mode}</code>
+          <strong>{modeLabels[mode].title}</strong>
+          <span>{modeLabels[mode].description}</span>
+        </button>
+      ))}
+    </nav>
+
+    <section
+      class="matching-lab-panel"
+      id={`${instanceId}-java_golden_replay`}
+      data-lab-panel="JAVA_GOLDEN_REPLAY"
+      aria-labelledby={`${instanceId}-golden-heading`}
+    >
+      <header class="matching-lab-panel-head">
+        <div>
+          <span class="eyebrow">JAVA_GOLDEN_REPLAY / READ ONLY</span>
+          <h2 id={`${instanceId}-golden-heading`}>沿固定场景逐命令检查事件与盘口</h2>
+        </div>
+        <p>
+          页面只读取已发布的同源静态文件。摘要对应 <code>{unit.completeRef}</code>，源码提交
+          <code>{unit.completeCommit}</code>。
+        </p>
+      </header>
+
+      <dl class="matching-lab-metrics">
+        {lab.goldenReplay.metrics.map((metric) => (
+          <div>
+            <dt>{metric.label}</dt>
+            <dd>{metric.value}</dd>
+            <small>{metric.note}</small>
+          </div>
+        ))}
+      </dl>
+
+      <div class="matching-lab-digest">
+        <span>CANONICAL DIGEST</span>
+        <code>{lab.goldenReplay.digest}</code>
+      </div>
+
+      <div class="matching-golden-layout">
+        <aside class="matching-golden-catalog">
+          <label for={`${instanceId}-scenario`}>选择固定场景</label>
+          <select id={`${instanceId}-scenario`} data-golden-scenario>
+            {lab.goldenReplay.scenarios.map((scenario) => (
+              <option value={scenario.id}>{scenario.title}</option>
+            ))}
+          </select>
+          <ol>
+            {lab.goldenReplay.scenarios.map((scenario, index) => (
+              <li data-golden-catalog-item={scenario.id}>
+                <span>{String(index + 1).padStart(2, "0")} / {scenario.commands} CMD</span>
+                <strong>{scenario.title}</strong>
+                <p>{scenario.focus}</p>
+              </li>
+            ))}
+          </ol>
+        </aside>
+
+        <div class="matching-golden-stepper">
+          <div class="matching-golden-toolbar">
+            <span data-golden-progress>等待读取静态 scenario pack</span>
+            <div>
+              <button type="button" data-golden-previous>← 上一条</button>
+              <button type="button" data-golden-reset>回到第一条</button>
+              <button type="button" data-golden-next>下一条 →</button>
+            </div>
+          </div>
+          <div class="matching-golden-stage" data-golden-stage aria-live="polite">
+            <p>场景目录已经在 HTML 中提供；启用 JavaScript 后可逐条查看固定输入、预期事件和 bookAfter。</p>
+          </div>
+        </div>
+      </div>
+
+      <footer class="matching-lab-sources">
+        <span>STATIC SOURCES</span>
+        <a href={publicEvidence.manifest}>manifest.json</a>
+        <a href={publicEvidence.scenarios}>price-time-v1.json</a>
+        <a href={publicEvidence.events}>event-batches.json</a>
+        <a href={publicEvidence.canonical}>canonical-history.utf8</a>
+      </footer>
+    </section>
+
+    <section
+      class="matching-lab-panel"
+      id={`${instanceId}-browser_model`}
+      data-lab-panel="BROWSER_MODEL"
+      aria-labelledby={`${instanceId}-model-heading`}
+      hidden
+    >
+      <header class="matching-lab-panel-head">
+        <div>
+          <span class="eyebrow">BROWSER_MODEL / EXPLORATION ONLY</span>
+          <h2 id={`${instanceId}-model-heading`}>先写下预测，再揭示一次状态迁移</h2>
+        </div>
+        <p>
+          只支持 <code>{lab.browserModel.instrumentId}</code>、<code>PlaceLimitOrder</code> 与
+          <code>{lab.browserModel.timeInForce}</code>。所有算术使用 BigInt，最多执行
+          {lab.browserModel.maxCommands} 条命令。
+        </p>
+      </header>
+
+      <div class="matching-model-grid">
+        <form class="matching-model-form" data-model-form novalidate>
+          <header>
+            <span>PLACE LIMIT ORDER</span>
+            <code data-model-order-id>orderId = {lab.browserModel.firstGeneratedOrderId}</code>
+          </header>
+          <p class="matching-model-readiness" data-model-readiness aria-live="polite">
+            等待 {goldenScenarioCount} 场景 / {goldenCommandCount} 命令 corpus 自检，模型暂未解锁。
+          </p>
+          <dl class="matching-model-fixed">
+            <div><dt>instrumentId</dt><dd>{lab.browserModel.instrumentId}</dd></div>
+            <div><dt>timeInForce</dt><dd>{lab.browserModel.timeInForce}</dd></div>
+          </dl>
+          <div class="matching-model-fields">
+            <label>
+              <span>side</span>
+              <select data-model-side>
+                <option value="BUY">BUY</option>
+                <option value="SELL">SELL</option>
+              </select>
+            </label>
+            <label>
+              <span>priceTicks</span>
+              <input
+                type="text"
+                inputmode="numeric"
+                autocomplete="off"
+                value="102"
+                maxlength={lab.browserModel.maxPriceTicks.length}
+                data-model-price
+              />
+              <small>{lab.browserModel.minPriceTicks} – {lab.browserModel.maxPriceTicks}</small>
+            </label>
+            <label>
+              <span>quantityLots</span>
+              <input
+                type="text"
+                inputmode="numeric"
+                autocomplete="off"
+                value="4"
+                maxlength={lab.browserModel.maxQuantityLots.length}
+                data-model-quantity
+              />
+              <small>{lab.browserModel.minQuantityLots} – {lab.browserModel.maxQuantityLots}</small>
+            </label>
+            <label class="matching-model-prediction">
+              <span>先预测 event batch</span>
+              <select data-model-prediction>
+                <option value="">请选择预测…</option>
+                <option value="RESTS_ONLY">只挂单：Accepted → Rested</option>
+                <option value="TRADES_ONLY">全部成交：Accepted → Trade+</option>
+                <option value="TRADES_AND_RESTS">成交后挂余量：Accepted → Trade+ → Rested</option>
+              </select>
+            </label>
+          </div>
+          <p class="matching-model-error" data-model-error role="alert" hidden></p>
+          <div class="matching-model-actions">
+            <button type="button" class="button primary" data-model-submit disabled>锁定预测并揭示</button>
+            <button type="button" class="button ghost" data-model-reset>重置到初始盘口</button>
+            <button type="button" class="button ghost" data-model-empty>从空盘口开始</button>
+          </div>
+        </form>
+
+        <aside class="matching-model-state" aria-label="浏览器模型状态">
+          <header>
+            <span>ISOLATED MODEL STATE</span>
+            <code><span data-model-command-count>0</span> / {lab.browserModel.maxCommands} COMMANDS</code>
+          </header>
+          <p>
+            初始盘口由 {seedSequences.length} 笔固定 seed order 构成；重置会恢复它们。模型状态只存在于当前页面实例。
+          </p>
+          <ol class="matching-model-seeds">
+            {seedSequences.map((seed) => (
+              <li>
+                <code>seq {seed.sequence}</code>
+                <span>{seed.side} {seed.quantityLots} @ {seed.priceTicks}</span>
+                <small>#{seed.orderId}</small>
+              </li>
+            ))}
+          </ol>
+        </aside>
+      </div>
+
+      <div class="matching-model-reveal" data-model-reveal hidden aria-live="polite">
+        <header>
+          <span>PREDICTION REVEALED</span>
+          <strong data-model-comparison></strong>
+        </header>
+        <code data-model-command></code>
+        <ol data-model-events></ol>
+      </div>
+
+      <section class="matching-book" aria-labelledby={`${instanceId}-book-heading`}>
+        <header>
+          <div>
+            <span>LOCAL L2 ORDER BOOK</span>
+            <h3 id={`${instanceId}-book-heading`}>{lab.browserModel.instrumentId}</h3>
+          </div>
+          <p>Price priority → acceptedSequence FIFO</p>
+        </header>
+        <div class="matching-book-sides">
+          <section class="matching-book-side side-bid" aria-label="Bid 订单簿">
+            <header><span>BID · HIGH → LOW</span><small>PRICE / FIFO QUEUE</small></header>
+            <div data-model-bids></div>
+          </section>
+          <section class="matching-book-side side-ask" aria-label="Ask 订单簿">
+            <header><span>ASK · LOW → HIGH</span><small>PRICE / FIFO QUEUE</small></header>
+            <div data-model-asks></div>
+          </section>
+        </div>
+      </section>
+
+      <footer class="matching-model-boundary-note">
+        <strong>这不是 Java 撮合器，也不是课程裁判。</strong>
+        <span>它不处理撤单、重复 orderId、账户、手续费、持久化、线程、网络、Aeron、性能或高可用。</span>
+      </footer>
+    </section>
+  </div>
+
+  <script is:inline type="application/json" data-matching-lab-config set:html={clientConfig}></script>
+</div>
+
+<script>
+  import "../practice/matching-lab";
+</script>

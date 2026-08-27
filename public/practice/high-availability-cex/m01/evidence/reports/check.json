@@ -1,0 +1,80 @@
+{
+  "schemaVersion" : "matching.m01.check.v2",
+  "unit" : "M01",
+  "status" : "PASS",
+  "contractPlanVersion" : "0.3",
+  "scenarioCorpus" : {
+    "path" : "matching-testkit/src/test/resources/m01/fixtures/price-time-v1.json",
+    "schemaPath" : "schemas/matching.m01.scenario.v1.schema.json",
+    "sha256" : "d050bc2fc029e3ac0afb5047e3030412412f3a7aecf0938a19a5953618ff9ed7",
+    "scenarios" : 8,
+    "cases" : 22,
+    "schemaProbes" : 5
+  },
+  "m00Regression" : {
+    "status" : "PASS",
+    "artifact" : "m00-regression.json"
+  },
+  "priceTime" : {
+    "status" : "PASS",
+    "artifact" : "price-time.json",
+    "scenarios" : 8,
+    "cases" : 22
+  },
+  "eventBatches" : {
+    "status" : "PASS",
+    "artifact" : "event-batches.json",
+    "cases" : 22
+  },
+  "invariants" : {
+    "status" : "PASS",
+    "artifact" : "invariants.json"
+  },
+  "canonical" : {
+    "format" : "M01H1",
+    "digest" : "sha256:74585489c50e81cc3e6a10044263186ce66a7f1b20e1f45015fed68614c3e5a1",
+    "lines" : 155,
+    "bytes" : 14256,
+    "artifact" : "canonical-history.utf8"
+  },
+  "replays" : {
+    "requested" : 100,
+    "completed" : 100,
+    "distinctDigests" : 1
+  },
+  "requiredMutants" : [ {
+    "id" : "M01-SAME-PRICE-LIFO",
+    "classification" : "STUDENT_FAILURE",
+    "killed" : true,
+    "scenarioId" : "same-price-fifo-three-makers",
+    "caseId" : "fifo-taker",
+    "artifact" : "mutants.json"
+  }, {
+    "id" : "M01-TAKER-PRICE",
+    "classification" : "STUDENT_FAILURE",
+    "killed" : true,
+    "scenarioId" : "better-price-before-time",
+    "caseId" : "buy-takes-better-price-first",
+    "artifact" : "mutants.json"
+  }, {
+    "id" : "M01-SKIP-FIRST-MAKER",
+    "classification" : "STUDENT_FAILURE",
+    "killed" : true,
+    "scenarioId" : "better-price-before-time",
+    "caseId" : "buy-takes-better-price-first",
+    "artifact" : "mutants.json"
+  } ],
+  "mutants" : {
+    "status" : "PASS",
+    "artifact" : "mutants.json",
+    "required" : 3,
+    "killed" : 3,
+    "systemErrorControl" : "SYSTEM_ERROR"
+  },
+  "architecture" : {
+    "status" : "PASS",
+    "artifact" : "architecture.json",
+    "sourceFiles" : 15
+  },
+  "artifacts" : [ "m00-regression.json", "price-time.json", "event-batches.json", "invariants.json", "canonical-history.utf8", "mutants.json", "architecture.json" ]
+}

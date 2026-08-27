@@ -1,0 +1,325 @@
+{
+  "schemaVersion": "matching.m01.scenario.v1",
+  "scenarios": [
+    {
+      "scenarioId": "invalid-does-not-consume-sequence",
+      "commands": [
+        {
+          "caseId": "reject-zero-price",
+          "input": { "instrumentId": "BTC-USDT", "orderId": 1, "side": "BUY", "priceTicks": 0, "quantityLots": 2 },
+          "expected": {
+            "events": [
+              { "type": "REJECTED", "code": "INVALID_PRICE", "field": "priceTicks" }
+            ],
+            "bookAfter": { "bids": [], "asks": [] }
+          }
+        },
+        {
+          "caseId": "first-valid-still-sequence-one",
+          "input": { "instrumentId": "BTC-USDT", "orderId": 2, "side": "BUY", "priceTicks": 100, "quantityLots": 2 },
+          "expected": {
+            "events": [
+              { "type": "ACCEPTED", "sequence": 1, "orderId": 2, "side": "BUY", "priceTicks": 100, "quantityLots": 2 },
+              { "type": "RESTED", "sequence": 1, "orderId": 2, "side": "BUY", "priceTicks": 100, "remainingQuantityLots": 2 }
+            ],
+            "bookAfter": {
+              "bids": [
+                { "priceTicks": 100, "orders": [{ "sequence": 1, "orderId": 2, "remainingQuantityLots": 2 }] }
+              ],
+              "asks": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "scenarioId": "empty-and-noncrossing-rest",
+      "commands": [
+        {
+          "caseId": "empty-buy-rests",
+          "input": { "instrumentId": "BTC-USDT", "orderId": 10, "side": "BUY", "priceTicks": 100, "quantityLots": 5 },
+          "expected": {
+            "events": [
+              { "type": "ACCEPTED", "sequence": 1, "orderId": 10, "side": "BUY", "priceTicks": 100, "quantityLots": 5 },
+              { "type": "RESTED", "sequence": 1, "orderId": 10, "side": "BUY", "priceTicks": 100, "remainingQuantityLots": 5 }
+            ],
+            "bookAfter": {
+              "bids": [{ "priceTicks": 100, "orders": [{ "sequence": 1, "orderId": 10, "remainingQuantityLots": 5 }] }],
+              "asks": []
+            }
+          }
+        },
+        {
+          "caseId": "noncrossing-sell-rests",
+          "input": { "instrumentId": "BTC-USDT", "orderId": 11, "side": "SELL", "priceTicks": 101, "quantityLots": 4 },
+          "expected": {
+            "events": [
+              { "type": "ACCEPTED", "sequence": 2, "orderId": 11, "side": "SELL", "priceTicks": 101, "quantityLots": 4 },
+              { "type": "RESTED", "sequence": 2, "orderId": 11, "side": "SELL", "priceTicks": 101, "remainingQuantityLots": 4 }
+            ],
+            "bookAfter": {
+              "bids": [{ "priceTicks": 100, "orders": [{ "sequence": 1, "orderId": 10, "remainingQuantityLots": 5 }] }],
+              "asks": [{ "priceTicks": 101, "orders": [{ "sequence": 2, "orderId": 11, "remainingQuantityLots": 4 }] }]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "scenarioId": "exact-touch-maker-price",
+      "commands": [
+        {
+          "caseId": "resting-sell",
+          "input": { "instrumentId": "BTC-USDT", "orderId": 20, "side": "SELL", "priceTicks": 101, "quantityLots": 3 },
+          "expected": {
+            "events": [
+              { "type": "ACCEPTED", "sequence": 1, "orderId": 20, "side": "SELL", "priceTicks": 101, "quantityLots": 3 },
+              { "type": "RESTED", "sequence": 1, "orderId": 20, "side": "SELL", "priceTicks": 101, "remainingQuantityLots": 3 }
+            ],
+            "bookAfter": { "bids": [], "asks": [{ "priceTicks": 101, "orders": [{ "sequence": 1, "orderId": 20, "remainingQuantityLots": 3 }] }] }
+          }
+        },
+        {
+          "caseId": "touching-buy-fills",
+          "input": { "instrumentId": "BTC-USDT", "orderId": 21, "side": "BUY", "priceTicks": 101, "quantityLots": 3 },
+          "expected": {
+            "events": [
+              { "type": "ACCEPTED", "sequence": 2, "orderId": 21, "side": "BUY", "priceTicks": 101, "quantityLots": 3 },
+              { "type": "TRADE", "makerSequence": 1, "makerOrderId": 20, "takerSequence": 2, "takerOrderId": 21, "priceTicks": 101, "quantityLots": 3 }
+            ],
+            "bookAfter": { "bids": [], "asks": [] }
+          }
+        }
+      ]
+    },
+    {
+      "scenarioId": "better-price-before-time",
+      "commands": [
+        {
+          "caseId": "earlier-worse-ask",
+          "input": { "instrumentId": "BTC-USDT", "orderId": 30, "side": "SELL", "priceTicks": 102, "quantityLots": 1 },
+          "expected": {
+            "events": [
+              { "type": "ACCEPTED", "sequence": 1, "orderId": 30, "side": "SELL", "priceTicks": 102, "quantityLots": 1 },
+              { "type": "RESTED", "sequence": 1, "orderId": 30, "side": "SELL", "priceTicks": 102, "remainingQuantityLots": 1 }
+            ],
+            "bookAfter": { "bids": [], "asks": [{ "priceTicks": 102, "orders": [{ "sequence": 1, "orderId": 30, "remainingQuantityLots": 1 }] }] }
+          }
+        },
+        {
+          "caseId": "later-better-ask",
+          "input": { "instrumentId": "BTC-USDT", "orderId": 31, "side": "SELL", "priceTicks": 101, "quantityLots": 1 },
+          "expected": {
+            "events": [
+              { "type": "ACCEPTED", "sequence": 2, "orderId": 31, "side": "SELL", "priceTicks": 101, "quantityLots": 1 },
+              { "type": "RESTED", "sequence": 2, "orderId": 31, "side": "SELL", "priceTicks": 101, "remainingQuantityLots": 1 }
+            ],
+            "bookAfter": { "bids": [], "asks": [
+              { "priceTicks": 101, "orders": [{ "sequence": 2, "orderId": 31, "remainingQuantityLots": 1 }] },
+              { "priceTicks": 102, "orders": [{ "sequence": 1, "orderId": 30, "remainingQuantityLots": 1 }] }
+            ] }
+          }
+        },
+        {
+          "caseId": "buy-takes-better-price-first",
+          "input": { "instrumentId": "BTC-USDT", "orderId": 32, "side": "BUY", "priceTicks": 102, "quantityLots": 2 },
+          "expected": {
+            "events": [
+              { "type": "ACCEPTED", "sequence": 3, "orderId": 32, "side": "BUY", "priceTicks": 102, "quantityLots": 2 },
+              { "type": "TRADE", "makerSequence": 2, "makerOrderId": 31, "takerSequence": 3, "takerOrderId": 32, "priceTicks": 101, "quantityLots": 1 },
+              { "type": "TRADE", "makerSequence": 1, "makerOrderId": 30, "takerSequence": 3, "takerOrderId": 32, "priceTicks": 102, "quantityLots": 1 }
+            ],
+            "bookAfter": { "bids": [], "asks": [] }
+          }
+        }
+      ]
+    },
+    {
+      "scenarioId": "same-price-fifo-three-makers",
+      "commands": [
+        {
+          "caseId": "fifo-maker-one",
+          "input": { "instrumentId": "BTC-USDT", "orderId": 40, "side": "SELL", "priceTicks": 100, "quantityLots": 1 },
+          "expected": {
+            "events": [
+              { "type": "ACCEPTED", "sequence": 1, "orderId": 40, "side": "SELL", "priceTicks": 100, "quantityLots": 1 },
+              { "type": "RESTED", "sequence": 1, "orderId": 40, "side": "SELL", "priceTicks": 100, "remainingQuantityLots": 1 }
+            ],
+            "bookAfter": { "bids": [], "asks": [{ "priceTicks": 100, "orders": [{ "sequence": 1, "orderId": 40, "remainingQuantityLots": 1 }] }] }
+          }
+        },
+        {
+          "caseId": "fifo-maker-two",
+          "input": { "instrumentId": "BTC-USDT", "orderId": 41, "side": "SELL", "priceTicks": 100, "quantityLots": 1 },
+          "expected": {
+            "events": [
+              { "type": "ACCEPTED", "sequence": 2, "orderId": 41, "side": "SELL", "priceTicks": 100, "quantityLots": 1 },
+              { "type": "RESTED", "sequence": 2, "orderId": 41, "side": "SELL", "priceTicks": 100, "remainingQuantityLots": 1 }
+            ],
+            "bookAfter": { "bids": [], "asks": [{ "priceTicks": 100, "orders": [
+              { "sequence": 1, "orderId": 40, "remainingQuantityLots": 1 },
+              { "sequence": 2, "orderId": 41, "remainingQuantityLots": 1 }
+            ] }] }
+          }
+        },
+        {
+          "caseId": "fifo-maker-three",
+          "input": { "instrumentId": "BTC-USDT", "orderId": 42, "side": "SELL", "priceTicks": 100, "quantityLots": 1 },
+          "expected": {
+            "events": [
+              { "type": "ACCEPTED", "sequence": 3, "orderId": 42, "side": "SELL", "priceTicks": 100, "quantityLots": 1 },
+              { "type": "RESTED", "sequence": 3, "orderId": 42, "side": "SELL", "priceTicks": 100, "remainingQuantityLots": 1 }
+            ],
+            "bookAfter": { "bids": [], "asks": [{ "priceTicks": 100, "orders": [
+              { "sequence": 1, "orderId": 40, "remainingQuantityLots": 1 },
+              { "sequence": 2, "orderId": 41, "remainingQuantityLots": 1 },
+              { "sequence": 3, "orderId": 42, "remainingQuantityLots": 1 }
+            ] }] }
+          }
+        },
+        {
+          "caseId": "fifo-taker",
+          "input": { "instrumentId": "BTC-USDT", "orderId": 43, "side": "BUY", "priceTicks": 100, "quantityLots": 3 },
+          "expected": {
+            "events": [
+              { "type": "ACCEPTED", "sequence": 4, "orderId": 43, "side": "BUY", "priceTicks": 100, "quantityLots": 3 },
+              { "type": "TRADE", "makerSequence": 1, "makerOrderId": 40, "takerSequence": 4, "takerOrderId": 43, "priceTicks": 100, "quantityLots": 1 },
+              { "type": "TRADE", "makerSequence": 2, "makerOrderId": 41, "takerSequence": 4, "takerOrderId": 43, "priceTicks": 100, "quantityLots": 1 },
+              { "type": "TRADE", "makerSequence": 3, "makerOrderId": 42, "takerSequence": 4, "takerOrderId": 43, "priceTicks": 100, "quantityLots": 1 }
+            ],
+            "bookAfter": { "bids": [], "asks": [] }
+          }
+        }
+      ]
+    },
+    {
+      "scenarioId": "maker-partially-filled",
+      "commands": [
+        {
+          "caseId": "large-resting-maker",
+          "input": { "instrumentId": "BTC-USDT", "orderId": 50, "side": "SELL", "priceTicks": 100, "quantityLots": 5 },
+          "expected": {
+            "events": [
+              { "type": "ACCEPTED", "sequence": 1, "orderId": 50, "side": "SELL", "priceTicks": 100, "quantityLots": 5 },
+              { "type": "RESTED", "sequence": 1, "orderId": 50, "side": "SELL", "priceTicks": 100, "remainingQuantityLots": 5 }
+            ],
+            "bookAfter": { "bids": [], "asks": [{ "priceTicks": 100, "orders": [{ "sequence": 1, "orderId": 50, "remainingQuantityLots": 5 }] }] }
+          }
+        },
+        {
+          "caseId": "small-buy-partial-maker",
+          "input": { "instrumentId": "BTC-USDT", "orderId": 51, "side": "BUY", "priceTicks": 101, "quantityLots": 2 },
+          "expected": {
+            "events": [
+              { "type": "ACCEPTED", "sequence": 2, "orderId": 51, "side": "BUY", "priceTicks": 101, "quantityLots": 2 },
+              { "type": "TRADE", "makerSequence": 1, "makerOrderId": 50, "takerSequence": 2, "takerOrderId": 51, "priceTicks": 100, "quantityLots": 2 }
+            ],
+            "bookAfter": { "bids": [], "asks": [{ "priceTicks": 100, "orders": [{ "sequence": 1, "orderId": 50, "remainingQuantityLots": 3 }] }] }
+          }
+        }
+      ]
+    },
+    {
+      "scenarioId": "taker-sweeps-three-levels-and-rests",
+      "commands": [
+        {
+          "caseId": "ask-level-one",
+          "input": { "instrumentId": "BTC-USDT", "orderId": 60, "side": "SELL", "priceTicks": 100, "quantityLots": 1 },
+          "expected": {
+            "events": [
+              { "type": "ACCEPTED", "sequence": 1, "orderId": 60, "side": "SELL", "priceTicks": 100, "quantityLots": 1 },
+              { "type": "RESTED", "sequence": 1, "orderId": 60, "side": "SELL", "priceTicks": 100, "remainingQuantityLots": 1 }
+            ],
+            "bookAfter": { "bids": [], "asks": [{ "priceTicks": 100, "orders": [{ "sequence": 1, "orderId": 60, "remainingQuantityLots": 1 }] }] }
+          }
+        },
+        {
+          "caseId": "ask-level-two",
+          "input": { "instrumentId": "BTC-USDT", "orderId": 61, "side": "SELL", "priceTicks": 101, "quantityLots": 1 },
+          "expected": {
+            "events": [
+              { "type": "ACCEPTED", "sequence": 2, "orderId": 61, "side": "SELL", "priceTicks": 101, "quantityLots": 1 },
+              { "type": "RESTED", "sequence": 2, "orderId": 61, "side": "SELL", "priceTicks": 101, "remainingQuantityLots": 1 }
+            ],
+            "bookAfter": { "bids": [], "asks": [
+              { "priceTicks": 100, "orders": [{ "sequence": 1, "orderId": 60, "remainingQuantityLots": 1 }] },
+              { "priceTicks": 101, "orders": [{ "sequence": 2, "orderId": 61, "remainingQuantityLots": 1 }] }
+            ] }
+          }
+        },
+        {
+          "caseId": "ask-level-three",
+          "input": { "instrumentId": "BTC-USDT", "orderId": 62, "side": "SELL", "priceTicks": 102, "quantityLots": 1 },
+          "expected": {
+            "events": [
+              { "type": "ACCEPTED", "sequence": 3, "orderId": 62, "side": "SELL", "priceTicks": 102, "quantityLots": 1 },
+              { "type": "RESTED", "sequence": 3, "orderId": 62, "side": "SELL", "priceTicks": 102, "remainingQuantityLots": 1 }
+            ],
+            "bookAfter": { "bids": [], "asks": [
+              { "priceTicks": 100, "orders": [{ "sequence": 1, "orderId": 60, "remainingQuantityLots": 1 }] },
+              { "priceTicks": 101, "orders": [{ "sequence": 2, "orderId": 61, "remainingQuantityLots": 1 }] },
+              { "priceTicks": 102, "orders": [{ "sequence": 3, "orderId": 62, "remainingQuantityLots": 1 }] }
+            ] }
+          }
+        },
+        {
+          "caseId": "sweep-and-rest-buy",
+          "input": { "instrumentId": "BTC-USDT", "orderId": 63, "side": "BUY", "priceTicks": 102, "quantityLots": 5 },
+          "expected": {
+            "events": [
+              { "type": "ACCEPTED", "sequence": 4, "orderId": 63, "side": "BUY", "priceTicks": 102, "quantityLots": 5 },
+              { "type": "TRADE", "makerSequence": 1, "makerOrderId": 60, "takerSequence": 4, "takerOrderId": 63, "priceTicks": 100, "quantityLots": 1 },
+              { "type": "TRADE", "makerSequence": 2, "makerOrderId": 61, "takerSequence": 4, "takerOrderId": 63, "priceTicks": 101, "quantityLots": 1 },
+              { "type": "TRADE", "makerSequence": 3, "makerOrderId": 62, "takerSequence": 4, "takerOrderId": 63, "priceTicks": 102, "quantityLots": 1 },
+              { "type": "RESTED", "sequence": 4, "orderId": 63, "side": "BUY", "priceTicks": 102, "remainingQuantityLots": 2 }
+            ],
+            "bookAfter": { "bids": [{ "priceTicks": 102, "orders": [{ "sequence": 4, "orderId": 63, "remainingQuantityLots": 2 }] }], "asks": [] }
+          }
+        }
+      ]
+    },
+    {
+      "scenarioId": "sell-side-mirror",
+      "commands": [
+        {
+          "caseId": "resting-bid-low",
+          "input": { "instrumentId": "BTC-USDT", "orderId": 70, "side": "BUY", "priceTicks": 99, "quantityLots": 1 },
+          "expected": {
+            "events": [
+              { "type": "ACCEPTED", "sequence": 1, "orderId": 70, "side": "BUY", "priceTicks": 99, "quantityLots": 1 },
+              { "type": "RESTED", "sequence": 1, "orderId": 70, "side": "BUY", "priceTicks": 99, "remainingQuantityLots": 1 }
+            ],
+            "bookAfter": { "bids": [{ "priceTicks": 99, "orders": [{ "sequence": 1, "orderId": 70, "remainingQuantityLots": 1 }] }], "asks": [] }
+          }
+        },
+        {
+          "caseId": "resting-bid-high",
+          "input": { "instrumentId": "BTC-USDT", "orderId": 71, "side": "BUY", "priceTicks": 101, "quantityLots": 2 },
+          "expected": {
+            "events": [
+              { "type": "ACCEPTED", "sequence": 2, "orderId": 71, "side": "BUY", "priceTicks": 101, "quantityLots": 2 },
+              { "type": "RESTED", "sequence": 2, "orderId": 71, "side": "BUY", "priceTicks": 101, "remainingQuantityLots": 2 }
+            ],
+            "bookAfter": { "bids": [
+              { "priceTicks": 101, "orders": [{ "sequence": 2, "orderId": 71, "remainingQuantityLots": 2 }] },
+              { "priceTicks": 99, "orders": [{ "sequence": 1, "orderId": 70, "remainingQuantityLots": 1 }] }
+            ], "asks": [] }
+          }
+        },
+        {
+          "caseId": "sell-takes-high-bid-first-and-rests",
+          "input": { "instrumentId": "BTC-USDT", "orderId": 72, "side": "SELL", "priceTicks": 99, "quantityLots": 4 },
+          "expected": {
+            "events": [
+              { "type": "ACCEPTED", "sequence": 3, "orderId": 72, "side": "SELL", "priceTicks": 99, "quantityLots": 4 },
+              { "type": "TRADE", "makerSequence": 2, "makerOrderId": 71, "takerSequence": 3, "takerOrderId": 72, "priceTicks": 101, "quantityLots": 2 },
+              { "type": "TRADE", "makerSequence": 1, "makerOrderId": 70, "takerSequence": 3, "takerOrderId": 72, "priceTicks": 99, "quantityLots": 1 },
+              { "type": "RESTED", "sequence": 3, "orderId": 72, "side": "SELL", "priceTicks": 99, "remainingQuantityLots": 1 }
+            ],
+            "bookAfter": { "bids": [], "asks": [{ "priceTicks": 99, "orders": [{ "sequence": 3, "orderId": 72, "remainingQuantityLots": 1 }] }] }
+          }
+        }
+      ]
+    }
+  ]
+}

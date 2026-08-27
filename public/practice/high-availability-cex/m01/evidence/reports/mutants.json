@@ -1,0 +1,40 @@
+{
+  "schemaVersion" : "matching.m01.mutants.v1",
+  "unit" : "M01",
+  "productionControl" : {
+    "id" : "M01-PRODUCTION-CONTROL",
+    "classification" : "PASS",
+    "scenarioId" : null,
+    "caseId" : null,
+    "message" : "all frozen scenarios and invariants matched"
+  },
+  "requiredMutants" : [ {
+    "id" : "M01-SAME-PRICE-LIFO",
+    "classification" : "STUDENT_FAILURE",
+    "scenarioId" : "same-price-fifo-three-makers",
+    "caseId" : "fifo-taker",
+    "message" : "scenario same-price-fifo-three-makers, case fifo-taker: expected events=[Accepted[sequence=4, orderId=43, side=BUY, priceTicks=100, quantityLots=3], Trade[makerSequence=1, makerOrderId=40, takerSequence=4, takerOrderId=43, priceTicks=100, quantityLots=1], Trade[makerSequence=2, makerOrderId=41, takerSequence=4, takerOrderId=43, priceTicks=100, quantityLots=1], Trade[makerSequence=3, makerOrderId=42, takerSequence=4, takerOrderId=43, priceTicks=100, quantityLots=1]], bookAfter=Book[bids=[], asks=[]], actual events=[Accepted[sequence=4, orderId=43, side=BUY, priceTicks=100, quantityLots=3], Trade[makerSequence=3, makerOrderId=42, takerSequence=4, takerOrderId=43, priceTicks=100, quantityLots=1], Trade[makerSequence=2, makerOrderId=41, takerSequence=4, takerOrderId=43, priceTicks=100, quantityLots=1], Trade[makerSequence=1, makerOrderId=40, takerSequence=4, takerOrderId=43, priceTicks=100, quantityLots=1]], bookAfter=Book[bids=[], asks=[]]",
+    "killed" : true
+  }, {
+    "id" : "M01-TAKER-PRICE",
+    "classification" : "STUDENT_FAILURE",
+    "scenarioId" : "better-price-before-time",
+    "caseId" : "buy-takes-better-price-first",
+    "message" : "scenario better-price-before-time, case buy-takes-better-price-first: expected events=[Accepted[sequence=3, orderId=32, side=BUY, priceTicks=102, quantityLots=2], Trade[makerSequence=2, makerOrderId=31, takerSequence=3, takerOrderId=32, priceTicks=101, quantityLots=1], Trade[makerSequence=1, makerOrderId=30, takerSequence=3, takerOrderId=32, priceTicks=102, quantityLots=1]], bookAfter=Book[bids=[], asks=[]], actual events=[Accepted[sequence=3, orderId=32, side=BUY, priceTicks=102, quantityLots=2], Trade[makerSequence=2, makerOrderId=31, takerSequence=3, takerOrderId=32, priceTicks=102, quantityLots=1], Trade[makerSequence=1, makerOrderId=30, takerSequence=3, takerOrderId=32, priceTicks=102, quantityLots=1]], bookAfter=Book[bids=[], asks=[]]",
+    "killed" : true
+  }, {
+    "id" : "M01-SKIP-FIRST-MAKER",
+    "classification" : "STUDENT_FAILURE",
+    "scenarioId" : "better-price-before-time",
+    "caseId" : "buy-takes-better-price-first",
+    "message" : "scenario better-price-before-time, case buy-takes-better-price-first: expected events=[Accepted[sequence=3, orderId=32, side=BUY, priceTicks=102, quantityLots=2], Trade[makerSequence=2, makerOrderId=31, takerSequence=3, takerOrderId=32, priceTicks=101, quantityLots=1], Trade[makerSequence=1, makerOrderId=30, takerSequence=3, takerOrderId=32, priceTicks=102, quantityLots=1]], bookAfter=Book[bids=[], asks=[]], actual events=[Accepted[sequence=3, orderId=32, side=BUY, priceTicks=102, quantityLots=2], Trade[makerSequence=1, makerOrderId=30, takerSequence=3, takerOrderId=32, priceTicks=102, quantityLots=1]], bookAfter=Book[bids=[], asks=[]]",
+    "killed" : true
+  } ],
+  "systemErrorControl" : {
+    "id" : "M01-SYSTEM-ERROR-CONTROL",
+    "classification" : "SYSTEM_ERROR",
+    "scenarioId" : null,
+    "caseId" : null,
+    "message" : "candidate raised IllegalStateException"
+  }
+}

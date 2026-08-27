@@ -1,0 +1,136 @@
+{
+  "schemaVersion" : "cex.lab-evidence.v1",
+  "case" : "high-availability-cex",
+  "project" : "matching",
+  "unit" : "M01",
+  "unitTag" : "course/m01-complete",
+  "productRelease" : null,
+  "planVersion" : "0.3",
+  "source" : {
+    "commit" : "be2e3b8e5db4959c5639d7aa3e7314dbac45d82b",
+    "dirty" : false
+  },
+  "environment" : {
+    "java" : "25.0.4+7-LTS",
+    "os" : "Linux",
+    "arch" : "amd64"
+  },
+  "claims" : [ {
+    "id" : "m00-input-regression",
+    "category" : "correctness",
+    "statement" : "Every frozen M00-invalid input remains Rejected without book mutation or acceptance-sequence consumption.",
+    "status" : "pass",
+    "command" : "./gradlew m01Check m01Evidence -Pm01.unitTag=course/m01-complete --no-daemon",
+    "observations" : {
+      "status" : "PASS",
+      "artifact" : "m00-regression.json"
+    },
+    "artifacts" : [ {
+      "path" : "reports/m00-regression.json",
+      "sha256" : "cbc1eeefdd81e52a404064b5e99e7c745306d289d1c91c18d2601779d2fe7fa5"
+    } ]
+  }, {
+    "id" : "price-time-priority",
+    "category" : "correctness",
+    "statement" : "The frozen corpus matches best-price then acceptance-sequence priority at maker price.",
+    "status" : "pass",
+    "command" : "./gradlew m01Check m01Evidence -Pm01.unitTag=course/m01-complete --no-daemon",
+    "observations" : {
+      "path" : "matching-testkit/src/test/resources/m01/fixtures/price-time-v1.json",
+      "schemaPath" : "schemas/matching.m01.scenario.v1.schema.json",
+      "sha256" : "d050bc2fc029e3ac0afb5047e3030412412f3a7aecf0938a19a5953618ff9ed7",
+      "scenarios" : 8,
+      "cases" : 22,
+      "schemaProbes" : 5
+    },
+    "artifacts" : [ {
+      "path" : "inputs/price-time-v1.json",
+      "sha256" : "d050bc2fc029e3ac0afb5047e3030412412f3a7aecf0938a19a5953618ff9ed7"
+    }, {
+      "path" : "reports/price-time.json",
+      "sha256" : "5ca60b7ff2c0677331f4052a8eb509450f263feca86e802d7ad31143eb487e36"
+    } ]
+  }, {
+    "id" : "matching-event-batches",
+    "category" : "correctness",
+    "statement" : "Every command emits the frozen Rejected or Accepted, Trade*, Rested? event grammar.",
+    "status" : "pass",
+    "command" : "./gradlew m01Check m01Evidence -Pm01.unitTag=course/m01-complete --no-daemon",
+    "observations" : {
+      "status" : "PASS",
+      "artifact" : "event-batches.json",
+      "cases" : 22
+    },
+    "artifacts" : [ {
+      "path" : "reports/event-batches.json",
+      "sha256" : "db0d9123d1c2833b93dc55a91cea41645f7199fe3aef9611d24a1cf89f01a808"
+    } ]
+  }, {
+    "id" : "quantity-and-book-invariants",
+    "category" : "correctness",
+    "statement" : "Positive trades, quantity conservation, ordered queues, no empty levels, and no crossed book hold after every batch.",
+    "status" : "pass",
+    "command" : "./gradlew m01Check m01Evidence -Pm01.unitTag=course/m01-complete --no-daemon",
+    "observations" : {
+      "status" : "PASS",
+      "artifact" : "invariants.json"
+    },
+    "artifacts" : [ {
+      "path" : "reports/invariants.json",
+      "sha256" : "687a5464967ceaf91a171b9ff5199d587093ced3b0cbb89beea2308aa2a25e59"
+    } ]
+  }, {
+    "id" : "deterministic-event-history",
+    "category" : "correctness",
+    "statement" : "One hundred fresh corpus parses and fresh engines produce one M01H1 byte history and digest.",
+    "status" : "pass",
+    "command" : "./gradlew m01Check m01Evidence -Pm01.unitTag=course/m01-complete --no-daemon",
+    "observations" : {
+      "requested" : 100,
+      "completed" : 100,
+      "distinctDigests" : 1
+    },
+    "artifacts" : [ {
+      "path" : "reports/canonical-history.utf8",
+      "sha256" : "74585489c50e81cc3e6a10044263186ce66a7f1b20e1f45015fed68614c3e5a1"
+    }, {
+      "path" : "reports/check.json",
+      "sha256" : "9550613d346f4da02f803817f47fbd9b11920a08cdc465d7ea3a1f57af19ae1c"
+    } ]
+  }, {
+    "id" : "semantic-mutants",
+    "category" : "mutation-testing",
+    "statement" : "LIFO, taker-price, and skipped-maker mutants are killed by business assertions; system errors do not count.",
+    "status" : "pass",
+    "command" : "./gradlew m01Check m01Evidence -Pm01.unitTag=course/m01-complete --no-daemon",
+    "observations" : {
+      "status" : "PASS",
+      "artifact" : "mutants.json",
+      "required" : 3,
+      "killed" : 3,
+      "systemErrorControl" : "SYSTEM_ERROR"
+    },
+    "artifacts" : [ {
+      "path" : "reports/mutants.json",
+      "sha256" : "3802d1d0cfd6538b02f97e98bc06fb5296b84e3f50d4b56f6e339cb5e8f88063"
+    } ]
+  }, {
+    "id" : "architecture-boundary",
+    "category" : "architecture",
+    "statement" : "matching-core remains a deterministic two-module business core without I/O or future runtime dependencies.",
+    "status" : "pass",
+    "command" : "./gradlew m01Check m01Evidence -Pm01.unitTag=course/m01-complete --no-daemon",
+    "observations" : {
+      "status" : "PASS",
+      "artifact" : "architecture.json",
+      "sourceFiles" : 15
+    },
+    "artifacts" : [ {
+      "path" : "reports/architecture.json",
+      "sha256" : "c1d73926b24e37ca17722fb7d4863bb7915af23fdd07a197b0e2f70133206290"
+    } ]
+  } ],
+  "limitations" : [ "Only one in-memory BTC-USDT GTC limit-order book is implemented.", "Scenario order IDs are unique; duplicate IDs, duplicate commands, and addressable lifecycle semantics are outside M01.", "There is no cancel, amendment, order index, IOC, FOK, post-only, market order, STP, market state, or price band.", "There is no account, asset, position, fee, settlement, or risk logic.", "Fixed scenarios and semantic mutants are not the independent generated reference model or property proof deferred to M03.", "The unit has no persistence, networking, database, threads, Aeron, or high availability.", "The evidence makes no throughput, latency, recovery, or production-readiness claim." ],
+  "supersedes" : null,
+  "generatedAt" : "2026-08-27T07:39:33.546501064Z"
+}

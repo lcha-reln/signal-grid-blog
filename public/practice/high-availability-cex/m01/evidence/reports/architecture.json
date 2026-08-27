@@ -1,0 +1,7 @@
+{
+  "schemaVersion" : "matching.m01.architecture.v1",
+  "unit" : "M01",
+  "status" : "PASS",
+  "sourceFiles" : 15,
+  "violations" : [ ]
+}

@@ -195,12 +195,13 @@ Mermaid 只在实际存在图表的页面加载。语法问题不一定让 Astro
 - 已签订或启动的单元必须记录自己的 `contractPlanVersion`。若案例计划随后升版而当前单元合同语义未变，保留冻结合同版本，并用 `planCompatibility` 明确解释差异；不得移动 tag 或回写课程仓库来伪造版本一致。
 - `PLANNED` 案例可以没有 `currentUnitCode`；`BUILDING` 必须对应唯一 `ACTIVE` track 和注册表中的实施单元，`VERIFIED` 的所有单元都必须已 `PUBLISHED`。单元引用的 `startRef` 和发布后的 `completeRef` 必须是不可移动的课程 tag。
 - 每个案例最多一个单元占用活跃交付窗口（`IN_PROGRESS / CODE_VERIFIED / CONTENT_VERIFIED`），最多一个下一单元处于 `READY`；存在活跃单元时，它必须与 `currentUnitCode` 完全一致。只有当前单元 `PUBLISHED` 后，下一单元才能进入实施窗口。
-- `scripts/verify-practice-plan.mjs` 按案例校验设计稿、案例配置、单元注册表、教程 frontmatter 和可选静态产物。它拒绝缺失或锁定单元、重复 `lessonOrder`/`permalink`、未达 `PUBLISHED` 却公开的教程和浮动源码 ref。它不读取、checkout 或联网访问课程代码仓库；跨仓 tag 的存在性只在发布前独立核验。
+- `scripts/verify-practice-plan.mjs` 按案例校验设计稿、案例配置、单元注册表、Lab 注册表、教程 frontmatter 和可选静态产物。它拒绝缺失或锁定单元、重复 `lessonOrder`/`permalink`、未达 `PUBLISHED` 却公开的教程或 Lab、漂移的 Golden 资源和浮动源码 ref。它不读取、checkout 或联网访问课程代码仓库；跨仓 tag 的存在性只在发布前独立核验。
 - 案例总入口为 `src/pages/practice/index.astro`。
-- 项目驾驶舱由 `src/pages/practice/[project]/index.astro` 生成，已开始的单元页使用 `src/pages/practice/[project]/[unit]/index.astro`，已发布教程使用 `src/pages/practice/[project]/[unit]/[lesson].astro`。
+- 项目驾驶舱由 `src/pages/practice/[project]/index.astro` 生成，已开始的单元页使用 `src/pages/practice/[project]/[unit]/index.astro`，已发布教程使用 `src/pages/practice/[project]/[unit]/[lesson].astro`；已注册并达到 `PUBLISHED` 的 L2 实验使用通用 `src/pages/practice/[project]/[unit]/lab.astro` 路由。
 - 当前只发布已经确认的案例和阶段地图，不为未来章节创建空 Markdown、空模块或虚假完成度。
 - 实战教程使用独立 `practiceLessons` collection，Markdown 位于 `src/content/practice/<project>/<unit>/`。Frontmatter 使用 `project / profileVersion / unitCode / lessonOrder / permalink / draft`，不重复单元合同。
-- 教程一律以 `draft: true` 开始。只有单元达到 `PUBLISHED` 后才能改为非草稿；草稿不生成生产路由，不进入搜索、sitemap、博客文章统计或主 RSS。`CONTENT_VERIFIED` 冻结该单元预期的 `lessonOrder / permalink` 集合；`PUBLISHED` 必须一次公开完整集合，不允许只翻转其中一篇。`CODE_VERIFIED` 同时冻结 complete tag、完整 40 位提交 SHA、仓库内 evidence 路径和发布证据合同；当前 M00 的生产 evidence 必须托管在 Signal Grid 的固定静态路径，verifier 会复核 CI manifest SHA-256、来源、精确 claim/限制和全部 artifact SHA-256。发布教程必须引用固定 complete tag 和可复核 evidence，不引用 `main`、`unit/*` 等浮动分支。
+- 教程一律以 `draft: true` 开始。只有单元达到 `PUBLISHED` 后才能改为非草稿；草稿不生成生产路由，不进入搜索、sitemap、博客文章统计或主 RSS。`CONTENT_VERIFIED` 冻结该单元预期的 `lessonOrder / permalink` 集合；`PUBLISHED` 必须一次公开完整集合，不允许只翻转其中一篇。`CODE_VERIFIED` 同时冻结 complete tag、完整 40 位提交 SHA、仓库内 evidence 路径和发布证据合同；当前 M00、M01 的生产 evidence 必须托管在 Signal Grid 的固定静态路径。verifier 除复核 CI manifest SHA-256、来源、精确 claim/限制和全部 artifact SHA-256，还通过 `reportFacts` 冻结权威 JSON 报告的业务状态与关键字段，并把它们与 claim observations 交叉核对；不能用同步改写文件和哈希掩盖失败报告。发布教程必须引用固定 complete tag 和可复核 evidence，不引用 `main`、`unit/*` 等浮动分支。
+- L2 实验登记在 `src/practice/labs.ts`，不能在通用路由或组件里按案例名写条件分支。M01–M03 共用一套 Matching Lab 壳与浏览器模型；每个已发布阶段只配置自己的静态 Golden 路径、场景目录和输入边界。所有 Golden 源必须是 manifest 已列出且哈希一致的 artifact；场景 ID、每个场景的命令数、事件和盘口都必须一致。浏览器模型在解锁前必须 fresh-state 重放全部公开 scenario，并逐事件、逐盘口与 Java evidence 一致；任一静态文件缺失、跨源或语义不一致都保持禁用。网页反馈只叫预测、揭示或 corpus 自检，不得使用课程裁判三态。
 
 互动采用本地优先的混合模式：
 
@@ -445,10 +446,13 @@ src/lib/content.ts                 URL、排序、摘要、专题归类
 src/components/SignalHero.astro    首页信号拓扑
 src/components/PracticeCaseCard.astro  实战案例卡片
 src/practice/config.ts             实战案例与阶段元数据
+src/practice/units.ts              已签约单元与发布证据合同
+src/practice/labs.ts               已登记 L2 实验及静态 Golden 绑定
 src/pages/practice/                实战门户与项目驾驶舱
 scripts/verify-practice-plan.mjs   实战设计、配置与静态产物一致性门禁
 src/styles/global.css              全站与首页主题样式
 src/styles/practice.css            实战页面与响应式样式
+src/styles/matching-lab.css        Matching Lab 布局与断点样式
 src/styles/prose.css               文章正文样式
 public/images/posts/               文章图片
 ```

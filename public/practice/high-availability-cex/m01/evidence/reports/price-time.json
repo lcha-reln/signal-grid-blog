@@ -1,0 +1,8 @@
+{
+  "schemaVersion" : "matching.m01.price-time.v1",
+  "unit" : "M01",
+  "status" : "PASS",
+  "fixtureSha256" : "d050bc2fc029e3ac0afb5047e3030412412f3a7aecf0938a19a5953618ff9ed7",
+  "scenarios" : 8,
+  "cases" : 22
+}

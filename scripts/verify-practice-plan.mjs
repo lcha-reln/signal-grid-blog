@@ -6,6 +6,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const configUrl = pathToFileURL(join(root, "src", "practice", "config.ts"));
 const unitsUrl = pathToFileURL(join(root, "src", "practice", "units.ts"));
+const labsUrl = pathToFileURL(join(root, "src", "practice", "labs.ts"));
 const lessonsRoot = join(root, "src", "content", "practice");
 const verifyDist = process.argv.includes("--dist");
 const errors = [];
@@ -33,6 +34,7 @@ const lessonFields = [
 
 const { PRACTICE_CASES } = await import(configUrl.href);
 const { PRACTICE_UNITS } = await import(unitsUrl.href);
+const { PRACTICE_LABS } = await import(labsUrl.href);
 
 function assert(condition, message) {
   if (!condition) errors.push(message);
@@ -167,6 +169,15 @@ function sameOrderedStrings(actual, expected) {
   );
 }
 
+function readObjectField(source, field) {
+  return field.split(".").reduce((value, segment) => {
+    if (value === null || typeof value !== "object" || !Object.hasOwn(value, segment)) {
+      return undefined;
+    }
+    return value[segment];
+  }, source);
+}
+
 async function validateNoSymlinkComponents(anchor, target, key) {
   const lexical = relative(anchor, target);
   assert(lexical && !lexical.startsWith(`..${sep}`) && lexical !== "..", `${key}: path escapes trusted root`);
@@ -241,7 +252,9 @@ async function validatePublishedEvidence(unit, key) {
   );
 
   const claimIds = new Set();
+  const claimsById = new Map();
   const artifactPaths = new Set();
+  const parsedJsonArtifacts = new Map();
   let realPublicRoot;
   let realEvidenceRoot;
   try {
@@ -261,6 +274,7 @@ async function validatePublishedEvidence(unit, key) {
     assert(typeof claim.id === "string" && claim.id.trim(), `${key}: evidence claim has no id`);
     assert(!claimIds.has(claim.id), `${key}: duplicate evidence claim ${claim.id}`);
     claimIds.add(claim.id);
+    claimsById.set(claim.id, claim);
     assert(claim.status === "pass", `${key}: non-pass evidence claim ${claim.id}`);
     assert(typeof claim.category === "string" && claim.category.trim(), `${key}: claim ${claim.id} has no category`);
     assert(typeof claim.statement === "string" && claim.statement.trim(), `${key}: claim ${claim.id} has no statement`);
@@ -305,9 +319,42 @@ async function validatePublishedEvidence(unit, key) {
           (await sha256File(artifactPath)) === artifact.sha256,
           `${key}: artifact hash mismatch ${artifactRelative}`,
         );
+        if (artifactRelative.endsWith(".json")) {
+          const parsedArtifact = JSON.parse(await readFile(artifactPath, "utf8"));
+          parsedJsonArtifacts.set(artifactRelative, parsedArtifact);
+          if (Object.hasOwn(parsedArtifact, "status")) {
+            assert(
+              parsedArtifact.status === "PASS",
+              `${key}: JSON evidence artifact is not PASS ${artifactRelative}`,
+            );
+          }
+        }
       } catch {
         assert(false, `${key}: evidence artifact is missing ${artifactRelative}`);
       }
+    }
+  }
+
+  for (const fact of contract.reportFacts ?? []) {
+    assert(
+      artifactPaths.has(fact.artifactPath),
+      `${key}: semantic report is not bound by manifest ${fact.artifactPath}`,
+    );
+    const report = parsedJsonArtifacts.get(fact.artifactPath);
+    assert(report, `${key}: semantic report is not valid JSON ${fact.artifactPath}`);
+    if (!report) continue;
+    const actual = readObjectField(report, fact.field);
+    assert(
+      Object.is(actual, fact.equals),
+      `${key}: semantic report fact changed ${fact.artifactPath}#${fact.field}`,
+    );
+    if (fact.claimId && fact.observationField) {
+      const claim = claimsById.get(fact.claimId);
+      assert(claim, `${key}: semantic report fact references missing claim ${fact.claimId}`);
+      assert(
+        Object.is(readObjectField(claim?.observations, fact.observationField), actual),
+        `${key}: claim observation differs from report ${fact.claimId}#${fact.observationField}`,
+      );
     }
   }
 }
@@ -360,6 +407,8 @@ for (const unit of PRACTICE_UNITS) {
   assert(lifecycleRanks.has(unit.lifecycle), `${key}: invalid lifecycle ${unit.lifecycle}`);
   assert(typeof unit.title === "string" && unit.title.trim(), `${key}: empty title`);
   assert(typeof unit.summary === "string" && unit.summary.trim(), `${key}: empty summary`);
+  assert(typeof unit.objective === "string" && unit.objective.trim(), `${key}: empty objective`);
+  assert(typeof unit.stopPoint === "string" && unit.stopPoint.trim(), `${key}: empty stopPoint`);
   assert(/^\d+\.\d+$/.test(unit.contractPlanVersion), `${key}: invalid contractPlanVersion`);
   const lifecycleRank = lifecycleRanks.get(unit.lifecycle) ?? -1;
   if (lifecycleRank >= lifecycleRanks.get("READY")) {
@@ -403,6 +452,49 @@ for (const unit of PRACTICE_UNITS) {
       assert(new Set(values).size === values.length, `${key}: duplicate evidenceContract.${field}`);
       assert(values.every((value) => typeof value === "string" && value.trim()), `${key}: blank evidenceContract.${field}`);
     }
+    const reportFacts = unit.evidenceContract.reportFacts;
+    assert(Array.isArray(reportFacts) && reportFacts.length > 0, `${key}: empty evidenceContract.reportFacts`);
+    const reportFactKeys = new Set();
+    for (const fact of reportFacts ?? []) {
+      const factKey = `${fact.artifactPath}\0${fact.field}`;
+      const validExpected =
+        fact.equals === null ||
+        typeof fact.equals === "string" ||
+        typeof fact.equals === "boolean" ||
+        (typeof fact.equals === "number" && Number.isFinite(fact.equals));
+      assert(
+        typeof fact.artifactPath === "string" &&
+          fact.artifactPath.startsWith("reports/") &&
+          fact.artifactPath.endsWith(".json") &&
+          !isAbsolute(fact.artifactPath) &&
+          fact.artifactPath
+            .split("/")
+            .every((segment) => segment && segment !== "." && segment !== ".."),
+        `${key}: invalid semantic report path ${fact.artifactPath}`,
+      );
+      assert(
+        typeof fact.field === "string" &&
+          /^[A-Za-z0-9_-]+(?:\.[A-Za-z0-9_-]+)*$/.test(fact.field),
+        `${key}: invalid semantic report field ${fact.field}`,
+      );
+      assert(validExpected, `${key}: invalid semantic report value ${factKey}`);
+      assert(!reportFactKeys.has(factKey), `${key}: duplicate semantic report fact ${factKey}`);
+      reportFactKeys.add(factKey);
+      assert(
+        Boolean(fact.claimId) === Boolean(fact.observationField),
+        `${key}: semantic report claim binding is incomplete ${factKey}`,
+      );
+      if (fact.claimId) {
+        assert(
+          unit.evidenceContract.claimIds.includes(fact.claimId),
+          `${key}: semantic report fact references unknown claim ${fact.claimId}`,
+        );
+        assert(
+          /^[A-Za-z0-9_-]+(?:\.[A-Za-z0-9_-]+)*$/.test(fact.observationField ?? ""),
+          `${key}: invalid claim observation field ${fact.observationField}`,
+        );
+      }
+    }
   }
   if (lifecycleRank >= lifecycleRanks.get("CONTENT_VERIFIED")) {
     assert(Array.isArray(unit.expectedLessons) && unit.expectedLessons.length > 0, `${key}: ${unit.lifecycle} requires expectedLessons`);
@@ -427,8 +519,22 @@ for (const unit of PRACTICE_UNITS) {
     assert(unit.evidenceUrl, `${key}: PUBLISHED requires a public evidenceUrl`);
     await validatePublishedEvidence(unit, key);
   }
-  for (const field of ["adds", "delivers", "excludes", "gate", "evidence", "localCommands"]) {
-    assert(Array.isArray(unit[field]) && unit[field].length > 0, `${key}: empty ${field}`);
+  for (const field of [
+    "adds",
+    "delivers",
+    "freezes",
+    "excludes",
+    "gate",
+    "interaction",
+    "evidence",
+    "localCommands",
+  ]) {
+    assert(
+      Array.isArray(unit[field]) &&
+        unit[field].length > 0 &&
+        unit[field].every((value) => typeof value === "string" && value.trim()),
+      `${key}: empty ${field}`,
+    );
   }
   for (const command of unit.localCommands) {
     const courseRefs = command.match(/course\/[a-z0-9.-]+/g) ?? [];
@@ -446,6 +552,222 @@ for (const unit of PRACTICE_UNITS) {
     assert(!supersededRefs.has(superseded.ref), `${key}: duplicate superseded start ref`);
     assert(typeof superseded.reason === "string" && superseded.reason.trim(), `${key}: superseded ref has no reason`);
     supersededRefs.add(superseded.ref);
+  }
+}
+
+const labsByKey = new Map();
+const matchingLabSource = await readIfExists(
+  join(root, "src", "practice", "matching-lab.ts"),
+);
+const matchingLabComponent = await readIfExists(
+  join(root, "src", "components", "MatchingLab.astro"),
+);
+for (const forbidden of ["STUDENT_FAILURE", "SYSTEM_ERROR", "innerHTML", "outerHTML", "eval(", "new Function("]) {
+  assert(
+    !matchingLabSource.includes(forbidden) && !matchingLabComponent.includes(forbidden),
+    `Matching Lab browser runtime contains forbidden capability or judge term ${forbidden}`,
+  );
+}
+
+for (const lab of PRACTICE_LABS) {
+  const key = `${lab.projectSlug}/${lab.unitCode}`;
+  const allowedFields = new Set([
+    "kind",
+    "projectSlug",
+    "unitCode",
+    "title",
+    "summary",
+    "modes",
+    "goldenReplay",
+    "browserModel",
+  ]);
+  assert(
+    Object.keys(lab).every((field) => allowedFields.has(field)),
+    `${key}: lab contains an undeclared top-level field`,
+  );
+  assert(!labsByKey.has(key), `${key}: duplicate lab registry entry`);
+  labsByKey.set(key, lab);
+  const unit = unitsByKey.get(key);
+  assert(unit, `${key}: lab references an unregistered unit`);
+  assert(lab.kind === "MATCHING", `${key}: unsupported lab kind ${lab.kind}`);
+  assert(typeof lab.title === "string" && lab.title.trim(), `${key}: lab title is empty`);
+  assert(typeof lab.summary === "string" && lab.summary.trim(), `${key}: lab summary is empty`);
+  assert(
+    Array.isArray(lab.modes) &&
+      lab.modes.length === 2 &&
+      lab.modes[0] === "JAVA_GOLDEN_REPLAY" &&
+      lab.modes[1] === "BROWSER_MODEL",
+    `${key}: matching lab modes must remain Golden replay then browser model`,
+  );
+
+  const replay = lab.goldenReplay;
+  const staticPaths = [
+    replay.manifestPath,
+    replay.scenarioPackPath,
+    replay.eventBatchesPath,
+    replay.canonicalHistoryPath,
+  ];
+  for (const path of staticPaths) {
+    assert(
+      typeof path === "string" &&
+        path.startsWith(`practice/${lab.projectSlug}/${lab.unitCode.toLowerCase()}/evidence/`) &&
+        !isAbsolute(path) &&
+        path.split("/").every((segment) => segment && segment !== "." && segment !== ".."),
+      `${key}: invalid lab static path ${path}`,
+    );
+    assert(await exists(join(root, "public", path)), `${key}: missing lab static source ${path}`);
+  }
+  assert(
+    unit?.evidenceContract?.publicManifestPath === replay.manifestPath,
+    `${key}: lab manifest differs from the unit evidence contract`,
+  );
+  let replayManifest;
+  try {
+    replayManifest = JSON.parse(
+      await readFile(join(root, "public", replay.manifestPath), "utf8"),
+    );
+  } catch (error) {
+    assert(false, `${key}: cannot parse lab evidence manifest (${error.message})`);
+  }
+  const manifestArtifacts = new Map();
+  for (const claim of replayManifest?.claims ?? []) {
+    for (const artifact of claim.artifacts ?? []) {
+      manifestArtifacts.set(artifact.path, artifact.sha256);
+    }
+  }
+  for (const path of [
+    replay.scenarioPackPath,
+    replay.eventBatchesPath,
+    replay.canonicalHistoryPath,
+  ]) {
+    const artifactPath = relative(dirname(replay.manifestPath), path);
+    const manifestHash = manifestArtifacts.get(artifactPath);
+    assert(manifestHash, `${key}: lab source is not a manifest artifact ${artifactPath}`);
+    if (manifestHash) {
+      assert(
+        (await sha256File(join(root, "public", path))) === manifestHash,
+        `${key}: lab source hash differs from manifest ${artifactPath}`,
+      );
+    }
+  }
+  assert(/^sha256:[0-9a-f]{64}$/.test(replay.digest ?? ""), `${key}: invalid lab digest`);
+  assert(
+    manifestArtifacts.get(relative(dirname(replay.manifestPath), replay.canonicalHistoryPath)) ===
+      replay.digest.replace(/^sha256:/, ""),
+    `${key}: lab canonical artifact hash differs from displayed digest`,
+  );
+  assert(
+    Array.isArray(replay.metrics) &&
+      replay.metrics.length > 0 &&
+      replay.metrics.every(
+        (metric) => metric.label?.trim() && metric.value?.trim() && metric.note?.trim(),
+      ),
+    `${key}: lab metrics are empty`,
+  );
+  const scenarioIds = new Set();
+  let configuredCommands = 0;
+  for (const scenario of replay.scenarios ?? []) {
+    assert(
+      typeof scenario.id === "string" &&
+        scenario.id.trim() &&
+        !scenarioIds.has(scenario.id) &&
+        scenario.title?.trim() &&
+        scenario.focus?.trim() &&
+        Number.isInteger(scenario.commands) &&
+        scenario.commands > 0,
+      `${key}: invalid or duplicate lab scenario ${scenario.id}`,
+    );
+    scenarioIds.add(scenario.id);
+    configuredCommands += scenario.commands;
+  }
+  assert(scenarioIds.size > 0, `${key}: lab has no Golden scenarios`);
+
+  let scenarioPack;
+  let eventBatches;
+  try {
+    scenarioPack = JSON.parse(await readFile(join(root, "public", replay.scenarioPackPath), "utf8"));
+    eventBatches = JSON.parse(await readFile(join(root, "public", replay.eventBatchesPath), "utf8"));
+  } catch (error) {
+    assert(false, `${key}: cannot parse lab Golden sources (${error.message})`);
+  }
+  const sourceScenarios = scenarioPack?.scenarios ?? [];
+  const sourceIds = sourceScenarios.map((scenario) => scenario.scenarioId);
+  const sourceCommands = sourceScenarios.reduce(
+    (total, scenario) => total + (scenario.commands?.length ?? 0),
+    0,
+  );
+  assert(
+    sourceIds.length === scenarioIds.size &&
+      sourceIds.every((id, index) => id === replay.scenarios[index]?.id) &&
+      sourceScenarios.every(
+        (scenario, index) =>
+          scenario.commands?.length === replay.scenarios[index]?.commands,
+      ) &&
+      sourceCommands === configuredCommands,
+    `${key}: lab catalog differs from its Golden scenario pack`,
+  );
+  const expectedEventScenarios = sourceScenarios.map((scenario) => ({
+    scenarioId: scenario.scenarioId,
+    cases: scenario.commands.map((command) => ({
+      caseId: command.caseId,
+      input: command.input,
+      events: command.expected.events,
+      bookAfter: command.expected.bookAfter,
+    })),
+  }));
+  assert(
+    JSON.stringify(eventBatches?.scenarios) === JSON.stringify(expectedEventScenarios),
+    `${key}: lab scenario pack and event-batches are not the same Golden corpus`,
+  );
+  const checkPath = join(
+    root,
+    "public",
+    dirname(replay.manifestPath),
+    "reports",
+    "check.json",
+  );
+  try {
+    const check = JSON.parse(await readFile(checkPath, "utf8"));
+    assert(check.canonical?.digest === replay.digest, `${key}: lab digest differs from check.json`);
+    assert(
+      check.scenarioCorpus?.scenarios === scenarioIds.size &&
+        check.scenarioCorpus?.cases === configuredCommands,
+      `${key}: lab counts differ from check.json`,
+    );
+  } catch (error) {
+    assert(false, `${key}: cannot verify lab check report (${error.message})`);
+  }
+
+  const model = lab.browserModel;
+  assert(model.instrumentId === "BTC-USDT", `${key}: M01 browser model instrument drifted`);
+  assert(model.timeInForce === "GTC", `${key}: M01 browser model TIF drifted`);
+  assert(
+    Number.isInteger(model.maxCommands) && model.maxCommands > 0 && model.maxCommands <= 100,
+    `${key}: browser model command bound is invalid`,
+  );
+  try {
+    const minPrice = BigInt(model.minPriceTicks);
+    const maxPrice = BigInt(model.maxPriceTicks);
+    const minQuantity = BigInt(model.minQuantityLots);
+    const maxQuantity = BigInt(model.maxQuantityLots);
+    const firstOrderId = BigInt(model.firstGeneratedOrderId);
+    assert(
+      minPrice > 0n && minPrice <= maxPrice && minQuantity > 0n && minQuantity <= maxQuantity,
+      `${key}: browser model numeric bounds are invalid`,
+    );
+    assert(firstOrderId > 0n, `${key}: browser model first order ID is invalid`);
+    for (const seed of model.seedOrders ?? []) {
+      const price = BigInt(seed.priceTicks);
+      const quantity = BigInt(seed.quantityLots);
+      assert(seed.side === "BUY" || seed.side === "SELL", `${key}: invalid seed side`);
+      assert(price >= minPrice && price <= maxPrice, `${key}: seed price is outside bounds`);
+      assert(
+        quantity >= minQuantity && quantity <= maxQuantity,
+        `${key}: seed quantity is outside bounds`,
+      );
+    }
+  } catch (error) {
+    assert(false, `${key}: browser model contains a non-integer bound (${error.message})`);
   }
 }
 
@@ -606,9 +928,13 @@ for (const practiceCase of PRACTICE_CASES) {
         assert(!unit.planCompatibility, `${key}: current contract has redundant planCompatibility`);
       }
     }
-    assertIncludes(design, unit.startRef, `${key} design`);
+    if (unit.startRef) assertIncludes(design, unit.startRef, `${key} design`);
     if (unit.completeCommit) assertIncludes(design, unit.completeCommit, `${key} complete commit design`);
-    assertIncludes(design, `> 当前单元合同 \`planVersion\`：\`${unit.contractPlanVersion}\``, `${key} design`);
+    assertIncludes(
+      design,
+      `> ${unit.code} 单元合同 \`planVersion\`：\`${unit.contractPlanVersion}\``,
+      `${key} design`,
+    );
     if (unit.planCompatibility) assertIncludes(design, unit.planCompatibility, `${key} design`);
     for (const superseded of unit.supersededStartRefs ?? []) {
       assertIncludes(design, superseded.ref, `${key} superseded start ref`);
@@ -770,6 +1096,48 @@ if (verifyDist) {
         assertIncludes(lessonHtml, lesson.unit.completeRef, `${lesson.file}: published lesson complete ref dist`);
         assertIncludes(lessonHtml, lesson.unit.evidenceUrl, `${lesson.file}: published lesson evidence URL dist`);
       }
+    }
+  }
+
+  for (const lab of PRACTICE_LABS) {
+    const unit = unitsByKey.get(`${lab.projectSlug}/${lab.unitCode}`);
+    const route = `/signal-grid-blog/practice/${lab.projectSlug}/${lab.unitCode.toLowerCase()}/lab/`;
+    const routeFile = join(
+      root,
+      "dist",
+      "practice",
+      lab.projectSlug,
+      lab.unitCode.toLowerCase(),
+      "lab",
+      "index.html",
+    );
+    const shouldPublish = unit?.lifecycle === "PUBLISHED";
+    assert(
+      (await exists(routeFile)) === shouldPublish,
+      `${lab.projectSlug}/${lab.unitCode}: lab route exposure disagrees with unit lifecycle`,
+    );
+    if (shouldPublish) {
+      const html = await readFile(routeFile, "utf8");
+      assertIncludes(html, lab.title, `${lab.projectSlug}/${lab.unitCode} lab dist`);
+      assertIncludes(html, "JAVA_GOLDEN_REPLAY", `${lab.projectSlug}/${lab.unitCode} lab dist`);
+      assertIncludes(html, "BROWSER_MODEL", `${lab.projectSlug}/${lab.unitCode} lab dist`);
+      assertIncludes(html, unit.completeRef, `${lab.projectSlug}/${lab.unitCode} lab complete ref`);
+      assertIncludes(
+        html,
+        `/signal-grid-blog/${lab.goldenReplay.scenarioPackPath}`,
+        `${lab.projectSlug}/${lab.unitCode} lab scenario source`,
+      );
+      assertIncludes(
+        html,
+        `/signal-grid-blog/${lab.goldenReplay.eventBatchesPath}`,
+        `${lab.projectSlug}/${lab.unitCode} lab event source`,
+      );
+      assert(!html.includes("data-pagefind-body"), `${lab.projectSlug}/${lab.unitCode}: runtime lab entered Pagefind body`);
+      assertIncludes(sitemap, route, `${lab.projectSlug}/${lab.unitCode} lab sitemap`);
+      assert(!search.includes(route), `${lab.projectSlug}/${lab.unitCode}: runtime lab entered static search output`);
+    } else {
+      assert(!sitemap.includes(route), `${lab.projectSlug}/${lab.unitCode}: unpublished lab entered sitemap`);
+      assert(!search.includes(route), `${lab.projectSlug}/${lab.unitCode}: unpublished lab entered search output`);
     }
   }
 }

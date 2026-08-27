@@ -1,0 +1,18 @@
+{
+  "schemaVersion" : "matching.m01.invariants.v1",
+  "unit" : "M01",
+  "status" : "PASS",
+  "cases" : 22,
+  "accepted" : 21,
+  "rejected" : 1,
+  "trades" : 12,
+  "checks" : {
+    "eventBatchOrder" : 22,
+    "positiveTradeQuantity" : 12,
+    "quantityConservation" : 22,
+    "makerPrice" : 12,
+    "priceTimePriority" : 12,
+    "bookStructureAndNoCross" : 44
+  },
+  "aggregateArithmetic" : "BigInteger"
+}

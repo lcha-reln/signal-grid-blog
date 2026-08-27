@@ -1,0 +1,41 @@
+---
+import BaseLayout from "../../../../layouts/BaseLayout.astro";
+import MatchingLab from "../../../../components/MatchingLab.astro";
+import { getPracticeCase, type PracticeCase } from "../../../../practice/config";
+import { PRACTICE_LABS, type MatchingLabDefinition } from "../../../../practice/labs";
+import {
+  getPracticeUnit,
+  isPracticeUnitAtLeast,
+  type PracticeUnit,
+} from "../../../../practice/units";
+
+export function getStaticPaths() {
+  return PRACTICE_LABS.flatMap((lab) => {
+    const practiceCase = getPracticeCase(lab.projectSlug);
+    const unit = getPracticeUnit(lab.projectSlug, lab.unitCode);
+    if (!practiceCase || !unit) {
+      throw new Error(`Lab registry references unknown unit ${lab.projectSlug}/${lab.unitCode}`);
+    }
+    if (!isPracticeUnitAtLeast(unit.lifecycle, "PUBLISHED")) return [];
+
+    return [
+      {
+        params: { project: lab.projectSlug, unit: lab.unitCode.toLowerCase() },
+        props: { practiceCase, unit, lab },
+      },
+    ];
+  });
+}
+
+interface Props {
+  practiceCase: PracticeCase;
+  unit: PracticeUnit;
+  lab: MatchingLabDefinition;
+}
+
+const { practiceCase, unit, lab } = Astro.props;
+---
+
+<BaseLayout title={`${unit.code} Matching Lab`} description={lab.summary}>
+  <MatchingLab {practiceCase} {unit} {lab} />
+</BaseLayout>

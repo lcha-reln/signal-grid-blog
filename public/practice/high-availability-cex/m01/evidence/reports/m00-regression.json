@@ -1,0 +1,17 @@
+{
+  "schemaVersion" : "matching.m01.m00-regression.v1",
+  "unit" : "M01",
+  "status" : "PASS",
+  "fixtureSchemaVersion" : "matching.m00.fixture.v1",
+  "canonicalFormat" : "M00H1",
+  "records" : 17,
+  "valid" : 2,
+  "invalid" : 15,
+  "engineInvalidCases" : 15,
+  "engineInvalidOutcome" : "REJECTED_WITHOUT_BOOK_OR_SEQUENCE_MUTATION",
+  "firstValidSequenceAfterInvalids" : 1,
+  "completedReplays" : 100,
+  "distinctDigests" : 1,
+  "canonicalDigest" : "sha256:2d287d677d5f200f2b5bd1dd18dabbd40e865779489ce6da36d0411a3b670669",
+  "message" : "M00 input contract preserved"
+}
