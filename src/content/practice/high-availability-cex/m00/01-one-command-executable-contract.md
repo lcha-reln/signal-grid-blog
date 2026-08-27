@@ -510,3 +510,5 @@ git status --short matching-testkit schemas buildSrc
 到这里，我们已经证明：单条 Schema-valid 候选输入的字段域明确，错误码与错误优先级明确，通过校验的值可以转换成类型化 `PlaceLimitOrder`，并且整个过程不依赖外部状态。
 
 我们仍未证明订单被接受、落入订单簿、产生撮合、冻结资产或能够故障恢复。此时最重要的工程动作是停止：不要添加 `OrderBook`、`Trade`、数据库表或 Aeron 通道，也不要把 `Valid` 改名成 `Accepted`。下一阶段只有在这条输入合同不再漂移之后，才有资格把它编码成可重放、可哈希的确定性历史。
+
+等四篇全部完成后，可以用不可移动的 [`course/m00-complete`](https://github.com/lcha-reln/cex-matching/tree/course/m00-complete) 对照完整单元；它不是本篇起点，也不改变这里“根 `m00Check` 仍为红灯”的阶段验收。

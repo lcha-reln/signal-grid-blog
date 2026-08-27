@@ -200,7 +200,7 @@ Mermaid 只在实际存在图表的页面加载。语法问题不一定让 Astro
 - 项目驾驶舱由 `src/pages/practice/[project]/index.astro` 生成，已开始的单元页使用 `src/pages/practice/[project]/[unit]/index.astro`，已发布教程使用 `src/pages/practice/[project]/[unit]/[lesson].astro`。
 - 当前只发布已经确认的案例和阶段地图，不为未来章节创建空 Markdown、空模块或虚假完成度。
 - 实战教程使用独立 `practiceLessons` collection，Markdown 位于 `src/content/practice/<project>/<unit>/`。Frontmatter 使用 `project / profileVersion / unitCode / lessonOrder / permalink / draft`，不重复单元合同。
-- 教程一律以 `draft: true` 开始。只有单元达到 `PUBLISHED` 后才能改为非草稿；草稿不生成生产路由，不进入搜索、sitemap、博客文章统计或主 RSS。`CODE_VERIFIED` 冻结仓库内 evidence 路径，`PUBLISHED` 还必须提供生产可访问的 HTTPS evidence URL。发布教程必须引用固定 complete tag 和可复核 evidence，不引用 `main`、`unit/*` 等浮动分支。
+- 教程一律以 `draft: true` 开始。只有单元达到 `PUBLISHED` 后才能改为非草稿；草稿不生成生产路由，不进入搜索、sitemap、博客文章统计或主 RSS。`CONTENT_VERIFIED` 冻结该单元预期的 `lessonOrder / permalink` 集合；`PUBLISHED` 必须一次公开完整集合，不允许只翻转其中一篇。`CODE_VERIFIED` 同时冻结 complete tag、完整 40 位提交 SHA、仓库内 evidence 路径和发布证据合同；当前 M00 的生产 evidence 必须托管在 Signal Grid 的固定静态路径，verifier 会复核 CI manifest SHA-256、来源、精确 claim/限制和全部 artifact SHA-256。发布教程必须引用固定 complete tag 和可复核 evidence，不引用 `main`、`unit/*` 等浮动分支。
 
 互动采用本地优先的混合模式：
 

@@ -81,6 +81,7 @@ const canonical = new URL(getPracticeLessonPath(lesson), Astro.site).toString();
         <div><dt>LESSON</dt><dd>{String(lessonIndex + 1).padStart(2, "0")} / {String(lessonCount).padStart(2, "0")}</dd></div>
         <div><dt>EXECUTION</dt><dd>LOCAL</dd></div>
         {completeUrl && <div><dt>CODE</dt><dd><a href={completeUrl} target="_blank" rel="noreferrer">PINNED TAG ↗</a></dd></div>}
+        {unit.evidenceUrl && <div><dt>EVIDENCE</dt><dd><a href={unit.evidenceUrl} target="_blank" rel="noreferrer">VERIFIED BUNDLE ↗</a></dd></div>}
         <div><dt>SOURCE</dt><dd><a href={editUrl} target="_blank" rel="noreferrer">EDIT ON GITHUB ↗</a></dd></div>
       </dl>
     </aside>
@@ -124,4 +125,3 @@ const canonical = new URL(getPracticeLessonPath(lesson), Astro.site).toString();
     window.addEventListener("resize", updateProgress);
   </script>
 </BaseLayout>
-

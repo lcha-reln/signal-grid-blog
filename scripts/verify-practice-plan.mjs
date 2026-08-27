@@ -1,5 +1,6 @@
-import { readdir, readFile, stat } from "node:fs/promises";
-import { dirname, join, relative, resolve, sep } from "node:path";
+import { createHash } from "node:crypto";
+import { lstat, readdir, readFile, realpath, stat } from "node:fs/promises";
+import { dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
@@ -135,6 +136,182 @@ async function exists(path) {
   }
 }
 
+function localEvidenceRelativePath(value) {
+  if (!isPublicHttpsUrl(value)) return undefined;
+  const url = new URL(value);
+  const base = "/signal-grid-blog/";
+  if (url.origin !== "https://lcha-reln.github.io" || !url.pathname.startsWith(base)) {
+    return undefined;
+  }
+  assert(!url.search && !url.hash, `${value}: local evidence URL cannot contain query or hash`);
+  try {
+    const local = decodeURIComponent(url.pathname.slice(base.length));
+    assert(local && !isAbsolute(local) && !local.split("/").includes(".."), `${value}: invalid local evidence path`);
+    return local;
+  } catch {
+    assert(false, `${value}: local evidence URL cannot be decoded`);
+    return undefined;
+  }
+}
+
+async function sha256File(path) {
+  return createHash("sha256").update(await readFile(path)).digest("hex");
+}
+
+function sameOrderedStrings(actual, expected) {
+  return (
+    Array.isArray(actual) &&
+    Array.isArray(expected) &&
+    actual.length === expected.length &&
+    actual.every((value, index) => value === expected[index])
+  );
+}
+
+async function validateNoSymlinkComponents(anchor, target, key) {
+  const lexical = relative(anchor, target);
+  assert(lexical && !lexical.startsWith(`..${sep}`) && lexical !== "..", `${key}: path escapes trusted root`);
+  let current = anchor;
+  for (const segment of lexical.split(sep)) {
+    current = join(current, segment);
+    const info = await lstat(current);
+    assert(!info.isSymbolicLink(), `${key}: symlink path component is forbidden ${relative(root, current)}`);
+  }
+}
+
+async function validatePublishedEvidence(unit, key) {
+  const contract = unit.evidenceContract;
+  assert(contract, `${key}: local evidence has no frozen evidenceContract`);
+  if (!contract) return;
+  const local = localEvidenceRelativePath(unit.evidenceUrl);
+  assert(local, `${key}: evidence must be hosted under the Signal Grid static site`);
+  assert(local === contract.publicManifestPath, `${key}: evidence URL differs from frozen publicManifestPath`);
+  if (!local || local !== contract.publicManifestPath) return;
+
+  const publicRoot = join(root, "public");
+  const manifestPath = resolve(publicRoot, local);
+  assert(
+    manifestPath.startsWith(`${publicRoot}${sep}`),
+    `${key}: evidence manifest escapes public directory`,
+  );
+  assert(manifestPath.endsWith(`${sep}manifest.json`), `${key}: evidenceUrl must identify manifest.json`);
+
+  const source = await readIfExists(manifestPath);
+  assert(source, `${key}: local evidence manifest is missing`);
+  if (!source) return;
+  assert(
+    (await sha256File(manifestPath)) === contract.manifestSha256,
+    `${key}: evidence manifest hash differs from the frozen CI artifact`,
+  );
+
+  let manifest;
+  try {
+    manifest = JSON.parse(source);
+  } catch {
+    assert(false, `${key}: local evidence manifest is not valid JSON`);
+    return;
+  }
+
+  assert(manifest.schemaVersion === contract.schemaVersion, `${key}: evidence schemaVersion changed`);
+  assert(manifest.case === unit.projectSlug, `${key}: evidence case changed`);
+  assert(manifest.project === contract.project, `${key}: evidence project changed`);
+  assert(manifest.unit === unit.code, `${key}: evidence unit changed`);
+  assert(manifest.unitTag === unit.completeRef, `${key}: evidence unitTag differs from completeRef`);
+  assert(manifest.productRelease === (unit.productRelease ?? null), `${key}: evidence productRelease changed`);
+  assert(manifest.planVersion === unit.contractPlanVersion, `${key}: evidence planVersion differs from unit contract`);
+  assert(manifest.source?.commit === unit.completeCommit, `${key}: evidence source differs from completeCommit`);
+  assert(manifest.source?.dirty === false, `${key}: dirty evidence cannot be published`);
+  assert(
+    typeof manifest.generatedAt === "string" &&
+      /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z$/.test(manifest.generatedAt),
+    `${key}: evidence generatedAt is not RFC 3339 UTC`,
+  );
+  for (const field of ["java", "os", "arch"]) {
+    assert(typeof manifest.environment?.[field] === "string" && manifest.environment[field].trim(), `${key}: evidence environment.${field} is empty`);
+  }
+  assert(
+    sameOrderedStrings(manifest.limitations, contract.limitations),
+    `${key}: evidence limitations differ from the frozen contract`,
+  );
+  assert(
+    sameOrderedStrings(
+      (manifest.claims ?? []).map((claim) => claim.id),
+      contract.claimIds,
+    ),
+    `${key}: evidence claim ids or order differ from the frozen contract`,
+  );
+
+  const claimIds = new Set();
+  const artifactPaths = new Set();
+  let realPublicRoot;
+  let realEvidenceRoot;
+  try {
+    await validateNoSymlinkComponents(publicRoot, manifestPath, key);
+    const manifestInfo = await lstat(manifestPath);
+    assert(manifestInfo.isFile() && !manifestInfo.isSymbolicLink(), `${key}: evidence manifest must be a regular file`);
+    realPublicRoot = await realpath(publicRoot);
+    const realManifest = await realpath(manifestPath);
+    assert(realManifest.startsWith(`${realPublicRoot}${sep}`), `${key}: evidence manifest escapes real public directory`);
+    realEvidenceRoot = await realpath(dirname(manifestPath));
+  } catch {
+    assert(false, `${key}: cannot resolve local evidence tree`);
+    return;
+  }
+
+  for (const claim of manifest.claims ?? []) {
+    assert(typeof claim.id === "string" && claim.id.trim(), `${key}: evidence claim has no id`);
+    assert(!claimIds.has(claim.id), `${key}: duplicate evidence claim ${claim.id}`);
+    claimIds.add(claim.id);
+    assert(claim.status === "pass", `${key}: non-pass evidence claim ${claim.id}`);
+    assert(typeof claim.category === "string" && claim.category.trim(), `${key}: claim ${claim.id} has no category`);
+    assert(typeof claim.statement === "string" && claim.statement.trim(), `${key}: claim ${claim.id} has no statement`);
+    assert(typeof claim.command === "string" && claim.command.trim(), `${key}: claim ${claim.id} has no command`);
+    assert(
+      claim.observations && typeof claim.observations === "object" && !Array.isArray(claim.observations),
+      `${key}: claim ${claim.id} has no observations`,
+    );
+    assert(Array.isArray(claim.artifacts) && claim.artifacts.length > 0, `${key}: claim ${claim.id} has no artifact`);
+
+    for (const artifact of claim.artifacts ?? []) {
+      const artifactRelative = artifact.path;
+      const validRelative =
+        typeof artifactRelative === "string" &&
+        artifactRelative.length > 0 &&
+        !isAbsolute(artifactRelative) &&
+        !artifactRelative.includes("\\") &&
+        artifactRelative.split("/").every((segment) => segment && segment !== "." && segment !== "..");
+      assert(validRelative, `${key}: invalid evidence artifact path ${artifactRelative}`);
+      if (!validRelative) continue;
+      assert(!artifactPaths.has(artifactRelative), `${key}: duplicate evidence artifact ${artifactRelative}`);
+      artifactPaths.add(artifactRelative);
+      assert(/^[0-9a-f]{64}$/.test(artifact.sha256 ?? ""), `${key}: invalid artifact hash ${artifactRelative}`);
+
+      const artifactPath = resolve(dirname(manifestPath), artifactRelative);
+      assert(
+        artifactPath.startsWith(`${dirname(manifestPath)}${sep}`),
+        `${key}: artifact escapes evidence directory ${artifactRelative}`,
+      );
+      try {
+        const artifactInfo = await lstat(artifactPath);
+        assert(
+          artifactInfo.isFile() && !artifactInfo.isSymbolicLink(),
+          `${key}: evidence artifact must be a regular file ${artifactRelative}`,
+        );
+        const realArtifact = await realpath(artifactPath);
+        assert(
+          realArtifact.startsWith(`${realEvidenceRoot}${sep}`),
+          `${key}: real artifact escapes evidence directory ${artifactRelative}`,
+        );
+        assert(
+          (await sha256File(artifactPath)) === artifact.sha256,
+          `${key}: artifact hash mismatch ${artifactRelative}`,
+        );
+      } catch {
+        assert(false, `${key}: evidence artifact is missing ${artifactRelative}`);
+      }
+    }
+  }
+}
+
 const caseSlugs = new Set();
 const caseIndexes = new Set();
 const designDocuments = new Set();
@@ -197,11 +374,50 @@ for (const unit of PRACTICE_UNITS) {
   }
   if (lifecycleRank >= lifecycleRanks.get("CODE_VERIFIED")) {
     assert(unit.completeRef, `${key}: ${unit.lifecycle} requires completeRef`);
+    assert(/^[0-9a-f]{40}$/.test(unit.completeCommit ?? ""), `${key}: ${unit.lifecycle} requires a full completeCommit`);
     assert(unit.evidencePath, `${key}: ${unit.lifecycle} requires evidencePath`);
+    assert(unit.evidenceContract, `${key}: ${unit.lifecycle} requires evidenceContract`);
   } else {
     assert(!unit.completeRef, `${key}: ${unit.lifecycle} must not publish completeRef before CODE_VERIFIED`);
+    assert(!unit.completeCommit, `${key}: ${unit.lifecycle} must not publish completeCommit before CODE_VERIFIED`);
     assert(!unit.evidencePath, `${key}: ${unit.lifecycle} must not publish evidencePath before CODE_VERIFIED`);
     assert(!unit.evidenceUrl, `${key}: ${unit.lifecycle} must not publish evidenceUrl before CODE_VERIFIED`);
+    assert(!unit.evidenceContract, `${key}: ${unit.lifecycle} must not publish evidenceContract before CODE_VERIFIED`);
+  }
+  if (unit.evidenceContract) {
+    assert(typeof unit.evidenceContract.schemaVersion === "string" && unit.evidenceContract.schemaVersion.trim(), `${key}: empty evidence schemaVersion`);
+    assert(typeof unit.evidenceContract.project === "string" && unit.evidenceContract.project.trim(), `${key}: empty evidence project`);
+    assert(
+      typeof unit.evidenceContract.publicManifestPath === "string" &&
+        unit.evidenceContract.publicManifestPath.endsWith("/manifest.json") &&
+        !isAbsolute(unit.evidenceContract.publicManifestPath) &&
+        unit.evidenceContract.publicManifestPath
+          .split("/")
+          .every((segment) => segment && segment !== "." && segment !== ".."),
+      `${key}: invalid evidence publicManifestPath`,
+    );
+    assert(/^[0-9a-f]{64}$/.test(unit.evidenceContract.manifestSha256 ?? ""), `${key}: invalid evidence manifestSha256`);
+    for (const field of ["claimIds", "limitations"]) {
+      const values = unit.evidenceContract[field];
+      assert(Array.isArray(values) && values.length > 0, `${key}: empty evidenceContract.${field}`);
+      assert(new Set(values).size === values.length, `${key}: duplicate evidenceContract.${field}`);
+      assert(values.every((value) => typeof value === "string" && value.trim()), `${key}: blank evidenceContract.${field}`);
+    }
+  }
+  if (lifecycleRank >= lifecycleRanks.get("CONTENT_VERIFIED")) {
+    assert(Array.isArray(unit.expectedLessons) && unit.expectedLessons.length > 0, `${key}: ${unit.lifecycle} requires expectedLessons`);
+  }
+  if (unit.expectedLessons) {
+    const expectedOrders = new Set();
+    const expectedPermalinks = new Set();
+    for (const lesson of unit.expectedLessons) {
+      assert(Number.isInteger(lesson.lessonOrder) && lesson.lessonOrder > 0, `${key}: invalid expected lesson order`);
+      assert(/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(lesson.permalink ?? ""), `${key}: invalid expected lesson permalink`);
+      assert(!expectedOrders.has(lesson.lessonOrder), `${key}: duplicate expected lesson order`);
+      assert(!expectedPermalinks.has(lesson.permalink), `${key}: duplicate expected lesson permalink`);
+      expectedOrders.add(lesson.lessonOrder);
+      expectedPermalinks.add(lesson.permalink);
+    }
   }
   if (unit.evidencePath) {
     assert(!unit.evidencePath.startsWith("/") && !unit.evidencePath.split("/").includes(".."), `${key}: invalid evidencePath`);
@@ -209,6 +425,7 @@ for (const unit of PRACTICE_UNITS) {
   if (unit.evidenceUrl) assert(isPublicHttpsUrl(unit.evidenceUrl), `${key}: evidenceUrl must be a public HTTPS URL`);
   if (unit.lifecycle === "PUBLISHED") {
     assert(unit.evidenceUrl, `${key}: PUBLISHED requires a public evidenceUrl`);
+    await validatePublishedEvidence(unit, key);
   }
   for (const field of ["adds", "delivers", "excludes", "gate", "evidence", "localCommands"]) {
     assert(Array.isArray(unit[field]) && unit[field].length > 0, `${key}: empty ${field}`);
@@ -390,6 +607,7 @@ for (const practiceCase of PRACTICE_CASES) {
       }
     }
     assertIncludes(design, unit.startRef, `${key} design`);
+    if (unit.completeCommit) assertIncludes(design, unit.completeCommit, `${key} complete commit design`);
     assertIncludes(design, `> 当前单元合同 \`planVersion\`：\`${unit.contractPlanVersion}\``, `${key} design`);
     if (unit.planCompatibility) assertIncludes(design, unit.planCompatibility, `${key} design`);
     for (const superseded of unit.supersededStartRefs ?? []) {
@@ -426,8 +644,16 @@ for (const practiceCase of PRACTICE_CASES) {
         assertIncludes(unitHtml, unit.lifecycle, `${practiceCase.slug}/${unit.code} dist`);
         assertIncludes(unitHtml, unit.startRef, `${practiceCase.slug}/${unit.code} dist`);
         if (unit.completeRef) assertIncludes(unitHtml, unit.completeRef, `${practiceCase.slug}/${unit.code} complete ref dist`);
+        if (unit.completeCommit) assertIncludes(unitHtml, unit.completeCommit, `${practiceCase.slug}/${unit.code} complete commit dist`);
         if (unit.lifecycle === "PUBLISHED") {
           assertIncludes(unitHtml, unit.evidenceUrl, `${practiceCase.slug}/${unit.code} evidence URL dist`);
+          const localEvidence = localEvidenceRelativePath(unit.evidenceUrl);
+          if (localEvidence) {
+            assert(
+              await exists(join(root, "dist", localEvidence)),
+              `${practiceCase.slug}/${unit.code}: local evidence is missing from dist`,
+            );
+          }
         }
       }
     }
@@ -475,7 +701,16 @@ for (const path of await listMarkdownFiles(lessonsRoot)) {
     const escapedRepository = repositoryUrl.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     const sourceLinks = source.match(new RegExp(`${escapedRepository}/(?:tree|blob)/[^\\s)\"']+`, "g")) ?? [];
     for (const link of sourceLinks) {
-      assert(fixedRefs.some((ref) => link.includes(`/${ref}`)), `${file}: floating or foreign source ref ${link}`);
+      assert(
+        fixedRefs.some(
+          (ref) =>
+            link === `${repositoryUrl}/tree/${ref}` ||
+            link.startsWith(`${repositoryUrl}/tree/${ref}/`) ||
+            link === `${repositoryUrl}/blob/${ref}` ||
+            link.startsWith(`${repositoryUrl}/blob/${ref}/`),
+        ),
+        `${file}: floating or foreign source ref ${link}`,
+      );
     }
   }
   if (!data.draft && unit?.completeRef) assertIncludes(body, unit.completeRef, `${file}: published lesson complete ref`);
@@ -483,9 +718,27 @@ for (const path of await listMarkdownFiles(lessonsRoot)) {
 }
 
 for (const unit of PRACTICE_UNITS.filter((item) => item.lifecycle === "PUBLISHED")) {
+  const unitLessons = lessons.filter(
+    (lesson) => lesson.data.project === unit.projectSlug && lesson.data.unitCode === unit.code,
+  );
   assert(
-    lessons.some((lesson) => lesson.data.project === unit.projectSlug && lesson.data.unitCode === unit.code && !lesson.data.draft),
-    `${unit.projectSlug}/${unit.code}: PUBLISHED unit has no published lesson`,
+    unitLessons.length === (unit.expectedLessons?.length ?? 0) &&
+      unitLessons.every((lesson) => !lesson.data.draft),
+    `${unit.projectSlug}/${unit.code}: PUBLISHED unit must expose every frozen lesson and no draft`,
+  );
+}
+
+for (const unit of PRACTICE_UNITS.filter((item) => isAtLeast(item.lifecycle, "CONTENT_VERIFIED"))) {
+  const actual = lessons
+    .filter((lesson) => lesson.data.project === unit.projectSlug && lesson.data.unitCode === unit.code)
+    .map((lesson) => `${lesson.data.lessonOrder}:${lesson.data.permalink}`)
+    .sort();
+  const expected = (unit.expectedLessons ?? [])
+    .map((lesson) => `${lesson.lessonOrder}:${lesson.permalink}`)
+    .sort();
+  assert(
+    actual.length === expected.length && actual.every((value, index) => value === expected[index]),
+    `${unit.projectSlug}/${unit.code}: lesson set differs from frozen expectedLessons`,
   );
 }
 
@@ -512,6 +765,11 @@ if (verifyDist) {
     } else {
       assert(await exists(routeFile), `${lesson.file}: published lesson route is missing`);
       assertIncludes(sitemap, route, `${lesson.file}: published lesson sitemap`);
+      if (lesson.unit?.completeRef) {
+        const lessonHtml = await readFile(routeFile, "utf8");
+        assertIncludes(lessonHtml, lesson.unit.completeRef, `${lesson.file}: published lesson complete ref dist`);
+        assertIncludes(lessonHtml, lesson.unit.evidenceUrl, `${lesson.file}: published lesson evidence URL dist`);
+      }
     }
   }
 }

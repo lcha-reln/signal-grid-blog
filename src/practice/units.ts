@@ -11,6 +11,20 @@ export interface SupersededPracticeRef {
   reason: string;
 }
 
+export interface PracticeEvidenceContract {
+  schemaVersion: string;
+  project: string;
+  publicManifestPath: string;
+  manifestSha256: string;
+  claimIds: readonly string[];
+  limitations: readonly string[];
+}
+
+export interface PracticeLessonContract {
+  lessonOrder: number;
+  permalink: string;
+}
+
 export interface PracticeUnit {
   projectSlug: string;
   profileVersion: string;
@@ -26,9 +40,12 @@ export interface PracticeUnit {
   startRef?: string;
   supersededStartRefs?: readonly SupersededPracticeRef[];
   completeRef?: string;
+  completeCommit?: string;
   productRelease?: string;
   evidencePath?: string;
   evidenceUrl?: string;
+  evidenceContract?: PracticeEvidenceContract;
+  expectedLessons?: readonly PracticeLessonContract[];
   adds: readonly string[];
   delivers: readonly string[];
   excludes: readonly string[];
@@ -74,7 +91,34 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
       },
     ],
     completeRef: "course/m00-complete",
+    completeCommit: "2aa9f344cf1b57dd84b622362ecc0c6866121145",
     evidencePath: "build/lab-evidence/M00/manifest.json",
+    evidenceContract: {
+      schemaVersion: "cex.lab-evidence.v1",
+      project: "matching",
+      publicManifestPath: "practice/high-availability-cex/m00/evidence/manifest.json",
+      manifestSha256: "a8962136833f185bee24fd45f22ea58b0db0ac1c837106f02dba7d2483f9deee",
+      claimIds: [
+        "input-contract",
+        "canonical-history",
+        "deterministic-replay",
+        "semantic-mutant",
+        "architecture-boundary",
+      ],
+      limitations: [
+        "Only one PlaceLimitOrder input contract is implemented for BTC-USDT.",
+        "A VALID result is not Accepted, Rested, or Trade and creates no order-book state.",
+        "There is no cancel, amendment, market order, TIF, STP, fee, asset, or account logic.",
+        "The unit has no persistence, networking, database, threads, Aeron, or high availability.",
+        "The evidence makes no throughput, latency, recovery, or production-readiness claim.",
+      ],
+    },
+    expectedLessons: [
+      { lessonOrder: 10, permalink: "place-limit-order-input-contract" },
+      { lessonOrder: 20, permalink: "fixture-canonical-history" },
+      { lessonOrder: 30, permalink: "fail-closed-deterministic-judge" },
+      { lessonOrder: 40, permalink: "publish-verifiable-evidence" },
+    ],
     adds: ["PlaceLimitOrder 输入合同", "按固定优先级执行的确定性验证", "canonical history 与 SHA-256 digest"],
     delivers: ["固定语料可以被重复解析并得到逐字节一致的历史", "无订单簿时也能先证明输入边界与裁判语义"],
     excludes: ["订单簿、成交和撤单", "WAL、快照与数据库", "Aeron Cluster、网关和账户资产"],

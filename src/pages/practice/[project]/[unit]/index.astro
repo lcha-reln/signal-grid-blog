@@ -102,6 +102,7 @@ const evidenceUrl = unit.evidenceUrl;
         <dl>
           <div><dt>START</dt><dd>{unit.startRef ? <code>{unit.startRef}</code> : "等待 READY 门禁"}</dd></div>
           <div><dt>COMPLETE</dt><dd>{unit.completeRef ? <code>{unit.completeRef}</code> : "等待代码门禁"}</dd></div>
+          <div><dt>COMMIT</dt><dd>{unit.completeCommit ? <code>{unit.completeCommit}</code> : "等待代码门禁"}</dd></div>
           <div><dt>RELEASE</dt><dd>{unit.productRelease ?? "NOT_APPLICABLE"}</dd></div>
         </dl>
         <div class="hero-actions">

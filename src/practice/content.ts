@@ -82,15 +82,70 @@ function validatePracticeUnits(): void {
     }
     if (
       isPracticeUnitAtLeast(unit.lifecycle, "CODE_VERIFIED") &&
-      (!unit.completeRef || !unit.evidencePath)
+      (!unit.completeRef || !unit.completeCommit || !unit.evidencePath || !unit.evidenceContract)
     ) {
-      throw new Error(`Practice unit ${key} must freeze completeRef and evidencePath at CODE_VERIFIED`);
+      throw new Error(
+        `Practice unit ${key} must freeze completeRef, completeCommit, evidencePath and evidenceContract at CODE_VERIFIED`,
+      );
+    }
+    if (unit.completeCommit && !/^[0-9a-f]{40}$/.test(unit.completeCommit)) {
+      throw new Error(`Practice unit ${key} completeCommit must be a full lowercase Git SHA`);
     }
     if (
       !isPracticeUnitAtLeast(unit.lifecycle, "CODE_VERIFIED") &&
-      (unit.completeRef || unit.evidencePath || unit.evidenceUrl)
+      (unit.completeRef ||
+        unit.completeCommit ||
+        unit.evidencePath ||
+        unit.evidenceUrl ||
+        unit.evidenceContract)
     ) {
       throw new Error(`Practice unit ${key} must not publish completion proof before CODE_VERIFIED`);
+    }
+    if (unit.evidenceContract) {
+      const { schemaVersion, project, publicManifestPath, manifestSha256, claimIds, limitations } =
+        unit.evidenceContract;
+      if (
+        !schemaVersion.trim() ||
+        !project.trim() ||
+        !publicManifestPath.trim() ||
+        publicManifestPath.startsWith("/") ||
+        publicManifestPath.split("/").some((segment) => !segment || segment === "." || segment === "..") ||
+        !/^[0-9a-f]{64}$/.test(manifestSha256)
+      ) {
+        throw new Error(`Practice unit ${key} evidenceContract has an empty identity field`);
+      }
+      if (
+        claimIds.length === 0 ||
+        limitations.length === 0 ||
+        new Set(claimIds).size !== claimIds.length ||
+        claimIds.some((claim) => !claim.trim()) ||
+        limitations.some((limitation) => !limitation.trim())
+      ) {
+        throw new Error(`Practice unit ${key} evidenceContract is empty or ambiguous`);
+      }
+    }
+    if (isPracticeUnitAtLeast(unit.lifecycle, "CONTENT_VERIFIED") && !unit.expectedLessons) {
+      throw new Error(`Practice unit ${key} must freeze expectedLessons at CONTENT_VERIFIED`);
+    }
+    if (unit.expectedLessons) {
+      const orders = new Set<number>();
+      const permalinks = new Set<string>();
+      for (const lesson of unit.expectedLessons) {
+        if (
+          !Number.isInteger(lesson.lessonOrder) ||
+          lesson.lessonOrder <= 0 ||
+          !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(lesson.permalink) ||
+          orders.has(lesson.lessonOrder) ||
+          permalinks.has(lesson.permalink)
+        ) {
+          throw new Error(`Practice unit ${key} has an invalid expectedLessons contract`);
+        }
+        orders.add(lesson.lessonOrder);
+        permalinks.add(lesson.permalink);
+      }
+      if (unit.expectedLessons.length === 0) {
+        throw new Error(`Practice unit ${key} has an empty expectedLessons contract`);
+      }
     }
     if (unit.evidenceUrl && !isPublicHttpsUrl(unit.evidenceUrl)) {
       throw new Error(`Practice unit ${key} evidenceUrl must be a public HTTPS URL`);
@@ -155,6 +210,7 @@ export function validatePracticeContent(lessons: PracticeLesson[]): void {
   const orders = new Map<string, string>();
   const lessonCountByUnit = new Map<string, number>();
   const publishedCountByUnit = new Map<string, number>();
+  const lessonsByUnit = new Map<string, PracticeLesson[]>();
 
   for (const lesson of lessons) {
     const practiceCase = getPracticeCase(lesson.data.project);
@@ -197,6 +253,7 @@ export function validatePracticeContent(lessons: PracticeLesson[]): void {
     orders.set(orderKey, lesson.id);
 
     lessonCountByUnit.set(unitKey, (lessonCountByUnit.get(unitKey) ?? 0) + 1);
+    lessonsByUnit.set(unitKey, [...(lessonsByUnit.get(unitKey) ?? []), lesson]);
     if (!lesson.data.draft) {
       publishedCountByUnit.set(unitKey, (publishedCountByUnit.get(unitKey) ?? 0) + 1);
     }
@@ -210,8 +267,22 @@ export function validatePracticeContent(lessons: PracticeLesson[]): void {
     ) {
       throw new Error(`Practice unit ${key} is ${unit.lifecycle} but has no lesson`);
     }
-    if (unit.lifecycle === "PUBLISHED" && (publishedCountByUnit.get(key) ?? 0) === 0) {
-      throw new Error(`Practice unit ${key} is PUBLISHED but has no published lesson`);
+    if (isPracticeUnitAtLeast(unit.lifecycle, "CONTENT_VERIFIED")) {
+      const expected = [...(unit.expectedLessons ?? [])]
+        .sort((left, right) => left.lessonOrder - right.lessonOrder)
+        .map((lesson) => `${lesson.lessonOrder}:${lesson.permalink}`);
+      const actual = [...(lessonsByUnit.get(key) ?? [])]
+        .sort((left, right) => left.data.lessonOrder - right.data.lessonOrder)
+        .map((lesson) => `${lesson.data.lessonOrder}:${lesson.data.permalink}`);
+      if (expected.length !== actual.length || expected.some((value, index) => value !== actual[index])) {
+        throw new Error(`Practice unit ${key} lessons differ from its frozen content contract`);
+      }
+    }
+    if (
+      unit.lifecycle === "PUBLISHED" &&
+      (publishedCountByUnit.get(key) ?? 0) !== (unit.expectedLessons?.length ?? 0)
+    ) {
+      throw new Error(`Practice unit ${key} must publish every frozen lesson atomically`);
     }
   }
 }
