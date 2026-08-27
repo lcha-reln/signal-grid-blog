@@ -58,7 +58,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     title: "最小可执行规格",
     summary: "冻结一条 PlaceLimitOrder 输入、确定性验证和 canonical history digest，让后续撮合演进拥有不可漂移的第一份合同。",
     order: 10,
-    lifecycle: "IN_PROGRESS",
+    lifecycle: "CODE_VERIFIED",
     contractPlanVersion: "0.1",
     planCompatibility: "PLAN v0.2 只新增 SPOT 之后的锁定 Profile 路线；M00 输入、验证、canonical history 与 digest 合同不变。",
     prerequisiteUnitCodes: [],
@@ -73,12 +73,18 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
         reason: "修复了任务源码，但仓内文档仍指向失败的原始起点",
       },
     ],
+    completeRef: "course/m00-complete",
+    evidencePath: "build/lab-evidence/M00/manifest.json",
     adds: ["PlaceLimitOrder 输入合同", "按固定优先级执行的确定性验证", "canonical history 与 SHA-256 digest"],
     delivers: ["固定语料可以被重复解析并得到逐字节一致的历史", "无订单簿时也能先证明输入边界与裁判语义"],
     excludes: ["订单簿、成交和撤单", "WAL、快照与数据库", "Aeron Cluster、网关和账户资产"],
     gate: ["固定 fixture 通过 Draft 2020-12 schema", "100 次重放产生同一 canonical digest", "必需 semantic mutant 被确定性裁判杀死"],
     evidence: ["M00 check report", "canonical history 与固定 digest", "semantic mutant 和架构边界结果"],
-    localCommands: ["./gradlew clean build", "./gradlew m00Check"],
+    localCommands: [
+      "./gradlew clean build --no-daemon",
+      "./gradlew m00Check --no-daemon",
+      "./gradlew m00Evidence -Pm00.unitTag=course/m00-complete --no-daemon",
+    ],
   },
 ];
 

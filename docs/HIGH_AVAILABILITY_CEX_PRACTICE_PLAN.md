@@ -1,6 +1,6 @@
 # 高可用 CEX 交易核心实战课程设计
 
-> 状态：M00 已启动，当前 `IN_PROGRESS`
+> 状态：M00 已启动，当前 `CODE_VERIFIED`（代码已验证，教程仍为草稿）
 >
 > 规划日期：2026-08-26
 >
@@ -14,7 +14,7 @@
 >
 > 当前规划基线：`SPOT-CEX-1.0` 的 30 个候选交付单元，3 个按门禁顺序创建的代码仓库
 >
-> 当前实施窗口：M00 是唯一 `IN_PROGRESS` 单元；M01 是下一候选；其余单元仅为可调整的课程地图
+> 当前实施窗口：M00 是唯一 `CODE_VERIFIED` 单元，正在完成教程；M01 是下一候选；其余单元仅为可调整的课程地图
 
 ## 1. 这份文档决定什么
 
@@ -231,7 +231,7 @@ Rest 初期是一个仓库和一个部署应用，内部划分 PriAPI、OpenAPI�
 
 | 顺序 | 仓库 | 创建条件 | 主要制品 |
 | ---: | --- | --- | --- |
-| 1 | [`cex-matching`](https://github.com/lcha-reln/cex-matching) | 已创建；M00 是唯一 `IN_PROGRESS` 单元 | Matching core、testkit、runtime、协议、故障实验 |
+| 1 | [`cex-matching`](https://github.com/lcha-reln/cex-matching) | 已创建；M00 已 `CODE_VERIFIED`，教程仍在完成 | Matching core、testkit、runtime、协议、故障实验 |
 | 2 | `counter` | `matching-1.0.0` 发布并从干净环境复验 | Counter core、Cluster runtime、bridge、sync、query |
 | 3 | `rest` | `counter-1.0.0` 发布并从干净环境复验 | PriAPI、OpenAPI、WS、system tests |
 
@@ -284,7 +284,7 @@ rest     = rest-1.0.0
 
 | 范围 | 生命周期 | 设计深度 | 仓库门禁 | 允许的工作 |
 | --- | --- | --- | --- | --- |
-| M00 | `IN_PROGRESS` | `CONTRACT` | `CREATED` | 只实现输入规范、确定性验证与 history digest |
+| M00 | `CODE_VERIFIED` | `CONTRACT` | `CREATED` | 代码、反例和 evidence 已通过；继续完成并复验 M00·01～04，全部保持草稿 |
 | M01 | `CANDIDATE` | `NEXT_MAP` | 随 `cex-matching` 仓库 | 只保留下一候选的教学和边界假设，M00 发布后重新签约 |
 | M02–M12 | `CANDIDATE` | `RISK_MAP` | 随 `cex-matching` 仓库 | 记录能力、关键不变量和危险故障，不冻结类、Schema 字段编号、依赖版本或文章标题 |
 | C00–C09 | `CANDIDATE` | `RISK_MAP` | `LOCKED` | 记录权威边界和关键故障；Matching 1.0 前不创建仓库 |
@@ -870,7 +870,9 @@ signal-grid-blog
 
 ## 14. M00 当前执行
 
-M00 已在独立公开仓库 [`lcha-reln/cex-matching`](https://github.com/lcha-reln/cex-matching) 启动。当前权威起点是不可移动的 [`course/m00.2-start`](https://github.com/lcha-reln/cex-matching/tree/course/m00.2-start)，`unit/m00` 是全专题唯一实现分支，生命周期为 `IN_PROGRESS`。原 [`course/m00-start`](https://github.com/lcha-reln/cex-matching/tree/course/m00-start) 与[失败 CI](https://github.com/lcha-reln/cex-matching/actions/runs/32951874121)证明干净环境发现了文件遗漏；[`course/m00.1-start`](https://github.com/lcha-reln/cex-matching/tree/course/m00.1-start) 则保留“代码已修复、仓内文档仍错误自指”的第二次审计记录。两个旧 tag 都不能删除或移动来美化历史；[当前起点 CI](https://github.com/lcha-reln/cex-matching/actions/runs/32954218080) 已通过。
+M00 已在独立公开仓库 [`lcha-reln/cex-matching`](https://github.com/lcha-reln/cex-matching) 完成代码验证。当前权威起点是不可移动的 [`course/m00.2-start`](https://github.com/lcha-reln/cex-matching/tree/course/m00.2-start)，完成点是 annotated tag [`course/m00-complete`](https://github.com/lcha-reln/cex-matching/tree/course/m00-complete)，两者之间的默认分支与 `unit/m00` 最终都收敛到提交 `2aa9f344cf1b57dd84b622362ecc0c6866121145`。原 [`course/m00-start`](https://github.com/lcha-reln/cex-matching/tree/course/m00-start) 与[失败 CI](https://github.com/lcha-reln/cex-matching/actions/runs/32951874121)证明干净环境发现了文件遗漏；[`course/m00.1-start`](https://github.com/lcha-reln/cex-matching/tree/course/m00.1-start) 则保留“代码已修复、仓内文档仍错误自指”的第二次审计记录。两个旧 tag 都不能删除或移动来美化历史；[当前起点 CI](https://github.com/lcha-reln/cex-matching/actions/runs/32954218080)、[完成分支 CI](https://github.com/lcha-reln/cex-matching/actions/runs/33032428721)、[完成 tag CI](https://github.com/lcha-reln/cex-matching/actions/runs/33032428741) 与[默认分支 CI](https://github.com/lcha-reln/cex-matching/actions/runs/33032644868) 均已通过。
+
+代码生命周期现为 `CODE_VERIFIED`：17 条固定记录、37 行/3199 字节 canonical history、100 次 fresh replay、必需 semantic mutant、架构边界和 evidence manifest 都已通过。教程 M00·01～04 尚未整体达到 `CONTENT_VERIFIED`，因此当前文章继续保持草稿，生产页也不得提前宣称 M00 已发布。CI artifact 只作为构建时证据；发布前还要把已校验的原始 evidence 固化到博客静态目录，提供不会随 Actions retention 消失的公开 URL。
 
 PLAN v0.2 只新增 SPOT 之后的锁定 Profile 路线；M00 输入、验证、canonical history 与 digest 合同不变。因此 M00 的 `course.properties` 与不可移动起点继续记录合同 `planVersion=0.1`，网站另行公开当前计划版本和这条兼容说明，不改 tag、不回写冻结证据。
 
@@ -899,4 +901,5 @@ Bootstrap 已冻结这些维护选择：
 
 | 日期 | 单元 | 生命周期 | 记录 |
 | --- | --- | --- | --- |
+| 2026-08-27 | M00 | `CODE_VERIFIED` | `unit/m00`、`main` 与 annotated `course/m00-complete` 收敛到 `2aa9f34`；分支、tag 与默认分支 CI 均成功，manifest 及全部 artifact hash 已复核；教程与持久公开 evidence 尚未发布 |
 | 2026-08-26 | M00 | `IN_PROGRESS` | 创建 `cex-matching`；保留 `course/m00-start` 的源码遗漏与 `course/m00.1-start` 的文档自指缺陷，以通过干净 CI 且自洽的 `course/m00.2-start` 作为权威起点；启动 `unit/m00` |
