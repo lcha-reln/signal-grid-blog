@@ -1,0 +1,106 @@
+{
+  "schemaVersion" : "matching.m00.validation-results.v1",
+  "records" : [ {
+    "index" : 0,
+    "caseId" : "valid-minimum-buy",
+    "status" : "VALID",
+    "code" : null,
+    "field" : null
+  }, {
+    "index" : 1,
+    "caseId" : "valid-maximum-sell",
+    "status" : "VALID",
+    "code" : null,
+    "field" : null
+  }, {
+    "index" : 2,
+    "caseId" : "unknown-instrument",
+    "status" : "INVALID",
+    "code" : "UNKNOWN_INSTRUMENT",
+    "field" : "instrumentId"
+  }, {
+    "index" : 3,
+    "caseId" : "invalid-order-id",
+    "status" : "INVALID",
+    "code" : "INVALID_ORDER_ID",
+    "field" : "orderId"
+  }, {
+    "index" : 4,
+    "caseId" : "negative-order-id",
+    "status" : "INVALID",
+    "code" : "INVALID_ORDER_ID",
+    "field" : "orderId"
+  }, {
+    "index" : 5,
+    "caseId" : "positive-overflow-order-id",
+    "status" : "INVALID",
+    "code" : "INVALID_ORDER_ID",
+    "field" : "orderId"
+  }, {
+    "index" : 6,
+    "caseId" : "invalid-side",
+    "status" : "INVALID",
+    "code" : "INVALID_SIDE",
+    "field" : "side"
+  }, {
+    "index" : 7,
+    "caseId" : "price-zero",
+    "status" : "INVALID",
+    "code" : "INVALID_PRICE",
+    "field" : "priceTicks"
+  }, {
+    "index" : 8,
+    "caseId" : "price-negative",
+    "status" : "INVALID",
+    "code" : "INVALID_PRICE",
+    "field" : "priceTicks"
+  }, {
+    "index" : 9,
+    "caseId" : "price-positive-overflow",
+    "status" : "INVALID",
+    "code" : "INVALID_PRICE",
+    "field" : "priceTicks"
+  }, {
+    "index" : 10,
+    "caseId" : "quantity-zero",
+    "status" : "INVALID",
+    "code" : "INVALID_QUANTITY",
+    "field" : "quantityLots"
+  }, {
+    "index" : 11,
+    "caseId" : "quantity-negative",
+    "status" : "INVALID",
+    "code" : "INVALID_QUANTITY",
+    "field" : "quantityLots"
+  }, {
+    "index" : 12,
+    "caseId" : "quantity-positive-overflow",
+    "status" : "INVALID",
+    "code" : "INVALID_QUANTITY",
+    "field" : "quantityLots"
+  }, {
+    "index" : 13,
+    "caseId" : "error-priority",
+    "status" : "INVALID",
+    "code" : "UNKNOWN_INSTRUMENT",
+    "field" : "instrumentId"
+  }, {
+    "index" : 14,
+    "caseId" : "order-id-priority",
+    "status" : "INVALID",
+    "code" : "INVALID_ORDER_ID",
+    "field" : "orderId"
+  }, {
+    "index" : 15,
+    "caseId" : "side-priority",
+    "status" : "INVALID",
+    "code" : "INVALID_SIDE",
+    "field" : "side"
+  }, {
+    "index" : 16,
+    "caseId" : "price-priority",
+    "status" : "INVALID",
+    "code" : "INVALID_PRICE",
+    "field" : "priceTicks"
+  } ]
+}

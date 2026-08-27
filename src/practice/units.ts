@@ -75,7 +75,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     title: "最小可执行规格",
     summary: "冻结一条 PlaceLimitOrder 输入、确定性验证和 canonical history digest，让后续撮合演进拥有不可漂移的第一份合同。",
     order: 10,
-    lifecycle: "CODE_VERIFIED",
+    lifecycle: "PUBLISHED",
     contractPlanVersion: "0.1",
     planCompatibility: "PLAN v0.2 只新增 SPOT 之后的锁定 Profile 路线；M00 输入、验证、canonical history 与 digest 合同不变。",
     prerequisiteUnitCodes: [],
@@ -93,6 +93,8 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     completeRef: "course/m00-complete",
     completeCommit: "2aa9f344cf1b57dd84b622362ecc0c6866121145",
     evidencePath: "build/lab-evidence/M00/manifest.json",
+    evidenceUrl:
+      "https://lcha-reln.github.io/signal-grid-blog/practice/high-availability-cex/m00/evidence/manifest.json",
     evidenceContract: {
       schemaVersion: "cex.lab-evidence.v1",
       project: "matching",

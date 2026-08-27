@@ -1,0 +1,58 @@
+{
+  "schemaVersion" : "matching.m00.check.v2",
+  "unit" : "M00",
+  "status" : "PASS",
+  "contractPlanVersion" : "0.1",
+  "fixture" : {
+    "path" : "matching-testkit/src/test/resources/m00/fixtures/history-v1.json",
+    "sha256" : "5809644a1c27c5b57b9162ee2a051a020b6a0fa13ab9aa31f53222c1081c540f",
+    "records" : 17,
+    "valid" : 2,
+    "invalid" : 15,
+    "schemaFailureProbes" : 19
+  },
+  "canonical" : {
+    "format" : "M00H1",
+    "lines" : 37,
+    "utf8Bytes" : 3199,
+    "digest" : "sha256:2d287d677d5f200f2b5bd1dd18dabbd40e865779489ce6da36d0411a3b670669",
+    "goldenPath" : "matching-testkit/src/test/resources/m00/golden/history-v1.canonical.txt"
+  },
+  "replays" : {
+    "requested" : 100,
+    "completed" : 100,
+    "distinctDigests" : 1
+  },
+  "requiredMutant" : {
+    "id" : "M00-QTY-ZERO-ACCEPTED",
+    "classification" : "STUDENT_FAILURE",
+    "killed" : true,
+    "caseId" : "quantity-zero",
+    "expected" : "INVALID_QUANTITY(quantityLots)",
+    "actual" : "VALID"
+  },
+  "architecture" : {
+    "status" : "PASS",
+    "coreSourceFiles" : 10,
+    "violations" : 0
+  },
+  "assertions" : [ {
+    "id" : "fixture-boundary",
+    "status" : "PASS"
+  }, {
+    "id" : "validation-contract",
+    "status" : "PASS"
+  }, {
+    "id" : "canonical-golden",
+    "status" : "PASS"
+  }, {
+    "id" : "deterministic-replay",
+    "status" : "PASS"
+  }, {
+    "id" : "architecture-boundary",
+    "status" : "PASS"
+  }, {
+    "id" : "semantic-mutant",
+    "status" : "PASS"
+  } ]
+}

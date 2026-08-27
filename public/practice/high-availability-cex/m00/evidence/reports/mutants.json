@@ -1,0 +1,28 @@
+{
+  "schemaVersion" : "matching.m00.mutants.v1",
+  "candidates" : [ {
+    "id" : "PRODUCTION-CONTROL",
+    "classification" : "PASS",
+    "killed" : false,
+    "caseId" : null,
+    "expected" : null,
+    "actual" : null,
+    "message" : "all business expectations matched"
+  }, {
+    "id" : "M00-QTY-ZERO-ACCEPTED",
+    "classification" : "STUDENT_FAILURE",
+    "killed" : true,
+    "caseId" : "quantity-zero",
+    "expected" : "INVALID_QUANTITY(quantityLots)",
+    "actual" : "VALID",
+    "message" : "case quantity-zero: expected INVALID_QUANTITY(quantityLots), actual VALID"
+  }, {
+    "id" : "SYSTEM-ERROR-CONTROL",
+    "classification" : "SYSTEM_ERROR",
+    "killed" : false,
+    "caseId" : "valid-minimum-buy",
+    "expected" : "VALID",
+    "actual" : "IllegalStateException",
+    "message" : "candidate raised IllegalStateException"
+  } ]
+}

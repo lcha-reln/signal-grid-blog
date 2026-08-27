@@ -1,0 +1,158 @@
+{
+  "schemaVersion": "matching.m00.fixture.v1",
+  "records": [
+    {
+      "caseId": "valid-minimum-buy",
+      "instrumentId": "BTC-USDT",
+      "orderId": 1,
+      "side": "BUY",
+      "priceTicks": 1,
+      "quantityLots": 1,
+      "expected": { "status": "VALID", "code": null, "field": null }
+    },
+    {
+      "caseId": "valid-maximum-sell",
+      "instrumentId": "BTC-USDT",
+      "orderId": 9223372036854775807,
+      "side": "SELL",
+      "priceTicks": 9223372036854775807,
+      "quantityLots": 9223372036854775807,
+      "expected": { "status": "VALID", "code": null, "field": null }
+    },
+    {
+      "caseId": "unknown-instrument",
+      "instrumentId": "ETH-USDT",
+      "orderId": 2,
+      "side": "BUY",
+      "priceTicks": 6500000,
+      "quantityLots": 3,
+      "expected": { "status": "INVALID", "code": "UNKNOWN_INSTRUMENT", "field": "instrumentId" }
+    },
+    {
+      "caseId": "invalid-order-id",
+      "instrumentId": "BTC-USDT",
+      "orderId": 0,
+      "side": "BUY",
+      "priceTicks": 6500000,
+      "quantityLots": 3,
+      "expected": { "status": "INVALID", "code": "INVALID_ORDER_ID", "field": "orderId" }
+    },
+    {
+      "caseId": "negative-order-id",
+      "instrumentId": "BTC-USDT",
+      "orderId": -1,
+      "side": "BUY",
+      "priceTicks": 6500000,
+      "quantityLots": 3,
+      "expected": { "status": "INVALID", "code": "INVALID_ORDER_ID", "field": "orderId" }
+    },
+    {
+      "caseId": "positive-overflow-order-id",
+      "instrumentId": "BTC-USDT",
+      "orderId": 9223372036854775808,
+      "side": "BUY",
+      "priceTicks": 6500000,
+      "quantityLots": 3,
+      "expected": { "status": "INVALID", "code": "INVALID_ORDER_ID", "field": "orderId" }
+    },
+    {
+      "caseId": "invalid-side",
+      "instrumentId": "BTC-USDT",
+      "orderId": 3,
+      "side": "buy",
+      "priceTicks": 6500000,
+      "quantityLots": 3,
+      "expected": { "status": "INVALID", "code": "INVALID_SIDE", "field": "side" }
+    },
+    {
+      "caseId": "price-zero",
+      "instrumentId": "BTC-USDT",
+      "orderId": 4,
+      "side": "BUY",
+      "priceTicks": 0,
+      "quantityLots": 3,
+      "expected": { "status": "INVALID", "code": "INVALID_PRICE", "field": "priceTicks" }
+    },
+    {
+      "caseId": "price-negative",
+      "instrumentId": "BTC-USDT",
+      "orderId": 5,
+      "side": "BUY",
+      "priceTicks": -1,
+      "quantityLots": 3,
+      "expected": { "status": "INVALID", "code": "INVALID_PRICE", "field": "priceTicks" }
+    },
+    {
+      "caseId": "price-positive-overflow",
+      "instrumentId": "BTC-USDT",
+      "orderId": 6,
+      "side": "BUY",
+      "priceTicks": 9223372036854775808,
+      "quantityLots": 3,
+      "expected": { "status": "INVALID", "code": "INVALID_PRICE", "field": "priceTicks" }
+    },
+    {
+      "caseId": "quantity-zero",
+      "instrumentId": "BTC-USDT",
+      "orderId": 43,
+      "side": "BUY",
+      "priceTicks": 6500000,
+      "quantityLots": 0,
+      "expected": { "status": "INVALID", "code": "INVALID_QUANTITY", "field": "quantityLots" }
+    },
+    {
+      "caseId": "quantity-negative",
+      "instrumentId": "BTC-USDT",
+      "orderId": 7,
+      "side": "BUY",
+      "priceTicks": 6500000,
+      "quantityLots": -1,
+      "expected": { "status": "INVALID", "code": "INVALID_QUANTITY", "field": "quantityLots" }
+    },
+    {
+      "caseId": "quantity-positive-overflow",
+      "instrumentId": "BTC-USDT",
+      "orderId": 8,
+      "side": "BUY",
+      "priceTicks": 6500000,
+      "quantityLots": 9223372036854775808,
+      "expected": { "status": "INVALID", "code": "INVALID_QUANTITY", "field": "quantityLots" }
+    },
+    {
+      "caseId": "error-priority",
+      "instrumentId": "ETH-USDT",
+      "orderId": 0,
+      "side": "HOLD",
+      "priceTicks": 0,
+      "quantityLots": 0,
+      "expected": { "status": "INVALID", "code": "UNKNOWN_INSTRUMENT", "field": "instrumentId" }
+    },
+    {
+      "caseId": "order-id-priority",
+      "instrumentId": "BTC-USDT",
+      "orderId": 0,
+      "side": "HOLD",
+      "priceTicks": 0,
+      "quantityLots": 0,
+      "expected": { "status": "INVALID", "code": "INVALID_ORDER_ID", "field": "orderId" }
+    },
+    {
+      "caseId": "side-priority",
+      "instrumentId": "BTC-USDT",
+      "orderId": 9,
+      "side": "HOLD",
+      "priceTicks": 0,
+      "quantityLots": 0,
+      "expected": { "status": "INVALID", "code": "INVALID_SIDE", "field": "side" }
+    },
+    {
+      "caseId": "price-priority",
+      "instrumentId": "BTC-USDT",
+      "orderId": 10,
+      "side": "BUY",
+      "priceTicks": 0,
+      "quantityLots": 0,
+      "expected": { "status": "INVALID", "code": "INVALID_PRICE", "field": "priceTicks" }
+    }
+  ]
+}

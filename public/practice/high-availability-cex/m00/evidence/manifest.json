@@ -1,0 +1,102 @@
+{
+  "schemaVersion" : "cex.lab-evidence.v1",
+  "case" : "high-availability-cex",
+  "project" : "matching",
+  "unit" : "M00",
+  "unitTag" : "course/m00-complete",
+  "productRelease" : null,
+  "planVersion" : "0.1",
+  "source" : {
+    "commit" : "2aa9f344cf1b57dd84b622362ecc0c6866121145",
+    "dirty" : false
+  },
+  "environment" : {
+    "java" : "25.0.4.1+1-LTS",
+    "os" : "Linux",
+    "arch" : "amd64"
+  },
+  "claims" : [ {
+    "id" : "input-contract",
+    "category" : "correctness",
+    "statement" : "Frozen fixture records produce the expected VALID or first-priority INVALID result.",
+    "status" : "pass",
+    "command" : "./gradlew m00Check m00Evidence --no-daemon",
+    "observations" : {
+      "records" : 17,
+      "valid" : 2,
+      "invalid" : 15,
+      "fixtureSha256" : "5809644a1c27c5b57b9162ee2a051a020b6a0fa13ab9aa31f53222c1081c540f"
+    },
+    "artifacts" : [ {
+      "path" : "inputs/history-v1.json",
+      "sha256" : "5809644a1c27c5b57b9162ee2a051a020b6a0fa13ab9aa31f53222c1081c540f"
+    }, {
+      "path" : "reports/validation-results.json",
+      "sha256" : "9d69ce23e8bbda919ecda471385d9bd6e6b2f8b93e26a5cef79fd78154bc4da3"
+    } ]
+  }, {
+    "id" : "canonical-history",
+    "category" : "correctness",
+    "statement" : "Canonical M00H1 bytes and SHA-256 match the checked-in golden.",
+    "status" : "pass",
+    "command" : "./gradlew m00Check m00Evidence --no-daemon",
+    "observations" : {
+      "format" : "M00H1",
+      "lines" : 37,
+      "utf8Bytes" : 3199,
+      "digest" : "sha256:2d287d677d5f200f2b5bd1dd18dabbd40e865779489ce6da36d0411a3b670669"
+    },
+    "artifacts" : [ {
+      "path" : "reports/canonical-history.utf8",
+      "sha256" : "2d287d677d5f200f2b5bd1dd18dabbd40e865779489ce6da36d0411a3b670669"
+    } ]
+  }, {
+    "id" : "deterministic-replay",
+    "category" : "correctness",
+    "statement" : "One hundred fresh replays produce identical results, bytes, and digest.",
+    "status" : "pass",
+    "command" : "./gradlew m00Check m00Evidence --no-daemon",
+    "observations" : {
+      "requested" : 100,
+      "completed" : 100,
+      "distinctDigests" : 1
+    },
+    "artifacts" : [ {
+      "path" : "reports/check.json",
+      "sha256" : "5b856c5b0d23f876e110e797344737de24c5b18f996d31147b5af37ab12f2b62"
+    } ]
+  }, {
+    "id" : "semantic-mutant",
+    "category" : "mutation-testing",
+    "statement" : "The required quantity-zero mutant is killed by a business assertion, not a system error.",
+    "status" : "pass",
+    "command" : "./gradlew m00Check m00Evidence --no-daemon",
+    "observations" : {
+      "id" : "M00-QTY-ZERO-ACCEPTED",
+      "classification" : "STUDENT_FAILURE",
+      "killed" : true,
+      "caseId" : "quantity-zero"
+    },
+    "artifacts" : [ {
+      "path" : "reports/mutants.json",
+      "sha256" : "0ae4ff7ed62f5f73afeebc2fe037eb78ae8655d01ccd177a8d44130afcb61ddc"
+    } ]
+  }, {
+    "id" : "architecture-boundary",
+    "category" : "architecture",
+    "statement" : "matching-core has no production dependency, I/O, clock, random, runtime, or future-module leak.",
+    "status" : "pass",
+    "command" : "./gradlew m00Check m00Evidence --no-daemon",
+    "observations" : {
+      "coreSourceFiles" : 10,
+      "violations" : 0
+    },
+    "artifacts" : [ {
+      "path" : "reports/architecture.json",
+      "sha256" : "ec456f16f5c6fc064ea244e3228568b89fd4e7471c83f5fe4aec738beb0a5a4d"
+    } ]
+  } ],
+  "limitations" : [ "Only one PlaceLimitOrder input contract is implemented for BTC-USDT.", "A VALID result is not Accepted, Rested, or Trade and creates no order-book state.", "There is no cancel, amendment, market order, TIF, STP, fee, asset, or account logic.", "The unit has no persistence, networking, database, threads, Aeron, or high availability.", "The evidence makes no throughput, latency, recovery, or production-readiness claim." ],
+  "supersedes" : null,
+  "generatedAt" : "2026-08-27T02:11:13.804669163Z"
+}

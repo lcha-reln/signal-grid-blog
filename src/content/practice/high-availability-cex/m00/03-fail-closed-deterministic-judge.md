@@ -11,7 +11,7 @@ tags:
   - 撮合引擎
   - 确定性裁判
   - Mutation Testing
-draft: true
+draft: false
 ---
 
 前两篇已经让一条 `PlaceLimitOrder` 拥有固定业务域，也把一组输入编码成固定 canonical bytes 和 SHA-256。很容易由此得出一个过早的结论：只要再运行一次得到相同摘要，M00 就已经“确定”了。
