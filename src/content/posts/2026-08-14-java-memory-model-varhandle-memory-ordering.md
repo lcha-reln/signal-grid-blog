@@ -2,7 +2,7 @@
 title: Java Memory Model 与 VarHandle：happens-before、内存顺序与安全发布
 description: 从数据竞争和 happens-before 出发，系统解释 volatile、锁与 final 字段语义，再用 VarHandle 的 plain、opaque、acquire-release、volatile、CAS 与 fence 构造可证明的线程间协议。
 date: 2026-08-14T15:00:00+08:00
-updated: 2026-08-17T21:00:00+08:00
+updated: 2026-08-27T13:30:00+08:00
 tags:
   - Java Memory Model
   - VarHandle
@@ -28,7 +28,7 @@ Java Memory Model（JMM）解决的正是这个问题：**给定一段程序和�
 
 本文以 **Java SE 25 / JLS 25** 为规范基线，示例主体保持 Java 17 可运行。VarHandle 从 JDK 9 起就是标准 API；JDK 23 已将 `sun.misc.Unsafe` 的内存访问方法标记为待移除，JDK 24 起默认在运行期告警，因此新代码应优先使用 VarHandle、并发工具类或 Foreign Function & Memory API。[JLS 25 第 17 章](https://docs.oracle.com/javase/specs/jls/se25/html/jls-17.html) · [VarHandle JDK 25](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/invoke/VarHandle.html) · [JEP 193](https://openjdk.org/jeps/193) · [JEP 471](https://openjdk.org/jeps/471)
 
-这是“Java 低延迟工程”的 Chapter 01。读完本文后，先进入 [Java 低延迟到底应该怎么测](/signal-grid-blog/posts/java-low-latency-measurement/)，学会为吞吐、尾延迟与生产收益建立可信证据；再通过 [Cache、局部性、伪共享与 NUMA](/signal-grid-blog/posts/java-low-latency-machine-model-cache-locality-false-sharing-numa/) 建立真实机器模型。随后依次追踪 [HotSpot 如何执行代码](/signal-grid-blog/posts/hotspot-execution-tlab-escape-analysis-jit-deoptimization-safepoint/)、[GC 如何消耗分配预算](/signal-grid-blog/posts/java-low-latency-gc-allocation-live-set-g1-zgc-shenandoah/) 与 [Linux 如何调度 CPU、内存和网卡队列](/signal-grid-blog/posts/linux-low-latency-runtime-cpu-affinity-numa-irq-rss-rps-xps-busy-poll/)，最后进入 [Disruptor](/signal-grid-blog/posts/lmax-disruptor-ring-buffer-and-sequencing/) 和 [Agrona](/signal-grid-blog/posts/agrona-direct-buffer-queues-and-agents/) 的具体数据通路。
+这是“Java 低延迟工程”的 Chapter 01。读完本文后，先进入 [Java 低延迟到底应该怎么测](/signal-grid-blog/posts/java-low-latency-measurement/)，学会为吞吐、尾延迟与生产收益建立可信证据；再通过 [Cache、局部性、伪共享与 NUMA](/signal-grid-blog/posts/java-low-latency-machine-model-cache-locality-false-sharing-numa/) 建立真实机器模型。随后依次追踪 [HotSpot 如何执行代码](/signal-grid-blog/posts/hotspot-execution-tlab-escape-analysis-jit-deoptimization-safepoint/)、[GC 如何消耗分配预算](/signal-grid-blog/posts/java-low-latency-gc-allocation-live-set-g1-zgc-shenandoah/)、[线程怎样从竞争进入等待](/signal-grid-blog/posts/java-thread-contention-aqs-park-unpark-scheduling/) 与 [Java NIO 怎样把 readiness 变成真实 I/O](/signal-grid-blog/posts/java-nio-selector-socket-data-path-backpressure/)，再由 [Linux 运行时](/signal-grid-blog/posts/linux-low-latency-runtime-cpu-affinity-numa-irq-rss-rps-xps-busy-poll/) 接到内核和网卡队列。最后进入 [Disruptor](/signal-grid-blog/posts/lmax-disruptor-ring-buffer-and-sequencing/)、[Agrona](/signal-grid-blog/posts/agrona-direct-buffer-queues-and-agents/) 与 [FFM](/signal-grid-blog/posts/java-off-heap-memory-ffm-memorysegment-arena-mmap-lifecycle/) 的具体数据通路和显式内存生命周期。
 
 ## 1. 先看一个“偶尔正常”的错误程序
 
@@ -102,12 +102,12 @@ flowchart TB
 
 因此，分析并发程序时要分清四层：
 
-| 层次 | 关注的问题 | 不能直接推出什么 |
-| --- | --- | --- |
-| Java 源码 | 每个线程想执行哪些操作 | 另一线程按源码顺序观察 |
-| JMM | 哪些执行结果合法 | 固定的机器指令与屏障 |
-| JVM/JIT | 如何在特定平台实现这些语义 | 所有 JVM 都生成同样代码 |
-| CPU/缓存 | 指令和缓存一致性怎样工作 | Java 层 API 的完整语义 |
+| 层次      | 关注的问题                 | 不能直接推出什么        |
+| --------- | -------------------------- | ----------------------- |
+| Java 源码 | 每个线程想执行哪些操作     | 另一线程按源码顺序观察  |
+| JMM       | 哪些执行结果合法           | 固定的机器指令与屏障    |
+| JVM/JIT   | 如何在特定平台实现这些语义 | 所有 JVM 都生成同样代码 |
+| CPU/缓存  | 指令和缓存一致性怎样工作   | Java 层 API 的完整语义  |
 
 把 JMM 解释成“线程把工作内存刷回主内存”会掩盖两个事实：
 
@@ -228,14 +228,14 @@ flowchart TB
 
 #### 常用 HB 规则
 
-| 规则 | 可以证明什么 | 常见误用 |
-| --- | --- | --- |
-| 同线程 program order | 本线程前序动作 HB 后序动作 | 推导另一线程也按源码顺序观察 |
-| monitor unlock → 后续 lock | 锁内写入对后续同锁临界区可见 | 使用不同锁也能传递 |
-| volatile write → 后续 read | 发布写之前的动作可传到观察之后 | `volatile++` 变成原子 |
-| `start()` → 子线程动作 | 启动前写入可被新线程看到 | 子线程写入自动返回父线程 |
-| 线程动作 → 成功 `join()` | 终止前写入可被 join 方看到 | timed join 超时也算成功检测终止 |
-| interrupt → 检测中断 | 中断前动作可传到检测点 | interrupt 等于强制终止线程 |
+| 规则                       | 可以证明什么                   | 常见误用                        |
+| -------------------------- | ------------------------------ | ------------------------------- |
+| 同线程 program order       | 本线程前序动作 HB 后序动作     | 推导另一线程也按源码顺序观察    |
+| monitor unlock → 后续 lock | 锁内写入对后续同锁临界区可见   | 使用不同锁也能传递              |
+| volatile write → 后续 read | 发布写之前的动作可传到观察之后 | `volatile++` 变成原子           |
+| `start()` → 子线程动作     | 启动前写入可被新线程看到       | 子线程写入自动返回父线程        |
+| 线程动作 → 成功 `join()`   | 终止前写入可被 join 方看到     | timed join 超时也算成功检测终止 |
+| interrupt → 检测中断       | 中断前动作可传到检测点         | interrupt 等于强制终止线程      |
 
 `Thread.join(Duration)` 返回 `false`，或者带超时的 `join` 仍然发现线程存活时，不能使用“线程终止 → join 方”的 HB 保证。
 
@@ -322,13 +322,13 @@ flowchart TB
 
 ### `volatile`、锁和原子类各自解决什么
 
-| 工具 | 核心能力 | 适合 | 不适合 |
-| --- | --- | --- | --- |
-| `final` | 构造期特殊可见性 | 不可变配置、值对象 | 后续可变状态同步 |
-| `volatile` | 单变量原子访问、可见性与顺序 | 状态标志、不可变快照引用、发布点 | 多字段不变量、复合更新 |
-| `synchronized` / 排他 Lock | 互斥 + lock/unlock 内存同步 | 多字段状态转换、条件等待 | 极端热路径里不经测量就滥用 |
-| Atomic 类 | 单变量原子 RMW | 计数、状态指针、无锁结构节点 | 多变量业务事务 |
-| VarHandle | 在字段/数组/视图上选择访问语义 | 底层库、定制内存协议 | 普通业务代码的默认首选 |
+| 工具                       | 核心能力                       | 适合                             | 不适合                     |
+| -------------------------- | ------------------------------ | -------------------------------- | -------------------------- |
+| `final`                    | 构造期特殊可见性               | 不可变配置、值对象               | 后续可变状态同步           |
+| `volatile`                 | 单变量原子访问、可见性与顺序   | 状态标志、不可变快照引用、发布点 | 多字段不变量、复合更新     |
+| `synchronized` / 排他 Lock | 互斥 + lock/unlock 内存同步    | 多字段状态转换、条件等待         | 极端热路径里不经测量就滥用 |
+| Atomic 类                  | 单变量原子 RMW                 | 计数、状态指针、无锁结构节点     | 多变量业务事务             |
+| VarHandle                  | 在字段/数组/视图上选择访问语义 | 底层库、定制内存协议             | 普通业务代码的默认首选     |
 
 优先使用更高层抽象。`BlockingQueue`、`ConcurrentHashMap`、`CompletableFuture`、锁和并发集合已经定义了内存一致性属性；只有当数据布局、对象开销或访问模式确实需要定制时，才应该直接使用 VarHandle。
 
@@ -615,18 +615,18 @@ public int incrementWeak() {
 
 下面是常用 RMW 模式的完整语义家族；Acquire / Release 后缀只强化相应一侧，并不会自动把另一侧也升级为 volatile：
 
-| 方法族 | 读取侧 | 成功写入侧 | 是否允许伪失败 |
-| --- | --- | --- | --- |
-| `compareAndSet` / `compareAndExchange` | volatile | volatile | 否 |
-| `compareAndExchangeAcquire` | acquire | plain | 否 |
-| `compareAndExchangeRelease` | plain | release | 否 |
-| `weakCompareAndSetPlain` | plain | plain | 是 |
-| `weakCompareAndSet` | volatile | volatile | 是 |
-| `weakCompareAndSetAcquire` | acquire | plain | 是 |
-| `weakCompareAndSetRelease` | plain | release | 是 |
-| `getAndSet` / `getAndAdd` / bitwise RMW | volatile | volatile | 否 |
-| 上述 RMW 的 `Acquire` 变体 | acquire | plain | 否 |
-| 上述 RMW 的 `Release` 变体 | plain | release | 否 |
+| 方法族                                  | 读取侧   | 成功写入侧 | 是否允许伪失败 |
+| --------------------------------------- | -------- | ---------- | -------------- |
+| `compareAndSet` / `compareAndExchange`  | volatile | volatile   | 否             |
+| `compareAndExchangeAcquire`             | acquire  | plain      | 否             |
+| `compareAndExchangeRelease`             | plain    | release    | 否             |
+| `weakCompareAndSetPlain`                | plain    | plain      | 是             |
+| `weakCompareAndSet`                     | volatile | volatile   | 是             |
+| `weakCompareAndSetAcquire`              | acquire  | plain      | 是             |
+| `weakCompareAndSetRelease`              | plain    | release    | 是             |
+| `getAndSet` / `getAndAdd` / bitwise RMW | volatile | volatile   | 否             |
+| 上述 RMW 的 `Acquire` 变体              | acquire  | plain      | 否             |
+| 上述 RMW 的 `Release` 变体              | plain    | release    | 否             |
 
 失败的 Release CAS 没有发生 release write，因此不能声称“发布已经完成”。选择弱化模式前，必须分别证明成功路径和失败路径。
 
@@ -699,23 +699,23 @@ public final class ArraySequencer {
 
 JDK 25 的限制比很多旧教程更严格：
 
-| 载体 | Plain | 非 Plain / 原子模式 |
-| --- | --- | --- |
-| `byte[]` 视图 | 支持 | 不支持，抛 `UnsupportedOperationException` |
-| heap `ByteBuffer` | 支持 | 不支持，抛 `IllegalStateException` |
-| 未对齐 direct `ByteBuffer` | 支持 | 不支持，抛 `IllegalStateException` |
-| 对齐 direct `ByteBuffer` | 支持 | 按视图类型支持相应原子模式 |
+| 载体                       | Plain | 非 Plain / 原子模式                        |
+| -------------------------- | ----- | ------------------------------------------ |
+| `byte[]` 视图              | 支持  | 不支持，抛 `UnsupportedOperationException` |
+| heap `ByteBuffer`          | 支持  | 不支持，抛 `IllegalStateException`         |
+| 未对齐 direct `ByteBuffer` | 支持  | 不支持，抛 `IllegalStateException`         |
+| 对齐 direct `ByteBuffer`   | 支持  | 按视图类型支持相应原子模式                 |
 
 原因不是“Java 不支持原子 int”，而是 byte 数组或 heap buffer 的基地址不保证满足更宽类型原子访问的自然对齐。JDK 23 已收紧这类行为，JDK 25 延续了该规则。[JDK-8320247](https://bugs.openjdk.org/browse/JDK-8320247) · [MethodHandles JDK 25](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/invoke/MethodHandles.html)
 
 对齐 direct `ByteBuffer` 也不是“所有类型、所有 RMW 都支持”。JDK 25 的能力矩阵是：
 
-| 模式 | 可用的视图类型 |
-| --- | --- |
-| read / write | `short`、`char`、`int`、`long`、`float`、`double` |
-| CAS、exchange、get-and-set | `int`、`long`、`float`、`double` |
-| get-and-add | `int`、`long` |
-| bitwise RMW | `int`、`long` |
+| 模式                       | 可用的视图类型                                    |
+| -------------------------- | ------------------------------------------------- |
+| read / write               | `short`、`char`、`int`、`long`、`float`、`double` |
+| CAS、exchange、get-and-set | `int`、`long`、`float`、`double`                  |
+| get-and-add                | `int`、`long`                                     |
+| bitwise RMW                | `int`、`long`                                     |
 
 plain `long` / `double` 虽可访问，Javadoc 仍不提供无条件的原子性保证；浮点 CAS / exchange 比较的是原始位表示，不是按 `==` 的数值语义比较。
 
@@ -750,14 +750,14 @@ public final class DirectBufferView {
 
 常见失败可以按两个阶段区分：
 
-| 阶段 | 异常 | 含义 |
-| --- | --- | --- |
-| 创建字段句柄 | `NoSuchFieldException`、`IllegalAccessException` | 字段描述或 Lookup 权限不匹配 |
-| 调用点类型适配 | `WrongMethodTypeException`、`ClassCastException` | 坐标、变量或返回类型不匹配 |
-| 模式选择 | `UnsupportedOperationException` | 句柄、变量类型或 final 字段不支持该模式 |
-| Buffer 载体 / 对齐 | `IllegalStateException` | heap buffer 或具体偏移不能执行非 plain 访问 |
-| 只读 Buffer 写入 | `ReadOnlyBufferException` | 载体不允许修改 |
-| 坐标范围 | `NullPointerException`、数组越界或 Buffer `IndexOutOfBoundsException` | receiver、数组下标或字节范围无效 |
+| 阶段               | 异常                                                                  | 含义                                        |
+| ------------------ | --------------------------------------------------------------------- | ------------------------------------------- |
+| 创建字段句柄       | `NoSuchFieldException`、`IllegalAccessException`                      | 字段描述或 Lookup 权限不匹配                |
+| 调用点类型适配     | `WrongMethodTypeException`、`ClassCastException`                      | 坐标、变量或返回类型不匹配                  |
+| 模式选择           | `UnsupportedOperationException`                                       | 句柄、变量类型或 final 字段不支持该模式     |
+| Buffer 载体 / 对齐 | `IllegalStateException`                                               | heap buffer 或具体偏移不能执行非 plain 访问 |
+| 只读 Buffer 写入   | `ReadOnlyBufferException`                                             | 载体不允许修改                              |
+| 坐标范围           | `NullPointerException`、数组越界或 Buffer `IndexOutOfBoundsException` | receiver、数组下标或字节范围无效            |
 
 ### 内存栅栏（Fence）为什么通常不是首选
 
@@ -786,11 +786,11 @@ flowchart TB
 
 这三个名词经常被混成一个问题：
 
-| 问题 | 语义 | 正确性还是性能 |
-| --- | --- | --- |
-| Word tearing | 写一个字段或数组元素破坏相邻变量 | JLS 禁止 |
-| 普通 64 位撕裂 | non-volatile `long` / `double` 的单次普通写可表现为两次 32 位写，读取可能拼接不同写入的两半 | 正确性风险 |
-| False sharing | 独立热点变量共享 cache line，引发一致性流量 | 性能问题 |
+| 问题           | 语义                                                                                        | 正确性还是性能 |
+| -------------- | ------------------------------------------------------------------------------------------- | -------------- |
+| Word tearing   | 写一个字段或数组元素破坏相邻变量                                                            | JLS 禁止       |
+| 普通 64 位撕裂 | non-volatile `long` / `double` 的单次普通写可表现为两次 32 位写，读取可能拼接不同写入的两半 | 正确性风险     |
+| False sharing  | 独立热点变量共享 cache line，引发一致性流量                                                 | 性能问题       |
 
 JLS 要求每个字段和数组元素独立，禁止因为写 `byte[0]` 而破坏 `byte[1]`。但语言规范仍允许普通 non-volatile `long` / `double` 的一次写表现为两个 32 位写，读取因而可能看到来自不同写入的高低两半；volatile 64 位访问必须原子。现代 HotSpot 常常原子实现普通 64 位访问，不应把实现习惯升级成跨 JVM 语言保证。
 
@@ -850,15 +850,15 @@ JMH 用于构建和运行 JVM 微基准。它能帮助控制 warmup、fork、mea
 
 ### 评审时要求一张证明表
 
-| 项目 | 必须回答 |
-| --- | --- |
-| 所有权 | 哪个线程可以写，何时转移 |
-| 发布变量 | 消费者观察哪个状态才可读 payload |
+| 项目     | 必须回答                                |
+| -------- | --------------------------------------- |
+| 所有权   | 哪个线程可以写，何时转移                |
+| 发布变量 | 消费者观察哪个状态才可读 payload        |
 | 成功路径 | 哪条 release/acquire 或 volatile 边成立 |
-| 失败路径 | CAS 失败、超时、关闭时是否错误推进 |
-| 复用 | 槽位、节点或版本会不会产生 ABA |
-| 进度 | 自旋是否有超时、退避与关闭响应 |
-| 测试 | 哪些结果允许，哪些结果必须禁止 |
+| 失败路径 | CAS 失败、超时、关闭时是否错误推进      |
+| 复用     | 槽位、节点或版本会不会产生 ABA          |
+| 进度     | 自旋是否有超时、退避与关闭响应          |
+| 测试     | 哪些结果允许，哪些结果必须禁止          |
 
 如果这些问题只能用“x86 一般不会”“压测没见过”回答，协议还没有完成。
 
@@ -881,19 +881,21 @@ flowchart TB
 
 无论最后选择哪种原语，评审都应回到前面的证明表：列出所有权、发布变量、成功与失败路径、复用代际和进度条件，再由 jcstress 寻找禁止结果，由 JMH 测量已经证明正确的实现。内存序不是孤立的性能开关，而是一份必须由读写双方共同遵守的线程间协议。
 
-### 与 Disruptor、Agrona 和 Aeron 的衔接
+### 与线程协作、Disruptor、Agrona、Aeron 和 FFM 的衔接
 
 本文的价值不是多认识一个 API，而是能重新解释后续组件：
 
-| 组件 | 表面动作 | JMM / VarHandle 视角 |
-| --- | --- | --- |
-| Disruptor | claim → 填槽 → publish | payload plain writes 先于发布状态，消费者通过 barrier 观察连续可用位置 |
-| Agrona `AtomicBuffer` | `putIntRelease` / `getIntAcquire` | 把同样的发布协议放进 Buffer 字节位置 |
-| Agrona Queue | `offer` / `poll` | 成功交接对象所有权，并由内部协议建立可见性 |
-| Aeron Publication | 填 log buffer → frame length 发布 | 以发布字段使完整 frame 对 Media Driver 可见 |
-| Aeron counters | plain / opaque / release / volatile 位置读写 | 监控快照与控制协议需要不同强度，不能混用 |
+| 组件                  | 表面动作                                     | JMM / VarHandle 视角                                                   |
+| --------------------- | -------------------------------------------- | ---------------------------------------------------------------------- |
+| Disruptor             | claim → 填槽 → publish                       | payload plain writes 先于发布状态，消费者通过 barrier 观察连续可用位置 |
+| Agrona `AtomicBuffer` | `putIntRelease` / `getIntAcquire`            | 把同样的发布协议放进 Buffer 字节位置                                   |
+| Agrona Queue          | `offer` / `poll`                             | 成功交接对象所有权，并由内部协议建立可见性                             |
+| Aeron Publication     | 填 log buffer → frame length 发布            | 以发布字段使完整 frame 对 Media Driver 可见                            |
+| Aeron counters        | plain / opaque / release / volatile 位置读写 | 监控快照与控制协议需要不同强度，不能混用                               |
+| Monitor / AQS         | 改谓词、signal/unpark、重新竞争              | 状态可见性、等待资格与实际获得 CPU 是三类不同证明                      |
+| FFM `MemorySegment`   | shared segment 跨线程访问                    | 空间可达不自动建立 happens-before，仍需显式发布协议                    |
 
-因此：[后续的 Disruptor 章节](/signal-grid-blog/posts/lmax-disruptor-ring-buffer-and-sequencing/) 不再只是“Ring Buffer 很快”，而是一套领取、填充、release 发布、acquire 观察与 gating 防覆盖的协议；[Agrona 章节](/signal-grid-blog/posts/agrona-direct-buffer-queues-and-agents/) 则把这些语义扩展到 Buffer、队列、Agent 和跨进程共享内存的底层积木。进入它们之前，[下一章](/signal-grid-blog/posts/java-low-latency-measurement/) 会先建立判断“快”是否可信的测量方法，[机器模型](/signal-grid-blog/posts/java-low-latency-machine-model-cache-locality-false-sharing-numa/)、[HotSpot](/signal-grid-blog/posts/hotspot-execution-tlab-escape-analysis-jit-deoptimization-safepoint/)、[GC](/signal-grid-blog/posts/java-low-latency-gc-allocation-live-set-g1-zgc-shenandoah/) 与 [Linux 运行时](/signal-grid-blog/posts/linux-low-latency-runtime-cpu-affinity-numa-irq-rss-rps-xps-busy-poll/) 再逐层解释结果由何而来。
+因此：[线程等待章节](/signal-grid-blog/posts/java-thread-contention-aqs-park-unpark-scheduling/) 会把内存可见性与 Monitor、AQS、`park/unpark` 的阻塞协议区分开；[Disruptor 章节](/signal-grid-blog/posts/lmax-disruptor-ring-buffer-and-sequencing/) 不再只是“Ring Buffer 很快”，而是一套领取、填充、release 发布、acquire 观察与 gating 防覆盖的协议；[Agrona 章节](/signal-grid-blog/posts/agrona-direct-buffer-queues-and-agents/) 则把这些语义扩展到 Buffer、队列和 Agent；[FFM 章节](/signal-grid-blog/posts/java-off-heap-memory-ffm-memorysegment-arena-mmap-lifecycle/) 进一步说明 shared `MemorySegment` 只提供跨线程可达性，并不会替应用建立发布顺序。进入这些机制之前，[下一章](/signal-grid-blog/posts/java-low-latency-measurement/) 会先建立判断“快”是否可信的测量方法。
 
 ## 官方资料
 

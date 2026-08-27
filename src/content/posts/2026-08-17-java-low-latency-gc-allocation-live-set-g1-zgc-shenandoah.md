@@ -2,7 +2,7 @@
 title: Java 低延迟 GC：分配率、Live Set、G1、ZGC 与 Generational Shenandoah
 description: 从分配率、存活率、晋升率、Live Set 与回收余量建立 GC 预算，细讲 JDK 25 中 G1、Generational ZGC 与 Generational Shenandoah 的屏障、触发、退化路径、日志观测和实验选型。
 date: 2026-08-17T20:21:00+08:00
-updated: 2026-08-17T21:00:00+08:00
+updated: 2026-08-27T13:30:00+08:00
 tags:
   - Java 性能
   - JVM
@@ -25,7 +25,7 @@ draft: false
 
 本文的主张是：低延迟 GC 首先是一个容量与速率问题，而不是参数记忆题。分配率决定新垃圾出现多快，存活对象决定一次回收必须处理多少工作，晋升率决定老年代压力增长多快，Live Set 决定堆的不可压缩底座，而 headroom 决定并发回收期间还有多少时间追赶应用。只有先量出这些量，G1、ZGC 或 Generational Shenandoah 的选择才有可证伪的依据。
 
-这是“Java 低延迟工程”的 Chapter 05。上一章 [HotSpot 如何执行你的代码](/signal-grid-blog/posts/hotspot-execution-tlab-escape-analysis-jit-deoptimization-safepoint/) 解释对象怎样经 TLAB 分配、代码怎样被 JIT 编译，以及去优化与 Safepoint 为什么会制造延迟；本章把“对象分配很快”继续推到“空间怎样被持续回收”。下一章会把 JVM 放进 [Linux 低延迟运行时](/signal-grid-blog/posts/linux-low-latency-runtime-cpu-affinity-numa-irq-rss-rps-xps-busy-poll/)，讨论 GC 线程最终会在哪些 CPU 和 NUMA 节点上运行。
+这是“Java 低延迟工程”的 Chapter 05。上一章 [HotSpot 如何执行你的代码](/signal-grid-blog/posts/hotspot-execution-tlab-escape-analysis-jit-deoptimization-safepoint/) 解释对象怎样经 TLAB 分配、代码怎样被 JIT 编译，以及去优化与 Safepoint 为什么会制造延迟；本章把“对象分配很快”继续推到“空间怎样被持续回收”。下一章转向 [Monitor、AQS、park/unpark 与调度延迟](/signal-grid-blog/posts/java-thread-contention-aqs-park-unpark-scheduling/)，区分 GC 或 Safepoint 停顿、锁竞争、主动停车和线程获得 CPU 之前的调度等待。
 
 版本边界是 **OpenJDK JDK 25**：G1 仍是大多数服务器配置上的默认收集器；`-XX:+UseZGC` 只会启用分代 ZGC，历史参数 `ZGenerational` 在 JDK 25 已是 obsolete，不应再写进新配置；Generational Shenandoah 已由 JEP 521 从 experimental 提升为 product feature，但 Shenandoah 默认仍使用单代模式，分代模式必须显式选择。本文讨论 Generational Shenandoah 的耗尽与退化路径时，以包含 [JDK-8368152](https://bugs.openjdk.org/browse/JDK-8368152) 修复的 **JDK 25.0.2 或供应商等效 backport** 为生产基线；供应商是否在特定平台构建 Shenandoah、是否带有相同修复，仍需用目标发行版核对。
 
@@ -33,18 +33,18 @@ draft: false
 
 GC 讨论最常见的错误不是算错，而是把不同口径叫成同一个“内存”。下面这些量必须分别记录。
 
-| 名称 | 精确定义 | 它不等于什么 |
-| --- | --- | --- |
-| 最大堆 `-Xmx` | JVM 允许 Java heap 增长到的硬上限 | 当前已占用内存、进程 RSS、容器内存上限 |
-| Reserved heap | 为堆保留的虚拟地址空间 | 已经有物理页承载的内存 |
-| Committed heap | JVM 已向操作系统提交、可供堆使用的范围 | 其中全是活对象，也不保证所有页此刻都驻留 |
-| Used / occupancy | 某一时刻被收集器视为已占用的堆空间 | Live Set；其中可能有尚未识别或尚未回收的垃圾 |
-| Live Set | 从 GC Roots 出发仍可达、因而本轮不能回收的对象集合及其大小 | “GC 后 used”的永恒常数；并发标记有时间边界，工作负载也会变化 |
-| Allocation rate | 单位时间内新分配的字节数，通常写成 B/s | 请求速率；一个请求可能分配 0 B，也可能分配数 MB |
-| Survival rate | 一批年轻对象经过指定 young GC 后仍存活的比例 | Promotion rate；存活对象可能先进入 survivor 区或原地变老 |
-| Promotion rate | 单位时间进入老年代的字节数 | 长期留存率；中等寿命对象之后仍可能在老年代死亡 |
-| Headroom | 回收进行期间可吸收业务分配、对象复制/重定位、突发和预测误差的可用余量 | 简单的 `Xmx - used`；保留区、碎片、代际配额都会减少可用余量 |
-| RSS | 进程当前驻留在物理内存中的页 | Java heap；还包含 Metaspace、Code Cache、线程栈、直接内存、GC 元数据和本地库等 |
+| 名称             | 精确定义                                                              | 它不等于什么                                                                   |
+| ---------------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| 最大堆 `-Xmx`    | JVM 允许 Java heap 增长到的硬上限                                     | 当前已占用内存、进程 RSS、容器内存上限                                         |
+| Reserved heap    | 为堆保留的虚拟地址空间                                                | 已经有物理页承载的内存                                                         |
+| Committed heap   | JVM 已向操作系统提交、可供堆使用的范围                                | 其中全是活对象，也不保证所有页此刻都驻留                                       |
+| Used / occupancy | 某一时刻被收集器视为已占用的堆空间                                    | Live Set；其中可能有尚未识别或尚未回收的垃圾                                   |
+| Live Set         | 从 GC Roots 出发仍可达、因而本轮不能回收的对象集合及其大小            | “GC 后 used”的永恒常数；并发标记有时间边界，工作负载也会变化                   |
+| Allocation rate  | 单位时间内新分配的字节数，通常写成 B/s                                | 请求速率；一个请求可能分配 0 B，也可能分配数 MB                                |
+| Survival rate    | 一批年轻对象经过指定 young GC 后仍存活的比例                          | Promotion rate；存活对象可能先进入 survivor 区或原地变老                       |
+| Promotion rate   | 单位时间进入老年代的字节数                                            | 长期留存率；中等寿命对象之后仍可能在老年代死亡                                 |
+| Headroom         | 回收进行期间可吸收业务分配、对象复制/重定位、突发和预测误差的可用余量 | 简单的 `Xmx - used`；保留区、碎片、代际配额都会减少可用余量                    |
+| RSS              | 进程当前驻留在物理内存中的页                                          | Java heap；还包含 Metaspace、Code Cache、线程栈、直接内存、GC 元数据和本地库等 |
 
 [Oracle JDK 25 GC Tuning Guide](https://docs.oracle.com/en/java/javase/25/gctuning/factors-affecting-garbage-collection-performance.html) 也明确区分 reserved、committed 与 heap 上限。`-Xms < -Xmx` 时，并不是全部保留空间都已经提交。再往下还有“已提交但尚未 fault-in 的页”与“当前驻留页”的区别，所以 `-Xmx=16g` 绝不等于 RSS 只有 16 GiB。
 
@@ -144,13 +144,13 @@ flowchart LR
 
 把收集器排成“会停顿”和“不会停顿”两类会误导设计。现代低延迟收集器通常同时包含短暂停、并发阶段和 mutator barriers。差异在于每类工作占多少，以及空间不足时怎样退化。
 
-| 成本位置 | 业务看到的现象 | 主要驱动因素 | 只看 GC pause 会漏掉什么 |
-| --- | --- | --- | --- |
-| STW pause | 所有或一组 Java 线程停止推进 | Roots、存活对象复制、引用处理、卡表/Remembered Set、Safepoint 同步 | 暂停外的 CPU 与屏障开销 |
-| Concurrent GC threads | 业务仍运行，但 service time 或吞吐变差 | 标记/重定位工作量、GC 线程数、CPU 与内存带宽竞争 | 请求变慢却没有同长度 GC pause |
-| Mutator barriers | 每次引用 load/store 的固定或条件成本 | 屏障快路径、慢路径命中率、对象图修改率 | 成本分散在所有业务样本里 |
-| Allocation stall / pacing | 某些分配线程局部等待 | headroom 耗尽、回收落后于分配 | 不是全局 STW，却直接进入请求尾延迟 |
-| Full / Degenerated fallback | 明显长尾或服务失速 | 并发周期启动过晚、evacuation 空间不足、碎片、极端突发 | 正常周期的漂亮分位数无法代表退化路径 |
+| 成本位置                    | 业务看到的现象                         | 主要驱动因素                                                       | 只看 GC pause 会漏掉什么             |
+| --------------------------- | -------------------------------------- | ------------------------------------------------------------------ | ------------------------------------ |
+| STW pause                   | 所有或一组 Java 线程停止推进           | Roots、存活对象复制、引用处理、卡表/Remembered Set、Safepoint 同步 | 暂停外的 CPU 与屏障开销              |
+| Concurrent GC threads       | 业务仍运行，但 service time 或吞吐变差 | 标记/重定位工作量、GC 线程数、CPU 与内存带宽竞争                   | 请求变慢却没有同长度 GC pause        |
+| Mutator barriers            | 每次引用 load/store 的固定或条件成本   | 屏障快路径、慢路径命中率、对象图修改率                             | 成本分散在所有业务样本里             |
+| Allocation stall / pacing   | 某些分配线程局部等待                   | headroom 耗尽、回收落后于分配                                      | 不是全局 STW，却直接进入请求尾延迟   |
+| Full / Degenerated fallback | 明显长尾或服务失速                     | 并发周期启动过晚、evacuation 空间不足、碎片、极端突发              | 正常周期的漂亮分位数无法代表退化路径 |
 
 ```mermaid
 gantt
@@ -365,16 +365,16 @@ Shenandoah 也必须“回收得比分配快”。空间压力上升时，其典
 
 ### 每个关键量都有适合的观测来源
 
-| 要回答的问题 | 首选证据 | 解释边界 |
-| --- | --- | --- |
-| 谁在制造分配压力 | JFR `jdk.ObjectAllocationSample`，必要时短时开启 TLAB allocation events | 采样能找热点，不等于逐对象精确账本 |
-| 每个线程分配多快 | JFR `jdk.ThreadAllocationStatistics` 的相邻窗口差值 | 需要按同一线程和时间窗求差 |
-| GC 暂停了多久 | GC log 与 JFR `jdk.GCPhasePause` | 还要看 Safepoint 到达、总暂停和业务延迟 |
-| 占用与低水位怎样变 | GC 前后 heap/generation 统计的时间序列 | after-GC occupancy 只是 Live Set 估计，不同事件不可混用 |
-| G1 为什么超时 | `gc+phases=debug`、`gc+heap=info`、`gc+ergo+cset=debug` | 诊断级日志需要单独评估体量和开销 |
-| 并发 GC 是否抢 CPU | 进程/线程 CPU、JFR、`perf stat`、容器 throttling | 低 pause 不代表低 CPU 税 |
-| 业务是否受影响 | scheduled end-to-end latency、goodput、队列深度、超时/拒绝 | GC 指标不能替代业务 SLO |
-| 堆是否挤压整机 | RSS、cgroup memory、swap、major faults、native memory | heap used 不能代表进程足迹 |
+| 要回答的问题       | 首选证据                                                                | 解释边界                                                |
+| ------------------ | ----------------------------------------------------------------------- | ------------------------------------------------------- |
+| 谁在制造分配压力   | JFR `jdk.ObjectAllocationSample`，必要时短时开启 TLAB allocation events | 采样能找热点，不等于逐对象精确账本                      |
+| 每个线程分配多快   | JFR `jdk.ThreadAllocationStatistics` 的相邻窗口差值                     | 需要按同一线程和时间窗求差                              |
+| GC 暂停了多久      | GC log 与 JFR `jdk.GCPhasePause`                                        | 还要看 Safepoint 到达、总暂停和业务延迟                 |
+| 占用与低水位怎样变 | GC 前后 heap/generation 统计的时间序列                                  | after-GC occupancy 只是 Live Set 估计，不同事件不可混用 |
+| G1 为什么超时      | `gc+phases=debug`、`gc+heap=info`、`gc+ergo+cset=debug`                 | 诊断级日志需要单独评估体量和开销                        |
+| 并发 GC 是否抢 CPU | 进程/线程 CPU、JFR、`perf stat`、容器 throttling                        | 低 pause 不代表低 CPU 税                                |
+| 业务是否受影响     | scheduled end-to-end latency、goodput、队列深度、超时/拒绝              | GC 指标不能替代业务 SLO                                 |
+| 堆是否挤压整机     | RSS、cgroup memory、swap、major faults、native memory                   | heap used 不能代表进程足迹                              |
 
 可以在不重启 JVM 的情况下开始一段有界 JFR：
 
@@ -413,14 +413,14 @@ flowchart LR
 
 三种收集器不是从“先进程度”排出的冠军榜。先按约束筛选，再用目标工作负载决胜。
 
-| 决策维度 | G1 | Generational ZGC | Generational Shenandoah |
-| --- | --- | --- | --- |
-| 主要暂停模型 | young/mixed evacuation 为 STW，老年代标记大部并发 | 昂贵工作高度并发，仍有短暂 STW 相位 | 标记、evacuation、update refs 高度并发，仍有短暂 STW 相位 |
-| Mutator 税 | SATB + card/write barrier | colored pointers + load/store barriers | LRB + SATB + card barriers |
-| 典型优势 | 默认成熟、吞吐与暂停均衡、诊断资料丰富 | 很严格的 JVM pause 预算、超大堆时暂停与堆大小弱相关 | 并发压缩且支持 compressed oops，分代模式降低年轻垃圾处理成本 |
-| 关键容量风险 | STW 复制量、to-space、humongous fragmentation、Full GC | concurrent cycle 追不上分配导致 allocation stall | pacing、Degenerated、Full GC，以及 vendor/platform 可用性 |
-| 起步参数 | `UseG1GC` + heap + soft pause goal | `UseZGC` + heap | `UseShenandoahGC` + `ShenandoahGCMode=generational` + heap |
-| 不能由名称保证 | 一定满足暂停目标 | 零停顿、吞吐不降、不会 stall | 默认就是分代、不会 Degenerated |
+| 决策维度       | G1                                                     | Generational ZGC                                    | Generational Shenandoah                                      |
+| -------------- | ------------------------------------------------------ | --------------------------------------------------- | ------------------------------------------------------------ |
+| 主要暂停模型   | young/mixed evacuation 为 STW，老年代标记大部并发      | 昂贵工作高度并发，仍有短暂 STW 相位                 | 标记、evacuation、update refs 高度并发，仍有短暂 STW 相位    |
+| Mutator 税     | SATB + card/write barrier                              | colored pointers + load/store barriers              | LRB + SATB + card barriers                                   |
+| 典型优势       | 默认成熟、吞吐与暂停均衡、诊断资料丰富                 | 很严格的 JVM pause 预算、超大堆时暂停与堆大小弱相关 | 并发压缩且支持 compressed oops，分代模式降低年轻垃圾处理成本 |
+| 关键容量风险   | STW 复制量、to-space、humongous fragmentation、Full GC | concurrent cycle 追不上分配导致 allocation stall    | pacing、Degenerated、Full GC，以及 vendor/platform 可用性    |
+| 起步参数       | `UseG1GC` + heap + soft pause goal                     | `UseZGC` + heap                                     | `UseShenandoahGC` + `ShenandoahGCMode=generational` + heap   |
+| 不能由名称保证 | 一定满足暂停目标                                       | 零停顿、吞吐不降、不会 stall                        | 默认就是分代、不会 Degenerated                               |
 
 ### 第一轮先比较默认策略，不搬运旧调优参数
 
@@ -458,4 +458,4 @@ flowchart LR
 3. headroom 是并发周期的时间预算。回收速度或调度速度追不上峰值分配时，系统会通过 allocation stall、pacing、evacuation failure、Degenerated/Full GC 或 OOM 暴露守恒关系；“低暂停设计”不能取消这条边界。
 4. 因此，收集器只保证一种机制和目标，不保证你的业务 SLO。可信结论必须把 GC 日志、JFR、CPU/RSS 和端到端业务分布对齐，并在稳态、突发和 Live Set 变化下重复验证。
 
-下一章 [Linux 低延迟运行时](/signal-grid-blog/posts/linux-low-latency-runtime-cpu-affinity-numa-irq-rss-rps-xps-busy-poll/) 会继续回答一个经常被 GC 参数掩盖的问题：当应用线程、GC workers、网卡 IRQ 和内核软中断争用相同核心或跨 NUMA 访问内存时，JVM 内部已经正确的预算为什么仍会在生产环境失效。
+下一章 [Java 线程为什么没有继续运行](/signal-grid-blog/posts/java-thread-contention-aqs-park-unpark-scheduling/) 会继续回答一个经常被 GC 参数掩盖的问题：某次长尾究竟来自回收或 Safepoint，还是 Monitor/AQS 竞争、`park/unpark` 唤醒链与调度延迟；再后面的 Java NIO 与 Linux 章节会把这条等待链接到 socket 和网卡队列。

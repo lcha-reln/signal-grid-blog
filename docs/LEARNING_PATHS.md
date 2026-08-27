@@ -32,7 +32,7 @@
 | 升级与故障验收  |      22 |           175 | Aeron 升级工程：协议兼容、Archive 迁移、Cluster 滚动重启与回滚               | `aeron-upgrade-engineering-protocol-archive-cluster-rollback`                         |
 | 升级与故障验收  |      23 |           180 | Aeron Cluster 故障实验室：三节点、Snapshot、选举、Backup 与恢复验收          | `aeron-cluster-failure-lab-snapshot-election-backup-recovery`                         |
 
-本路径以 Aeron 1.52.2、SBE 1.39.0 和对应官方文档、源码及 Javadoc 为版本基线。在线 Cookbook 用于补充实战问题，不替代核心概念与 API 事实。Transport 是 Archive 与 Cluster 的共同前提；SBE 把传输字节收敛为可演进协议；Archive 负责可定位的持久化流，并可与业务 Checkpoint 组合成可恢复服务；Cluster 在 Transport 与 Archive 之上建立确定性复制状态机，最后通过升级与故障实验验证整条恢复链。Agrona 不重复放入本路径，阅读 Buffer、Agent 与 IdleStrategy 时可回到 [Java 低延迟工程 Chapter 08](../src/content/posts/2026-03-10-agrona-direct-buffer-queues-and-agents.md)。
+本路径以 Aeron 1.52.2、SBE 1.39.0 和对应官方文档、源码及 Javadoc 为版本基线。在线 Cookbook 用于补充实战问题，不替代核心概念与 API 事实。Transport 是 Archive 与 Cluster 的共同前提；SBE 把传输字节收敛为可演进协议；Archive 负责可定位的持久化流，并可与业务 Checkpoint 组合成可恢复服务；Cluster 在 Transport 与 Archive 之上建立确定性复制状态机，最后通过升级与故障实验验证整条恢复链。Agrona 不重复放入本路径，阅读 Buffer、Agent 与 IdleStrategy 时可回到 [Java 低延迟工程 Chapter 10](../src/content/posts/2026-03-10-agrona-direct-buffer-queues-and-agents.md)。
 
 ## 交易系统
 
@@ -94,18 +94,21 @@
 
 ## Java 低延迟工程
 
-| 阶段                      | Chapter | `seriesOrder` | 标题                                                                 | `permalink`                                                             |
-| ------------------------- | ------: | ------------: | -------------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| 并发正确性与性能证据      |      01 |            10 | Java Memory Model 与 VarHandle：happens-before、内存顺序与安全发布   | `java-memory-model-varhandle-memory-ordering`                           |
-| 并发正确性与性能证据      |      02 |            20 | Java 低延迟到底应该怎么测：JMH、尾延迟与生产证据链                   | `java-low-latency-measurement`                                          |
-| 机器、JVM 与 Linux 运行时 |      03 |            30 | Java 低延迟的机器模型：Cache Line、局部性、伪共享与 NUMA             | `java-low-latency-machine-model-cache-locality-false-sharing-numa`      |
-| 机器、JVM 与 Linux 运行时 |      04 |            40 | HotSpot 如何执行你的代码：TLAB、逃逸分析、JIT、去优化与 Safepoint    | `hotspot-execution-tlab-escape-analysis-jit-deoptimization-safepoint`   |
-| 机器、JVM 与 Linux 运行时 |      05 |            50 | Java 低延迟 GC：分配率、Live Set、G1、ZGC 与 Generational Shenandoah | `java-low-latency-gc-allocation-live-set-g1-zgc-shenandoah`             |
-| 机器、JVM 与 Linux 运行时 |      06 |            60 | Linux 低延迟运行时：CPU 亲和性、NUMA、IRQ、RSS/RPS/XPS 与 Busy Poll  | `linux-low-latency-runtime-cpu-affinity-numa-irq-rss-rps-xps-busy-poll` |
-| 事件通路与执行模型        |      07 |            70 | LMAX Disruptor 4：Ring Buffer、消费拓扑与 Batch Rewind               | `lmax-disruptor-ring-buffer-and-sequencing`                             |
-| 事件通路与执行模型        |      08 |            80 | Agrona 2：DirectBuffer、并发队列与 Agent 执行模型                    | `agrona-direct-buffer-queues-and-agents`                                |
+| 阶段                   | Chapter | `seriesOrder` | 标题                                                                      | `permalink`                                                             |
+| ---------------------- | ------: | ------------: | ------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| 并发正确性与性能证据   |      01 |            10 | Java Memory Model 与 VarHandle：happens-before、内存顺序与安全发布        | `java-memory-model-varhandle-memory-ordering`                           |
+| 并发正确性与性能证据   |      02 |            20 | Java 低延迟到底应该怎么测：JMH、尾延迟与生产证据链                        | `java-low-latency-measurement`                                          |
+| 机器、JVM 与系统运行时 |      03 |            30 | Java 低延迟的机器模型：Cache Line、局部性、伪共享与 NUMA                  | `java-low-latency-machine-model-cache-locality-false-sharing-numa`      |
+| 机器、JVM 与系统运行时 |      04 |            40 | HotSpot 如何执行你的代码：TLAB、逃逸分析、JIT、去优化与 Safepoint         | `hotspot-execution-tlab-escape-analysis-jit-deoptimization-safepoint`   |
+| 机器、JVM 与系统运行时 |      05 |            50 | Java 低延迟 GC：分配率、Live Set、G1、ZGC 与 Generational Shenandoah      | `java-low-latency-gc-allocation-live-set-g1-zgc-shenandoah`             |
+| 机器、JVM 与系统运行时 |      06 |            52 | Java 线程为什么没有继续运行：Monitor、AQS、park/unpark 与调度延迟         | `java-thread-contention-aqs-park-unpark-scheduling`                     |
+| 机器、JVM 与系统运行时 |      07 |            58 | Java 网络 I/O 的真实数据路径：NIO、Selector、DirectBuffer、系统调用与背压 | `java-nio-selector-socket-data-path-backpressure`                       |
+| 机器、JVM 与系统运行时 |      08 |            60 | Linux 低延迟运行时：CPU 亲和性、NUMA、IRQ、RSS/RPS/XPS 与 Busy Poll       | `linux-low-latency-runtime-cpu-affinity-numa-irq-rss-rps-xps-busy-poll` |
+| 数据通路原语与执行模型 |      09 |            70 | LMAX Disruptor 4：Ring Buffer、消费拓扑与 Batch Rewind                    | `lmax-disruptor-ring-buffer-and-sequencing`                             |
+| 数据通路原语与执行模型 |      10 |            80 | Agrona 2：DirectBuffer、并发队列与 Agent 执行模型                         | `agrona-direct-buffer-queues-and-agents`                                |
+| 数据通路原语与执行模型 |      11 |            90 | Java 堆外内存与 FFM：MemorySegment、Arena、mmap 与生命周期                | `java-off-heap-memory-ffm-memorysegment-arena-mmap-lifecycle`           |
 
-本路径先从 JMM 与 VarHandle 建立数据竞争、happens-before、内存顺序和安全发布的证明方法；接着用 JMH、开放负载、尾延迟直方图与生产灰度建立可信的性能证据链；再把 Java 热路径放回 Cache、局部性、伪共享、TLB、SMT 与 NUMA 的真实机器模型。随后沿 HotSpot 的解释执行、分层编译、对象分配、去优化与 Safepoint 解释运行时波动，再把分配率、Live Set 与回收余量带入 G1、ZGC 和 Generational Shenandoah，最后沿 CPU、内存节点、IRQ 与网卡队列建立 Linux 数据路径。完成这些基础后，用 Disruptor 把约束落到事件管线、序列和背压协议，由 Agrona 下探 Buffer、并发容器与 Agent 执行循环。
+本路径先从 JMM 与 VarHandle 建立数据竞争、happens-before、内存顺序和安全发布的证明方法；接着用 JMH、开放负载、尾延迟直方图与生产灰度建立可信的性能证据链；再把 Java 热路径放回 Cache、局部性、伪共享、TLB、SMT 与 NUMA 的真实机器模型。随后沿 HotSpot 的分层编译、对象分配、去优化与 Safepoint 解释运行时波动，把分配率、Live Set 与回收余量带入 G1、ZGC 和 Generational Shenandoah，再追踪线程怎样因 Monitor、AQS 与 park/unpark 从竞争进入等待。Java NIO 章节把 partial I/O、Selector readiness、发送队列和背压接到 socket 边界，Linux 章节继续沿 CPU、NUMA、IRQ、NAPI 与网卡队列追到真实内核路径。完成这些基础后，Disruptor 与 Agrona 分别把约束落到事件拓扑、序列、并发容器和 Agent 循环，最后由 FFM 用显式的空间、时间和线程边界收束堆外 Buffer、native 调用与 mmap 生命周期。
 
 ## AI Agent 后端工程
 

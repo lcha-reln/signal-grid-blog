@@ -2,7 +2,7 @@
 title: Java 低延迟到底应该怎么测：JMH、尾延迟与生产证据链
 description: 从问题定义、测量边界和正确性基线出发，讲清 JMH 微基准、JIT 与 GC 预热、端到端负载、协调遗漏、尾延迟直方图、硬件噪声、剖析与生产验证，建立可复现的 Java 低延迟证据链。
 date: 2026-08-14T18:35:00+08:00
-updated: 2026-08-17T21:00:00+08:00
+updated: 2026-08-27T13:30:00+08:00
 tags:
   - Java 性能
   - JMH
@@ -25,7 +25,7 @@ draft: false
 
 **低延迟不是某个数字，而是一条证据链。** 正确的测试要把业务承诺、测量边界、到达模型、JVM 生命周期、硬件环境、统计方法和生产验证连起来。少掉其中一环，就很容易把“测试工具跑出了一个数”误当成“系统满足了延迟目标”。
 
-这是“Java 低延迟工程”的 Chapter 02。上一章 [Java Memory Model 与 VarHandle](/signal-grid-blog/posts/java-memory-model-varhandle-memory-ordering/) 解决的是“程序是否正确”；本章解决“正确实现是否真的更快，以及代价是什么”。下一章会先把证据放回 [Cache、局部性、伪共享与 NUMA 的机器模型](/signal-grid-blog/posts/java-low-latency-machine-model-cache-locality-false-sharing-numa/)，再沿 HotSpot、GC 与 Linux 运行时逐层定位延迟来源；最后由 [Disruptor](/signal-grid-blog/posts/lmax-disruptor-ring-buffer-and-sequencing/) 与 [Agrona](/signal-grid-blog/posts/agrona-direct-buffer-queues-and-agents/) 把这些约束落到具体组件。
+这是“Java 低延迟工程”的 Chapter 02。上一章 [Java Memory Model 与 VarHandle](/signal-grid-blog/posts/java-memory-model-varhandle-memory-ordering/) 解决的是“程序是否正确”；本章解决“正确实现是否真的更快，以及代价是什么”。下一章会先把证据放回 [Cache、局部性、伪共享与 NUMA 的机器模型](/signal-grid-blog/posts/java-low-latency-machine-model-cache-locality-false-sharing-numa/)，再沿 HotSpot、GC、线程等待、Java NIO 与 Linux 运行时逐层定位延迟来源；最后由 [Disruptor](/signal-grid-blog/posts/lmax-disruptor-ring-buffer-and-sequencing/)、[Agrona](/signal-grid-blog/posts/agrona-direct-buffer-queues-and-agents/) 与 [FFM](/signal-grid-blog/posts/java-off-heap-memory-ffm-memorysegment-arena-mmap-lifecycle/) 把这些约束落到事件通路和堆外生命周期。
 
 本文以 **JDK 25** 与 **JMH 1.37** 为示例基线。工具版本会变化，测量原则不会：先写清问题，再选择实验层级；先保证负载与样本没有撒谎，再解释结果。
 
@@ -33,14 +33,14 @@ draft: false
 
 一次性能实验至少要写出下面六项，缺一项就无法复现。
 
-| 项目 | 必须明确的内容 | 错误示例 |
-| --- | --- | --- |
-| 对象 | 哪段代码、哪个组件、哪条业务链路 | “测 Java 性能” |
-| 人群 | 哪类请求、消息大小、命中率、读写比 | 把所有接口混成一个分布 |
-| 边界 | 从哪个时刻开始，到哪个时刻结束 | 只写“接口耗时” |
-| 负载 | 到达率、并发数、突发形状、持续时间 | 只写“100 个线程” |
-| 目标 | 吞吐、p99.9、超时率、CPU 或成本上限 | 只追求平均延迟最低 |
-| 约束 | 数据一致性、背压、可靠性、资源预算 | 通过丢请求换取低延迟 |
+| 项目 | 必须明确的内容                      | 错误示例               |
+| ---- | ----------------------------------- | ---------------------- |
+| 对象 | 哪段代码、哪个组件、哪条业务链路    | “测 Java 性能”         |
+| 人群 | 哪类请求、消息大小、命中率、读写比  | 把所有接口混成一个分布 |
+| 边界 | 从哪个时刻开始，到哪个时刻结束      | 只写“接口耗时”         |
+| 负载 | 到达率、并发数、突发形状、持续时间  | 只写“100 个线程”       |
+| 目标 | 吞吐、p99.9、超时率、CPU 或成本上限 | 只追求平均延迟最低     |
+| 约束 | 数据一致性、背压、可靠性、资源预算  | 通过丢请求换取低延迟   |
 
 一个可以执行的目标应像这样：
 
@@ -98,12 +98,12 @@ flowchart TB
   J --> C --> S --> P
 ```
 
-| 层级 | 适合回答 | 不能单独回答 |
-| --- | --- | --- |
-| JMH 微基准 | 某个方法、编码器、内存序或数据结构的单位成本 | 线上端到端 SLA |
-| 组件实验 | 队列、事件循环、连接池在真实线程拓扑下的饱和点 | 网络和上下游依赖造成的总延迟 |
-| 系统压测 | 一条完整业务链在指定流量下的响应与失败分布 | 所有生产噪声和长期漂移 |
-| 生产验证 | 真实租户、数据与运维事件下是否仍满足 SLO | 单靠观察很难证明某项代码改动的因果 |
+| 层级       | 适合回答                                       | 不能单独回答                       |
+| ---------- | ---------------------------------------------- | ---------------------------------- |
+| JMH 微基准 | 某个方法、编码器、内存序或数据结构的单位成本   | 线上端到端 SLA                     |
+| 组件实验   | 队列、事件循环、连接池在真实线程拓扑下的饱和点 | 网络和上下游依赖造成的总延迟       |
+| 系统压测   | 一条完整业务链在指定流量下的响应与失败分布     | 所有生产噪声和长期漂移             |
+| 生产验证   | 真实租户、数据与运维事件下是否仍满足 SLO       | 单靠观察很难证明某项代码改动的因果 |
 
 四层之间不是“越上层越准确”。微基准控制力强，但代表性窄；生产数据代表性强，但混杂因素多。最好的证据是：微基准解释机制，组件与系统实验验证外推，生产灰度确认真实收益。
 
@@ -340,17 +340,17 @@ java -jar target/benchmarks.jar \
 
 #### JMH 的几个关键旋钮
 
-| 配置 | 含义 | 常见误用 |
-| --- | --- | --- |
-| `@Fork` | 使用新的 JVM 进程重复实验 | `fork = 0` 后把当前 IDE JVM 当正式结果 |
-| `@Warmup` | 让编译、类加载与缓存逐步进入目标状态 | 看到曲线变平就宣称代表生产长期稳态 |
-| `@Measurement` | 真正计入结果的迭代 | 迭代太短，只测到定时与调度噪声 |
-| `Mode.Throughput` | 单位时间完成的操作数 | 把高吞吐直接翻译成低尾延迟 |
-| `Mode.AverageTime` | 平均单位操作时间 | 用平均数掩盖长尾 |
-| `Mode.SampleTime` | 随机采样部分操作并给出分布，可能漏掉某些 pause | 误认为等价于端到端开放负载 |
-| `Mode.SingleShotTime` | 测一次 invocation，常用于冷启动或批次 | 没有独立设计 warmup 与 fork |
-| `@State` | 定义状态的共享范围 | 把 `Scope.Thread` 的无竞争结果外推到共享对象 |
-| `@Param` | 扫描输入维度 | 只测一个刚好命中缓存的尺寸 |
+| 配置                  | 含义                                           | 常见误用                                     |
+| --------------------- | ---------------------------------------------- | -------------------------------------------- |
+| `@Fork`               | 使用新的 JVM 进程重复实验                      | `fork = 0` 后把当前 IDE JVM 当正式结果       |
+| `@Warmup`             | 让编译、类加载与缓存逐步进入目标状态           | 看到曲线变平就宣称代表生产长期稳态           |
+| `@Measurement`        | 真正计入结果的迭代                             | 迭代太短，只测到定时与调度噪声               |
+| `Mode.Throughput`     | 单位时间完成的操作数                           | 把高吞吐直接翻译成低尾延迟                   |
+| `Mode.AverageTime`    | 平均单位操作时间                               | 用平均数掩盖长尾                             |
+| `Mode.SampleTime`     | 随机采样部分操作并给出分布，可能漏掉某些 pause | 误认为等价于端到端开放负载                   |
+| `Mode.SingleShotTime` | 测一次 invocation，常用于冷启动或批次          | 没有独立设计 warmup 与 fork                  |
+| `@State`              | 定义状态的共享范围                             | 把 `Scope.Thread` 的无竞争结果外推到共享对象 |
+| `@Param`              | 扫描输入维度                                   | 只测一个刚好命中缓存的尺寸                   |
 
 不同问题应使用不同模式。编码器吞吐可用 Throughput；单次操作分布可用 SampleTime；冷启动、反序列化大批次可考虑 SingleShotTime。最终 SLA 仍要在系统负载实验中验证。
 
@@ -699,15 +699,15 @@ G1、ZGC 等 collector 的设计取舍不同，暂停、吞吐、内存余量和
 
 #### 必须记录的环境
 
-| 层次 | 至少记录 |
-| --- | --- |
-| CPU | 型号、微码、socket、NUMA、物理核、SMT、频率策略与 turbo |
-| 内存 | 容量、NUMA 放置、page size、THP 状态、是否预触页 |
-| OS | 内核、调度策略、C-state、IRQ/RSS/RPS、主要 sysctl |
+| 层次 | 至少记录                                                  |
+| ---- | --------------------------------------------------------- |
+| CPU  | 型号、微码、socket、NUMA、物理核、SMT、频率策略与 turbo   |
+| 内存 | 容量、NUMA 放置、page size、THP 状态、是否预触页          |
+| OS   | 内核、调度策略、C-state、IRQ/RSS/RPS、主要 sysctl         |
 | 容器 | image digest、CPU quota、cpuset、memory limit、throttling |
-| JVM | vendor/build、GC、heap、全部非默认 flag |
-| 进程 | affinity、线程角色、优先级、文件与网络限制 |
-| 数据 | payload 分布、热点 key、命中率、数据集冷热程度 |
+| JVM  | vendor/build、GC、heap、全部非默认 flag                   |
+| 进程 | affinity、线程角色、优先级、文件与网络限制                |
+| 数据 | payload 分布、热点 key、命中率、数据集冷热程度            |
 
 ```mermaid
 flowchart TB
@@ -1057,7 +1057,7 @@ artifacts:
 - relaxed poll 的短暂 `null` 是否被误算为空队列？
 - Broadcast lapped、队列 offer failure 和 Ring Buffer 容量不足是否都计数？
 
-JMM 告诉我们实现为何正确；本章告诉我们如何证明它在目标条件下值得采用。下一章进入 [Java 低延迟的机器模型](/signal-grid-blog/posts/java-low-latency-machine-model-cache-locality-false-sharing-numa/)，把硬件计数器背后的 Cache、局部性、伪共享、TLB、SMT 与 NUMA 关系讲清；之后再依次区分 HotSpot 编译与去优化、GC 回收预算以及 Linux 调度和网络队列造成的波动，最后由 Disruptor 把这些约束落到发布协议、消费拓扑、背压与 Batch Rewind。
+JMM 告诉我们实现为何正确；本章告诉我们如何证明它在目标条件下值得采用。下一章进入 [Java 低延迟的机器模型](/signal-grid-blog/posts/java-low-latency-machine-model-cache-locality-false-sharing-numa/)，把硬件计数器背后的 Cache、局部性、伪共享、TLB、SMT 与 NUMA 关系讲清；之后再依次区分 HotSpot 编译与去优化、GC 回收预算、Monitor/AQS 等待、NIO socket 排队以及 Linux 调度和网卡队列造成的波动，最后才评估 Disruptor、Agrona 与 FFM 是否在目标语义下真正改善了通路。
 
 ## 官方资料与继续阅读
 
@@ -1066,7 +1066,7 @@ JMM 告诉我们实现为何正确；本章告诉我们如何证明它在目标�
 - [OpenJDK JMH 项目与推荐用法](https://github.com/openjdk/jmh)
 - [JMH 1.37 Releases / Tags](https://github.com/openjdk/jmh/tags)
 - [JMH 官方 Samples](https://github.com/openjdk/jmh/tree/1.37/jmh-samples/src/main/java/org/openjdk/jmh/samples)
-- [JDK 25 `System.nanoTime()`](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/System.html#nanoTime())
+- [JDK 25 `System.nanoTime()`](<https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/System.html#nanoTime()>)
 - [JDK 25：使用 JFR 排查性能问题](https://docs.oracle.com/en/java/javase/25/troubleshoot/troubleshoot-performance-issues-using-jfr.html)
 - [JDK 25 `jfr` 命令](https://docs.oracle.com/en/java/javase/25/docs/specs/man/jfr.html)
 - [JDK 25 JFR API](https://docs.oracle.com/en/java/javase/25/docs/api/jdk.jfr/jdk/jfr/package-summary.html)

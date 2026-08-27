@@ -2,7 +2,7 @@
 title: LMAX Disruptor 4：Ring Buffer、消费拓扑与 Batch Rewind
 description: 基于 Disruptor 4.0.0，从发布协议、序列协调、消费依赖和背压讲到 WaitStrategy、批处理与 Batch Rewind，并说明它何时适合替代队列、何时并不适合。
 date: 2026-03-07T10:43:08+08:00
-updated: 2026-08-17T21:00:00+08:00
+updated: 2026-08-27T13:30:00+08:00
 categories:
   - 高性能组件
 tags:
@@ -24,6 +24,8 @@ Disruptor 经常被介绍成“比 `BlockingQueue` 更快的队列”。这个�
 它更准确的定位是：**一个进程内、有界、预分配的线程间事件处理框架**。生产者把事件发布到 Ring Buffer，多组消费者可以同时观察同一事件，并通过依赖图表达“并行处理”和“必须先完成”的关系。性能来自更严格的约束，而不是来自一个可以无条件替换所有队列的魔法容器。
 
 本文以截至 2026-08-13 仍由 GitHub 标记为 latest 的稳定版 **Disruptor 4.0.0** 为基线。4.0.0 最低要求 Java 11，并移除了旧版 WorkerPool、`Executor` 构造器等 API；本文的代码和结论不再沿用早期 JDK 7 时代的实现与基准。[4.0.0 Release Notes](https://github.com/LMAX-Exchange/disruptor/releases/tag/4.0.0) · [Maven Central](https://central.sonatype.com/artifact/com.lmax/disruptor/4.0.0)
+
+这是“Java 低延迟工程”的 Chapter 09。前面的 [线程等待](/signal-grid-blog/posts/java-thread-contention-aqs-park-unpark-scheduling/) 与 [Linux 运行时](/signal-grid-blog/posts/linux-low-latency-runtime-cpu-affinity-numa-irq-rss-rps-xps-busy-poll/) 已说明不同 WaitStrategy 最终支付的是自旋、让出、停车、唤醒或调度成本；本文只讨论 Disruptor 如何把这些成本放进有界事件拓扑。下一章再由 [Agrona](/signal-grid-blog/posts/agrona-direct-buffer-queues-and-agents/) 比较二进制 Buffer、并发队列与 Agent 循环。
 
 ## 1. 它不是“更快的 Queue”
 
@@ -48,15 +50,15 @@ flowchart TB
   end
 ```
 
-| 维度 | 工作队列 | Disruptor |
-| --- | --- | --- |
-| 单个事件的消费者 | 通常由一个 worker 取得 | 可多播给多个 handler |
-| 消费关系 | 多为平级竞争 | 可表达并行、串行和菱形依赖 |
-| 容量 | 可有界，也可无界 | 固定容量，大小必须为 2 的幂 |
-| 数据对象 | 通常随任务创建 | Ring Buffer 槽位在启动时预分配并循环复用 |
-| 背压 | 由队列 API 和应用策略决定 | 最慢的有效消费序列阻止生产者覆盖未处理槽位 |
-| 持久化 | 队列自身通常也不保证 | 不提供；它不是 Kafka、Aeron Archive 或数据库日志 |
-| 跨进程 | 取决于具体实现 | 不支持，定位是进程内线程间传递 |
+| 维度             | 工作队列                  | Disruptor                                        |
+| ---------------- | ------------------------- | ------------------------------------------------ |
+| 单个事件的消费者 | 通常由一个 worker 取得    | 可多播给多个 handler                             |
+| 消费关系         | 多为平级竞争              | 可表达并行、串行和菱形依赖                       |
+| 容量             | 可有界，也可无界          | 固定容量，大小必须为 2 的幂                      |
+| 数据对象         | 通常随任务创建            | Ring Buffer 槽位在启动时预分配并循环复用         |
+| 背压             | 由队列 API 和应用策略决定 | 最慢的有效消费序列阻止生产者覆盖未处理槽位       |
+| 持久化           | 队列自身通常也不保证      | 不提供；它不是 Kafka、Aeron Archive 或数据库日志 |
+| 跨进程           | 取决于具体实现            | 不支持，定位是进程内线程间传递                   |
 
 因此，下面两段代码语义完全不同：
 
@@ -391,14 +393,14 @@ public final class OrderPipeline {
 
 WaitStrategy 控制**消费者等待新 sequence** 的方式。4.0.0 的常用选择如下：
 
-| 策略 | 等待方式 | 适用起点 | 主要风险 |
-| --- | --- | --- | --- |
-| `BlockingWaitStrategy` | 锁 + 条件变量 | 通用服务、容器、共享 CPU | 唤醒会增加延迟与抖动 |
-| `SleepingWaitStrategy` | 自旋 → yield → park | 低 CPU 干扰的异步任务 | 从空闲恢复时延迟更高 |
-| `YieldingWaitStrategy` | 持续轮询并 `Thread.yield()` | 有充足逻辑核的低延迟服务 | 仍会持续占用 CPU |
-| `BusySpinWaitStrategy` | 持续忙等 | 有独占物理核、亲和性与压测证据 | 超卖或共享核心时会恶化全局尾延迟 |
-| `PhasedBackoffWaitStrategy` | 分阶段 spin / yield / fallback | 需要自定义折中 | 参数与环境强绑定 |
-| Timeout / Lite Blocking | 阻塞并提供超时或减少信号开销 | 需要空闲检测的特殊路径 | 语义和调度更复杂 |
+| 策略                        | 等待方式                       | 适用起点                       | 主要风险                         |
+| --------------------------- | ------------------------------ | ------------------------------ | -------------------------------- |
+| `BlockingWaitStrategy`      | 锁 + 条件变量                  | 通用服务、容器、共享 CPU       | 唤醒会增加延迟与抖动             |
+| `SleepingWaitStrategy`      | 自旋 → yield → park            | 低 CPU 干扰的异步任务          | 从空闲恢复时延迟更高             |
+| `YieldingWaitStrategy`      | 持续轮询并 `Thread.yield()`    | 有充足逻辑核的低延迟服务       | 仍会持续占用 CPU                 |
+| `BusySpinWaitStrategy`      | 持续忙等                       | 有独占物理核、亲和性与压测证据 | 超卖或共享核心时会恶化全局尾延迟 |
+| `PhasedBackoffWaitStrategy` | 分阶段 spin / yield / fallback | 需要自定义折中                 | 参数与环境强绑定                 |
+| Timeout / Lite Blocking     | 阻塞并提供超时或减少信号开销   | 需要空闲检测的特殊路径         | 语义和调度更复杂                 |
 
 选择顺序建议是：
 
@@ -411,15 +413,15 @@ WaitStrategy 不是生产者容量不足时的策略。稳定版 4.0.0 中，生
 
 ## 8. 4.0 的变化与迁移陷阱
 
-| 变化 | 迁移时要做什么 |
-| --- | --- |
-| 最低 Java 11 | 升级运行时与构建链；不要再围绕 `Unsafe` 示例解释当前实现 |
-| 删除接收 `Executor` 的构造器 | 直接提供 `ThreadFactory`，明确线程名、daemon、优先级与异常观测 |
-| 删除 WorkerPool / WorkProcessor | 重新确认业务究竟要多播还是竞争消费；不存在一行代码的等价替换 |
-| EventHandler 收拢扩展接口 | 把启动、关闭、批次开始、超时和 sequence callback 放到同一个 handler |
-| 新增最大批次大小 | 手工构造 `BatchEventProcessor` 时用 Builder 限制单批大小 |
-| 新增 Batch Rewind | 对可恢复的整批事务显式选择重放策略，并保证幂等或可回滚 |
-| `handleExceptionsWith` 废弃 | 启动前用 `setDefaultExceptionHandler`，或为指定 handler 配置异常处理 |
+| 变化                            | 迁移时要做什么                                                       |
+| ------------------------------- | -------------------------------------------------------------------- |
+| 最低 Java 11                    | 升级运行时与构建链；不要再围绕 `Unsafe` 示例解释当前实现             |
+| 删除接收 `Executor` 的构造器    | 直接提供 `ThreadFactory`，明确线程名、daemon、优先级与异常观测       |
+| 删除 WorkerPool / WorkProcessor | 重新确认业务究竟要多播还是竞争消费；不存在一行代码的等价替换         |
+| EventHandler 收拢扩展接口       | 把启动、关闭、批次开始、超时和 sequence callback 放到同一个 handler  |
+| 新增最大批次大小                | 手工构造 `BatchEventProcessor` 时用 Builder 限制单批大小             |
+| 新增 Batch Rewind               | 对可恢复的整批事务显式选择重放策略，并保证幂等或可回滚               |
+| `handleExceptionsWith` 废弃     | 启动前用 `setDefaultExceptionHandler`，或为指定 handler 配置异常处理 |
 
 ### 8.1 Batch Rewind 不是 exactly-once
 
@@ -452,15 +454,15 @@ disruptor.handleEventsWith(
 
 不要复用十多年前的“每秒多少操作”作为自己的容量结论。官方后来补充的现代吞吐测试使用 AMD EPYC 9374F、Linux 5.4.277 与 OpenJDK 11.0.24；在该环境里，结果仍明显依赖拓扑：
 
-| 拓扑 | ArrayBlockingQueue | Disruptor 3 | Disruptor 4 |
-| --- | ---: | ---: | ---: |
-| 1 Producer → 1 Consumer | 20.9 M ops/s | 134.6 M | 160.4 M |
-| 3 Producers → 1 Consumer | 18.8 M ops/s | 16.0 M | 29.7 M |
-| 1 Producer → 3-way Multicast | 2.4 M ops/s | 68.2 M | 70.0 M |
+| 拓扑                         | ArrayBlockingQueue | Disruptor 3 | Disruptor 4 |
+| ---------------------------- | -----------------: | ----------: | ----------: |
+| 1 Producer → 1 Consumer      |       20.9 M ops/s |     134.6 M |     160.4 M |
+| 3 Producers → 1 Consumer     |       18.8 M ops/s |      16.0 M |      29.7 M |
+| 1 Producer → 3-way Multicast |        2.4 M ops/s |      68.2 M |      70.0 M |
 
 这组数据说明 Disruptor 在对应微基准中有优势，也同时说明：多生产者竞争、版本与消费拓扑会改变结果，甚至旧版某个拓扑会落后于 `ArrayBlockingQueue`。它不是你的业务 SLA。[官方 Performance Testing](https://lmax-exchange.github.io/disruptor/disruptor.html#_throughput_performance_testing)
 
-本节只保留 Disruptor 特有的实验矩阵。通用测量合同见 [Java 低延迟到底应该怎么测](/signal-grid-blog/posts/java-low-latency-measurement/)；前置的 [机器模型](/signal-grid-blog/posts/java-low-latency-machine-model-cache-locality-false-sharing-numa/)、[HotSpot](/signal-grid-blog/posts/hotspot-execution-tlab-escape-analysis-jit-deoptimization-safepoint/)、[GC](/signal-grid-blog/posts/java-low-latency-gc-allocation-live-set-g1-zgc-shenandoah/) 与 [Linux 运行时](/signal-grid-blog/posts/linux-low-latency-runtime-cpu-affinity-numa-irq-rss-rps-xps-busy-poll/) 则分别解释缓存拓扑、编译状态、回收压力和线程/网卡布置为什么会改变 Ring Buffer 的真实结果。
+本节只保留 Disruptor 特有的实验矩阵。通用测量合同见 [Java 低延迟到底应该怎么测](/signal-grid-blog/posts/java-low-latency-measurement/)；前置的 [机器模型](/signal-grid-blog/posts/java-low-latency-machine-model-cache-locality-false-sharing-numa/)、[HotSpot](/signal-grid-blog/posts/hotspot-execution-tlab-escape-analysis-jit-deoptimization-safepoint/)、[GC](/signal-grid-blog/posts/java-low-latency-gc-allocation-live-set-g1-zgc-shenandoah/)、[线程等待](/signal-grid-blog/posts/java-thread-contention-aqs-park-unpark-scheduling/) 与 [Linux 运行时](/signal-grid-blog/posts/linux-low-latency-runtime-cpu-affinity-numa-irq-rss-rps-xps-busy-poll/) 则分别解释缓存拓扑、编译状态、回收压力、自旋/停车和线程/网卡布置为什么会改变 Ring Buffer 的真实结果。
 
 可信的评估至少要包含：
 

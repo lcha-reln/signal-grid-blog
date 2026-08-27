@@ -2,7 +2,7 @@
 title: "Linux 低延迟运行时：CPU 亲和性、NUMA、IRQ、RSS/RPS/XPS 与 Busy Poll"
 description: 从一条网络消息的真实数据路径出发，讲清 NIC 队列、RSS、IRQ、NAPI、软中断、RPS/RFS、应用线程、XPS 与 NUMA 内存的所有权关系，并用 CPU affinity、cpuset、irqbalance、nohz_full 和 Busy Poll 构造可验证而非靠经验猜测的 Linux 低延迟运行时。
 date: 2026-08-17T20:23:41+08:00
-updated: 2026-08-17T21:00:00+08:00
+updated: 2026-08-27T13:30:00+08:00
 tags:
   - Linux
   - 低延迟
@@ -27,7 +27,7 @@ draft: false
 
 只固定应用线程，却不固定 IRQ、队列与内存，可能把一次随机迁移变成一次稳定的跨核或跨 NUMA 访问；把所有工作塞进同一个 CPU，又可能用局部性换来 IRQ 抢占、softirq 积压和突发时的队头阻塞。**Linux 低延迟调优的核心不是“绑核”，而是为数据路径建立可观察的所有权，使不必要的迁移、排队和唤醒变少，同时给必要的内核工作保留容量。**
 
-这是“Java 低延迟工程”的 Chapter 06。[HotSpot 执行模型](/signal-grid-blog/posts/hotspot-execution-tlab-escape-analysis-jit-deoptimization-safepoint/) 已经解释 JVM 线程为什么会经历编译、去优化与 Safepoint，[低延迟 GC](/signal-grid-blog/posts/java-low-latency-gc-allocation-live-set-g1-zgc-shenandoah/) 则说明分配和回收怎样消耗 CPU 与内存余量；更早的 [机器模型](/signal-grid-blog/posts/java-low-latency-machine-model-cache-locality-false-sharing-numa/) 建立 Cache、伪共享与 NUMA 的物理边界，[测量方法](/signal-grid-blog/posts/java-low-latency-measurement/) 规定尾延迟主张必须怎样被证伪。本文把这些线程真正放进 Linux，以主线内核的通用网络栈、cgroup v2 和现代多队列 NIC 为边界。驱动、固件、虚拟化层、云厂商和发行版都可能改变可用接口；文中的 CPU 编号与参数只能作为实验形状，不能直接复制为生产配置。
+这是“Java 低延迟工程”的 Chapter 08。[HotSpot 执行模型](/signal-grid-blog/posts/hotspot-execution-tlab-escape-analysis-jit-deoptimization-safepoint/) 和 [低延迟 GC](/signal-grid-blog/posts/java-low-latency-gc-allocation-live-set-g1-zgc-shenandoah/) 已解释 JVM 内部的执行与回收成本，[线程等待章节](/signal-grid-blog/posts/java-thread-contention-aqs-park-unpark-scheduling/) 区分了锁竞争、主动停车与调度延迟，上一章 [Java NIO 数据路径](/signal-grid-blog/posts/java-nio-selector-socket-data-path-backpressure/) 则停在 socket、Selector 与内核缓冲边界。本文继续把这些线程和字节放进 Linux，以主线内核的通用网络栈、cgroup v2 和现代多队列 NIC 为边界。驱动、固件、虚拟化层、云厂商和发行版都可能改变可用接口；文中的 CPU 编号与参数只能作为实验形状，不能直接复制为生产配置。
 
 ```mermaid
 flowchart LR
@@ -57,14 +57,14 @@ flowchart LR
 
 这五组映射中，任何一组都不能从另一组自动推出。把进程限制在 CPU 8–11，并不意味着 NIC IRQ 不会打到 CPU 8，也不意味着某个 Java event loop 固定在 CPU 9，更不意味着它的堆页在 NUMA node 1。`smp_affinity_list` 也只是 IRQ 的允许集合；支持 managed IRQ 的设备可能由内核管理最终位置，必须查看 `effective_affinity_list`。
 
-| 资源 | 真正控制的问题 | 主要观察入口 | 常见误判 |
-| --- | --- | --- | --- |
-| RSS indirection / RX queue | 某个 flow 进入哪条硬件队列 | `ethtool -l/-x/-n`、队列计数器 | “多队列会自动均匀” |
-| IRQ / NAPI | 谁接收通知并回收 RX/TX 完成 | `/proc/interrupts`、`effective_affinity_list`、`/proc/softirqs` | “IRQ 所在 CPU 等于应用 CPU” |
-| RPS / RFS | 上层协议处理是否被转交 | `rps_cpus`、`rps_flow_cnt`、IPI 与 softirq 分布 | “开启就是多核加速” |
-| 应用线程 | 谁读取 socket、修改业务状态 | `ps -L`、`/proc/<tid>/status`、应用线程名 | “进程绑核等于每个线程按角色绑核” |
-| NUMA 页 | CPU 实际访问本地还是远端内存 | `numastat -p`、`/proc/<pid>/numa_maps` | “CPU 在 node 1，内存自然也在 node 1” |
-| XPS / TX queue | 发送和 completion 由哪条队列承担 | `xps_cpus`、`xps_rxqs`、per-queue counters | “XPS 会把发送线程调度到指定 CPU” |
+| 资源                       | 真正控制的问题                   | 主要观察入口                                                    | 常见误判                             |
+| -------------------------- | -------------------------------- | --------------------------------------------------------------- | ------------------------------------ |
+| RSS indirection / RX queue | 某个 flow 进入哪条硬件队列       | `ethtool -l/-x/-n`、队列计数器                                  | “多队列会自动均匀”                   |
+| IRQ / NAPI                 | 谁接收通知并回收 RX/TX 完成      | `/proc/interrupts`、`effective_affinity_list`、`/proc/softirqs` | “IRQ 所在 CPU 等于应用 CPU”          |
+| RPS / RFS                  | 上层协议处理是否被转交           | `rps_cpus`、`rps_flow_cnt`、IPI 与 softirq 分布                 | “开启就是多核加速”                   |
+| 应用线程                   | 谁读取 socket、修改业务状态      | `ps -L`、`/proc/<tid>/status`、应用线程名                       | “进程绑核等于每个线程按角色绑核”     |
+| NUMA 页                    | CPU 实际访问本地还是远端内存     | `numastat -p`、`/proc/<pid>/numa_maps`                          | “CPU 在 node 1，内存自然也在 node 1” |
+| XPS / TX queue             | 发送和 completion 由哪条队列承担 | `xps_cpus`、`xps_rxqs`、per-queue counters                      | “XPS 会把发送线程调度到指定 CPU”     |
 
 ### 先记录机器事实
 
@@ -209,11 +209,11 @@ taskset -apc 8-11 "$PID"
 
 可以把常见拓扑归纳为三种，但没有一种对所有负载最优：
 
-| 拓扑 | 可能收益 | 主要风险 | 更适合验证的条件 |
-| --- | --- | --- | --- |
-| RX IRQ/NAPI 与消费线程同一逻辑 CPU | 减少跨 CPU backlog、IPI 与缓存迁移 | IRQ/softirq 会抢占应用，突发可能让两者一起积压 | 单 flow/单 owner、包率可控、同核总服务时间有余量 |
-| IRQ/NAPI 与应用分在同一 LLC/NUMA node | 内核与用户态各有执行容量，远端内存风险较低 | 多一次交接，可能产生 IPI 与 cache-line transfer | 收包批次大、应用计算明显、同核干扰主导尾延迟 |
-| 按多条 RX queue 与多个 worker 一一分片 | 扩展并行度，所有权清晰 | flow 倾斜、队列数/线程数增加工作集，重分片复杂 | 大量独立 flow，可稳定按 flow 路由与回压 |
+| 拓扑                                   | 可能收益                                   | 主要风险                                        | 更适合验证的条件                                 |
+| -------------------------------------- | ------------------------------------------ | ----------------------------------------------- | ------------------------------------------------ |
+| RX IRQ/NAPI 与消费线程同一逻辑 CPU     | 减少跨 CPU backlog、IPI 与缓存迁移         | IRQ/softirq 会抢占应用，突发可能让两者一起积压  | 单 flow/单 owner、包率可控、同核总服务时间有余量 |
+| IRQ/NAPI 与应用分在同一 LLC/NUMA node  | 内核与用户态各有执行容量，远端内存风险较低 | 多一次交接，可能产生 IPI 与 cache-line transfer | 收包批次大、应用计算明显、同核干扰主导尾延迟     |
+| 按多条 RX queue 与多个 worker 一一分片 | 扩展并行度，所有权清晰                     | flow 倾斜、队列数/线程数增加工作集，重分片复杂  | 大量独立 flow，可稳定按 flow 路由与回压          |
 
 “同核”必须说清是同一逻辑 CPU、同一物理 core 的 SMT sibling，还是同一 LLC/NUMA node。IRQ 在 CPU 8、应用在 CPU 24，如果它们恰好是 SMT siblings，既不是完全分离，也不等于真正同核串行：两条 hardware thread 会竞争执行端口、缓存与频率预算。保留或禁用 SMT 都应作为实验变量，而不是低延迟教条。
 
@@ -413,13 +413,13 @@ Linux 提供多种 Busy Poll 入口：
 
 它们并不属于同一代内核。新接口设计必须先固定运行基线：
 
-| 能力 | 最早进入主线的版本边界 | 迁移时要核对什么 |
-| --- | --- | --- |
-| socket `SO_BUSY_POLL` | Linux 3.11 | 内核配置、驱动与设备是否支持；socket 是否已经关联正确 NAPI context |
-| epoll `EPIOCSPARAMS` | Linux 6.9；glibc 2.40 提供对应公开头文件 | kernel UAPI 与构建环境是否同时具备；不能只看运行机内核 |
-| io_uring NAPI busy poll | Linux 6.9 | io_uring 注册路径、权限、NAPI ID 与应用 owner 模型 |
-| per-NAPI IRQ suspension / `irq-suspend-timeout` | Linux 6.13 | 应用停止轮询后恢复 IRQ 的安全边界 |
-| threaded NAPI busy polling | Linux 6.19 | NAPI kthread affinity、持续 CPU 占用与队列所有权 |
+| 能力                                            | 最早进入主线的版本边界                   | 迁移时要核对什么                                                   |
+| ----------------------------------------------- | ---------------------------------------- | ------------------------------------------------------------------ |
+| socket `SO_BUSY_POLL`                           | Linux 3.11                               | 内核配置、驱动与设备是否支持；socket 是否已经关联正确 NAPI context |
+| epoll `EPIOCSPARAMS`                            | Linux 6.9；glibc 2.40 提供对应公开头文件 | kernel UAPI 与构建环境是否同时具备；不能只看运行机内核             |
+| io_uring NAPI busy poll                         | Linux 6.9                                | io_uring 注册路径、权限、NAPI ID 与应用 owner 模型                 |
+| per-NAPI IRQ suspension / `irq-suspend-timeout` | Linux 6.13                               | 应用停止轮询后恢复 IRQ 的安全边界                                  |
+| threaded NAPI busy polling                      | Linux 6.19                               | NAPI kthread affinity、持续 CPU 占用与队列所有权                   |
 
 这张表说明的是接口出现的最低主线版本，不等于任一发行版都已启用或 backport 行为完全相同；最终仍以目标 kernel config、UAPI headers、驱动和运行时探测为准。
 
@@ -452,16 +452,16 @@ busy_poll_budget: 默认 -> 与实际 burst 大小匹配的有限预算
 
 下面的矩阵不是通用反模式清单，而是用于把观测反推到具体所有权断裂点：
 
-| 观测 | 可能的所有权断裂 | 需要同时验证 | 不应直接采取的动作 |
-| --- | --- | --- | --- |
-| 某 RX queue 持续丢包，其他 queue 空闲 | RSS hash/indirection 遇到 elephant flow 或 flow 倾斜 | per-queue 包数、hash 字段、flow 分布 | 盲目增加所有队列 |
-| IRQ 在 CPU 2，`NET_RX` 累计量主要在 CPU 9 | RPS/RFS、threaded NAPI affinity、IRQ 迁移，或其实来自另一接口/队列；普通 softirq defer 仍在同一 CPU 的 `ksoftirqd/N` | 路径 trace、queue/NAPI 身份、`rps_cpus`、IPI 与对应 CPU 的 `ksoftirqd`；`/proc/softirqs` 只是全局累计证据 | 只改 IRQ affinity |
-| 应用绑在 node 1，remote access 仍高 | 页在 node 0，或 NIC/kernel buffer/共享映射不对齐 | `numa_maps`、`numastat`、NIC node、first-touch 顺序 | 启动后再执行一次 `taskset` |
-| 手工 IRQ affinity 不生效，或设备 reset 后发生变化 | irqbalance 覆盖、驱动 reset/reallocation；managed IRQ 从分配时就由内核管理，不是稍后才“接管” | 写入结果、即时 allowed/effective mask、daemon 日志与设备事件 | 反复写同一个 mask，或直接停掉全机 irqbalance |
-| isolated CPU 仍有周期尖峰 | tick 之外的 IRQ、workqueue、内核线程、SMT sibling 干扰 | tracepoint、线程/IRQ 分布、housekeeping 容量 | 继续叠加更多 boot 参数 |
-| Busy Poll 降低 p50，却提高 p99.99 | 轮询预算侵占业务/housekeeping，或高负载无 headroom | CPU 饱和、频率、队列深度、过载恢复 | 加长轮询窗口 |
-| XPS 已配置但 TX queue 仍倾斜 | socket 缓存旧 queue、flow hash、RXQ map 未命中或驱动差异 | per-TX queue delta、`xps_cpus/xps_rxqs`、实际 CPU | 把所有 CPU 写入所有 queue |
-| CPU migration 为零，延迟仍有尖峰 | 迁移不是主因；可能是 IRQ、GC、page fault、锁或频率 | 同一时间轴的 JFR/perf/IRQ/NUMA/队列证据 | 认定“绑核没有生效” |
+| 观测                                              | 可能的所有权断裂                                                                                                     | 需要同时验证                                                                                              | 不应直接采取的动作                           |
+| ------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
+| 某 RX queue 持续丢包，其他 queue 空闲             | RSS hash/indirection 遇到 elephant flow 或 flow 倾斜                                                                 | per-queue 包数、hash 字段、flow 分布                                                                      | 盲目增加所有队列                             |
+| IRQ 在 CPU 2，`NET_RX` 累计量主要在 CPU 9         | RPS/RFS、threaded NAPI affinity、IRQ 迁移，或其实来自另一接口/队列；普通 softirq defer 仍在同一 CPU 的 `ksoftirqd/N` | 路径 trace、queue/NAPI 身份、`rps_cpus`、IPI 与对应 CPU 的 `ksoftirqd`；`/proc/softirqs` 只是全局累计证据 | 只改 IRQ affinity                            |
+| 应用绑在 node 1，remote access 仍高               | 页在 node 0，或 NIC/kernel buffer/共享映射不对齐                                                                     | `numa_maps`、`numastat`、NIC node、first-touch 顺序                                                       | 启动后再执行一次 `taskset`                   |
+| 手工 IRQ affinity 不生效，或设备 reset 后发生变化 | irqbalance 覆盖、驱动 reset/reallocation；managed IRQ 从分配时就由内核管理，不是稍后才“接管”                         | 写入结果、即时 allowed/effective mask、daemon 日志与设备事件                                              | 反复写同一个 mask，或直接停掉全机 irqbalance |
+| isolated CPU 仍有周期尖峰                         | tick 之外的 IRQ、workqueue、内核线程、SMT sibling 干扰                                                               | tracepoint、线程/IRQ 分布、housekeeping 容量                                                              | 继续叠加更多 boot 参数                       |
+| Busy Poll 降低 p50，却提高 p99.99                 | 轮询预算侵占业务/housekeeping，或高负载无 headroom                                                                   | CPU 饱和、频率、队列深度、过载恢复                                                                        | 加长轮询窗口                                 |
+| XPS 已配置但 TX queue 仍倾斜                      | socket 缓存旧 queue、flow hash、RXQ map 未命中或驱动差异                                                             | per-TX queue delta、`xps_cpus/xps_rxqs`、实际 CPU                                                         | 把所有 CPU 写入所有 queue                    |
+| CPU migration 为零，延迟仍有尖峰                  | 迁移不是主因；可能是 IRQ、GC、page fault、锁或频率                                                                   | 同一时间轴的 JFR/perf/IRQ/NUMA/队列证据                                                                   | 认定“绑核没有生效”                           |
 
 一个尤其常见的失败是“所有队列都绑到一个低延迟 CPU”。它确实消除了 IRQ 的随机位置，却把所有 flow、管理 IRQ、NAPI 与可能的 TX completion 串到一个服务中心。轻载时缓存局部、曲线很好；突发时该 CPU 的服务率低于到达率，所有 queue 一起排队。正确的 owner 单位通常是“队列/flow shard 与一个有容量的处理拓扑”，不是“整块 NIC 与一个神奇核心”。
 

@@ -2,7 +2,7 @@
 title: Agrona 2：DirectBuffer、并发队列与 Agent 执行模型
 description: 基于 Agrona 2.5.0，围绕 Buffer 与内存顺序、SPSC/MPSC 队列、Agent/IdleStrategy 和低分配集合，解释所有权、背压与生命周期，并纠正“零 GC、零拷贝、无锁就一定更快”的常见误区。
 date: 2026-03-10T11:15:21+08:00
-updated: 2026-08-17T17:45:00+08:00
+updated: 2026-08-27T13:30:00+08:00
 tags:
   - Agrona
   - Java 并发
@@ -24,6 +24,8 @@ Agrona 常被介绍成“高性能 Java 工具箱”，然后话题很快滑向 
 
 本文以 **Agrona 2.5.0** 为基线。旧版 1.21.1 之后，Agrona 已把运行基线提升到 JDK 17，2.0 移除了 `UnsafeAccess`、`MemoryAccess` 与 `SigIntBarrier`，2.1 补齐 plain / opaque / acquire-release / compare-and-exchange API，2.3 调整了 `ShutdownSignalBarrier` 生命周期，2.5 又改变了 `AgentRunner.close()` 的中断语义。继续照搬旧示例，轻则概念过时，重则关闭流程卡住。[官方 Releases](https://github.com/aeron-io/agrona/releases) · [2.5.0 Changelog](https://github.com/aeron-io/agrona/blob/2.5.0/CHANGELOG.adoc)
 
+这是“Java 低延迟工程”的 Chapter 10。上一章 [LMAX Disruptor](/signal-grid-blog/posts/lmax-disruptor-ring-buffer-and-sequencing/) 讨论对象事件、多播拓扑与 Sequence 协调；本文转向 Buffer、并发容器和 Agent duty cycle。下一章 [Java 堆外内存与 FFM](/signal-grid-blog/posts/java-off-heap-memory-ffm-memorysegment-arena-mmap-lifecycle/) 会把这里依赖实现与启动参数约束的堆外访问，提升为 JDK 25 中带空间、时间和线程边界的标准内存模型。
+
 ## 1. 它在系统里的正确位置
 
 Agrona 不是网络传输、持久化日志、消息协议或业务框架。Aeron 和 SBE 使用 Agrona，但这不意味着应用必须按“Agrona → SBE → Aeron → Archive → Cluster”的固定链条搭建。
@@ -40,13 +42,13 @@ flowchart TB
 
 可以把 Agrona 的能力分成五组：
 
-| 能力 | 代表组件 | 它解决什么 | 它不保证什么 |
-| --- | --- | --- | --- |
-| 内存视图 | `DirectBuffer`、`UnsafeBuffer`、`AtomicBuffer` | 统一访问 heap、direct 或映射内存 | 所有权、生命周期、协议兼容 |
-| 线程间通路 | SPSC/MPSC/MPMC Queue、Ring Buffer、Broadcast | 有界、低开销地交接对象或二进制记录 | 持久化、重放、跨主机可靠性 |
-| 执行循环 | `Agent`、`AgentRunner`、`IdleStrategy` | 把非阻塞工作与空闲策略组合起来 | 自动隔离阻塞、合理的 CPU 预算 |
-| 低分配结构 | primitive map/set/list、缓存、timer wheel | 避免部分装箱和短命对象 | “完全零分配”、线程安全 |
-| 运维原语 | counters、`MarkFile`、`DistinctErrorLog` | 进度、存活与重复错误观测 | 业务账本、事务、灾难恢复 |
+| 能力       | 代表组件                                       | 它解决什么                         | 它不保证什么                  |
+| ---------- | ---------------------------------------------- | ---------------------------------- | ----------------------------- |
+| 内存视图   | `DirectBuffer`、`UnsafeBuffer`、`AtomicBuffer` | 统一访问 heap、direct 或映射内存   | 所有权、生命周期、协议兼容    |
+| 线程间通路 | SPSC/MPSC/MPMC Queue、Ring Buffer、Broadcast   | 有界、低开销地交接对象或二进制记录 | 持久化、重放、跨主机可靠性    |
+| 执行循环   | `Agent`、`AgentRunner`、`IdleStrategy`         | 把非阻塞工作与空闲策略组合起来     | 自动隔离阻塞、合理的 CPU 预算 |
+| 低分配结构 | primitive map/set/list、缓存、timer wheel      | 避免部分装箱和短命对象             | “完全零分配”、线程安全        |
+| 运维原语   | counters、`MarkFile`、`DistinctErrorLog`       | 进度、存活与重复错误观测           | 业务账本、事务、灾难恢复      |
 
 ### 它与 Aeron 学习路径怎样衔接
 
@@ -153,13 +155,13 @@ sequenceDiagram
   Note over P,C: release → acquire 让此前 payload 写入可见
 ```
 
-| 配对 | 适用含义 | 不应该拿它做什么 |
-| --- | --- | --- |
-| plain / plain | 同线程或已有外部同步的普通访问 | 跨线程发布消息 |
-| opaque / opaque | 单一位置的原子性、相干性，顺序约束很弱 | 发布多个字段组成的 payload |
-| release / acquire | 发布者先写数据再发布状态，消费者先读状态再读数据 | 需要更强顺序约束的协议 |
-| volatile / volatile | 对该内存位置提供更强的同步顺序 | 把多字段变成事务或自动获得业务事件全序 |
-| CAS / compare-and-exchange | 对单个状态做条件更新并取得竞争结果 | 把多字段业务事务变成“原子” |
+| 配对                       | 适用含义                                         | 不应该拿它做什么                       |
+| -------------------------- | ------------------------------------------------ | -------------------------------------- |
+| plain / plain              | 同线程或已有外部同步的普通访问                   | 跨线程发布消息                         |
+| opaque / opaque            | 单一位置的原子性、相干性，顺序约束很弱           | 发布多个字段组成的 payload             |
+| release / acquire          | 发布者先写数据再发布状态，消费者先读状态再读数据 | 需要更强顺序约束的协议                 |
+| volatile / volatile        | 对该内存位置提供更强的同步顺序                   | 把多字段变成事务或自动获得业务事件全序 |
+| CAS / compare-and-exchange | 对单个状态做条件更新并取得竞争结果               | 把多字段业务事务变成“原子”             |
 
 原子访问还要求自然对齐：`int` 索引按 4 字节对齐，`long` 按 8 字节对齐。x86 对部分未对齐访问比较宽容，不代表 ARM 同样安全；当前 Javadoc 明确警告未对齐原子访问可能性能恶化，甚至在某些架构触发 JVM 崩溃。构造共享 `AtomicBuffer` 后调用 `verifyAlignment()`；测试阶段还可用与 core 同版本的独立 `org.agrona:agrona-agent` 构件，通过 `-javaagent:/path/agrona-agent-2.5.0.jar` 捕获未对齐索引。agent 有显著开销，只用于测试或诊断。[AtomicBuffer 2.5.0](https://javadoc.io/doc/org.agrona/agrona/2.5.0/org/agrona/concurrent/AtomicBuffer.html)
 
@@ -175,13 +177,13 @@ sequenceDiagram
 
 先按语义选通路，再比较实现：
 
-| 需求 | Agrona 组件 | 载荷 | 满载或落后语义 |
-| --- | --- | --- | --- |
-| 单生产者 → 单消费者 | `OneToOneConcurrentArrayQueue` | 对象引用 | `offer` 返回 `false` |
-| 多生产者 → 单消费者 | `ManyToOneConcurrentArrayQueue` | 对象引用 | `offer` 返回 `false` |
-| 多生产者 ↔ 多消费者 | `ManyToManyConcurrentArrayQueue` | 对象引用 | relaxed 观察，满时 `false` |
+| 需求                             | Agrona 组件                                  | 载荷          | 满载或落后语义                |
+| -------------------------------- | -------------------------------------------- | ------------- | ----------------------------- |
+| 单生产者 → 单消费者              | `OneToOneConcurrentArrayQueue`               | 对象引用      | `offer` 返回 `false`          |
+| 多生产者 → 单消费者              | `ManyToOneConcurrentArrayQueue`              | 对象引用      | `offer` 返回 `false`          |
+| 多生产者 ↔ 多消费者              | `ManyToManyConcurrentArrayQueue`             | 对象引用      | relaxed 观察，满时 `false`    |
 | 单/多生产者 → 单消费者二进制命令 | `OneToOneRingBuffer` / `ManyToOneRingBuffer` | Buffer 内记录 | `write=false` / `tryClaim=-2` |
-| 单发送者 → 多个独立观察者 | `BroadcastTransmitter` + Receiver | Buffer 内记录 | 慢接收者会被绕过并丢消息 |
+| 单发送者 → 多个独立观察者        | `BroadcastTransmitter` + Receiver            | Buffer 内记录 | 慢接收者会被绕过并丢消息      |
 
 这些结构都是**有界**的。Array Queue 会把请求容量向上取整到 2 的幂；Ring/Broadcast Buffer 的数据区容量必须是 2 的幂，并额外预留各自的 trailer。容量不是“峰值吞吐量乘 2”这样的固定经验数，而要由积压模型计算：
 
@@ -251,12 +253,12 @@ flowchart LR
 
 ### IdleStrategy 是预算，不是排名
 
-| 策略 | 空闲行为 | 适合场景 | 主要代价 |
-| --- | --- | --- | --- |
-| `BusySpinIdleStrategy` | 持续自旋 | 已隔离的专用核心、严格测量后确有收益 | 常驻占用核心、功耗与邻居干扰 |
-| `YieldingIdleStrategy` | 无工作时调用 `Thread.yield()` | 低延迟但无法独占全部核心 | 受调度器影响、抖动不可预测 |
-| `BackoffIdleStrategy` | spin → yield → 指数 park | 延迟与 CPU 的通用折中 | park 阶段唤醒更慢，受 OS timer slack 影响 |
-| sleeping / parking 类 | 直接等待一段时间 | 控制面、后台维护 | 尾延迟更高 |
+| 策略                   | 空闲行为                      | 适合场景                             | 主要代价                                  |
+| ---------------------- | ----------------------------- | ------------------------------------ | ----------------------------------------- |
+| `BusySpinIdleStrategy` | 持续自旋                      | 已隔离的专用核心、严格测量后确有收益 | 常驻占用核心、功耗与邻居干扰              |
+| `YieldingIdleStrategy` | 无工作时调用 `Thread.yield()` | 低延迟但无法独占全部核心             | 受调度器影响、抖动不可预测                |
+| `BackoffIdleStrategy`  | spin → yield → 指数 park      | 延迟与 CPU 的通用折中                | park 阶段唤醒更慢，受 OS timer slack 影响 |
+| sleeping / parking 类  | 直接等待一段时间              | 控制面、后台维护                     | 尾延迟更高                                |
 
 IdleStrategy 可能有内部状态。`BackoffIdleStrategy` 等带可变退避状态的实例不能并发共享；官方提供 `INSTANCE` 的 `BusySpinIdleStrategy`、`NoOpIdleStrategy` 和 `YieldingIdleStrategy` 是无状态例外。`BusySpin` 也不是“最快”的同义词：如果线程没有独立 CPU、容器 quota 很紧或同核还有关键线程，持续自旋反而会放大尾延迟。应在目标 CPU、内核参数、容器配额和真实负载下测量。
 
@@ -463,15 +465,15 @@ java \
 
 生产环境则至少暴露：
 
-| 指标 | 说明 |
-| --- | --- |
-| offered / accepted / rejected | 入口压力与丢弃/背压是否失控 |
-| producerPosition - consumerPosition | Ring Buffer 字节积压，仅作为并发快照 |
-| batch size / work count | 批处理效率与空转比例 |
-| duty-cycle duration | Agent 是否被阻塞或一次处理过多 |
-| error count / last error | 循环是否在异常后继续带病运行 |
-| broadcast lapped count | 检测到的绕圈次数；每次至少意味着约一整个 buffer 的数据损失，不等于精确丢失消息数 |
-| process CPU / throttling / safepoint | Busy spin 与容器、JVM 的相互影响 |
+| 指标                                 | 说明                                                                             |
+| ------------------------------------ | -------------------------------------------------------------------------------- |
+| offered / accepted / rejected        | 入口压力与丢弃/背压是否失控                                                      |
+| producerPosition - consumerPosition  | Ring Buffer 字节积压，仅作为并发快照                                             |
+| batch size / work count              | 批处理效率与空转比例                                                             |
+| duty-cycle duration                  | Agent 是否被阻塞或一次处理过多                                                   |
+| error count / last error             | 循环是否在异常后继续带病运行                                                     |
+| broadcast lapped count               | 检测到的绕圈次数；每次至少意味着约一整个 buffer 的数据损失，不等于精确丢失消息数 |
+| process CPU / throttling / safepoint | Busy spin 与容器、JVM 的相互影响                                                 |
 
 最后在同一机器、同一启动参数和接近生产的流量分布下做 A/B。若优化只提高空环平均吞吐，却让满载拒绝率或 p99.9 变差，它不是成功的低延迟优化。
 
@@ -479,15 +481,15 @@ java \
 
 上一章的 [LMAX Disruptor 4](/signal-grid-blog/posts/lmax-disruptor-ring-buffer-and-sequencing/) 聚焦预分配对象事件、多播消费者与依赖图；Agrona 的 Array Queue 和 Ring Buffer 更接近有界交接通道，Agent 则提供 duty-cycle 执行模型。它们不是同一 API 的快慢版本。
 
-| 场景 | 优先考虑 |
-| --- | --- |
-| 普通后台任务、动态 worker pool、可维护性优先 | `ExecutorService`、JDK 有界队列 |
-| SPSC/MPSC 对象所有权交接 | Agrona concurrent array queue |
-| MPSC 二进制命令交给单写者 | `ManyToOneRingBuffer` + Agent |
-| 同一事件被多个阶段消费，且有依赖图 | Disruptor |
-| 进程间/主机间低延迟传输 | Aeron；需要重放再结合 Aeron Archive |
-| 持久化流、消费者重启追赶、长时间保留 | Kafka、数据库日志或专用 WAL |
-| 允许慢观察者错过旧数据，且每条消息都是完整自包含快照 | Agrona Broadcast Buffer |
+| 场景                                                 | 优先考虑                            |
+| ---------------------------------------------------- | ----------------------------------- |
+| 普通后台任务、动态 worker pool、可维护性优先         | `ExecutorService`、JDK 有界队列     |
+| SPSC/MPSC 对象所有权交接                             | Agrona concurrent array queue       |
+| MPSC 二进制命令交给单写者                            | `ManyToOneRingBuffer` + Agent       |
+| 同一事件被多个阶段消费，且有依赖图                   | Disruptor                           |
+| 进程间/主机间低延迟传输                              | Aeron；需要重放再结合 Aeron Archive |
+| 持久化流、消费者重启追赶、长时间保留                 | Kafka、数据库日志或专用 WAL         |
+| 允许慢观察者错过旧数据，且每条消息都是完整自包含快照 | Agrona Broadcast Buffer             |
 
 不该使用 Agrona 的典型信号包括：
 
@@ -499,20 +501,20 @@ java \
 
 尤其不要把 `-Dagrona.disable.bounds.checks=true` 当通用优化开关。它把越界错误从可诊断异常变成数据破坏甚至进程崩溃风险。只有在协议和索引经过充分验证、基准确认检查确为瓶颈，并且生产具备内存破坏隔离手段时才值得单独评估。
 
-Agrona 真正教会我们的，不是“Unsafe 更快”，而是低延迟系统必须把**所有权、容量、内存可见性和执行预算**写成显式协议。库可以提供锋利的工具，正确性与可恢复性仍然属于系统设计。
+Agrona 真正教会我们的，不是“Unsafe 更快”，而是低延迟系统必须把**所有权、容量、内存可见性和执行预算**写成显式协议。库可以提供锋利的工具，正确性与可恢复性仍然属于系统设计。下一章 [Java 堆外内存与 FFM](/signal-grid-blog/posts/java-off-heap-memory-ffm-memorysegment-arena-mmap-lifecycle/) 将继续追问：当 Buffer 背后变成 native allocation 或 mmap，谁拥有地址、何时可以关闭、哪些线程可以访问，以及 `force()` 到底没有保证什么。
 
 ## 附录：从 1.21.1 升级到 2.5.0
 
 旧项目不能只改 Maven 版本。至少逐项检查：
 
-| 版本 | 关键变化 | 迁移动作 |
-| --- | --- | --- |
-| 1.23.0 | 编译和运行最低 JDK 17；移除 `MappedResizeableBuffer`、`RecordBuffer` 与旧 NIO selector hack | 升级运行时，替换已删除类型 |
-| 2.0.0 | 移除 `UnsafeAccess`、`MemoryAccess`、`SigIntBarrier`；新增 CRC32/CRC32C | 改用 `UnsafeApi` / `VarHandle` / `ShutdownSignalBarrier`，配置 `--add-opens` |
-| 2.1.0 | `AtomicBuffer`、Counter、Position 增加 plain / opaque / acquire-release；新增 compare-and-exchange | 用成对内存序表达协议，清理旧 ordered 命名 |
-| 2.3.0 | `ShutdownSignalBarrier` 改用 shutdown hook，并要求显式 close | 使用 try-with-resources；避免残留 hook 阻止 JVM 退出 |
-| 2.4.0 | 删除 `SigInt`；修复 timer、Buffer、MarkFile 与 BroadcastReceiver 细节 | 删除 JVM signal hack，回归共享内存与计时路径 |
-| 2.5.0 | `AgentRunner.close()` 不再可中断地提前返回 | 保证 `doWork()` 有界、可响应关闭，并给卡死线程留诊断动作 |
+| 版本   | 关键变化                                                                                           | 迁移动作                                                                     |
+| ------ | -------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| 1.23.0 | 编译和运行最低 JDK 17；移除 `MappedResizeableBuffer`、`RecordBuffer` 与旧 NIO selector hack        | 升级运行时，替换已删除类型                                                   |
+| 2.0.0  | 移除 `UnsafeAccess`、`MemoryAccess`、`SigIntBarrier`；新增 CRC32/CRC32C                            | 改用 `UnsafeApi` / `VarHandle` / `ShutdownSignalBarrier`，配置 `--add-opens` |
+| 2.1.0  | `AtomicBuffer`、Counter、Position 增加 plain / opaque / acquire-release；新增 compare-and-exchange | 用成对内存序表达协议，清理旧 ordered 命名                                    |
+| 2.3.0  | `ShutdownSignalBarrier` 改用 shutdown hook，并要求显式 close                                       | 使用 try-with-resources；避免残留 hook 阻止 JVM 退出                         |
+| 2.4.0  | 删除 `SigInt`；修复 timer、Buffer、MarkFile 与 BroadcastReceiver 细节                              | 删除 JVM signal hack，回归共享内存与计时路径                                 |
+| 2.5.0  | `AgentRunner.close()` 不再可中断地提前返回                                                         | 保证 `doWork()` 有界、可响应关闭，并给卡死线程留诊断动作                     |
 
 最值得借升级重构的，不是类名，而是协议：
 
