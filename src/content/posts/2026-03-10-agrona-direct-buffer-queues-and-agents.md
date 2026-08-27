@@ -2,7 +2,7 @@
 title: Agrona 2：DirectBuffer、并发队列与 Agent 执行模型
 description: 基于 Agrona 2.5.0，围绕 Buffer 与内存顺序、SPSC/MPSC 队列、Agent/IdleStrategy 和低分配集合，解释所有权、背压与生命周期，并纠正“零 GC、零拷贝、无锁就一定更快”的常见误区。
 date: 2026-03-10T11:15:21+08:00
-updated: 2026-08-27T13:30:00+08:00
+updated: 2026-08-27T20:02:00+08:00
 tags:
   - Agrona
   - Java 并发
@@ -24,7 +24,7 @@ Agrona 常被介绍成“高性能 Java 工具箱”，然后话题很快滑向 
 
 本文以 **Agrona 2.5.0** 为基线。旧版 1.21.1 之后，Agrona 已把运行基线提升到 JDK 17，2.0 移除了 `UnsafeAccess`、`MemoryAccess` 与 `SigIntBarrier`，2.1 补齐 plain / opaque / acquire-release / compare-and-exchange API，2.3 调整了 `ShutdownSignalBarrier` 生命周期，2.5 又改变了 `AgentRunner.close()` 的中断语义。继续照搬旧示例，轻则概念过时，重则关闭流程卡住。[官方 Releases](https://github.com/aeron-io/agrona/releases) · [2.5.0 Changelog](https://github.com/aeron-io/agrona/blob/2.5.0/CHANGELOG.adoc)
 
-这是“Java 低延迟工程”的 Chapter 10。上一章 [LMAX Disruptor](/signal-grid-blog/posts/lmax-disruptor-ring-buffer-and-sequencing/) 讨论对象事件、多播拓扑与 Sequence 协调；本文转向 Buffer、并发容器和 Agent duty cycle。下一章 [Java 堆外内存与 FFM](/signal-grid-blog/posts/java-off-heap-memory-ffm-memorysegment-arena-mmap-lifecycle/) 会把这里依赖实现与启动参数约束的堆外访问，提升为 JDK 25 中带空间、时间和线程边界的标准内存模型。
+这是“Java 低延迟工程”的 Chapter 12。上一章 [LMAX Disruptor](/signal-grid-blog/posts/lmax-disruptor-ring-buffer-and-sequencing/) 讨论对象事件、多播拓扑与 Sequence 协调；本文转向 Buffer、并发容器和 Agent duty cycle。下一章 [Java 堆外内存与 FFM](/signal-grid-blog/posts/java-off-heap-memory-ffm-memorysegment-arena-mmap-lifecycle/) 会把这里依赖实现与启动参数约束的堆外访问，提升为 JDK 25 中带空间、时间和线程边界的标准内存模型。
 
 ## 1. 它在系统里的正确位置
 

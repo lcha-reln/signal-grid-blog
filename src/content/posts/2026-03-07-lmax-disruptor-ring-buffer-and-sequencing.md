@@ -2,7 +2,7 @@
 title: LMAX Disruptor 4：Ring Buffer、消费拓扑与 Batch Rewind
 description: 基于 Disruptor 4.0.0，从发布协议、序列协调、消费依赖和背压讲到 WaitStrategy、批处理与 Batch Rewind，并说明它何时适合替代队列、何时并不适合。
 date: 2026-03-07T10:43:08+08:00
-updated: 2026-08-27T13:30:00+08:00
+updated: 2026-08-27T20:02:00+08:00
 categories:
   - 高性能组件
 tags:
@@ -25,7 +25,7 @@ Disruptor 经常被介绍成“比 `BlockingQueue` 更快的队列”。这个�
 
 本文以截至 2026-08-13 仍由 GitHub 标记为 latest 的稳定版 **Disruptor 4.0.0** 为基线。4.0.0 最低要求 Java 11，并移除了旧版 WorkerPool、`Executor` 构造器等 API；本文的代码和结论不再沿用早期 JDK 7 时代的实现与基准。[4.0.0 Release Notes](https://github.com/LMAX-Exchange/disruptor/releases/tag/4.0.0) · [Maven Central](https://central.sonatype.com/artifact/com.lmax/disruptor/4.0.0)
 
-这是“Java 低延迟工程”的 Chapter 09。前面的 [线程等待](/signal-grid-blog/posts/java-thread-contention-aqs-park-unpark-scheduling/) 与 [Linux 运行时](/signal-grid-blog/posts/linux-low-latency-runtime-cpu-affinity-numa-irq-rss-rps-xps-busy-poll/) 已说明不同 WaitStrategy 最终支付的是自旋、让出、停车、唤醒或调度成本；本文只讨论 Disruptor 如何把这些成本放进有界事件拓扑。下一章再由 [Agrona](/signal-grid-blog/posts/agrona-direct-buffer-queues-and-agents/) 比较二进制 Buffer、并发队列与 Agent 循环。
+这是“Java 低延迟工程”的 Chapter 11。前面的 [线程等待](/signal-grid-blog/posts/java-thread-contention-aqs-park-unpark-scheduling/) 与 [Linux 运行时](/signal-grid-blog/posts/linux-low-latency-runtime-cpu-affinity-numa-irq-rss-rps-xps-busy-poll/) 已说明不同 WaitStrategy 最终支付的是自旋、让出、停车、唤醒或调度成本；本文只讨论 Disruptor 如何把这些成本放进有界事件拓扑。下一章再由 [Agrona](/signal-grid-blog/posts/agrona-direct-buffer-queues-and-agents/) 比较二进制 Buffer、并发队列与 Agent 循环。
 
 ## 1. 它不是“更快的 Queue”
 

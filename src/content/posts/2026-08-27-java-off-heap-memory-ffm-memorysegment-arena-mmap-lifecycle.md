@@ -2,7 +2,7 @@
 title: "Java 堆外内存与 FFM：MemorySegment、Arena、mmap 与生命周期"
 description: 以 JDK 25 为基线，把 MemorySegment 解释为受空间、时间与线程边界约束的能力对象，串联 Arena、MemoryLayout、原生分配与 mmap，并厘清 load、unload、force、异步所有权和持久性保证的边界。
 date: 2026-08-27T09:00:00+08:00
-updated: 2026-08-27T18:18:00+08:00
+updated: 2026-08-27T20:02:00+08:00
 tags:
   - Java
   - JDK 25
@@ -27,7 +27,7 @@ draft: false
 
 本文以 **Java SE 25 / OpenJDK 25.0.2** 为基线。FFM 已在 JDK 22 通过 [JEP 454](https://openjdk.org/jeps/454) 定稿，本文使用的分配、布局与映射 API 不需要 preview 参数；会导致 JVM 崩溃或内存静默损坏的受限操作仍受 native access 控制。本文不展开 jextract、C ABI 或 JNI 调用教程，而是聚焦所有 native 数据通路共同依赖的内存合同。
 
-这是“Java 低延迟工程”的 **Chapter 11**。前面的 [JMM 与 VarHandle](/signal-grid-blog/posts/java-memory-model-varhandle-memory-ordering/) 给出线程间可见性的证明方法，[低延迟测量](/signal-grid-blog/posts/java-low-latency-measurement/) 规定性能主张需要什么证据，[机器模型](/signal-grid-blog/posts/java-low-latency-machine-model-cache-locality-false-sharing-numa/)、[HotSpot](/signal-grid-blog/posts/hotspot-execution-tlab-escape-analysis-jit-deoptimization-safepoint/)、[GC](/signal-grid-blog/posts/java-low-latency-gc-allocation-live-set-g1-zgc-shenandoah/)、[线程等待](/signal-grid-blog/posts/java-thread-contention-aqs-park-unpark-scheduling/)、[NIO 数据路径](/signal-grid-blog/posts/java-nio-selector-socket-data-path-backpressure/) 与 [Linux 运行时](/signal-grid-blog/posts/linux-low-latency-runtime-cpu-affinity-numa-irq-rss-rps-xps-busy-poll/) 解释成本从哪里来；[Disruptor](/signal-grid-blog/posts/lmax-disruptor-ring-buffer-and-sequencing/) 和 [Agrona](/signal-grid-blog/posts/agrona-direct-buffer-queues-and-agents/) 再把所有权落实到队列、Buffer 与 Agent。本章最后收束一个问题：当字节离开 Java Heap，如何仍然证明每次访问合法。
+这是“Java 低延迟工程”的 **Chapter 13**。前面的 [JMM 与 VarHandle](/signal-grid-blog/posts/java-memory-model-varhandle-memory-ordering/) 给出线程间可见性的证明方法，[低延迟测量](/signal-grid-blog/posts/java-low-latency-measurement/) 规定性能主张需要什么证据，[机器模型](/signal-grid-blog/posts/java-low-latency-machine-model-cache-locality-false-sharing-numa/)、[HotSpot](/signal-grid-blog/posts/hotspot-execution-tlab-escape-analysis-jit-deoptimization-safepoint/)、[Vector API 与 SIMD](/signal-grid-blog/posts/java-vector-api-simd-data-layout-auto-vectorization-benchmarks/)、[GC](/signal-grid-blog/posts/java-low-latency-gc-allocation-live-set-g1-zgc-shenandoah/)、[线程等待](/signal-grid-blog/posts/java-thread-contention-aqs-park-unpark-scheduling/)、[NIO 数据路径](/signal-grid-blog/posts/java-nio-selector-socket-data-path-backpressure/)、[io_uring 与零拷贝](/signal-grid-blog/posts/java-epoll-io-uring-zero-copy-completion-backpressure/) 与 [Linux 运行时](/signal-grid-blog/posts/linux-low-latency-runtime-cpu-affinity-numa-irq-rss-rps-xps-busy-poll/) 解释成本从哪里来；[Disruptor](/signal-grid-blog/posts/lmax-disruptor-ring-buffer-and-sequencing/) 和 [Agrona](/signal-grid-blog/posts/agrona-direct-buffer-queues-and-agents/) 再把所有权落实到队列、Buffer 与 Agent。本章最后收束一个问题：当字节离开 Java Heap，如何仍然证明每次访问合法。
 
 ## 1. 堆外内存真正缺少的不是地址，而是访问资格
 
@@ -541,7 +541,7 @@ mmap 还必须区分冷启动与热页。刚被另一个 trial 读过的文件�
 
 端到端判断则回到 Chapter 02 的证据链：同时报告 offered、accepted、completed、goodput、拒绝与错误；把 page fault、RSS、cgroup memory、CPU、磁盘写回、GC 和 owner 级 native bytes 与延迟时间线对齐。NMT 只能解释它覆盖的 JVM 分类，不能作为“没有 native leak”的唯一证据。
 
-### Chapter 11：把“堆外更快”改写成可证明的所有权问题
+### Chapter 13：把“堆外更快”改写成可证明的所有权问题
 
 走完整条 Java 低延迟路径后，FFM 的位置已经很清楚：
 
@@ -551,7 +551,7 @@ mmap 还必须区分冷启动与热页。刚被另一个 trial 读过的文件�
 4. mmap 的映射、驻留、写回和解除是四件事；`load`/`unload` 是尽力提示，`force` 有本地设备边界，确定 unmap 来自 Arena close。
 5. 性能收益只有在正确性语义相同、生命周期成本完整、工作集和故障模型真实时才成立；有时 FFM 的主要收益不是更低的纳秒数，而是终于能解释谁拥有这段内存、它何时失效，以及失败后为什么不会继续被访问。
 
-这正是 Chapter 01 的 JMM、Chapter 02 的测量方法、GC 的分配预算、NIO 与 Linux 的真实数据路径以及 Agrona 的 Buffer 所有权最终汇合的地方：**低延迟不是绕开管理，而是把过去隐含在地址和惯例里的边界，提升为可以检查、测量和证伪的协议。**
+这正是 Chapter 01 的 JMM、Chapter 02 的测量方法、Vector API 的数据布局与执行证据、GC 的分配预算、NIO、io_uring 与 Linux 的真实数据路径以及 Agrona 的 Buffer 所有权最终汇合的地方：**低延迟不是绕开管理，而是把过去隐含在地址和惯例里的边界，提升为可以检查、测量和证伪的协议。**
 
 ### 官方一手资料
 

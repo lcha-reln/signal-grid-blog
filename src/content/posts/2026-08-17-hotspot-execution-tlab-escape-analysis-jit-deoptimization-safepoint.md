@@ -2,7 +2,7 @@
 title: "HotSpot 如何执行你的代码：TLAB、逃逸分析、JIT、去优化与 Safepoint"
 description: 从 class 文件与解释执行出发，沿着 HotSpot 的分层编译、OSR、运行时画像、内联、TLAB 分配、C2 逃逸分析、标量替换、去优化与 Safepoint/Handshake，建立一条可观测的 Java 低延迟执行链。
 date: 2026-08-17T20:24:00+08:00
-updated: 2026-08-17T21:00:00+08:00
+updated: 2026-08-27T20:02:00+08:00
 tags:
   - Java 性能
   - HotSpot
@@ -456,4 +456,4 @@ HotSpot 的性能来自有条件的快路径，而不是某个永远成立的魔
 
 因此，去优化不是对 JIT 的否定，而是推测式优化能够安全存在的前提；Safepoint 也不只是“GC 停顿”，而是运行时获得全局一致状态的协调机制。Thread-Local Handshake 能把一部分操作收缩到单线程或线程集合，却不能替代需要全局不变量的 Safepoint。
 
-对低延迟系统而言，稳态平均成本往往已经落在 TLAB 和 C2 快路径里，真正刺穿尾部的是 **TLAB refill、分配失败、OSR/重编译、uncommon trap、对象重新物化、到达 Safepoint 的等待和 VM operation**。能够把这些转换逐一投射到同一条业务延迟时间线，才算真正知道 HotSpot 在怎样执行你的代码，也才有基础进入下一章 [Java 低延迟 GC](/signal-grid-blog/posts/java-low-latency-gc-allocation-live-set-g1-zgc-shenandoah/)，讨论这些分配如何转化为 Live Set、回收周期与空间余量。
+对低延迟系统而言，稳态平均成本往往已经落在 TLAB 和 C2 快路径里，真正刺穿尾部的是 **TLAB refill、分配失败、OSR/重编译、uncommon trap、对象重新物化、到达 Safepoint 的等待和 VM operation**。能够把这些转换逐一投射到同一条业务延迟时间线，才算真正知道 HotSpot 在怎样执行你的代码，也才有基础进入下一章 [Vector API 与 SIMD](/signal-grid-blog/posts/java-vector-api-simd-data-layout-auto-vectorization-benchmarks/)，继续判断自动向量化和显式向量程序需要满足哪些布局、语义与证据边界。

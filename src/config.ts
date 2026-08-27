@@ -207,11 +207,11 @@ export const SERIES: readonly SeriesDefinition[] = [
     title: "Java 低延迟工程",
     eyebrow: "LOW-LATENCY ENGINEERING",
     description:
-      "从 Java Memory Model 与 VarHandle 出发，用可信测量建立证据，再下探机器模型、HotSpot、垃圾回收、线程等待、Java NIO 与 Linux 数据路径，最后以 Disruptor、Agrona 和 FFM 理解序列协调、背压、堆外布局与显式生命周期。",
+      "从 Java Memory Model 与 VarHandle 出发，用可信测量建立证据，再下探机器模型、HotSpot、SIMD、垃圾回收、线程等待、Java NIO、io_uring 与 Linux 数据路径，最后以 Disruptor、Agrona 和 FFM 理解序列协调、背压、堆外布局与显式生命周期。",
     prerequisite:
       "熟悉 Java 语法、线程与基本数据结构；不要求预先掌握 Java 内存模型。",
     outcome:
-      "能够用 happens-before 证明线程间协议，解释 Cache、JIT、分配、GC、锁竞争、调度、Selector、CPU 与网络队列如何共同塑造尾延迟，安全管理堆外内存与 mmap，并通过基准、运行时事件、硬件计数器和生产指标判断优化是否成立。",
+      "能够用 happens-before 证明线程间协议，解释 Cache、JIT、SIMD、分配、GC、锁竞争、调度、Selector、io_uring、CPU 与网络队列如何共同塑造尾延迟，安全管理堆外内存与 mmap，并通过基准、运行时事件、硬件计数器和生产指标判断优化是否成立。",
     color: "blue",
     index: "04",
     stages: [
@@ -228,7 +228,7 @@ export const SERIES: readonly SeriesDefinition[] = [
         eyebrow: "JVM & SYSTEM RUNTIME",
         title: "机器、JVM 与系统运行时",
         description:
-          "沿 Cache、JIT、分配、GC、锁等待、Selector、调度与网卡队列追踪 Java 热路径的真实执行成本。",
+          "沿 Cache、JIT、SIMD、分配、GC、锁等待、readiness/completion、调度与网卡队列追踪 Java 热路径的真实执行成本。",
         fromOrder: 30,
       },
       {

@@ -2,7 +2,7 @@
 title: "Java 线程为什么没有继续运行：Monitor、AQS、park/unpark 与调度延迟"
 description: 从锁持有、同步队列、条件等待、park/unpark permit、唤醒到重新获得 CPU，解释 Monitor、AQS、Condition、平台线程与虚拟线程的真实等待路径，并建立区分锁竞争、主动等待和调度延迟的 off-CPU 证据链。
 date: 2026-08-27T18:00:47+08:00
-updated: 2026-08-27T18:00:47+08:00
+updated: 2026-08-27T20:02:00+08:00
 tags:
   - Java 性能
   - Java 并发
@@ -27,7 +27,7 @@ draft: false
 
 本文以 **Java SE 25、JDK 25 GA 的 OpenJDK/HotSpot 与主线 Linux 文档**为基线。Java 规范定义 Monitor、等待集、线程状态和并发 API 的语义；HotSpot 决定这些语义在当前 JVM 中怎样走快慢路径；Linux 决定平台线程什么时候真正获得 CPU。三层可以互相解释，但不能互相冒充。本文不重讲 [JMM 与 happens-before](/signal-grid-blog/posts/java-memory-model-varhandle-memory-ordering/)、[JFR/perf 的通用使用方法](/signal-grid-blog/posts/java-low-latency-measurement/)、[HotSpot 的 JIT 与 Safepoint](/signal-grid-blog/posts/hotspot-execution-tlab-escape-analysis-jit-deoptimization-safepoint/)，也不重复 [Linux 绑核、IRQ 与网卡队列](/signal-grid-blog/posts/linux-low-latency-runtime-cpu-affinity-numa-irq-rss-rps-xps-busy-poll/)。这里专注回答一件事：**一条本来能继续的 Java 执行路径，在哪一层失去了运行资格，又在哪一层重新获得资格。**
 
-这是“Java 低延迟工程”的 Chapter 06。上一章 [Java 低延迟 GC](/signal-grid-blog/posts/java-low-latency-gc-allocation-live-set-g1-zgc-shenandoah/) 已经说明分配、并发回收和空间余量怎样占用 CPU；本章继续区分业务线程是主动等待、被同步器阻挡，还是已经可运行却没有得到 CPU。下一章将进入 [Java NIO、Selector 与 Socket 数据路径](/signal-grid-blog/posts/java-nio-selector-socket-data-path-backpressure/)，把这里的等待、唤醒和调度模型接到 readiness、partial I/O、发送队列与背压。
+这是“Java 低延迟工程”的 Chapter 07。上一章 [Java 低延迟 GC](/signal-grid-blog/posts/java-low-latency-gc-allocation-live-set-g1-zgc-shenandoah/) 已经说明分配、并发回收和空间余量怎样占用 CPU；本章继续区分业务线程是主动等待、被同步器阻挡，还是已经可运行却没有得到 CPU。下一章将进入 [Java NIO、Selector 与 Socket 数据路径](/signal-grid-blog/posts/java-nio-selector-socket-data-path-backpressure/)，把这里的等待、唤醒和调度模型接到 readiness、partial I/O、发送队列与背压。
 
 ## 1. “没有继续运行”至少要拆成五段时间
 

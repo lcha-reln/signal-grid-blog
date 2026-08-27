@@ -2,7 +2,7 @@
 title: "Linux 低延迟运行时：CPU 亲和性、NUMA、IRQ、RSS/RPS/XPS 与 Busy Poll"
 description: 从一条网络消息的真实数据路径出发，讲清 NIC 队列、RSS、IRQ、NAPI、软中断、RPS/RFS、应用线程、XPS 与 NUMA 内存的所有权关系，并用 CPU affinity、cpuset、irqbalance、nohz_full 和 Busy Poll 构造可验证而非靠经验猜测的 Linux 低延迟运行时。
 date: 2026-08-17T20:23:41+08:00
-updated: 2026-08-27T13:30:00+08:00
+updated: 2026-08-27T20:02:00+08:00
 tags:
   - Linux
   - 低延迟
@@ -27,7 +27,7 @@ draft: false
 
 只固定应用线程，却不固定 IRQ、队列与内存，可能把一次随机迁移变成一次稳定的跨核或跨 NUMA 访问；把所有工作塞进同一个 CPU，又可能用局部性换来 IRQ 抢占、softirq 积压和突发时的队头阻塞。**Linux 低延迟调优的核心不是“绑核”，而是为数据路径建立可观察的所有权，使不必要的迁移、排队和唤醒变少，同时给必要的内核工作保留容量。**
 
-这是“Java 低延迟工程”的 Chapter 08。[HotSpot 执行模型](/signal-grid-blog/posts/hotspot-execution-tlab-escape-analysis-jit-deoptimization-safepoint/) 和 [低延迟 GC](/signal-grid-blog/posts/java-low-latency-gc-allocation-live-set-g1-zgc-shenandoah/) 已解释 JVM 内部的执行与回收成本，[线程等待章节](/signal-grid-blog/posts/java-thread-contention-aqs-park-unpark-scheduling/) 区分了锁竞争、主动停车与调度延迟，上一章 [Java NIO 数据路径](/signal-grid-blog/posts/java-nio-selector-socket-data-path-backpressure/) 则停在 socket、Selector 与内核缓冲边界。本文继续把这些线程和字节放进 Linux，以主线内核的通用网络栈、cgroup v2 和现代多队列 NIC 为边界。驱动、固件、虚拟化层、云厂商和发行版都可能改变可用接口；文中的 CPU 编号与参数只能作为实验形状，不能直接复制为生产配置。
+这是“Java 低延迟工程”的 Chapter 10。[HotSpot 执行模型](/signal-grid-blog/posts/hotspot-execution-tlab-escape-analysis-jit-deoptimization-safepoint/) 和 [低延迟 GC](/signal-grid-blog/posts/java-low-latency-gc-allocation-live-set-g1-zgc-shenandoah/) 已解释 JVM 内部的执行与回收成本，[线程等待章节](/signal-grid-blog/posts/java-thread-contention-aqs-park-unpark-scheduling/) 区分了锁竞争、主动停车与调度延迟，[Java NIO 数据路径](/signal-grid-blog/posts/java-nio-selector-socket-data-path-backpressure/) 则把 readiness、partial I/O 与应用背压接到 socket 边界。上一章 [从 Readiness 到 Completion](/signal-grid-blog/posts/java-epoll-io-uring-zero-copy-completion-backpressure/) 继续比较 epoll 与 io_uring，并拆开 completion、零拷贝和多级在途队列。本文再把这些线程和字节放进 Linux，以主线内核的通用网络栈、cgroup v2 和现代多队列 NIC 为边界。驱动、固件、虚拟化层、云厂商和发行版都可能改变可用接口；文中的 CPU 编号与参数只能作为实验形状，不能直接复制为生产配置。
 
 ```mermaid
 flowchart LR

@@ -2,7 +2,7 @@
 title: Java 低延迟 GC：分配率、Live Set、G1、ZGC 与 Generational Shenandoah
 description: 从分配率、存活率、晋升率、Live Set 与回收余量建立 GC 预算，细讲 JDK 25 中 G1、Generational ZGC 与 Generational Shenandoah 的屏障、触发、退化路径、日志观测和实验选型。
 date: 2026-08-17T20:21:00+08:00
-updated: 2026-08-27T13:30:00+08:00
+updated: 2026-08-27T20:02:00+08:00
 tags:
   - Java 性能
   - JVM
@@ -25,7 +25,7 @@ draft: false
 
 本文的主张是：低延迟 GC 首先是一个容量与速率问题，而不是参数记忆题。分配率决定新垃圾出现多快，存活对象决定一次回收必须处理多少工作，晋升率决定老年代压力增长多快，Live Set 决定堆的不可压缩底座，而 headroom 决定并发回收期间还有多少时间追赶应用。只有先量出这些量，G1、ZGC 或 Generational Shenandoah 的选择才有可证伪的依据。
 
-这是“Java 低延迟工程”的 Chapter 05。上一章 [HotSpot 如何执行你的代码](/signal-grid-blog/posts/hotspot-execution-tlab-escape-analysis-jit-deoptimization-safepoint/) 解释对象怎样经 TLAB 分配、代码怎样被 JIT 编译，以及去优化与 Safepoint 为什么会制造延迟；本章把“对象分配很快”继续推到“空间怎样被持续回收”。下一章转向 [Monitor、AQS、park/unpark 与调度延迟](/signal-grid-blog/posts/java-thread-contention-aqs-park-unpark-scheduling/)，区分 GC 或 Safepoint 停顿、锁竞争、主动停车和线程获得 CPU 之前的调度等待。
+这是“Java 低延迟工程”的 Chapter 06。前面的 [HotSpot 执行模型](/signal-grid-blog/posts/hotspot-execution-tlab-escape-analysis-jit-deoptimization-safepoint/) 已解释对象怎样经 TLAB 分配、代码怎样被 JIT 编译，以及去优化与 Safepoint 为什么会制造延迟；上一章 [Vector API 与 SIMD](/signal-grid-blog/posts/java-vector-api-simd-data-layout-auto-vectorization-benchmarks/) 再把 JIT、数据布局与 CPU 并行执行连起来。本章把“对象分配很快”继续推到“空间怎样被持续回收”。下一章转向 [Monitor、AQS、park/unpark 与调度延迟](/signal-grid-blog/posts/java-thread-contention-aqs-park-unpark-scheduling/)，区分 GC 或 Safepoint 停顿、锁竞争、主动停车和线程获得 CPU 之前的调度等待。
 
 版本边界是 **OpenJDK JDK 25**：G1 仍是大多数服务器配置上的默认收集器；`-XX:+UseZGC` 只会启用分代 ZGC，历史参数 `ZGenerational` 在 JDK 25 已是 obsolete，不应再写进新配置；Generational Shenandoah 已由 JEP 521 从 experimental 提升为 product feature，但 Shenandoah 默认仍使用单代模式，分代模式必须显式选择。本文讨论 Generational Shenandoah 的耗尽与退化路径时，以包含 [JDK-8368152](https://bugs.openjdk.org/browse/JDK-8368152) 修复的 **JDK 25.0.2 或供应商等效 backport** 为生产基线；供应商是否在特定平台构建 Shenandoah、是否带有相同修复，仍需用目标发行版核对。
 
@@ -458,4 +458,4 @@ flowchart LR
 3. headroom 是并发周期的时间预算。回收速度或调度速度追不上峰值分配时，系统会通过 allocation stall、pacing、evacuation failure、Degenerated/Full GC 或 OOM 暴露守恒关系；“低暂停设计”不能取消这条边界。
 4. 因此，收集器只保证一种机制和目标，不保证你的业务 SLO。可信结论必须把 GC 日志、JFR、CPU/RSS 和端到端业务分布对齐，并在稳态、突发和 Live Set 变化下重复验证。
 
-下一章 [Java 线程为什么没有继续运行](/signal-grid-blog/posts/java-thread-contention-aqs-park-unpark-scheduling/) 会继续回答一个经常被 GC 参数掩盖的问题：某次长尾究竟来自回收或 Safepoint，还是 Monitor/AQS 竞争、`park/unpark` 唤醒链与调度延迟；再后面的 Java NIO 与 Linux 章节会把这条等待链接到 socket 和网卡队列。
+下一章 [Java 线程为什么没有继续运行](/signal-grid-blog/posts/java-thread-contention-aqs-park-unpark-scheduling/) 会继续回答一个经常被 GC 参数掩盖的问题：某次长尾究竟来自回收或 Safepoint，还是 Monitor/AQS 竞争、`park/unpark` 唤醒链与调度延迟；再后面的 Java NIO、io_uring 与 Linux 章节会把这条等待链接到 socket、内核完成队列和网卡队列。

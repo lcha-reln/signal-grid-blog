@@ -2,7 +2,7 @@
 title: "Java 网络 I/O 的真实数据路径：NIO、Selector、DirectBuffer、系统调用与背压"
 description: 从 readiness 只是提示这一边界出发，沿 SocketChannel 的 partial read/write、长度前缀 framing、Selector 与 SelectionKey 生命周期、OP_WRITE、有界发送队列、DirectBuffer 所有权、gather/scatter、TLS/字符解码和 event loop 拓扑，建立可恢复、可测量的 Java 网络 I/O 协议。
 date: 2026-08-27T18:02:54+08:00
-updated: 2026-08-27T18:02:54+08:00
+updated: 2026-08-27T20:02:00+08:00
 tags:
   - Java NIO
   - Selector
@@ -20,7 +20,7 @@ draft: false
 
 Java NIO 暴露的是一组**非阻塞字节流原语**。它告诉应用某个操作现在可能推进，并通过 `ByteBuffer.position()` 记录已经消费或提交了多少字节；它不替应用定义消息边界、发送队列上限、慢对端策略，也不把写入本机 socket send buffer 升格为对端业务完成。低延迟实现真正要维护的是一条跨层协议：
 
-这是“Java 低延迟工程”的 **Chapter 07**。上一章 [Java 线程为什么没有继续运行：Monitor、AQS、park/unpark 与调度延迟](/signal-grid-blog/posts/java-thread-contention-aqs-park-unpark-scheduling/) 已经把等待拆成锁协议、唤醒许可与调度推进；本章沿着 event-loop 线程继续向外追踪字节怎样进入内核、怎样形成排队以及应用如何把压力反向传播。下一章 [Linux 低延迟运行时](/signal-grid-blog/posts/linux-low-latency-runtime-cpu-affinity-numa-irq-rss-rps-xps-busy-poll/) 再把同一条时间线推进到 IRQ、NAPI、RSS/RPS/XPS、CPU affinity 与 NUMA。
+这是“Java 低延迟工程”的 **Chapter 08**。上一章 [Java 线程为什么没有继续运行：Monitor、AQS、park/unpark 与调度延迟](/signal-grid-blog/posts/java-thread-contention-aqs-park-unpark-scheduling/) 已经把等待拆成锁协议、唤醒许可与调度推进；本章沿着 event-loop 线程继续向外追踪字节怎样进入内核、怎样形成排队以及应用如何把压力反向传播。下一章 [从 Readiness 到 Completion](/signal-grid-blog/posts/java-epoll-io-uring-zero-copy-completion-backpressure/) 再比较 epoll 与 io_uring，拆开内核完成、零拷贝和多级在途队列各自的保证。
 
 ```mermaid
 flowchart LR
@@ -37,7 +37,7 @@ flowchart LR
   KERNEL <--> PEER["对端协议与业务"]
 ```
 
-本文以 **Java SE 25、OpenJDK 25 GA 与 Linux 的 stream socket** 为边界。Java API 的规范合同优先；`EPollSelectorImpl`、`eventfd`、`readv/writev` 等只描述该版本 OpenJDK 在 Linux 上的实现路径，不是其他 JDK、操作系统或未来版本必须维持的形状。本文也不重写 RSS、IRQ、NAPI 与 NIC queue：它们属于后续的 [Linux 低延迟运行时](/signal-grid-blog/posts/linux-low-latency-runtime-cpu-affinity-numa-irq-rss-rps-xps-busy-poll/)。Aeron 的可靠 UDP、流控和重传是另一套传输协议，也不能由这里的 TCP/NIO 结论代替。
+本文以 **Java SE 25、OpenJDK 25 GA 与 Linux 的 stream socket** 为边界。Java API 的规范合同优先；`EPollSelectorImpl`、`eventfd`、`readv/writev` 等只描述该版本 OpenJDK 在 Linux 上的实现路径，不是其他 JDK、操作系统或未来版本必须维持的形状。本文不展开 io_uring 的 submission/completion 协议、registered buffer 与内核零拷贝，它们属于下一章；也不重写 RSS、IRQ、NAPI 与 NIC queue，它们属于再后面的 [Linux 低延迟运行时](/signal-grid-blog/posts/linux-low-latency-runtime-cpu-affinity-numa-irq-rss-rps-xps-busy-poll/)。Aeron 的可靠 UDP、流控和重传是另一套传输协议，也不能由这里的 TCP/NIO 结论代替。
 
 ## 1. Readiness 只是“现在值得尝试”，不是操作完成
 
@@ -693,7 +693,7 @@ JFR 的 `jdk.SocketRead` / `jdk.SocketWrite` 可以帮助定位耗时 socket I/O
 4. direct buffer、gather/scatter、TLS 和 codec 都只改变某一层的数据移动或状态机，不能取消 partial I/O、生命周期和对端确认边界。
 5. 因此，低延迟网络 I/O 的保证不是“用了 epoll”或“用了 DirectBuffer”，而是每一字节只被消费一次、每一 buffer 始终有唯一 owner、每一队列有硬上限、每一种断线都有可观察结果，并能在真实饱和与故障下重复证明。
 
-下一章 [Linux 低延迟运行时](/signal-grid-blog/posts/linux-low-latency-runtime-cpu-affinity-numa-irq-rss-rps-xps-busy-poll/) 会从本机 socket queue 继续向下，解释 RSS、IRQ、NAPI、RPS/RFS、XPS、CPU affinity 与 NUMA 怎样决定这些 syscall 最终由谁推进、在哪里排队，以及为何 Java 层正确的背压仍可能被错误的内核数据路径放大。
+下一章 [从 Readiness 到 Completion](/signal-grid-blog/posts/java-epoll-io-uring-zero-copy-completion-backpressure/) 会从本机 socket 与 syscall 边界继续向下，比较 epoll readiness 与 io_uring completion，说明零拷贝究竟省掉哪一次搬运，以及应用队列、SQ、in-flight、CQ 与 socket queue 为什么必须共同背压。再下一章 [Linux 低延迟运行时](/signal-grid-blog/posts/linux-low-latency-runtime-cpu-affinity-numa-irq-rss-rps-xps-busy-poll/) 才把这条路径推进到 RSS、IRQ、NAPI、RPS/RFS、XPS、CPU affinity 与 NUMA。
 
 ### 一手资料
 
