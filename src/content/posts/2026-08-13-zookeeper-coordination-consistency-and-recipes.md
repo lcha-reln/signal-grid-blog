@@ -2,7 +2,7 @@
 title: "ZooKeeper 3.9：从 znode、Watch 到 ZAB、一致性与工程配方"
 description: "以 Apache ZooKeeper 3.9.5 为基线，从数据模型、Session、Watch 和 ZAB 写入链路出发，讲清读写一致性、版本事务、选主与锁、fencing、安全、部署和故障排查。"
 date: 2026-08-13T19:30:00+08:00
-updated: 2026-08-17T17:45:00+08:00
+updated: 2026-08-27T16:08:00+08:00
 tags:
   - ZooKeeper
   - ZAB
@@ -24,7 +24,7 @@ draft: false
 
 文章会使用原生 API 解释语义，再用 **Apache Curator 5.9.0** 展示工程写法。ZooKeeper 3.9 的源码仍维持 Java 8 字节码兼容基线；为让示例更清晰，本文代码采用 Java 17 的语法表达，生产环境应选择仍受维护的 LTS JDK。Curator 能替我们处理连接、重试和成熟 recipe，但它不能替业务定义 fencing、幂等、结果未知和降级策略。
 
-本文是“有状态系统可靠性”学习路径的 Chapter 06。前面先由 [WAL](/signal-grid-blog/posts/write-ahead-log-durability-and-crash-recovery/) 建立本地持久前缀，通过 [Chapter 03：分布式时间](/signal-grid-blog/posts/distributed-systems-time-clocks-ordering-and-leases/) 理解 Session timeout、Lease 与 fencing 的时间边界，经 [Chapter 04：一致性模型](/signal-grid-blog/posts/consistency-models-linearizability-serializability-and-real-time-order/) 学会区分普通读取、同步屏障与线性一致合同，再由 [Chapter 05：Raft 论文精读](/signal-grid-blog/posts/raft-consensus-leader-election-log-replication-and-safety/) 建立多数派、任期、复制日志和安全性证明的通用框架；本章转向 ZooKeeper 实际暴露的 znode、Session、Watch、ACL 与 recipe。ZAB 与 Raft 不是同一个协议。
+本文是“有状态系统可靠性”学习路径的 Chapter 07。前面先由 [WAL](/signal-grid-blog/posts/write-ahead-log-durability-and-crash-recovery/) 建立本地持久前缀，通过 [Chapter 03：分布式时间](/signal-grid-blog/posts/distributed-systems-time-clocks-ordering-and-leases/) 理解 Session timeout、Lease 与 fencing 的时间边界，经 [Chapter 04：一致性模型](/signal-grid-blog/posts/consistency-models-linearizability-serializability-and-real-time-order/) 学会区分读取合同，再由 [Chapter 05：复制协议设计空间](/signal-grid-blog/posts/replication-protocol-design-space-primary-backup-quorum-chain-smr/)与 [Chapter 06：Raft 论文精读](/signal-grid-blog/posts/raft-consensus-leader-election-log-replication-and-safety/) 建立复制路径、多数派、任期和日志安全性的通用框架；本章转向 ZooKeeper 实际暴露的 znode、Session、Watch、ACL 与 recipe。ZAB 与 Raft 不是同一个协议。
 
 ## 1. ZooKeeper 解决的不是“存数据”，而是“协调决定”
 
@@ -94,16 +94,16 @@ zooKeeper.setData("/apps/order-service/config", next, stat.getVersion());
 
 常用字段不是装饰信息：
 
-| 字段 | 含义 | 常见用途 |
-| --- | --- | --- |
-| `czxid` | 创建该 znode 的事务 zxid | 判断创建顺序、审计 |
-| `mzxid` | 最后修改数据的事务 zxid | 比较数据快照新旧 |
-| `pzxid` | 最后修改子节点集合的事务 zxid | 判断成员列表是否变化 |
-| `version` | 数据修改次数 | `setData` / `delete` 条件更新 |
-| `cversion` | 子节点集合修改次数 | 检测目录结构变化 |
-| `aversion` | ACL 修改次数 | 条件化权限维护 |
-| `ephemeralOwner` | 普通临时节点通常是 Session ID；扩展节点类型可能使用特殊标记 | 追踪生命周期类型与临时所有权 |
-| `dataLength` / `numChildren` | 数据长度与直接子节点数 | 容量与异常检查 |
+| 字段                         | 含义                                                        | 常见用途                      |
+| ---------------------------- | ----------------------------------------------------------- | ----------------------------- |
+| `czxid`                      | 创建该 znode 的事务 zxid                                    | 判断创建顺序、审计            |
+| `mzxid`                      | 最后修改数据的事务 zxid                                     | 比较数据快照新旧              |
+| `pzxid`                      | 最后修改子节点集合的事务 zxid                               | 判断成员列表是否变化          |
+| `version`                    | 数据修改次数                                                | `setData` / `delete` 条件更新 |
+| `cversion`                   | 子节点集合修改次数                                          | 检测目录结构变化              |
+| `aversion`                   | ACL 修改次数                                                | 条件化权限维护                |
+| `ephemeralOwner`             | 普通临时节点通常是 Session ID；扩展节点类型可能使用特殊标记 | 追踪生命周期类型与临时所有权  |
+| `dataLength` / `numChildren` | 数据长度与直接子节点数                                      | 容量与异常检查                |
 
 `zxid` 是 ZooKeeper 全局写入顺序；`version` 只在单个 znode 内递增。不要把 `/a` 的 version 7 与 `/b` 的 version 9 当成全局先后关系。
 
@@ -111,15 +111,15 @@ zooKeeper.setData("/apps/order-service/config", next, stat.getVersion());
 
 `CreateMode` 有 7 个可选组合，不宜把 `SEQUENTIAL` 误解成与 persistent、ephemeral 并列的一种生命周期：
 
-| 创建模式 | 生命周期 | 适合 | 边界 |
-| --- | --- | --- | --- |
-| `PERSISTENT` | 显式删除 | 配置、命名空间、元数据 | 不会因客户端退出自动清理 |
-| `EPHEMERAL` | 所属 Session 结束后删除 | 成员、存活声明 | 不能拥有子节点 |
-| `PERSISTENT_SEQUENTIAL` | 显式删除，名称带父节点内序号 | 低频有序任务、审计条目 | 失败恢复和积压清理必须另行设计 |
-| `EPHEMERAL_SEQUENTIAL` | Session 结束后删除，名称带序号 | 选举、锁的候选队列 | 不能拥有子节点；不是持久任务 |
-| `CONTAINER` | 最后一个子节点删除后，未来可能被服务端清理 | recipe 的父路径 | 清理不是即时承诺，创建子节点要处理 `NoNode` |
-| `PERSISTENT_WITH_TTL` | 无子节点且一段时间未修改后成为清理候选 | 低频租约式元数据 | 默认禁用，清理也不是精确计时器 |
-| `PERSISTENT_SEQUENTIAL_WITH_TTL` | 持久顺序节点满足 TTL 条件后成为清理候选 | 有时限的低频有序元数据 | 同时继承顺序号与 TTL 的全部边界 |
+| 创建模式                         | 生命周期                                   | 适合                   | 边界                                        |
+| -------------------------------- | ------------------------------------------ | ---------------------- | ------------------------------------------- |
+| `PERSISTENT`                     | 显式删除                                   | 配置、命名空间、元数据 | 不会因客户端退出自动清理                    |
+| `EPHEMERAL`                      | 所属 Session 结束后删除                    | 成员、存活声明         | 不能拥有子节点                              |
+| `PERSISTENT_SEQUENTIAL`          | 显式删除，名称带父节点内序号               | 低频有序任务、审计条目 | 失败恢复和积压清理必须另行设计              |
+| `EPHEMERAL_SEQUENTIAL`           | Session 结束后删除，名称带序号             | 选举、锁的候选队列     | 不能拥有子节点；不是持久任务                |
+| `CONTAINER`                      | 最后一个子节点删除后，未来可能被服务端清理 | recipe 的父路径        | 清理不是即时承诺，创建子节点要处理 `NoNode` |
+| `PERSISTENT_WITH_TTL`            | 无子节点且一段时间未修改后成为清理候选     | 低频租约式元数据       | 默认禁用，清理也不是精确计时器              |
+| `PERSISTENT_SEQUENTIAL_WITH_TTL` | 持久顺序节点满足 TTL 条件后成为清理候选    | 有时限的低频有序元数据 | 同时继承顺序号与 TTL 的全部边界             |
 
 顺序节点后缀是父节点局部的十位补零计数，例如 `lock-0000000042`。它适合构造队列顺序，不等于永不重复的全局业务 ID：同一父目录下其他子节点的创建也会推进计数，已创建节点随后删除会让现存列表出现空洞；`getChildren()` 的返回顺序也没有保证，客户端必须解析完整后缀再排序。父路径重建或 32 位计数溢出还会破坏“永远递增”的假设。TTL 节点依赖 `zookeeper.extendedTypesEnabled=true`，默认关闭；“到 TTL 时刻立即删除”也不是其保证。
 
@@ -174,13 +174,13 @@ ZAB 与 [Raft](/signal-grid-blog/posts/raft-consensus-leader-election-log-replic
 
 网上最常见的错误是：“ZooKeeper 是 CP，所以每次读都是强一致。”CAP 分类无法替代操作级语义。
 
-| 操作 | 核心保证 | 容易误解的地方 |
-| --- | --- | --- |
-| 写 | 线性化、全序、原子应用 | 连接失败时客户端可能不知道是否成功 |
-| 同一 Session 的操作 | 保持程序顺序，切换 server 不倒退到更旧视图 | 不代表不同客户端同时看到同一版本 |
-| 普通读 | 本地副本回答，顺序一致但可能陈旧 | 不是 quorum read |
-| `sync` 后读 | 把连接 server 的视图推进到 Leader 已知前缀 | 当前实现仍不是严格 quorum barrier |
-| 成功的条件写 | 对指定 version 原子比较并更新 | 只覆盖该事务涉及的 ZooKeeper 状态 |
+| 操作                | 核心保证                                   | 容易误解的地方                     |
+| ------------------- | ------------------------------------------ | ---------------------------------- |
+| 写                  | 线性化、全序、原子应用                     | 连接失败时客户端可能不知道是否成功 |
+| 同一 Session 的操作 | 保持程序顺序，切换 server 不倒退到更旧视图 | 不代表不同客户端同时看到同一版本   |
+| 普通读              | 本地副本回答，顺序一致但可能陈旧           | 不是 quorum read                   |
+| `sync` 后读         | 把连接 server 的视图推进到 Leader 已知前缀 | 当前实现仍不是严格 quorum barrier  |
+| 成功的条件写        | 对指定 version 原子比较并更新              | 只覆盖该事务涉及的 ZooKeeper 状态  |
 
 ```mermaid
 sequenceDiagram
@@ -321,13 +321,13 @@ sequenceDiagram
 
 不同操作的恢复方式不同：
 
-| 操作 | 结果未知后怎样收敛 |
-| --- | --- |
-| 固定路径 `create` | `exists/getData` 检查是否已是期望内容与请求 ID |
-| `setData(version)` | 读取新值和 version；判断原写是否已发生，不能只重复旧 version |
-| `delete(version)` | `NoNode` 可能表示原删除已成功，也可能是别人删除，需业务身份 |
-| 顺序节点 `create` | 在节点数据/前缀中写 GUID，枚举并找回属于本请求的节点；Curator recipe 可用 protection 模式封装这一步 |
-| `multi` | 读取所有受影响状态，使用事务 ID 或版本条件判断整组是否提交 |
+| 操作               | 结果未知后怎样收敛                                                                                  |
+| ------------------ | --------------------------------------------------------------------------------------------------- |
+| 固定路径 `create`  | `exists/getData` 检查是否已是期望内容与请求 ID                                                      |
+| `setData(version)` | 读取新值和 version；判断原写是否已发生，不能只重复旧 version                                        |
+| `delete(version)`  | `NoNode` 可能表示原删除已成功，也可能是别人删除，需业务身份                                         |
+| 顺序节点 `create`  | 在节点数据/前缀中写 GUID，枚举并找回属于本请求的节点；Curator recipe 可用 protection 模式封装这一步 |
+| `multi`            | 读取所有受影响状态，使用事务 ID 或版本条件判断整组是否提交                                          |
 
 成熟库可以封装 recipe 的恢复，但不能凭空推导业务意图。请求中最好携带稳定的 operation ID，而不是依赖“重试三次大概率成功”。
 
@@ -669,14 +669,14 @@ ZooKeeper 官方目前同时维护 3.8 与 3.9 两条线。升级前应阅读目
 
 3.6 起的新 Metrics System 可以通过内置 Prometheus provider 导出。不要原样照搬官方示例阈值；应为自己的基线建立以下仪表盘：
 
-| 维度 | 观察什么 | 常见含义 |
-| --- | --- | --- |
-| 请求 | 吞吐、p50/p95/p99、outstanding、throttle | 入口压力或处理器拥塞 |
-| 磁盘 | fsync 延迟、snapshot 时间、WAL/快照大小、剩余空间 | 写长尾、恢复风险 |
-| quorum | Leader 变化、follower sync、zxid 差距、ZAB phase | 网络分区或落后副本 |
-| Session | 连接数、过期数、认证失败、revalidation | 客户端抖动或配置错误 |
-| Watch | Watch 总数、触发率、递归 Watch 覆盖 | 内存压力、惊群 |
-| JVM | GC pause、heap、direct memory、线程和 fd | Session 误过期或进程失稳 |
+| 维度    | 观察什么                                          | 常见含义                 |
+| ------- | ------------------------------------------------- | ------------------------ |
+| 请求    | 吞吐、p50/p95/p99、outstanding、throttle          | 入口压力或处理器拥塞     |
+| 磁盘    | fsync 延迟、snapshot 时间、WAL/快照大小、剩余空间 | 写长尾、恢复风险         |
+| quorum  | Leader 变化、follower sync、zxid 差距、ZAB phase  | 网络分区或落后副本       |
+| Session | 连接数、过期数、认证失败、revalidation            | 客户端抖动或配置错误     |
+| Watch   | Watch 总数、触发率、递归 Watch 覆盖               | 内存压力、惊群           |
+| JVM     | GC pause、heap、direct memory、线程和 fd          | Session 误过期或进程失稳 |
 
 Prometheus provider 示例：
 

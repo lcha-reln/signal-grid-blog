@@ -2,7 +2,7 @@
 title: "跨系统副作用：结果未知、幂等、Outbox/Inbox、2PC 与 Saga"
 description: "从结果未知与双写故障矩阵出发，讲清稳定幂等键、去重生命周期、Transactional Outbox/Inbox、CDC 重复、2PC 不确定事务、Saga 补偿，以及外部 exactly-once 的参与边界。"
 date: 2026-08-18T14:15:23+08:00
-updated: 2026-08-18T14:15:23+08:00
+updated: 2026-08-27T16:08:00+08:00
 tags:
   - 分布式系统
   - 幂等
@@ -22,7 +22,7 @@ draft: false
 
 本文的核心结论是：跨系统可靠性不是寻找一个“绝不重复”的传输层，而是让每次业务意图具有稳定身份，把本地状态与待办事实放进可恢复边界，并让最终产生副作用的系统参与去重、事务或补偿。Outbox/Inbox、2PC 与 Saga 是三种不同取舍，不能互相冒充。
 
-本文是“有状态系统可靠性”学习路径中应用级连续性之后的一章。建议先读 [WAL 到底保证什么](/signal-grid-blog/posts/write-ahead-log-durability-and-crash-recovery/) 理解本地提交与 ACK，[分布式时间](/signal-grid-blog/posts/distributed-systems-time-clocks-ordering-and-leases/) 理解 timeout 只能产生怀疑，[Raft 论文精读](/signal-grid-blog/posts/raft-consensus-leader-election-log-replication-and-safety/) 理解提交后响应丢失，以及 [Kafka 4.3 深度指南](/signal-grid-blog/posts/kafka-distributed-log-kraft-consumers-and-transactions/) 和 [分布式消息序列号](/signal-grid-blog/posts/distributed-message-sequencing/) 中的 offset、eventId 与恢复位置边界。
+本文是“有状态系统可靠性”学习路径的 Chapter 10。建议先读 [WAL 到底保证什么](/signal-grid-blog/posts/write-ahead-log-durability-and-crash-recovery/) 理解本地提交与 ACK，[分布式时间](/signal-grid-blog/posts/distributed-systems-time-clocks-ordering-and-leases/) 理解 timeout 只能产生怀疑，[Raft 论文精读](/signal-grid-blog/posts/raft-consensus-leader-election-log-replication-and-safety/) 理解提交后响应丢失，以及 [Kafka 4.3 深度指南](/signal-grid-blog/posts/kafka-distributed-log-kraft-consumers-and-transactions/) 和 [分布式消息序列号](/signal-grid-blog/posts/distributed-message-sequencing/) 中的 offset、eventId 与恢复位置边界。
 
 ## 结果未知是跨系统副作用的起点
 

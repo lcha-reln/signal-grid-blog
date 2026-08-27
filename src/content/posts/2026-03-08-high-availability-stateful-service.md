@@ -2,7 +2,7 @@
 title: "有状态服务的高可用架构：热备复制、选主与快照恢复"
 description: "以 Kafka 分区日志和双节点热备为主线，拆解确定性执行、Leader 选举与 fencing、状态校验、快照恢复和输出持久化，并明确 RTO、RPO 与一致性边界。"
 date: 2026-03-08T14:43:51+08:00
-updated: 2026-08-17T17:45:00+08:00
+updated: 2026-08-27T16:08:00+08:00
 categories:
   - 高可用架构
 tags:
@@ -26,7 +26,7 @@ draft: false
 
 > 这不是仅靠几项中间件配置就能获得的“强一致方案”。一致性来自完整协议：确定性执行、按分区记录的恢复位点、Leader epoch、下游 fencing、原子快照，以及可重复验证的故障切换流程。
 
-本文是学习路径的架构总览。下一章 [《WAL 到底保证什么》](/signal-grid-blog/posts/write-ahead-log-durability-and-crash-recovery/) 会先解释单机怎样用日志、持久化屏障和恢复算法建立可恢复前缀；Chapter 03 的 [《分布式时间》](/signal-grid-blog/posts/distributed-systems-time-clocks-ordering-and-leases/) 再拆开墙钟、因果顺序、超时与 Lease；Chapter 04 用 [operation history 精确定义一致性合同](/signal-grid-blog/posts/consistency-models-linearizability-serializability-and-real-time-order/)，随后 Chapter 05 的 [Raft 论文精读](/signal-grid-blog/posts/raft-consensus-leader-election-log-replication-and-safety/) 才把本地日志扩展为多数副本共同认可的提交前缀。本文的双节点热备参考模型本身不是 Raft 集群。
+本文是学习路径的架构总览。下一章 [《WAL 到底保证什么》](/signal-grid-blog/posts/write-ahead-log-durability-and-crash-recovery/) 会先解释单机怎样用日志、持久化屏障和恢复算法建立可恢复前缀；Chapter 03 的 [《分布式时间》](/signal-grid-blog/posts/distributed-systems-time-clocks-ordering-and-leases/) 再拆开墙钟、因果顺序、超时与 Lease；Chapter 04 用 [operation history 精确定义一致性合同](/signal-grid-blog/posts/consistency-models-linearizability-serializability-and-real-time-order/)；Chapter 05 的[复制协议设计空间](/signal-grid-blog/posts/replication-protocol-design-space-primary-backup-quorum-chain-smr/)比较同步、异步、Quorum、Chain Replication 与状态机复制；随后 Chapter 06 的 [Raft 论文精读](/signal-grid-blog/posts/raft-consensus-leader-election-log-replication-and-safety/) 才深入一种多数派日志协议。本文的双节点热备参考模型本身不是 Raft 集群。
 
 ## 先定义故障边界和目标
 
@@ -207,11 +207,11 @@ flowchart TB
 
 Redis 心跳适合监控“节点最近是否报告存活”，但不适合授予写权限。系统至少有三类不同信号：
 
-| 信号 | 用途 | 能否决定写权限 |
-| --- | --- | --- |
-| ZooKeeper connection/leadership | 判断协调状态 | 只能作为协议的一部分 |
-| Application readiness | 判断状态、版本和依赖是否已就绪 | 路由准入依据 |
-| Redis/Prometheus heartbeat | 告警、容量和趋势观测 | 不能 |
+| 信号                            | 用途                           | 能否决定写权限       |
+| ------------------------------- | ------------------------------ | -------------------- |
+| ZooKeeper connection/leadership | 判断协调状态                   | 只能作为协议的一部分 |
+| Application readiness           | 判断状态、版本和依赖是否已就绪 | 路由准入依据         |
+| Redis/Prometheus heartbeat      | 告警、容量和趋势观测           | 不能                 |
 
 如果每 5 秒写一次心跳、TTL 为 120 秒，而检查任务每 120 秒才读取一次，最坏检测时间会接近 240 秒。任何阈值都应从目标检测时间、实际 GC 暂停、网络抖动和误报成本推导，并通过演练验证。
 
@@ -255,14 +255,14 @@ logStartOffset <= snapshot.nextOffset <= highWatermark
 
 下面这些配置方向合理，但不能替代端到端协议：
 
-| 配置 | 正确理解 |
-| --- | --- |
-| `acks=all` | 等待当前 ISR；还需为 topic 设置合适的 replication factor 与 `min.insync.replicas` |
-| `enable.idempotence=true` | 避免 producer retry 在 Kafka log 内产生重复，不等于业务处理 exactly-once |
-| `max.in.flight.requests.per.connection<=5` | 开启幂等时可保持顺序；固定为 1 通常不是必需的 |
-| `delivery.timeout.ms` | 给重试设置总时间边界；`retries=2147483647` 也不是无限等待 |
-| `enable.auto.commit=false` | 允许应用控制提交时机，但手动提交本身不提供原子处理 |
-| `auto.offset.reset=earliest` | 只在没有有效 offset 或旧位置已被清理时生效，不是正常恢复策略 |
+| 配置                                       | 正确理解                                                                          |
+| ------------------------------------------ | --------------------------------------------------------------------------------- |
+| `acks=all`                                 | 等待当前 ISR；还需为 topic 设置合适的 replication factor 与 `min.insync.replicas` |
+| `enable.idempotence=true`                  | 避免 producer retry 在 Kafka log 内产生重复，不等于业务处理 exactly-once          |
+| `max.in.flight.requests.per.connection<=5` | 开启幂等时可保持顺序；固定为 1 通常不是必需的                                     |
+| `delivery.timeout.ms`                      | 给重试设置总时间边界；`retries=2147483647` 也不是无限等待                         |
+| `enable.auto.commit=false`                 | 允许应用控制提交时机，但手动提交本身不提供原子处理                                |
+| `auto.offset.reset=earliest`               | 只在没有有效 offset 或旧位置已被清理时生效，不是正常恢复策略                      |
 
 `acks=all` 也不自动等于“多数副本确认”。例如 replication factor 为 3 时，通常还要设置 `min.insync.replicas=2`，并明确在 ISR 不足时宁可拒绝写入。
 

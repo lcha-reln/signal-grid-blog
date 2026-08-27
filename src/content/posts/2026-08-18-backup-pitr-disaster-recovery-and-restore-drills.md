@@ -2,7 +2,7 @@
 title: "备份不是副本：PITR、RPO/RTO、灾难恢复与恢复演练"
 description: "从威胁模型出发，区分在线副本、异地镜像与隔离备份，推导 base backup、连续日志、timeline、PITR、多组件一致恢复点、fencing、外部副作用对账，以及如何用恢复演练证明 RPO/RTO。"
 date: 2026-08-18T14:22:06+08:00
-updated: 2026-08-18T14:22:06+08:00
+updated: 2026-08-27T16:08:00+08:00
 tags:
   - 备份恢复
   - PITR
@@ -37,7 +37,7 @@ Leader 把一条误删除命令正确复制给两个 Follower，三个副本会�
   → 在目标时间内完成的恢复演练证据
 ```
 
-本文承接 [WAL 到底保证什么](/signal-grid-blog/posts/write-ahead-log-durability-and-crash-recovery/) 与[分布式快照与一致检查点](/signal-grid-blog/posts/distributed-snapshots-consistent-checkpoints-barriers-recovery-cursors/)。前者解释单机崩溃后怎样重放日志，后者解释状态与输入 cursor 怎样形成 consistent cut；本文把故障范围扩展到磁盘永久损坏、整站丢失、误操作、静默损坏、凭证失陷和勒索软件。ZooKeeper 与 Kafka 只作为产品案例，协议结论保持通用。
+本文是“有状态系统可靠性”学习路径的 Chapter 14，承接 [WAL 到底保证什么](/signal-grid-blog/posts/write-ahead-log-durability-and-crash-recovery/) 与[分布式快照与一致检查点](/signal-grid-blog/posts/distributed-snapshots-consistent-checkpoints-barriers-recovery-cursors/)。前者解释单机崩溃后怎样重放日志，后者解释状态与输入 cursor 怎样形成 consistent cut；本文把故障范围扩展到磁盘永久损坏、整站丢失、误操作、静默损坏、凭证失陷和勒索软件。ZooKeeper 与 Kafka 只作为产品案例，协议结论保持通用。
 
 ## 1. 先画威胁模型：Replica、DR Copy 与 Backup 回答不同问题
 

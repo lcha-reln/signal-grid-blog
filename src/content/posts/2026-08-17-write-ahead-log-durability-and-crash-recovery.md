@@ -2,7 +2,7 @@
 title: "WAL 到底保证什么：从 Write-Ahead Rule、fsync 到崩溃恢复"
 description: "从故障模型出发，拆解 WAL 的先行写入规则与 write、force、ack 的持久化边界，讲清 ARIES 恢复、group commit、checkpoint、日志截断，以及 WAL 不负责的复制和 exactly-once。"
 date: 2026-08-17T10:30:00+08:00
-updated: 2026-08-17T17:45:00+08:00
+updated: 2026-08-27T16:08:00+08:00
 tags:
   - WAL
   - Write-Ahead Logging
@@ -24,7 +24,7 @@ draft: false
 
 WAL（Write-Ahead Logging，常译“预写日志”）真正建立的是一组先后约束：在允许数据页进入持久介质之前，恢复所需的日志必须先稳定；在向调用方承诺“已持久提交”之前，提交记录及其依赖的日志必须先稳定。只有日志格式、日志序列号（Log Sequence Number，LSN）、同步屏障、确认策略、恢复算法、checkpoint 和保留策略一起闭环，这些顺序才会变成可验证的原子性与持久性。
 
-本文是“有状态系统可靠性”学习路径的 Chapter 02。建议先读 [Chapter 01：有状态服务的高可用架构](/signal-grid-blog/posts/high-availability-stateful-service/) 建立故障模型、RTO/RPO 与恢复全景；下一章 [Chapter 03：分布式时间](/signal-grid-blog/posts/distributed-systems-time-clocks-ordering-and-leases/) 会先区分物理时间、逻辑顺序、超时与 Lease，再由 [Chapter 04：一致性模型](/signal-grid-blog/posts/consistency-models-linearizability-serializability-and-real-time-order/) 定义客户端能够观察到的 history；随后 [Chapter 05：Raft 论文精读](/signal-grid-blog/posts/raft-consensus-leader-election-log-replication-and-safety/) 才把这里的**本地持久前缀**扩展为多个节点共同认可的**复制提交前缀**。
+本文是“有状态系统可靠性”学习路径的 Chapter 02。建议先读 [Chapter 01：有状态服务的高可用架构](/signal-grid-blog/posts/high-availability-stateful-service/) 建立故障模型、RTO/RPO 与恢复全景；下一章 [Chapter 03：分布式时间](/signal-grid-blog/posts/distributed-systems-time-clocks-ordering-and-leases/) 会先区分物理时间、逻辑顺序、超时与 Lease，再由 [Chapter 04：一致性模型](/signal-grid-blog/posts/consistency-models-linearizability-serializability-and-real-time-order/) 定义客户端能够观察到的 history；[Chapter 05：复制协议的设计空间](/signal-grid-blog/posts/replication-protocol-design-space-primary-backup-quorum-chain-smr/)先比较哪些副本、确认和读取路径能够建立复制承诺，随后 [Chapter 06：Raft 论文精读](/signal-grid-blog/posts/raft-consensus-leader-election-log-replication-and-safety/) 再深入一种多数派日志协议。
 
 本文以 [ARIES 原论文](https://research.ibm.com/publications/aries-a-transaction-recovery-method-supporting-fine-granularity-locking-and-partial-rollbacks-using-write-ahead-logging) 解释经典事务恢复，以 [PostgreSQL 18 WAL 文档](https://www.postgresql.org/docs/18/wal-intro.html) 展示现代产品的承诺层级，再用 JDK 25 与 Linux/POSIX 的官方契约落到 Java 工程。ARIES 是一种重要算法，不是所有 WAL 产品的统一内部实现；PostgreSQL、Kafka、Raft 日志也不能彼此直接套用。
 
@@ -66,15 +66,15 @@ WAL 本身通常不保证：
 
 同一个字节可能依次存在于 Java 堆外缓冲、内核 page cache、控制器缓存、设备缓存和非易失介质。不同故障会清掉不同层。
 
-| 故障 | 仍可能保留什么 | 单份本地 WAL 需要的边界 |
-| --- | --- | --- |
-| 线程异常或业务回滚 | 进程与 OS 都在 | 正确事务语义与 undo/忽略策略 |
-| JVM/进程崩溃 | 内核 page cache 通常仍在 | 不能把“通常”当 durable ACK；仍应按承诺 force |
-| 内核崩溃或重启 | page cache 丢失 | 成功穿过 OS 同步屏障 |
-| 整机断电 | 易失控制器/设备缓存也可能丢 | 文件系统、驱动、设备正确执行 flush / Force Unit Access（FUA） |
-| 单盘永久损坏 | 本地文件可能全部消失 | 冗余副本、备份或介质恢复，不是单份 WAL |
-| 静默损坏 | 文件还在但字节错误 | checksum 检测，加冗余才能修复 |
-| 节点或机房永久丢失 | 本地介质不可访问 | 复制、异地备份和可演练恢复 |
+| 故障               | 仍可能保留什么              | 单份本地 WAL 需要的边界                                       |
+| ------------------ | --------------------------- | ------------------------------------------------------------- |
+| 线程异常或业务回滚 | 进程与 OS 都在              | 正确事务语义与 undo/忽略策略                                  |
+| JVM/进程崩溃       | 内核 page cache 通常仍在    | 不能把“通常”当 durable ACK；仍应按承诺 force                  |
+| 内核崩溃或重启     | page cache 丢失             | 成功穿过 OS 同步屏障                                          |
+| 整机断电           | 易失控制器/设备缓存也可能丢 | 文件系统、驱动、设备正确执行 flush / Force Unit Access（FUA） |
+| 单盘永久损坏       | 本地文件可能全部消失        | 冗余副本、备份或介质恢复，不是单份 WAL                        |
+| 静默损坏           | 文件还在但字节错误          | checksum 检测，加冗余才能修复                                 |
+| 节点或机房永久丢失 | 本地介质不可访问            | 复制、异地备份和可演练恢复                                    |
 
 ```mermaid
 flowchart LR
@@ -236,11 +236,11 @@ COMMIT(txn-7)
 
 日志“记录什么”和“能做什么”是两个维度：
 
-| 维度 | 常见选择 | 含义 |
-| --- | --- | --- |
-| 恢复方向 | redo-only / undo-only / undo-redo | 能恢复已提交变化、撤销未提交变化，或两者兼具 |
-| 内容表达 | before/after image / value / operation | 记录整块、字段值，或“字段加 5”一类操作 |
-| 定位方式 | page-oriented / logical | 直接定位页，或按 key/业务对象重新定位 |
+| 维度     | 常见选择                               | 含义                                         |
+| -------- | -------------------------------------- | -------------------------------------------- |
+| 恢复方向 | redo-only / undo-only / undo-redo      | 能恢复已提交变化、撤销未提交变化，或两者兼具 |
+| 内容表达 | before/after image / value / operation | 记录整块、字段值，或“字段加 5”一类操作       |
+| 定位方式 | page-oriented / logical                | 直接定位页，或按 key/业务对象重新定位        |
 
 后来的教材常把“物理定位到页、页内记录逻辑变化”的组合概括为 **physiological logging**。但不要把这个词、redo/undo 能力和 logical/physical 定位压成一条由低到高的分类轴；它们解决的问题不同。
 
@@ -250,12 +250,12 @@ COMMIT(txn-7)
 
 缓冲池有两个彼此独立的策略问题：
 
-| 选择 | 允许什么 | 恢复代价 |
-| --- | --- | --- |
-| steal | 含未提交修改的页可以被换出并写盘 | 可能需要 UNDO |
-| no-steal | 含未提交修改的页不能写盘 | 减少 UNDO，但长事务会钉住大量内存 |
-| force | 提交前把事务修改的所有数据页写盘 | 减少 REDO，但提交会变成随机 I/O |
-| no-force | 提交时不要求数据页全部写盘 | 需要 REDO，换来较轻的提交热路径 |
+| 选择     | 允许什么                         | 恢复代价                          |
+| -------- | -------------------------------- | --------------------------------- |
+| steal    | 含未提交修改的页可以被换出并写盘 | 可能需要 UNDO                     |
+| no-steal | 含未提交修改的页不能写盘         | 减少 UNDO，但长事务会钉住大量内存 |
+| force    | 提交前把事务修改的所有数据页写盘 | 减少 REDO，但提交会变成随机 I/O   |
+| no-force | 提交时不要求数据页全部写盘       | 需要 REDO，换来较轻的提交热路径   |
 
 ```mermaid
 flowchart TB
@@ -280,14 +280,14 @@ flowchart TB
 
 #### 先认识几个 LSN
 
-| 名称 | 所属对象 | 回答的问题 |
-| --- | --- | --- |
-| LSN | 日志记录 | 这条记录位于日志空间哪里 |
-| pageLSN | 数据页 | 这个页已经包含到哪条更新 |
-| RecLSN | Dirty Page Table 条目 | 这个页本轮第一次变脏的位置 |
-| LastLSN | 事务表条目 | 该事务最近一条日志在哪里 |
-| PrevLSN | 日志记录 | 该事务上一条日志在哪里 |
-| UndoNxtLSN | CLR | 该事务下一条仍需撤销的日志在哪里 |
+| 名称       | 所属对象              | 回答的问题                       |
+| ---------- | --------------------- | -------------------------------- |
+| LSN        | 日志记录              | 这条记录位于日志空间哪里         |
+| pageLSN    | 数据页                | 这个页已经包含到哪条更新         |
+| RecLSN     | Dirty Page Table 条目 | 这个页本轮第一次变脏的位置       |
+| LastLSN    | 事务表条目            | 该事务最近一条日志在哪里         |
+| PrevLSN    | 日志记录              | 该事务上一条日志在哪里           |
+| UndoNxtLSN | CLR                   | 该事务下一条仍需撤销的日志在哪里 |
 
 LSN 是日志地址与恢复顺序标记，不是 wall-clock 时间，也不是跨数据库的全局业务序列号。
 
@@ -390,13 +390,13 @@ flowchart TB
 
 checkpoint、snapshot、backup 和 archive 要分开：
 
-| 机制 | 主要目标 | 单独能否恢复介质丢失 |
-| --- | --- | --- |
-| checkpoint | 缩短 crash recovery | 通常不能 |
-| snapshot / base backup | 提供完整状态基线 | 只能恢复到基线时刻 |
-| online WAL | 恢复近期崩溃 | WAL 设备丢失后不能 |
-| archived WAL | 把基线推进到后续时刻 | 必须配套可用基线 |
-| replica | 降低节点故障恢复时间 | 不是历史备份，错误也可能复制 |
+| 机制                   | 主要目标             | 单独能否恢复介质丢失         |
+| ---------------------- | -------------------- | ---------------------------- |
+| checkpoint             | 缩短 crash recovery  | 通常不能                     |
+| snapshot / base backup | 提供完整状态基线     | 只能恢复到基线时刻           |
+| online WAL             | 恢复近期崩溃         | WAL 设备丢失后不能           |
+| archived WAL           | 把基线推进到后续时刻 | 必须配套可用基线             |
+| replica                | 降低节点故障恢复时间 | 不是历史备份，错误也可能复制 |
 
 ## 4. ACK 合同、Group Commit 与 Java 持久化边界
 
@@ -443,13 +443,13 @@ PostgreSQL 的 [`commit_delay`](https://www.postgresql.org/docs/18/wal-configura
 
 下表假设 `synchronous_standby_names` 非空，且系统已选出当前同步备库。若没有同步备库配置，`remote_write`、`on` 与 `remote_apply` 都不会凭参数名自动产生远端承诺，而只剩主库本地 WAL flush；`local` 本来就不等待远端。
 
-| 模式 | 主库本地等待 | 同步备库等待 | 剩余耐久边界 |
-| --- | --- | --- | --- |
-| `off` | 不等 WAL durable flush | 不等 | 主库数据库或 OS 崩溃可丢近期成功事务 |
-| `local` | WAL durable flush | 不等 | 主库节点或其持久介质永久丢失时没有同步副本承诺 |
-| `remote_write` | WAL durable flush | 已写入备库 OS，但未必 durable | 若主库已丢失，备库又在 flush 前发生 OS 崩溃，事务仍可能丢失 |
-| `on` | WAL durable flush | durable flush | 参与承诺的主库与同步备库持久存储同时丢失或损坏 |
-| `remote_apply` | WAL durable flush | durable flush 且 replay 可见 | 耐久故障边界与 `on` 相同；额外等待可见性，但不等于外部副作用原子 |
+| 模式           | 主库本地等待           | 同步备库等待                  | 剩余耐久边界                                                     |
+| -------------- | ---------------------- | ----------------------------- | ---------------------------------------------------------------- |
+| `off`          | 不等 WAL durable flush | 不等                          | 主库数据库或 OS 崩溃可丢近期成功事务                             |
+| `local`        | WAL durable flush      | 不等                          | 主库节点或其持久介质永久丢失时没有同步副本承诺                   |
+| `remote_write` | WAL durable flush      | 已写入备库 OS，但未必 durable | 若主库已丢失，备库又在 flush 前发生 OS 崩溃，事务仍可能丢失      |
+| `on`           | WAL durable flush      | durable flush                 | 参与承诺的主库与同步备库持久存储同时丢失或损坏                   |
+| `remote_apply` | WAL durable flush      | durable flush 且 replay 可见  | 耐久故障边界与 `on` 相同；额外等待可见性，但不等于外部副作用原子 |
 
 这里最重要的不是照抄 PostgreSQL 参数，而是学会给自己的 API 命名：
 
@@ -494,7 +494,7 @@ static void writeFully(FileChannel channel, ByteBuffer src) throws IOException {
 
 #### `FileChannel.force()` 的精确边界
 
-[JDK 25 `FileChannel.force`](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/channels/FileChannel.html#force(boolean)) 规定：文件位于本地存储设备时，返回后，经该 channel 对文件作出的相关变化已经写到设备；非本地设备没有同样保证。
+[JDK 25 `FileChannel.force`](<https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/channels/FileChannel.html#force(boolean)>) 规定：文件位于本地存储设备时，返回后，经该 channel 对文件作出的相关变化已经写到设备；非本地设备没有同样保证。
 
 - `force(false)`：要求文件内容；
 - `force(true)`：还要求文件元数据；
@@ -502,7 +502,7 @@ static void writeFully(FileChannel channel, ByteBuffer src) throws IOException {
 - 它只保证经该 channel（或关联的 `FileOutputStream` / `RandomAccessFile`）作出的修改；
 - 对 mapped buffer 的修改可能刷、也可能不刷。
 
-内存映射写入必须调用 [`MappedByteBuffer.force()`](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/MappedByteBuffer.html#force())。它解决 persistence，不替代多线程可见性协议；共享映射里的结构仍需要单写者、锁或 VarHandle 等并发设计。
+内存映射写入必须调用 [`MappedByteBuffer.force()`](<https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/MappedByteBuffer.html#force()>)。它解决 persistence，不替代多线程可见性协议；共享映射里的结构仍需要单写者、锁或 VarHandle 等并发设计。
 
 #### `SYNC` / `DSYNC` 不是事务
 
@@ -812,7 +812,7 @@ WAL 不是“一个永远追加的文件”，而是一份可恢复协议的证�
 
 > WAL 保证的不是“任何东西都不丢”，而是让系统能证明：在它承诺覆盖的故障模型里，哪些变化已经不可丢，哪些变化必须撤销，崩溃后应从哪一个合法前缀继续。
 
-下一章进入 [《分布式时间》](/signal-grid-blog/posts/distributed-systems-time-clocks-ordering-and-leases/)：先解释为什么墙钟、逻辑顺序、超时与 Lease 不能互相替代；再由 [一致性模型](/signal-grid-blog/posts/consistency-models-linearizability-serializability-and-real-time-order/) 定义 history 与 API 承诺，最后用 [Raft 论文精读](/signal-grid-blog/posts/raft-consensus-leader-election-log-replication-and-safety/) 说明一份本地日志变成多份副本后，系统还需要任期、选举、日志匹配与多数派提交，才能证明这个前缀不会被未来 Leader 推翻。
+下一章进入 [《分布式时间》](/signal-grid-blog/posts/distributed-systems-time-clocks-ordering-and-leases/)：先解释为什么墙钟、逻辑顺序、超时与 Lease 不能互相替代；再由 [一致性模型](/signal-grid-blog/posts/consistency-models-linearizability-serializability-and-real-time-order/) 定义 history 与 API 承诺；随后用[复制协议设计空间](/signal-grid-blog/posts/replication-protocol-design-space-primary-backup-quorum-chain-smr/)比较多种复制和确认路径，最后由 [Raft 论文精读](/signal-grid-blog/posts/raft-consensus-leader-election-log-replication-and-safety/) 深入任期、选举、日志匹配与多数派提交。
 
 ## 官方资料
 

@@ -2,7 +2,7 @@
 title: "如何证明恢复协议真的可靠：Failpoint、确定性模拟、历史检查与故障注入"
 description: "从可证伪的恢复主张出发，讲清不变量、状态化负载、Failpoint、虚拟时间与存储、确定性调度、History Checker、trace replay，以及如何分别测量 safety、liveness、RPO 与 RTO。"
 date: 2026-08-18T14:15:00+08:00
-updated: 2026-08-18T14:15:00+08:00
+updated: 2026-08-27T16:08:00+08:00
 tags:
   - 故障注入
   - Deterministic Simulation
@@ -25,7 +25,7 @@ draft: false
 
 恢复协议的可靠性不能由故障数量证明，而要由一条完整证据链建立：**先把安全性、活性和恢复目标写成可证伪主张；再生成会触及这些主张的 workload 与 fault schedule；用可重放的执行器产生 History 和持久状态；最后由与主张同层次的 oracle 判断结果。**
 
-本文是“有状态系统可靠性”专题的 capstone。前面的 [WAL](/signal-grid-blog/posts/write-ahead-log-durability-and-crash-recovery/) 给出了本地 crash boundary，[Raft](/signal-grid-blog/posts/raft-consensus-leader-election-log-replication-and-safety/) 给出了提交前缀，[一致性模型](/signal-grid-blog/posts/consistency-models-linearizability-serializability-and-real-time-order/) 定义了合法 History，[分布式快照](/signal-grid-blog/posts/distributed-snapshots-consistent-checkpoints-barriers-recovery-cursors/) 约束状态与恢复游标，[备份与灾难恢复](/signal-grid-blog/posts/backup-pitr-disaster-recovery-and-restore-drills/) 定义 RPO/RTO，[滚动升级](/signal-grid-blog/posts/stateful-system-rolling-upgrades-protocol-snapshot-migration-safe-rollback/) 又引入 mixed-version History。本章把这些协议边界变成可执行、可重放、可审计的验证方法。
+本文是“有状态系统可靠性”专题的 Chapter 17，也是整条路径的 capstone。前面的 [WAL](/signal-grid-blog/posts/write-ahead-log-durability-and-crash-recovery/) 给出了本地 crash boundary，[Raft](/signal-grid-blog/posts/raft-consensus-leader-election-log-replication-and-safety/) 给出了提交前缀，[一致性模型](/signal-grid-blog/posts/consistency-models-linearizability-serializability-and-real-time-order/) 定义了合法 History，[分布式快照](/signal-grid-blog/posts/distributed-snapshots-consistent-checkpoints-barriers-recovery-cursors/) 约束状态与恢复游标，[备份与灾难恢复](/signal-grid-blog/posts/backup-pitr-disaster-recovery-and-restore-drills/) 定义 RPO/RTO，[滚动升级](/signal-grid-blog/posts/stateful-system-rolling-upgrades-protocol-snapshot-migration-safe-rollback/) 引入 mixed-version History，[协议可观测性](/signal-grid-blog/posts/stateful-system-observability-epoch-commit-lag-cursor-recovery/) 则规定运行时必须保留哪些状态与恢复证据。本章把这些协议边界变成可执行、可重放、可审计的验证方法。
 
 本文讨论非拜占庭的崩溃恢复、网络分区、存储失败与版本切换。确定性模拟、Jepsen、property-based testing 和硬件故障实验是互补工具；任何一个工具单独“跑绿”都不是对全部实现状态的数学证明。
 

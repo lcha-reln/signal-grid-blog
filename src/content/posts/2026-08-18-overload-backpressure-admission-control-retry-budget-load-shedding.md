@@ -2,7 +2,7 @@
 title: "过载也是故障：背压、Admission Control、Retry Budget 与 Load Shedding"
 description: 从排队与开放负载出发，解释背压为何不能独自阻止过载，并把有界队列、准入控制、截止时间、重试预算、公平调度、Brownout 与负载丢弃组织成一条可验证的可靠性协议。
 date: 2026-08-18T14:15:18+08:00
-updated: 2026-08-18T14:29:31+08:00
+updated: 2026-08-27T16:08:00+08:00
 tags:
   - 过载保护
   - 背压
@@ -22,7 +22,7 @@ draft: false
 
 因此，过载保护不是在监控里加一条 CPU 告警，也不是给线程池套一个无限队列。它是一份端到端协议：**谁可以进入系统，已经接下的工作必须获得什么结果，容量不足时牺牲什么，重试还能增加多少负载，以及压力消失后系统能否自己恢复。**
 
-[Java 低延迟测量](/signal-grid-blog/posts/java-low-latency-measurement/) 已经说明为什么要同时报告 offered、admitted、durably accepted、completed、goodput、拒绝和队龄；[分布式系统里的时间](/signal-grid-blog/posts/distributed-systems-time-clocks-ordering-and-leases/) 说明了截止时间为什么必须沿调用链递减。本文把这些证据组织成过载控制面，并在最后给出可证伪的正确性与恢复实验。
+本文是“有状态系统可靠性”学习路径的 Chapter 11。[Java 低延迟测量](/signal-grid-blog/posts/java-low-latency-measurement/) 已经说明为什么要同时报告 offered、admitted、durably accepted、completed、goodput、拒绝和队龄；[分布式系统里的时间](/signal-grid-blog/posts/distributed-systems-time-clocks-ordering-and-leases/) 说明了截止时间为什么必须沿调用链递减。本文把这些证据组织成过载控制面，并在最后给出可证伪的正确性与恢复实验；下一章把这些容量边界带入[状态所有权迁移](/signal-grid-blog/posts/state-ownership-migration-shard-catchup-handoff-fencing/)，处理 Catch-up、切流和旧 Owner fencing。
 
 ## 1. 先定义过载：系统欠下了无法按时偿还的工作
 

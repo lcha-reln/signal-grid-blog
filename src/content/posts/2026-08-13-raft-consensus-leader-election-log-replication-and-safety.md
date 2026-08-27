@@ -2,7 +2,7 @@
 title: "Raft 论文精读：Leader 选举、日志复制、安全性与成员变更"
 description: "以 Raft 扩展论文为主线，从复制状态机、任期和 RPC 出发，讲清 Leader 选举、日志匹配、提交规则、安全性证明、成员变更、日志压缩与客户端语义，并用故障时间线解释协议边界。"
 date: 2026-08-13T22:30:00+08:00
-updated: 2026-08-17T17:45:00+08:00
+updated: 2026-08-27T16:08:00+08:00
 tags:
   - Raft
   - 分布式共识
@@ -22,7 +22,7 @@ Raft 经常被概括成一句话：**选出 Leader，把日志复制到多数节
 
 本文以 Diego Ongaro 与 John Ousterhout 的 [Raft 扩展版论文](https://raft.github.io/raft.pdf) 为主要依据，按论文的因果链重写，而不是逐段翻译。配图均为重新设计的教学图；文中的 Java 伪代码只表达协议约束，不对应任何特定开源实现。
 
-这是“有状态系统可靠性”学习路径的 Chapter 05。建议先阅读 [Chapter 01：有状态服务的高可用架构](/signal-grid-blog/posts/high-availability-stateful-service/) 建立工程全景，由 [Chapter 02：WAL 到底保证什么](/signal-grid-blog/posts/write-ahead-log-durability-and-crash-recovery/) 理解本地持久前缀、ACK 与崩溃恢复，通过 [Chapter 03：分布式时间](/signal-grid-blog/posts/distributed-systems-time-clocks-ordering-and-leases/) 区分墙钟、逻辑顺序、超时与 Lease，再由 [Chapter 04：一致性模型](/signal-grid-blog/posts/consistency-models-linearizability-serializability-and-real-time-order/) 明确 linearizability、serializability 与实时顺序的 API 合同；本文给出“多数副本如何对一条有序日志达成一致”的标准模型。下一章会转向 [Chapter 06：ZooKeeper 与 ZAB](/signal-grid-blog/posts/zookeeper-coordination-consistency-and-recipes/)，比较共识算法与协调服务对应用暴露的不同接口。
+这是“有状态系统可靠性”学习路径的 Chapter 06。建议先阅读 [Chapter 01：有状态服务的高可用架构](/signal-grid-blog/posts/high-availability-stateful-service/) 建立工程全景，由 [Chapter 02：WAL 到底保证什么](/signal-grid-blog/posts/write-ahead-log-durability-and-crash-recovery/) 理解本地持久前缀、ACK 与崩溃恢复，通过 [Chapter 03：分布式时间](/signal-grid-blog/posts/distributed-systems-time-clocks-ordering-and-leases/) 区分墙钟、逻辑顺序、超时与 Lease，再由 [Chapter 04：一致性模型](/signal-grid-blog/posts/consistency-models-linearizability-serializability-and-real-time-order/) 明确 API 合同；[Chapter 05：复制协议的设计空间](/signal-grid-blog/posts/replication-protocol-design-space-primary-backup-quorum-chain-smr/)已比较 Primary-Backup、Quorum、Chain Replication 与状态机复制，本文再深入“多数副本如何对一条有序日志达成一致”的标准模型。下一章会转向 [Chapter 07：ZooKeeper 与 ZAB](/signal-grid-blog/posts/zookeeper-coordination-consistency-and-recipes/)，比较共识算法与协调服务对应用暴露的不同接口。
 
 > **版本边界**：本文解释的是 2014 年扩展版论文中的基础 Raft，包括 Leader 选举、日志复制、安全性、joint consensus、快照和客户端语义。Pre-Vote、CheckQuorum、ReadIndex、Leadership Transfer、每次只改一个成员（one-server-at-a-time reconfiguration）等常见能力来自后续论文、博士论文或工程实现，不能倒过来写成原论文协议的一部分。
 
@@ -52,10 +52,10 @@ flowchart LR
 
 这一定义包含三层容易混淆的东西：
 
-| 层次 | 回答的问题 | Raft 是否直接解决 |
-| --- | --- | --- |
-| 日志共识 | 每个 index 最终是哪条命令 | 是 |
-| 状态机执行 | 相同命令是否产生相同状态 | 要求应用保持确定性 |
+| 层次       | 回答的问题                         | Raft 是否直接解决            |
+| ---------- | ---------------------------------- | ---------------------------- |
+| 日志共识   | 每个 index 最终是哪条命令          | 是                           |
+| 状态机执行 | 相同命令是否产生相同状态           | 要求应用保持确定性           |
 | 外部副作用 | 邮件、支付、数据库写是否只发生一次 | 否，需要幂等、事务或 fencing |
 
 ### 故障模型不是“任何故障都能扛”
@@ -82,11 +82,11 @@ Raft 的主要承诺是：
 一个 `N` 节点固定配置需要 `floor(N / 2) + 1` 个投票成员形成多数派。任意两个多数派必有交集，这个交集把“上一条已经做出的决定”带进下一次选举或提交判断。
 
 | 投票节点 | 多数派 | 可同时容忍的节点故障 |
-| ---: | ---: | ---: |
-| 1 | 1 | 0 |
-| 3 | 2 | 1 |
-| 5 | 3 | 2 |
-| 7 | 4 | 3 |
+| -------: | -----: | -------------------: |
+|        1 |      1 |                    0 |
+|        3 |      2 |                    1 |
+|        5 |      3 |                    2 |
+|        7 |      4 |                    3 |
 
 偶数节点通常不会提升故障容忍数：4 节点仍需 3 票，只能容忍 1 个故障，却增加了复制成本。生产中常见 3 或 5 个投票成员，但真正选择还要考虑故障域、跨机房延迟与维护窗口。
 
@@ -159,15 +159,15 @@ stateDiagram-v2
 
 论文把状态分成三组：
 
-| 状态 | 归属 | 是否必须持久化 | 作用 |
-| --- | --- | --- | --- |
-| `currentTerm` | 所有节点 | 是 | 拒绝旧任期、避免任期倒退 |
-| `votedFor` | 所有节点 | 是 | 保证一个任期最多投一位候选人 |
-| `log[]` | 所有节点 | 是 | 保存已经接受的有序命令 |
-| `commitIndex` | 所有节点 | 否，论文算法中可重新获知 | 已知提交前缀末端 |
-| `lastApplied` | 所有节点 | 取决于状态机；持久状态机必须同等持久，易失状态机可易失 | 已应用前缀末端 |
-| `nextIndex[]` | Leader | 否，每次当选重建 | 下次给每个 Follower 发送的位置 |
-| `matchIndex[]` | Leader | 否，每次当选重建 | 已知各 Follower 复制到的位置 |
+| 状态           | 归属     | 是否必须持久化                                         | 作用                           |
+| -------------- | -------- | ------------------------------------------------------ | ------------------------------ |
+| `currentTerm`  | 所有节点 | 是                                                     | 拒绝旧任期、避免任期倒退       |
+| `votedFor`     | 所有节点 | 是                                                     | 保证一个任期最多投一位候选人   |
+| `log[]`        | 所有节点 | 是                                                     | 保存已经接受的有序命令         |
+| `commitIndex`  | 所有节点 | 否，论文算法中可重新获知                               | 已知提交前缀末端               |
+| `lastApplied`  | 所有节点 | 取决于状态机；持久状态机必须同等持久，易失状态机可易失 | 已应用前缀末端                 |
+| `nextIndex[]`  | Leader   | 否，每次当选重建                                       | 下次给每个 Follower 发送的位置 |
+| `matchIndex[]` | Leader   | 否，每次当选重建                                       | 已知各 Follower 复制到的位置   |
 
 关键约束不是“最终会写盘”，而是：**节点必须在发送任何依赖新持久状态的 RPC 响应之前，先把 `currentTerm`、`votedFor` 与日志的相关变化可靠保存。** 这也包括“收到更高 term，更新任期后又因日志落后而拒绝”的响应；拒绝投票不等于可以忘记已经观察到的新任期。
 
@@ -331,11 +331,11 @@ Follower 的冲突尾部可能来自以前的 Leader，却尚未提交。新 Lea
 
 #### 已复制、已提交、已应用是三个状态
 
-| 状态 | 含义 |
-| --- | --- |
-| replicated | 某个副本已经持久化该条目 |
-| committed | 该条目已不会被未来合法 Leader 换成另一条命令 |
-| applied | 状态机已经按序执行该条目 |
+| 状态       | 含义                                         |
+| ---------- | -------------------------------------------- |
+| replicated | 某个副本已经持久化该条目                     |
+| committed  | 该条目已不会被未来合法 Leader 换成另一条命令 |
+| applied    | 状态机已经按序执行该条目                     |
 
 Leader 只能按连续前缀推进 `commitIndex`，所有节点只能按 index 顺序把 `commitIndex` 之前尚未应用的条目交给状态机。不能先应用 index 42 再等待 41，也不能把“写到本地 WAL”直接称作 committed；本地 `writtenLSN`、`durableLSN` 与复制提交前缀的差别见 [Chapter 02](/signal-grid-blog/posts/write-ahead-log-durability-and-crash-recovery/)。
 
@@ -387,13 +387,13 @@ flowchart TB
 
 论文把 Raft 的安全性浓缩为五条性质：
 
-| 性质 | 直观含义 |
-| --- | --- |
-| Election Safety | 一个 term 最多一位 Leader |
-| Leader Append-Only | Leader 不覆盖或删除自己的日志，只追加 |
-| Log Matching | 相同 `(index, term)` 意味着此前缀完全相同 |
-| Leader Completeness | 已提交条目存在于所有更高任期 Leader 中 |
-| State Machine Safety | 同一 index 永远不会应用两条不同命令 |
+| 性质                 | 直观含义                                  |
+| -------------------- | ----------------------------------------- |
+| Election Safety      | 一个 term 最多一位 Leader                 |
+| Leader Append-Only   | Leader 不覆盖或删除自己的日志，只追加     |
+| Log Matching         | 相同 `(index, term)` 意味着此前缀完全相同 |
+| Leader Completeness  | 已提交条目存在于所有更高任期 Leader 中    |
+| State Machine Safety | 同一 index 永远不会应用两条不同命令       |
 
 它们不是五句互不相关的口号，而是一条依赖链：
 
@@ -720,14 +720,14 @@ client -> leader local stable append
 
 #### 至少监控这些位置
 
-| 维度 | 指标或事件 | 解释 |
-| --- | --- | --- |
-| 角色 | current term、Leader changes、election duration | 频繁选举通常是网络、存储或暂停问题 |
-| 复制 | per-follower match/next、append reject、snapshot install | 判断落后与分叉修复成本 |
-| 提交 | leader last index、commit index、last applied | 区分复制 lag、commit lag、apply lag |
-| 存储 | WAL append/fsync、snapshot duration/size、replay time | 验证耐久边界和 RTO |
-| 客户端 | timeout、retry、dedupe hit、unknown outcome | 判断业务重复与可见故障 |
-| 配置 | active config、joint phase、learner lag | 避免成员变更卡死 |
+| 维度   | 指标或事件                                               | 解释                                |
+| ------ | -------------------------------------------------------- | ----------------------------------- |
+| 角色   | current term、Leader changes、election duration          | 频繁选举通常是网络、存储或暂停问题  |
+| 复制   | per-follower match/next、append reject、snapshot install | 判断落后与分叉修复成本              |
+| 提交   | leader last index、commit index、last applied            | 区分复制 lag、commit lag、apply lag |
+| 存储   | WAL append/fsync、snapshot duration/size、replay time    | 验证耐久边界和 RTO                  |
+| 客户端 | timeout、retry、dedupe hit、unknown outcome              | 判断业务重复与可见故障              |
+| 配置   | active config、joint phase、learner lag                  | 避免成员变更卡死                    |
 
 不要只监控“有没有 Leader”。一个 Leader 可能没有多数派、无法提交，或者本地状态机严重落后。
 
@@ -735,18 +735,18 @@ client -> leader local stable append
 
 单元测试 happy path 远远不够。至少需要可复现地注入：
 
-| 场景 | 必须验证的性质 |
-| --- | --- |
-| 两位 Candidate 同时超时 | 同一 term 最多一位 Leader；分票后能进入新 term |
+| 场景                         | 必须验证的性质                                                                                                                  |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| 两位 Candidate 同时超时      | 同一 term 最多一位 Leader；分票后能进入新 term                                                                                  |
 | 授票持久化与响应之间逐点崩溃 | 持久化前不得发成功响应；持久化后即使响应丢失，也只能给同一 Candidate 重复授票；成功响应一旦可见，重启后不得在同一 term 投给别人 |
-| Follower 写日志后丢响应 | 重试不重复追加，内容保持一致 |
-| Leader 本地追加后立即崩溃 | 未提交尾部可被合法新 Leader 覆盖 |
-| 旧 term 条目落到多数后崩溃 | 未有 current-term commit 时不能错误应用 |
-| Leader 提交后响应丢失 | 客户端重试只返回缓存结果，不重复执行 |
-| Follower 落后到日志已压缩 | InstallSnapshot 后从正确 index 继续追赶 |
-| 快照写一半断电 | 重启拒绝半快照，仍可从旧恢复点恢复 |
-| 3→5 成员变更期间逐点崩溃 | old/new 不能分别独立决定 |
-| 旧 Leader 网络隔离后读请求 | 无多数派确认时不得返回线性一致读 |
+| Follower 写日志后丢响应      | 重试不重复追加，内容保持一致                                                                                                    |
+| Leader 本地追加后立即崩溃    | 未提交尾部可被合法新 Leader 覆盖                                                                                                |
+| 旧 term 条目落到多数后崩溃   | 未有 current-term commit 时不能错误应用                                                                                         |
+| Leader 提交后响应丢失        | 客户端重试只返回缓存结果，不重复执行                                                                                            |
+| Follower 落后到日志已压缩    | InstallSnapshot 后从正确 index 继续追赶                                                                                         |
+| 快照写一半断电               | 重启拒绝半快照，仍可从旧恢复点恢复                                                                                              |
+| 3→5 成员变更期间逐点崩溃     | old/new 不能分别独立决定                                                                                                        |
+| 旧 Leader 网络隔离后读请求   | 无多数派确认时不得返回线性一致读                                                                                                |
 
 最有价值的测试不是随机 `sleep`，而是可控制时钟、网络、稳定存储和崩溃点的确定性模拟：记录随机 seed、消息投递顺序、持久化完成点与角色转换，失败后能够逐事件重放。
 

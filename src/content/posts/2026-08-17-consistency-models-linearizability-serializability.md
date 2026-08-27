@@ -2,7 +2,7 @@
 title: "一致性不是一个形容词：线性一致、顺序一致、可串行化与实时顺序"
 description: "从操作历史、调用与响应事件出发，严格区分线性一致、顺序一致、可串行化和严格可串行化，再延伸到因果、会话与最终一致性，讲清 CAP、共识、事务、API 契约和 History Checker。"
 date: 2026-08-17T16:55:00+08:00
-updated: 2026-08-17T17:45:00+08:00
+updated: 2026-08-27T16:08:00+08:00
 tags:
   - 一致性模型
   - Linearizability
@@ -28,7 +28,7 @@ draft: false
 
 本文是“有状态系统可靠性”学习路径中承上启下的一章。前面的 [《WAL 到底保证什么》](/signal-grid-blog/posts/write-ahead-log-durability-and-crash-recovery/) 解释了本地日志、提交确认与崩溃恢复；[《分布式时间：时钟、因果与租约》](/signal-grid-blog/posts/distributed-systems-time-clocks-ordering-and-leases/) 区分了墙钟、逻辑顺序与真实的协议决定。本文进一步回答：当多个调用发生重叠、多个事务并发、多个副本暂时分歧时，我们究竟允许调用方观察到什么。
 
-随后再阅读 [Raft 论文精读](/signal-grid-blog/posts/raft-consensus-leader-election-log-replication-and-safety/)，就能把“一致性契约”与“多数副本怎样维护权威日志”分开；再看 [ZooKeeper](/signal-grid-blog/posts/zookeeper-coordination-consistency-and-recipes/)、[Kafka](/signal-grid-blog/posts/kafka-distributed-log-kraft-consumers-and-transactions/) 时，也不会把产品的某个写入协议直接等同于所有读、事务和外部副作用都具有同一种一致性。
+下一章先进入[复制协议的设计空间](/signal-grid-blog/posts/replication-protocol-design-space-primary-backup-quorum-chain-smr/)，把“一致性契约”与副本确认、读取和故障转移路径分开；随后再读 [Raft 论文精读](/signal-grid-blog/posts/raft-consensus-leader-election-log-replication-and-safety/)，深入一种多数派日志协议。这样再看 [ZooKeeper](/signal-grid-blog/posts/zookeeper-coordination-consistency-and-recipes/) 与 [Kafka](/signal-grid-blog/posts/kafka-distributed-log-kraft-consumers-and-transactions/) 时，也不会把产品的某个写入协议直接等同于所有读、事务和外部副作用都具有同一种一致性。
 
 本文主要依据 Herlihy 与 Wing 的线性一致原论文、Lamport 的顺序一致定义、Adya 的事务隔离形式化、Terry 等人的 Session Guarantees、Gilbert 与 Lynch 的 CAP 证明，以及 PostgreSQL、Spanner 的公开契约。示例均为重新设计的教学历史，不对应某个产品的隐藏实现。
 
@@ -435,13 +435,13 @@ Google Spanner 将 external consistency 描述为比普通 serializability 更�
 
 这两个词相似，是因为它们都用“某个顺序执行”帮助推理；它们约束的单位不同。
 
-| 问题                     | 线性一致                   | 可串行化                           |
-| ------------------------ | -------------------------- | ---------------------------------- |
-| 原子单位                 | 单个对象操作               | 整个事务                           |
-| 核心规范                 | 对象的顺序语义             | 事务的串行等价                     |
-| 是否天然保留现实时间     | 是                         | 否                                 |
+| 问题                     | 线性一致                   | 可串行化                                                           |
+| ------------------------ | -------------------------- | ------------------------------------------------------------------ |
+| 原子单位                 | 单个对象操作               | 整个事务                                                           |
+| 核心规范                 | 对象的顺序语义             | 事务的串行等价                                                     |
+| 是否天然保留现实时间     | 是                         | 否                                                                 |
 | 是否天然保护跨对象不变量 | 否                         | 有条件：相关状态在同一事务内，且事务逻辑在串行执行时本就保持不变量 |
-| 常见反例                 | 写已返回，后续读仍返回旧值 | 事务依赖图成环、write skew 等      |
+| 常见反例                 | 写已返回，后续读仍返回旧值 | 事务依赖图成环、write skew 等                                      |
 
 四种组合在概念上都值得辨认：
 

@@ -2,7 +2,7 @@
 title: "Kafka 4.3：从分区日志、ISR 与 KRaft 到消费语义、事务和生产运维"
 description: "以 Apache Kafka 4.3.1 为基线，从 topic、partition、record batch 和复制日志出发，讲清 KRaft 元数据、Leader/ISR、高水位、生产确认、消费组再均衡、offset、事务与 exactly-once 的真实边界，以及容量、监控、升级和故障处理。"
 date: 2026-08-13T20:25:00+08:00
-updated: 2026-08-17T17:45:00+08:00
+updated: 2026-08-27T16:08:00+08:00
 tags:
   - Apache Kafka
   - KRaft
@@ -22,7 +22,7 @@ draft: false
 
 本文以 **Apache Kafka 4.3.1** 为版本基线。Kafka 4.x 已完全移除 ZooKeeper 模式，元数据控制面由 KRaft 管理；4.3.1 是 2026 年 6 月发布的维护版本，除常规修复外，还修复了 Kafka Streams 的关键 RocksDB native memory leak。本文不会把旧版 ZooKeeper-era 教程中的命令和参数直接平移到 4.3。[官方 Downloads](https://kafka.apache.org/community/downloads/) · [4.3.1 Release Announcement](https://kafka.apache.org/blog/2026/06/25/apache-kafka-4.3.1-release-announcement/) · [4.3 Upgrade Guide](https://kafka.apache.org/43/getting-started/upgrade/)
 
-本文是“有状态系统可靠性”学习路径的 Chapter 07。建议先阅读 [Chapter 01：有状态服务的高可用架构](/signal-grid-blog/posts/high-availability-stateful-service/) 建立全景，由 [Chapter 02：WAL 到底保证什么](/signal-grid-blog/posts/write-ahead-log-durability-and-crash-recovery/) 区分 page cache、本地持久与恢复前缀，通过 [Chapter 03：分布式时间](/signal-grid-blog/posts/distributed-systems-time-clocks-ordering-and-leases/) 理解物理时间戳、逻辑顺序和超时的边界，用 [Chapter 04：一致性模型](/signal-grid-blog/posts/consistency-models-linearizability-serializability-and-real-time-order/) 区分日志顺序、事务顺序与客户端观察，再由 [Chapter 05：Raft 论文精读](/signal-grid-blog/posts/raft-consensus-leader-election-log-replication-and-safety/) 理解多数派提交，并由 [Chapter 06：ZooKeeper 协调、一致性与工程配方](/signal-grid-blog/posts/zookeeper-coordination-consistency-and-recipes/) 理解协调服务的控制面接口。要特别说明：**现代 Kafka 不依赖 ZooKeeper，KRaft 也不能被当成标准 Raft 的同义实现**；这里是知识依赖，不是 Kafka 4.x 的部署依赖。下一章会进一步讨论 [Chapter 08：应用级消息序列号、Gap 检测与恢复](/signal-grid-blog/posts/distributed-message-sequencing/)。
+本文是“有状态系统可靠性”学习路径的 Chapter 08。建议先阅读 [Chapter 01：有状态服务的高可用架构](/signal-grid-blog/posts/high-availability-stateful-service/) 建立全景，由 [Chapter 02：WAL 到底保证什么](/signal-grid-blog/posts/write-ahead-log-durability-and-crash-recovery/) 区分 page cache、本地持久与恢复前缀，通过 [Chapter 03：分布式时间](/signal-grid-blog/posts/distributed-systems-time-clocks-ordering-and-leases/) 理解物理时间戳、逻辑顺序和超时的边界，用 [Chapter 04：一致性模型](/signal-grid-blog/posts/consistency-models-linearizability-serializability-and-real-time-order/) 区分日志顺序、事务顺序与客户端观察，经 [Chapter 05：复制协议设计空间](/signal-grid-blog/posts/replication-protocol-design-space-primary-backup-quorum-chain-smr/)理解确认与读取路径，再由 [Chapter 06：Raft 论文精读](/signal-grid-blog/posts/raft-consensus-leader-election-log-replication-and-safety/) 理解多数派日志，并由 [Chapter 07：ZooKeeper 协调、一致性与工程配方](/signal-grid-blog/posts/zookeeper-coordination-consistency-and-recipes/) 理解协调服务的控制面接口。要特别说明：**现代 Kafka 不依赖 ZooKeeper，KRaft 也不能被当成标准 Raft 的同义实现**；这里是知识依赖，不是 Kafka 4.x 的部署依赖。下一章会进一步讨论 [Chapter 09：应用级消息序列号、Gap 检测与恢复](/signal-grid-blog/posts/distributed-message-sequencing/)。
 
 ## 1. 先给 Kafka 一个准确定位
 
@@ -150,14 +150,14 @@ flowchart LR
 
 批处理同时降低网络往返、系统调用、磁盘小写入和压缩冗余。它解释了为什么下列参数不能孤立调：
 
-| 参数 | 主要作用 | 代价与边界 |
-| --- | --- | --- |
-| `batch.size` | 单 partition batch 的目标容量 | 太小降低吞吐；不是“必须攒满才发送” |
-| `linger.ms` | 给 batch 留出聚合时间 | 增加少量排队延迟以换吞吐 |
-| `compression.type` | gzip/snappy/lz4/zstd 等批次压缩 | 节省网络与磁盘，但消耗 CPU |
-| `buffer.memory` | producer 待发送缓存总量近似上限 | 下游变慢时可能阻塞 send |
-| `delivery.timeout.ms` | 一条 record 从 send 到成功/失败的总时间预算 | 应覆盖 linger、请求等待和重试 |
-| `max.request.size` | producer 单请求大小边界 | 还必须与 broker/topic 的消息大小限制协调 |
+| 参数                  | 主要作用                                    | 代价与边界                               |
+| --------------------- | ------------------------------------------- | ---------------------------------------- |
+| `batch.size`          | 单 partition batch 的目标容量               | 太小降低吞吐；不是“必须攒满才发送”       |
+| `linger.ms`           | 给 batch 留出聚合时间                       | 增加少量排队延迟以换吞吐                 |
+| `compression.type`    | gzip/snappy/lz4/zstd 等批次压缩             | 节省网络与磁盘，但消耗 CPU               |
+| `buffer.memory`       | producer 待发送缓存总量近似上限             | 下游变慢时可能阻塞 send                  |
+| `delivery.timeout.ms` | 一条 record 从 send 到成功/失败的总时间预算 | 应覆盖 linger、请求等待和重试            |
+| `max.request.size`    | producer 单请求大小边界                     | 还必须与 broker/topic 的消息大小限制协调 |
 
 不要通过把 `linger.ms` 调大来掩盖 broker 过载，也不要在没有压测的情况下把 batch 和 request 上限扩大十倍。大 batch 会增加尾延迟、内存占用和失败重试成本。
 
@@ -247,11 +247,11 @@ try (KafkaProducer<String, byte[]> producer = new KafkaProducer<>(props)) {
 
 #### `acks=0 / 1 / all` 到底在确认什么
 
-| `acks` | Leader 行为 | 主要风险 |
-| --- | --- | --- |
-| `0` | producer 不等待 broker 响应 | 甚至无法确认 broker 是否收到，自动重试也缺少可靠反馈 |
-| `1` | Leader 本地追加后响应，不等待 follower | Leader 在复制前故障可能丢失已确认记录 |
-| `all` | 等待当前 ISR 的全部副本确认 | ISR 过小仍可能只有一个副本；需要 `min.insync.replicas` 共同约束 |
+| `acks` | Leader 行为                            | 主要风险                                                        |
+| ------ | -------------------------------------- | --------------------------------------------------------------- |
+| `0`    | producer 不等待 broker 响应            | 甚至无法确认 broker 是否收到，自动重试也缺少可靠反馈            |
+| `1`    | Leader 本地追加后响应，不等待 follower | Leader 在复制前故障可能丢失已确认记录                           |
+| `all`  | 等待当前 ISR 的全部副本确认            | ISR 过小仍可能只有一个副本；需要 `min.insync.replicas` 共同约束 |
 
 最容易写错的一句话是：`acks=all` 等于“多数副本确认”。它实际等待的是**当时 ISR 中的全部副本**。如果 replication factor 是 3、ISR 只剩 Leader 一个，且 `min.insync.replicas=1`，写入仍可能成功。
 
@@ -317,12 +317,12 @@ Follower 不是由 Leader 主动 push；它通过 fetch 复制。Leader 根据�
 
 #### 四个位置不要混用
 
-| 位置 | 含义 | 读法 |
-| --- | --- | --- |
-| LEO / log end offset | 本地日志下一条可追加位置 | 每个副本各有自己的值 |
-| High Watermark / HW | 已被所有 ISR 覆盖的稳定前缀边界 | 普通 consumer 只读取 offset `< HW` |
-| LSO / last stable offset | 第一个未完成事务的位置边界 | `read_committed` 只读取 offset `< LSO` |
-| committed consumer offset | consumer group 下次恢复应读取的位置 | 应提交“下一条待处理 offset” |
+| 位置                      | 含义                                | 读法                                   |
+| ------------------------- | ----------------------------------- | -------------------------------------- |
+| LEO / log end offset      | 本地日志下一条可追加位置            | 每个副本各有自己的值                   |
+| High Watermark / HW       | 已被所有 ISR 覆盖的稳定前缀边界     | 普通 consumer 只读取 offset `< HW`     |
+| LSO / last stable offset  | 第一个未完成事务的位置边界          | `read_committed` 只读取 offset `< LSO` |
+| committed consumer offset | consumer group 下次恢复应读取的位置 | 应提交“下一条待处理 offset”            |
 
 LSO 通常不高于 HW。若前面存在长时间未完成的事务，后面的已写记录即使已复制到 HW，也会暂时对 `read_committed` consumer 不可见。
 
@@ -408,10 +408,10 @@ flowchart TB
 
 不要混淆两个 quorum：
 
-| Quorum / 集合 | 决定什么 | 故障影响 |
-| --- | --- | --- |
-| KRaft controller majority | 集群元数据能否继续变更、故障能否选出 Active Controller | 失去多数后控制面不能正常推进 |
-| partition ISR / ELR | 某个数据 partition 的复制、可见性和 Leader 候选 | 只影响相应 partition 的写入与选主 |
+| Quorum / 集合             | 决定什么                                               | 故障影响                          |
+| ------------------------- | ------------------------------------------------------ | --------------------------------- |
+| KRaft controller majority | 集群元数据能否继续变更、故障能否选出 Active Controller | 失去多数后控制面不能正常推进      |
+| partition ISR / ELR       | 某个数据 partition 的复制、可见性和 Leader 候选        | 只影响相应 partition 的写入与选主 |
 
 三个 controller 能容忍一个 controller 故障，不代表所有 topic 自动拥有三个数据副本；反过来，topic RF=3 也不能替代 controller majority。
 
@@ -566,14 +566,14 @@ group.protocol=consumer
 
 两种协议的关键差异：
 
-| 维度 | Classic protocol | Consumer protocol |
-| --- | --- | --- |
-| 默认状态 | Kafka 4.3 client 默认 | 需 `group.protocol=consumer` |
-| assignment 计算 | 成员侧 leader / assignor 参与 | broker-side assignor |
-| 再均衡方式 | 可能依赖全局同步阶段 | fully incremental，无全局同步屏障 |
-| heartbeat / session timeout | 主要由 client 配置 | 由 broker group configs 控制 |
-| 自定义 client assignor | 可用 | 当前不支持自定义 client-side assignor |
-| 正则订阅 | client 侧 pattern 模型 | 新 API 可在 server 侧用 RE2J 评估 |
+| 维度                        | Classic protocol              | Consumer protocol                     |
+| --------------------------- | ----------------------------- | ------------------------------------- |
+| 默认状态                    | Kafka 4.3 client 默认         | 需 `group.protocol=consumer`          |
+| assignment 计算             | 成员侧 leader / assignor 参与 | broker-side assignor                  |
+| 再均衡方式                  | 可能依赖全局同步阶段          | fully incremental，无全局同步屏障     |
+| heartbeat / session timeout | 主要由 client 配置            | 由 broker group configs 控制          |
+| 自定义 client assignor      | 可用                          | 当前不支持自定义 client-side assignor |
+| 正则订阅                    | client 侧 pattern 模型        | 新 API 可在 server 侧用 RE2J 评估     |
 
 ```mermaid
 flowchart TB
@@ -623,13 +623,13 @@ flowchart TB
   P -. "crash before commit" .-> DUP["at-least-once window<br/>side effect repeated"]
 ```
 
-| 模式 | 典型顺序 | 结果 |
-| --- | --- | --- |
-| at-most-once | 先 commit offset，再处理 | 处理失败时可能丢业务效果，不会因该窗口重放 |
-| at-least-once | 先处理，再 commit offset | 不轻易漏，但崩溃窗口会重复 |
-| Kafka EOS | 输出记录与输入 offset 在同一个 Kafka transaction 中提交 | Kafka-to-Kafka 原子；下游需 `read_committed` |
-| 外部幂等 | 业务 effect 按 eventId / commandId 去重 | 可把重复投递变成“效果一次” |
-| 外部原子 checkpoint | 数据库 effect 与 next offset 在同一数据库事务 | 恢复时从该 checkpoint seek；不使用 group offset 作为唯一真相 |
+| 模式                | 典型顺序                                                | 结果                                                         |
+| ------------------- | ------------------------------------------------------- | ------------------------------------------------------------ |
+| at-most-once        | 先 commit offset，再处理                                | 处理失败时可能丢业务效果，不会因该窗口重放                   |
+| at-least-once       | 先处理，再 commit offset                                | 不轻易漏，但崩溃窗口会重复                                   |
+| Kafka EOS           | 输出记录与输入 offset 在同一个 Kafka transaction 中提交 | Kafka-to-Kafka 原子；下游需 `read_committed`                 |
+| 外部幂等            | 业务 effect 按 eventId / commandId 去重                 | 可把重复投递变成“效果一次”                                   |
+| 外部原子 checkpoint | 数据库 effect 与 next offset 在同一数据库事务           | 恢复时从该 checkpoint seek；不使用 group offset 作为唯一真相 |
 
 网络超时还有“结果未知”：producer 或 consumer 发出请求后连接断开，不能仅凭客户端没收到响应推断服务端没执行。重试必须是协议的一部分。
 
@@ -839,18 +839,18 @@ Broker 会记录 delivery attempt，并用每 partition 的 record lock 上限�
 
 Kafka 只保存 bytes 和少量 record metadata，不知道 JSON 字段是否兼容。一个可运维 topic 至少应明确：
 
-| 契约项 | 必须回答的问题 |
-| --- | --- |
-| 业务语义 | 这是命令、事实事件、状态快照还是 CDC 变更？ |
-| key | 顺序域和分区域是什么？允许 null 吗？ |
-| value schema | 使用 Avro/Protobuf/JSON Schema 还是自定义 codec？ |
-| compatibility | producer 与 consumer 如何滚动升级？ |
-| timestamp | event time 还是 broker append time？时钟异常如何处理？ |
-| headers | trace、tenant、schema hint 是否只是辅助元数据？ |
-| retention | 最慢 consumer、重放和合规需要多久历史？ |
-| cleanup policy | delete、compact 还是组合？tombstone 语义是什么？ |
-| reliability | RF、min ISR、acks、幂等与 transaction 要求？ |
-| ownership | 谁能创建、扩 partition、修改配置和删除 topic？ |
+| 契约项         | 必须回答的问题                                         |
+| -------------- | ------------------------------------------------------ |
+| 业务语义       | 这是命令、事实事件、状态快照还是 CDC 变更？            |
+| key            | 顺序域和分区域是什么？允许 null 吗？                   |
+| value schema   | 使用 Avro/Protobuf/JSON Schema 还是自定义 codec？      |
+| compatibility  | producer 与 consumer 如何滚动升级？                    |
+| timestamp      | event time 还是 broker append time？时钟异常如何处理？ |
+| headers        | trace、tenant、schema hint 是否只是辅助元数据？        |
+| retention      | 最慢 consumer、重放和合规需要多久历史？                |
+| cleanup policy | delete、compact 还是组合？tombstone 语义是什么？       |
+| reliability    | RF、min ISR、acks、幂等与 transaction 要求？           |
+| ownership      | 谁能创建、扩 partition、修改配置和删除 topic？         |
 
 演进时应遵循“先让 reader 能读新旧格式，再让 writer 发送新格式”的兼容顺序。删除字段、改变 key 序列化或重解释枚举值，都可能比加字段危险得多。
 

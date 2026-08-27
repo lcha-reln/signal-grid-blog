@@ -2,7 +2,7 @@
 title: "分布式快照与一致检查点：从 Chandy–Lamport 到 Barrier、Checkpoint 与恢复位点"
 description: "从 consistent cut 与 Chandy–Lamport Marker 出发，推导流处理中的 Barrier、对齐与非对齐 Checkpoint，讲清状态、Source Cursor、Sink 事务、恢复代次和 Rescaling 必须怎样共同闭环。"
 date: 2026-08-18T14:12:58+08:00
-updated: 2026-08-18T14:12:58+08:00
+updated: 2026-08-27T16:08:00+08:00
 tags:
   - 分布式快照
   - Chandy-Lamport
@@ -30,7 +30,7 @@ draft: false
 
 少其中任何一项，系统都只能“重启”，不能证明“恢复”。
 
-本文位于“有状态系统可靠性”路径的恢复段。建议先读[分布式系统里的时间](/signal-grid-blog/posts/distributed-systems-time-clocks-ordering-and-leases/)，理解 happened-before 不是墙钟先后；再读 [Kafka：分布式日志、KRaft、消费者与事务](/signal-grid-blog/posts/kafka-distributed-log-kraft-consumers-and-transactions/)，掌握分区位点和“下一条 offset”的含义。还应结合前文[跨系统副作用：幂等、Outbox、Inbox、2PC 与 Saga](/signal-grid-blog/posts/cross-system-side-effects-idempotency-outbox-inbox-2pc-saga/)理解检查点之外的外部世界，并由紧邻的[过载也是故障](/signal-grid-blog/posts/overload-backpressure-admission-control-retry-budget-load-shedding/)理解 Barrier 延迟与队列堆积；本文在这些基础上建立一致检查点与恢复位点。
+本文是“有状态系统可靠性”学习路径的 Chapter 13。建议先读[分布式系统里的时间](/signal-grid-blog/posts/distributed-systems-time-clocks-ordering-and-leases/)，理解 happened-before 不是墙钟先后；再读 [Kafka：分布式日志、KRaft、消费者与事务](/signal-grid-blog/posts/kafka-distributed-log-kraft-consumers-and-transactions/)，掌握分区位点和“下一条 offset”的含义。还应结合[跨系统副作用](/signal-grid-blog/posts/cross-system-side-effects-idempotency-outbox-inbox-2pc-saga/)理解检查点之外的世界，由[过载也是故障](/signal-grid-blog/posts/overload-backpressure-admission-control-retry-budget-load-shedding/)理解 Barrier 延迟与队列堆积，并由紧邻的[状态所有权迁移](/signal-grid-blog/posts/state-ownership-migration-shard-catchup-handoff-fencing/)明确权威代际与恢复切点；本文在这些基础上建立一致检查点与恢复位点。
 
 Chandy–Lamport 部分以 1985 年原论文为准；产品案例固定到 **Apache Flink 2.3.0**。Flink 的配置名和实现能力属于这个版本，不能反向冒充所有数据流系统的通用定义。
 
