@@ -2,7 +2,7 @@
 title: "现货、期货与永续合约：基差、收敛与对冲"
 description: "从现金流和结算规则出发比较现货、到期期货与永续合约，解释线性盈亏、基差收敛、资金费用和对冲残余风险，纠正“杠杆改变盈亏”与“无风险套利”等误解。"
 date: 2026-03-10T00:00:00+08:00
-updated: 2026-08-17T17:45:00+08:00
+updated: 2026-08-27T21:50:00+08:00
 categories:
   - 交易系统
 tags:
@@ -145,6 +145,8 @@ settlementIndex, marginModelVersion, fundingRuleVersion
 ```
 
 清算不能只保存一个“当前仓位”。它还要区分交易成交、已实现盈亏、资金费用、手续费、每日结算和最终到期结算等变动原因。这样才能回答“余额为什么变化”，并在规则升级后重放历史，而不拿新公式改写旧交易。
+
+下一章进入 [期权合约生命周期](/signal-grid-blog/posts/options-contract-lifecycle-exercise-assignment-expiration-settlement/)：期权不能只沿用期货的双边义务模型，还必须表达买卖双方不对称的权利义务、行权窗口、assignment、到期判定与现金或实物终局。
 
 ## 官方参考
 

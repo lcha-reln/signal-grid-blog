@@ -2,7 +2,7 @@
 title: "订单簿做市：价差、库存、逆向选择与合规边界"
 description: "从订单簿双边报价出发，解释价差收益、库存偏移、逆向选择、Delta 与 VaR 的边界，并区分自成交、洗售交易和合规交叉交易。"
 date: 2026-03-10T10:00:00+08:00
-updated: 2026-08-18T11:05:00+08:00
+updated: 2026-08-27T21:50:00+08:00
 categories:
   - 交易系统
 tags:
@@ -20,7 +20,7 @@ draft: false
 
 订单簿做市不是“同时挂一个买单和一个卖单，就稳定赚到中间价差”。报价成交后，做市商获得库存；在下一次对冲或反向成交前，库存会暴露在价格、基差、波动率、延迟和流动性风险中。主动吃单者还可能比报价方更早知道价格即将变化，这就是逆向选择。
 
-本文是交易系统学习路径的 Chapter 18，也是系统综合章。它会用到 [订单簿与自成交保护](/signal-grid-blog/posts/order-book-and-self-trade-prevention/)、[行情数据管线与订单簿重建](/signal-grid-blog/posts/market-data-pipeline-and-order-book-reconstruction/)、[订单委托与执行策略](/signal-grid-blog/posts/order-types-and-execution-strategies/) 以及 [仓位生命周期与盈亏](/signal-grid-blog/posts/position-lifecycle-and-pnl/) 中的概念。
+本文是交易系统学习路径的 Chapter 27，也是系统综合章。它会用到 [订单簿与自成交保护](/signal-grid-blog/posts/order-book-and-self-trade-prevention/)、[行情数据管线与订单簿重建](/signal-grid-blog/posts/market-data-pipeline-and-order-book-reconstruction/)、[仓位生命周期与盈亏](/signal-grid-blog/posts/position-lifecycle-and-pnl/) 以及上一章 [智能订单路由与执行算法](/signal-grid-blog/posts/smart-order-routing-execution-algorithms/) 中的概念。
 
 > 本文讨论市场结构、系统控制与合规边界，不构成投资、交易、收益或策略建议。任何做市安排都必须服从适用法律、交易场所规则、客户授权和内部风险限额。
 
@@ -186,6 +186,8 @@ STP 是撮合前的机械保护，不是完整的合规结论。若不同账户�
 - 库存偏多时报价中心下移，库存偏空时上移；不能用相反方向同时“吸引买卖双方”。
 - `Delta = 0` 只是局部一阶中性，VaR 是给定持有期和置信水平下的分位数，都不代表无风险或最大损失。
 - 自成交是机械事实，wash trade 涉及非真实交易意图，cross trade 可以是受规则约束的合法撮合；三者不能混用。
+
+下一章进入 [市场监控与交易审计](/signal-grid-blog/posts/market-surveillance-trading-audit-alert-case-evidence/)：做市与路由系统产生订单、撤单和成交事实，监控系统只能据此生成可调查信号，不能跳过证据链直接输出法律结论。
 
 ## 官方参考
 

@@ -2,7 +2,7 @@
 title: "订单簿与自成交保护：从队列结构到 STP"
 description: "拆解 L2/L3 订单簿、价格档位与同价队列、快照加增量重建，以及自成交保护策略；同时区分技术上的 self-match 与带有主观意图的非法 wash trade。"
 date: 2026-03-10T02:00:00+08:00
-updated: 2026-08-18T11:05:00+08:00
+updated: 2026-08-27T21:50:00+08:00
 categories:
   - 交易系统
 tags:
@@ -99,7 +99,7 @@ Coinbase Exchange 的官方 Full Channel 文档采用这一流程，并提醒：
 
 不同平台的序列字段覆盖范围不同：可能是全连接、全市场、单产品或单频道；也可能只保证某个 WebSocket 分片内有序。消费端必须按平台契约实现，不能把一个整数序列号想象成全交易所总序。
 
-本节只建立快照与增量的基本心智模型。完整的多平台协议差异、原子批次、Gap 恢复、checksum、断线重连和扇出背压，请继续阅读 [Chapter 09：行情数据管线与订单簿重建](/signal-grid-blog/posts/market-data-pipeline-and-order-book-reconstruction/)。
+本节只建立快照与增量的基本心智模型。完整的多平台协议差异、原子批次、Gap 恢复、checksum、断线重连和扇出背压，请继续阅读 [Chapter 11：行情数据管线与订单簿重建](/signal-grid-blog/posts/market-data-pipeline-and-order-book-reconstruction/)。
 
 ## 什么时候触发 STP
 

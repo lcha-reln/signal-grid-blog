@@ -2,7 +2,7 @@
 title: "永续合约资金费率：溢价、结算与基差交易"
 description: "从指数价格、盘口冲击价和溢价采样解释资金费率，区分不同平台的公式与结算窗口，并拆解基差交易中的资金、执行和清算风险。"
 date: 2026-03-09T21:00:00+08:00
-updated: 2026-08-18T11:05:00+08:00
+updated: 2026-08-27T21:50:00+08:00
 categories:
   - 交易系统
 tags:
@@ -22,7 +22,7 @@ draft: false
 
 这是一个**激励反馈机制**，不是价格必然回归的数学保证。流动性枯竭、仓位拥挤、抵押品约束和平台风险控制都可能让偏离持续存在。
 
-本文是交易系统学习路径的 Chapter 12。[Chapter 10：仓位生命周期与 PnL](/signal-grid-blog/posts/position-lifecycle-and-pnl/) 已说明成交如何形成仓位，[Chapter 11：期货结算与交割](/signal-grid-blog/posts/futures-settlement-variation-margin-and-delivery/) 则处理有到期日合约的每日盯市和最终履约；这里再把 funding 作为永续合约独立于成交价损益的周期现金流处理。
+本文是交易系统学习路径的 Chapter 15。[Chapter 13：仓位生命周期与 PnL](/signal-grid-blog/posts/position-lifecycle-and-pnl/) 已说明成交如何形成仓位，[Chapter 14：期货结算与交割](/signal-grid-blog/posts/futures-settlement-variation-margin-and-delivery/) 则处理有到期日合约的每日盯市和最终履约；这里再把 funding 作为永续合约独立于成交价损益的周期现金流处理。
 
 > 本文用于解释产品与系统规则，不构成交易建议。资金费率公式、采样窗口、上下限、评估时间和扣款账户都可能按平台、合约和地区变化。
 
@@ -219,7 +219,7 @@ netResult
 
 它能够对永续价格施加回归激励，却不保证价格必然收敛，更不承诺历史费率可以持续。交易和系统实现都应围绕可审计的结算批次推理，而不是围绕一个界面上的年化数字推理。
 
-下一章先进入 [交易账本与双重记账](/signal-grid-blog/posts/trading-ledger-double-entry-accounting-and-reconciliation/)，把 funding、手续费和已实现 PnL 变成可幂等重放、可冲正、可对账的分录；随后再由保证金风险引擎区分 equity、margin balance、available balance 和 maintenance margin。
+下一章先进入 [费率与返佣引擎](/signal-grid-blog/posts/trading-fee-rebate-engine-versioning-reconciliation/)，把费率命中、舍入、折扣和返佣结算固化为版本化事实；随后 [交易账本与双重记账](/signal-grid-blog/posts/trading-ledger-double-entry-accounting-and-reconciliation/) 再把 funding、手续费和已实现 PnL 变成可幂等重放、可冲正、可对账的分录。
 
 ## 官方参考
 

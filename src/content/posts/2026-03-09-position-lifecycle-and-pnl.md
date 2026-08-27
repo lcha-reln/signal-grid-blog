@@ -2,7 +2,7 @@
 title: "合约仓位生命周期：开仓、减仓、平仓与盈亏"
 description: "从成交事件而不是下单按钮出发，解释仓位如何建立、加减与反向，并区分线性和反向合约、单向和双向持仓、未实现与已实现盈亏。"
 date: 2026-03-09T15:31:31+08:00
-updated: 2026-08-18T11:05:00+08:00
+updated: 2026-08-27T21:50:00+08:00
 categories:
   - 交易系统
 tags:
@@ -21,7 +21,7 @@ draft: false
 
 仓位不是“提交开仓订单”后凭空出现的一行数据，而是成交事件按产品规则累积出的状态。订单可以没有成交、部分成交或分多笔成交；只有 fill 才会改变数量、平均入场价和已实现盈亏。
 
-这一点也解释了为什么“卖出”不总是“做空”，反向订单也不总是“平仓”。行为取决于产品类型、当前仓位、持仓模式和 Reduce-Only 等约束。本文是交易系统学习路径的 Chapter 10；建议先阅读 [Chapter 04：交易订单语义](/signal-grid-blog/posts/order-types-and-execution-strategies/)，再进入仓位层。
+这一点也解释了为什么“卖出”不总是“做空”，反向订单也不总是“平仓”。行为取决于产品类型、当前仓位、持仓模式和 Reduce-Only 等约束。本文是交易系统学习路径的 Chapter 13；建议先阅读 [Chapter 05：交易订单语义](/signal-grid-blog/posts/order-types-and-execution-strategies/) 与 [Chapter 12：成交后的清算链](/signal-grid-blog/posts/post-trade-clearing-chain-trade-capture-novation-settlement/)，再进入仓位层。
 
 > 本文讨论合约与系统记账语义，不构成交易建议。公式必须与具体合约的 multiplier、quantity unit、quote currency、settlement currency 和账户模式一起使用。
 

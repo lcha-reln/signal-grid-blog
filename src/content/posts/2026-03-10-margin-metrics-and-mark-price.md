@@ -2,7 +2,7 @@
 title: "保证金风险引擎：权益、维持保证金与标记价格"
 description: "用明确的账户作用域拆开钱包余额、权益、保证金余额、可用保证金与维持保证金，解释标记价格的数据链路、风险比率方向和简化强平公式的适用边界。"
 date: 2026-03-10T01:00:00+08:00
-updated: 2026-08-18T11:05:00+08:00
+updated: 2026-08-27T21:50:00+08:00
 categories:
   - 交易系统
 tags:
@@ -23,7 +23,7 @@ draft: false
 
 因此，风险引擎不能先背一个公式再套所有产品。它必须先确定**账户作用域、抵押品规则、价格快照、持仓模式和比率方向**，再计算当前规则版本下的 IM、MM 与风险动作。
 
-本文是交易系统学习路径的 Chapter 14。[Chapter 12：永续资金费用](/signal-grid-blog/posts/perpetual-funding-rate/) 会改变账户现金与风险缓冲，[Chapter 13：交易账本与双重记账](/signal-grid-blog/posts/trading-ledger-double-entry-accounting-and-reconciliation/) 已把这些现金流拆成 posted、pending 与 available 等可审计状态；这里再把账本余额和仓位估值接入同一风险快照。
+本文是交易系统学习路径的 Chapter 19。[Chapter 15：永续资金费用](/signal-grid-blog/posts/perpetual-funding-rate/) 会改变账户现金与风险缓冲，[Chapter 17：交易账本与双重记账](/signal-grid-blog/posts/trading-ledger-double-entry-accounting-and-reconciliation/) 已把现金流拆成 posted、pending 与 available 等可审计状态，[Chapter 18：数字资产托管与充提](/signal-grid-blog/posts/digital-asset-custody-deposits-withdrawals-reconciliation/) 又划清内部权益与外部资产控制的边界；这里再把账本余额和仓位估值接入同一风险快照。
 
 > 本文讨论风险模型和实现边界，不构成交易建议。所有公式中的费率、档位、价格源和清算步骤都必须以目标平台当期规则为准。
 
@@ -299,6 +299,8 @@ OKX 当前公开清算说明就包含先撤活动订单、较高档位先部分�
 保证金风险不是某一个百分比，而是对明确账户作用域、账本余额、仓位与订单位置、价格快照和规则版本的一次联合判断。Equity、available balance、IM、MM 和风险比率各自回答不同问题，任何重复计入或口径混用都会改变清算边界。
 
 风险动作也不是由一个显示价格直接触发的一刀切操作。系统必须在每一步重新计算同一个可解释约束，并把估算、权威决定和恢复位置分别记录下来。
+
+下一章进入 [期权估值与波动率曲面](/signal-grid-blog/posts/options-valuation-greeks-volatility-surface/)：保证金快照中的期权价格和 Greeks 不是静态主数据，而是绑定市场输入、模型、曲面版本与质量状态的风险事实。
 
 ## 官方参考
 

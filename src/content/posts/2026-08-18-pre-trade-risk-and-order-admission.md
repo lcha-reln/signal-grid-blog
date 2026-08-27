@@ -2,7 +2,7 @@
 title: "交易前风控与订单准入：资金预占、信用限额、Fat Finger、价格带与 Kill Switch"
 description: "把交易前风控建模为可恢复的订单准入事务：从权威输入、分层限额和原子预占出发，讲清价格与数量保护、并发幂等、COD、Mass Cancel、Kill Switch、参数代际及故障证明。"
 date: 2026-08-18T10:45:00+08:00
-updated: 2026-08-18T11:05:00+08:00
+updated: 2026-08-27T21:50:00+08:00
 tags:
   - 交易前风控
   - 订单准入
@@ -21,7 +21,7 @@ draft: false
 
 本文的核心结论是：**交易前风控不是一个无状态校验函数，而是一笔带版本、可幂等、可恢复的订单准入事务。** 它要在同一个权威顺序里决定订单能否进入下一阶段，并原子地预占会被该订单消耗的资金、信用或风险预算；后续再由成交、拒绝和撤单等权威事件结转或释放预占。
 
-本文承接 [交易品种主数据与市场状态](/signal-grid-blog/posts/trading-instrument-master-market-state-and-rule-versioning/) 和 [交易订单语义](/signal-grid-blog/posts/order-types-and-execution-strategies/)。前者提供 instrument identity、tick、lot、交易阶段与规则版本，后者定义 Market、Limit、TIF、Post-Only、Reduce-Only 及订单状态机。这里不重复这些定义，而是回答：一张语义合法的订单，凭什么获得进入路由或撮合的资格。
+本文是交易系统学习路径的 Chapter 07，承接 [交易订单语义](/signal-grid-blog/posts/order-types-and-execution-strategies/) 与 [交易接入网关和会话恢复](/signal-grid-blog/posts/trading-access-gateway-session-recovery/)。前者定义 Market、Limit、TIF、Post-Only、Reduce-Only 及订单状态机，后者说明会话连续并不等于订单已经被业务接受；这里继续回答：一张语义合法且已到达业务边界的订单，凭什么获得进入路由或撮合的资格。
 
 > 本文讨论交易系统工程，不构成法律、监管、投资或风险管理意见。SEC Rule 15c3-5、欧盟 MiFID II/RTS 6、CME Globex、HKEX 与 FIX 的适用主体和技术语义并不相同；文中引用只用于建立可验证边界。真实控制必须以业务所在司法辖区、持牌实体、客户关系、交易场所、清算安排和当期规则为准。交易前检查只能限制已建模的风险，不能消除价格跳空、流动性枯竭、模型错误、场所故障或未知风险。
 
@@ -752,6 +752,8 @@ flowchart TB
 4. policy generation、kill epoch、事件日志和外部对账让 failover 与重放仍能证明相同不变量。
 
 保证之外仍有广阔风险：参考价格可能失真，合法 price band 内仍可能滑点巨大，场所可能暂停或故障，模型可能漏掉相关性，订单通过后市场也会变化。风险检查的正确目标，是把**已知且可度量的承诺**限制在经授权边界内，并在事实不足时安全收缩；它不能把不确定市场变成确定结果。
+
+下一章进入 [订单簿与自成交保护](/signal-grid-blog/posts/order-book-and-self-trade-prevention/)：准入成功只授予订单进入执行路径的资格，实际优先级、成交和 STP 结果仍由订单簿与撮合规则裁决。
 
 ### 一手资料与适用边界
 

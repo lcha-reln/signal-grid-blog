@@ -2,7 +2,7 @@
 title: "期货结算与交割：每日盯市、Variation Margin、最终结算与实物交割"
 description: "从权威结算价出发，解释期货仓位怎样经过每日盯市、Variation Margin、账本入账、最终现金结算或实物交割，并用状态机、不变量与对账模型划清资金失败、交割失败和违约边界。"
 date: 2026-08-18T10:45:32+08:00
-updated: 2026-08-18T11:13:00+08:00
+updated: 2026-08-27T21:50:00+08:00
 tags:
   - 期货结算
   - Variation Margin
@@ -654,7 +654,7 @@ official price versions
 
 这套模型能保证的是：每个金额和状态都能追溯到成交、价格、产品规则与外部证据，重复消息或重启不会再次产生经济效果，失败时也不会把 unknown 伪装成完成。它不能保证市场永远有流动性、客户或会员永不违约、标的一定按原物交付，也不能把某家 venue 的期限和处置方式推广为全行业规则。
 
-下一篇可继续阅读 [永续合约资金费率：溢价、结算与基差交易](/signal-grid-blog/posts/perpetual-funding-rate/)，比较“没有到期日的周期现金流”与本文逐日/最终结算的差别；随后进入 [交易账本与双重记账](/signal-grid-blog/posts/trading-ledger-double-entry-accounting-and-reconciliation/)，把 Variation、最终现金结算和交割应收应付接入完整的不可变账本。
+下一篇可继续阅读 [永续合约资金费率：溢价、结算与基差交易](/signal-grid-blog/posts/perpetual-funding-rate/)，比较“没有到期日的周期现金流”与本文逐日/最终结算的差别；随后由 [费率与返佣引擎](/signal-grid-blog/posts/trading-fee-rebate-engine-versioning-reconciliation/) 固化费用现金流，最后进入 [交易账本与双重记账](/signal-grid-blog/posts/trading-ledger-double-entry-accounting-and-reconciliation/)，把 Variation、最终现金结算、费用和交割应收应付接入完整的不可变账本。
 
 ## 官方参考
 

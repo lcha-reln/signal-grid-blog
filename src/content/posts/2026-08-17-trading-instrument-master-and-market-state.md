@@ -2,7 +2,7 @@
 title: "交易品种主数据与市场状态：合约规格、交易日、停牌、价格带与规则版本"
 description: "从资产、品种与上市实例的身份边界出发，讲清现货、期货、永续与期权规格，交易日历、市场状态、价格带、Security Definition 分发、双时间版本、原子切换与故障恢复。"
 date: 2026-08-17T16:55:00+08:00
-updated: 2026-08-17T17:45:00+08:00
+updated: 2026-08-27T21:50:00+08:00
 tags:
   - 交易系统
   - 产品主数据
@@ -1007,7 +1007,7 @@ snapshot/checkpoint + incremental log
 
 只要这三条链存在，系统才能回答“为什么这张订单在那个时刻被接受或拒绝”，并在重启、升级和规则修正后给出同一个结果。
 
-下一篇先进入 [现货、期货与永续合约：基差、收敛与对冲](/signal-grid-blog/posts/derivatives-contracts-and-basis/)，理解不同产品定义如何改变现金流与风险；随后阅读 [交易订单语义：Market、Limit、TIF、Post-Only 与条件单](/signal-grid-blog/posts/order-types-and-execution-strategies/)，把本章的 instrument capabilities、market state 和 rule version 接到真实订单契约上。
+下一篇先进入 [现货、期货与永续合约：基差、收敛与对冲](/signal-grid-blog/posts/derivatives-contracts-and-basis/)，理解不同产品定义如何改变现金流与风险；再由 [期权合约生命周期](/signal-grid-blog/posts/options-contract-lifecycle-exercise-assignment-expiration-settlement/) 补齐权利义务、行权与到期终局，最后阅读 [交易订单语义：Market、Limit、TIF、Post-Only 与条件单](/signal-grid-blog/posts/order-types-and-execution-strategies/)，把 instrument capabilities、market state 和 rule version 接到真实订单契约上。
 
 ## 官方参考
 

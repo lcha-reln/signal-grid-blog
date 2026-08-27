@@ -2,7 +2,7 @@
 title: "逐仓与全仓：风险隔离、共享权益与风险传播"
 description: "从保证金所有权、线性合约盈亏和清算范围出发，比较逐仓与全仓的风险边界，并解释自动追加保证金、风险限额与平台规则为何会改变最终结果。"
 date: 2026-03-09T20:00:00+08:00
-updated: 2026-08-18T11:05:00+08:00
+updated: 2026-08-27T21:50:00+08:00
 categories:
   - 交易系统
 tags:
@@ -20,7 +20,7 @@ draft: false
 
 逐仓（Isolated Margin）和全仓（Cross Margin）的核心区别，不是界面上选择了哪个杠杆倍数，而是：**哪些权益可以支撑哪些风险，亏损会沿什么边界传播，清算引擎又会在哪个层级采取动作。**
 
-本文是交易系统学习路径的 Chapter 15。建议先阅读 [Chapter 14：保证金风险引擎](/signal-grid-blog/posts/margin-metrics-and-mark-price/)，再把这里的保证金范围、账户权益和维持保证金要求连起来理解。
+本文是交易系统学习路径的 Chapter 22。[Chapter 19：保证金风险引擎](/signal-grid-blog/posts/margin-metrics-and-mark-price/) 定义了权益、价格快照和维持要求，[Chapter 21：现货保证金融资](/signal-grid-blog/posts/spot-margin-lending-borrowing-interest-liquidation/) 又把借款本金、应计利息和还款顺序接入账户；这里再比较这些资产与负债放进隔离桶或共享池后，风险怎样传播。
 
 > 本文用于解释产品规则与系统设计，不构成投资、交易或风险承受能力建议。真实结果取决于交易场所、产品、账户模式、风险档位、费用和当时流动性；下文中的数字只用于校验计算关系。
 

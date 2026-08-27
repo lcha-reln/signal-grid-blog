@@ -21,7 +21,12 @@ export const SITE = {
 };
 
 export type SeriesKey =
-  "aeron" | "trading" | "availability" | "performance" | "agent" | "meta";
+  | "aeron"
+  | "trading"
+  | "availability"
+  | "performance"
+  | "agent"
+  | "meta";
 
 export interface SeriesStage {
   index: string;
@@ -109,10 +114,10 @@ export const SERIES: readonly SeriesDefinition[] = [
     title: "交易系统",
     eyebrow: "EXCHANGE SYSTEMS",
     description:
-      "围绕中心化交易所，从产品、订单语义与交易前风控一路走到撮合、OMS、行情重建、仓位、期货结算、账本、保证金和清算，建立业务规则与系统状态机之间的映射。",
+      "围绕交易系统，从产品与期权终局、订单接入、风控、撮合和成交清算，一路走到仓位资金、账本托管、估值融资、资本约束、执行质量与市场监控，建立业务规则、外部义务和系统状态机之间的映射。",
     prerequisite: "理解基础现货交易和百分比、盈亏计算；了解事件驱动架构更佳。",
     outcome:
-      "能够解释订单从准入、撮合、私有回报到结算入账的完整生命周期，说明公开行情与 OMS 如何从权威事件恢复，并把产品规则转成可测试、可审计的状态、风控、数据与账务约束。",
+      "能够解释合约从建模到终局、订单从会话接入到清算履约、资产从内部账本到外部托管证据的完整生命周期，说明 OMS、行情、路由与监控如何从权威事件恢复，并把规则转成可测试、可对账、可审计的状态与风险约束。",
     color: "amber",
     index: "02",
     stages: [
@@ -126,32 +131,34 @@ export const SERIES: readonly SeriesDefinition[] = [
       },
       {
         index: "02",
-        eyebrow: "ORDER FLOW, RISK & MARKET DATA",
-        title: "订单、风控、撮合与行情",
+        eyebrow: "ORDER FLOW & CLEARING",
+        title: "订单、接入、撮合与成交清算",
         description:
-          "从订单契约与原子准入追到订单簿、撮合、OMS 和私有回报，再用快照、增量、序列号与校验恢复公开行情。",
+          "从订单契约、会话恢复与原子准入追到订单簿、撮合、OMS 和私有回报，再用公开行情与成交清算连接执行事实和履约义务。",
         fromOrder: 30,
       },
       {
         index: "03",
-        eyebrow: "POSITION, SETTLEMENT & LEDGER",
-        title: "仓位、结算与账本",
+        eyebrow: "POSITION, FUNDING & LEDGER",
+        title: "仓位、资金、结算与账本",
         description:
-          "连接仓位、每日盯市与交割、资金费率、双重记账、余额不变量和风险定价。",
+          "连接仓位、每日盯市与交割、资金费率、费率返佣、双重记账、托管资产证据、风险定价与融资负债。",
         fromOrder: 60,
       },
       {
         index: "04",
-        eyebrow: "RISK & CAPITAL",
-        title: "保证金与清算",
-        description: "比较保证金模式、清算机制、账户组织与组合风控。",
+        eyebrow: "CAPITAL, RISK & EXECUTION",
+        title: "资本、风险与执行",
+        description:
+          "比较保证金模式、强平与组合风控，再用成交质量和智能路由连接风险预算与跨场所执行。",
         fromOrder: 90,
       },
       {
         index: "05",
-        eyebrow: "SYNTHESIS",
-        title: "系统综合",
-        description: "用做市串联流动性、库存、对冲和交易基础设施。",
+        eyebrow: "SYNTHESIS & SURVEILLANCE",
+        title: "系统综合与监控",
+        description:
+          "用做市串联流动性、库存、对冲和交易基础设施，再以可回放监控与人工调查闭合审计证据。",
         fromOrder: 120,
       },
     ],
