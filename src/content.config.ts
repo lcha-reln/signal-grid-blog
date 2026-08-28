@@ -3,7 +3,15 @@ import { glob } from "astro/loaders";
 import { z } from "astro/zod";
 
 const stringList = z.union([z.string(), z.array(z.string())]).optional();
-const seriesKey = z.enum(["aeron", "trading", "availability", "performance", "agent", "meta"]);
+const seriesKey = z.enum([
+  "aeron",
+  "trading",
+  "availability",
+  "performance",
+  "agent",
+  "storage",
+  "meta",
+]);
 
 const posts = defineCollection({
   loader: glob({ pattern: "**/*.md", base: "./src/content/posts" }),

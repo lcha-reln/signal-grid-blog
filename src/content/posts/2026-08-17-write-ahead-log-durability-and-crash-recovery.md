@@ -2,7 +2,7 @@
 title: "WAL 到底保证什么：从 Write-Ahead Rule、fsync 到崩溃恢复"
 description: "从故障模型出发，拆解 WAL 的先行写入规则与 write、force、ack 的持久化边界，讲清 ARIES 恢复、group commit、checkpoint、日志截断，以及 WAL 不负责的复制和 exactly-once。"
 date: 2026-08-17T10:30:00+08:00
-updated: 2026-08-27T16:08:00+08:00
+updated: 2026-08-28T14:34:00+08:00
 tags:
   - WAL
   - Write-Ahead Logging
@@ -35,6 +35,8 @@ WAL 能保证什么？一个不偷换前提的回答是：
 > 在明确的故障模型、诚实履约的持久化栈和正确的恢复算法下，WAL 通过约束日志、数据页与提交确认的顺序，使系统能够在崩溃后恢复到某个合法的已提交前缀，并满足它公开承诺的事务原子性与持久性级别。
 
 这句话里的每个限定都不能删。
+
+本文从可靠性协议回答“提交确认后，崩溃恢复应得到什么”；如果你需要先看清 Page、Buffer Pool、WAL 与 Manifest 在单机存储引擎里的权威关系，以及 checkpoint 到底发布了哪一组可恢复材料，请先读[《存储引擎全景》](/signal-grid-blog/posts/storage-engine-pages-buffer-pool-wal-manifest-recovery-boundaries/)。两篇文章使用同一条先行顺序，但这里不重复展开页缓存和文件集合的内部结构。
 
 ```mermaid
 flowchart TB

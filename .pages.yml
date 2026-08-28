@@ -66,6 +66,7 @@ content:
             - { name: availability, label: 有状态系统可靠性 }
             - { name: performance, label: Java 低延迟工程 }
             - { name: agent, label: AI Agent 后端工程 }
+            - { name: storage, label: 存储引擎与数据库内核 }
             - { name: meta, label: 站点指南 }
         description: 选择文章所属的顶层知识主线；具体组件与概念继续使用标签表示。
       - name: seriesOrder

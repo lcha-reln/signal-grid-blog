@@ -2,7 +2,7 @@
 title: "副本都在线，数据却已经错了：Checksum、Scrubbing、损坏隔离与权威修复"
 description: "从静默数据损坏的失效模型出发，推导端到端校验边界、读时校验与 Scrubbing、Replica Divergence、损坏隔离、权威副本选择、Repair 与 Anti-entropy 的安全边界，并用故障注入证明坏数据不会在修复和备份中继续扩散。"
 date: 2026-08-27T16:32:00+08:00
-updated: 2026-08-27T16:55:00+08:00
+updated: 2026-08-28T14:34:00+08:00
 tags:
   - 数据完整性
   - Silent Data Corruption
@@ -36,6 +36,8 @@ draft: false
 本文讨论的是**偶发位翻转、潜伏扇区错误、误定向写、传输和内存损坏，以及由它们引发的副本分歧与恢复**。CRC、hash、MAC 各自能证明什么会被严格区分；恶意篡改只在完整性证据的认证边界内讨论，不把普通 checksum 冒充安全机制。
 
 本文是“有状态系统可靠性”学习路径的 Chapter 16，承接[备份不是副本](/signal-grid-blog/posts/backup-pitr-disaster-recovery-and-restore-drills/)对历史恢复材料的讨论，并为后续[有状态系统如何滚动升级](/signal-grid-blog/posts/stateful-system-rolling-upgrades-protocol-snapshot-migration-safe-rollback/)补上“迁移前后的字节是否可信”这一层。通用结论不依赖具体产品；例子以 PostgreSQL 18、Apache Kafka 4.0，以及截至 2026-08-27 的 OpenZFS、Ceph 和 Apache Cassandra 官方文档为边界。
+
+这里关心跨设备、副本、备份与恢复流程的端到端权威判定；[《存储完整性》](/signal-grid-blog/posts/storage-integrity-checksum-scrubbing-repair-format-evolution/)则下沉到单个存储引擎，讨论 checksum 覆盖哪些页和文件、scrub 如何与在线读写并发、repair 怎样发布新 generation，以及格式升级期间何时仍可安全回滚。检测手段相似，权威范围不同。
 
 ## 1. “成功读出”不是“内容正确”：先把完整性故障分层
 
