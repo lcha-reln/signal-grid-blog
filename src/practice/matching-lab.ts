@@ -1,11 +1,15 @@
 type Side = "BUY" | "SELL";
 type CommandType = "PLACE" | "CANCEL";
+type ExecutionPolicy = "GTC" | "IOC" | "FOK" | "POST_ONLY";
 type GoldenReplayPresentation = "GOLDEN_HISTORY" | "COUNTEREXAMPLE";
 type GoldenReplaySupportRole = "REPLAY" | "MUTANTS";
 type Prediction =
   | "RESTS_ONLY"
   | "TRADES_ONLY"
   | "TRADES_AND_RESTS"
+  | "POLICY_REJECTED"
+  | "REMAINDER_CANCELED_ONLY"
+  | "TRADES_AND_REMAINDER_CANCELED"
   | "CANCEL_SUCCEEDS"
   | "CANCEL_REJECTED";
 type Lifecycle = "RESTING" | "FILLED" | "CANCELED";
@@ -23,6 +27,7 @@ interface GoldenPlaceInput {
   side: Side;
   priceTicks: number | string;
   quantityLots: number | string;
+  executionPolicy?: string;
 }
 
 interface GoldenCancelInput {
@@ -63,6 +68,8 @@ interface GoldenEvent {
   takerOrderId?: number | string;
   remainingQuantityLots?: number | string;
   canceledQuantityLots?: number | string;
+  executionPolicy?: string;
+  reason?: string;
 }
 
 interface GoldenOutcome {
@@ -110,7 +117,9 @@ interface BrowserSeedOrder {
 
 interface BrowserModelConfig {
   instrumentId: string;
-  timeInForce: "GTC";
+  supportedExecutionPolicies: ExecutionPolicy[];
+  defaultExecutionPolicy: ExecutionPolicy;
+  requireAcceptedExecutionPolicy: boolean;
   minPriceTicks: string;
   maxPriceTicks: string;
   minQuantityLots: string;
@@ -168,6 +177,7 @@ interface ModelEvent {
     | "ACCEPTED"
     | "TRADE"
     | "RESTED"
+    | "REMAINDER_CANCELED"
     | "CANCELED";
   code?: string;
   field?: string;
@@ -182,7 +192,16 @@ interface ModelEvent {
   takerOrderId?: bigint;
   remainingQuantityLots?: bigint;
   canceledQuantityLots?: bigint;
+  executionPolicy?: ExecutionPolicy;
+  reason?: "IOC_REMAINDER";
 }
+
+const EXECUTION_POLICIES: readonly ExecutionPolicy[] = [
+  "GTC",
+  "IOC",
+  "FOK",
+  "POST_ONLY",
+];
 
 function requiredElement<T extends Element>(
   root: ParentNode,
@@ -213,11 +232,13 @@ function formatGoldenEvent(event: GoldenEvent): string {
     case "REJECTED":
       return `Rejected(code=${event.code}, field=${event.field})`;
     case "ACCEPTED":
-      return `Accepted(seq=${event.sequence}, orderId=${event.orderId}, side=${event.side}, price=${event.priceTicks}, qty=${event.quantityLots})`;
+      return `Accepted(seq=${event.sequence}, orderId=${event.orderId}, side=${event.side}, price=${event.priceTicks}, qty=${event.quantityLots}${event.executionPolicy ? `, policy=${event.executionPolicy}` : ""})`;
     case "TRADE":
       return `Trade(maker=${event.makerOrderId}/seq${event.makerSequence}, taker=${event.takerOrderId}/seq${event.takerSequence}, price=${event.priceTicks}, qty=${event.quantityLots})`;
     case "RESTED":
       return `Rested(seq=${event.sequence}, orderId=${event.orderId}, side=${event.side}, price=${event.priceTicks}, remaining=${event.remainingQuantityLots})`;
+    case "REMAINDER_CANCELED":
+      return `RemainderCanceled(seq=${event.sequence}, orderId=${event.orderId}, side=${event.side}, price=${event.priceTicks}, canceled=${event.canceledQuantityLots}, reason=${event.reason})`;
     case "PLACE_REJECTED":
       return `PlaceRejected(orderId=${event.orderId}, code=${event.code})`;
     case "CANCEL_REJECTED":
@@ -246,7 +267,7 @@ function formatGoldenInput(command: GoldenCommand): string {
       `PLACE command ${command.caseId} has no limit-order fields`,
     );
   }
-  return `PlaceLimitOrder(${command.input.instrumentId}, #${command.input.orderId}, ${command.input.side}, price=${command.input.priceTicks}, qty=${command.input.quantityLots})`;
+  return `PlaceLimitOrder(${command.input.instrumentId}, #${command.input.orderId}, ${command.input.side}, price=${command.input.priceTicks}, qty=${command.input.quantityLots}${command.input.executionPolicy ? `, policy=${command.input.executionPolicy}` : ""})`;
 }
 
 function createGoldenBookSide(
@@ -911,6 +932,7 @@ interface ModelPlaceInput {
   side: string;
   priceTicks: bigint;
   quantityLots: bigint;
+  executionPolicy: string;
 }
 
 interface ModelCancelInput {
@@ -922,19 +944,74 @@ function rejected(code: string, field: string): ModelEvent[] {
   return [{ type: "REJECTED", code, field }];
 }
 
+function normalizeExecutionPolicy(value: string): ExecutionPolicy | undefined {
+  return EXECUTION_POLICIES.find((policy) => policy === value);
+}
+
+function hasCrossingMaker(
+  state: ModelState,
+  side: Side,
+  limitPrice: bigint,
+): boolean {
+  return chooseMaker(state.orders, side, limitPrice) !== undefined;
+}
+
+function isFullyExecutable(
+  state: ModelState,
+  side: Side,
+  limitPrice: bigint,
+  quantityLots: bigint,
+): boolean {
+  const opposite: Side = side === "BUY" ? "SELL" : "BUY";
+  const makers = state.orders
+    .filter(
+      (maker) =>
+        maker.side === opposite &&
+        (side === "BUY"
+          ? maker.priceTicks <= limitPrice
+          : maker.priceTicks >= limitPrice),
+    )
+    .sort((left, right) => {
+      if (left.priceTicks !== right.priceTicks) {
+        if (side === "BUY")
+          return left.priceTicks < right.priceTicks ? -1 : 1;
+        return left.priceTicks > right.priceTicks ? -1 : 1;
+      }
+      return left.sequence < right.sequence
+        ? -1
+        : left.sequence > right.sequence
+          ? 1
+          : 0;
+    });
+  let required = quantityLots;
+  for (const maker of makers) {
+    if (maker.remainingQuantityLots >= required) return true;
+    required -= maker.remainingQuantityLots;
+  }
+  return false;
+}
+
 function executePlaceCommand(
   state: ModelState,
   input: ModelPlaceInput,
-  instrumentId: string,
+  config: BrowserModelConfig,
 ): ModelEvent[] {
-  if (input.instrumentId !== instrumentId)
+  if (input.instrumentId !== config.instrumentId)
     return rejected("UNKNOWN_INSTRUMENT", "instrumentId");
-  if (input.orderId <= 0n) return rejected("INVALID_ORDER_ID", "orderId");
+  if (input.orderId <= 0n || input.orderId > BigInt(config.maxOrderId))
+    return rejected("INVALID_ORDER_ID", "orderId");
   if (input.side !== "BUY" && input.side !== "SELL")
     return rejected("INVALID_SIDE", "side");
-  if (input.priceTicks <= 0n) return rejected("INVALID_PRICE", "priceTicks");
-  if (input.quantityLots <= 0n)
+  if (input.priceTicks <= 0n || input.priceTicks > BigInt(config.maxPriceTicks))
+    return rejected("INVALID_PRICE", "priceTicks");
+  if (
+    input.quantityLots <= 0n ||
+    input.quantityLots > BigInt(config.maxQuantityLots)
+  )
     return rejected("INVALID_QUANTITY", "quantityLots");
+  const executionPolicy = normalizeExecutionPolicy(input.executionPolicy);
+  if (!executionPolicy)
+    return rejected("INVALID_EXECUTION_POLICY", "executionPolicy");
   if (state.registry.has(input.orderId.toString())) {
     return [
       {
@@ -946,6 +1023,36 @@ function executePlaceCommand(
   }
 
   const side = input.side;
+  if (
+    executionPolicy === "FOK" &&
+    !isFullyExecutable(
+      state,
+      side,
+      input.priceTicks,
+      input.quantityLots,
+    )
+  ) {
+    return [
+      {
+        type: "PLACE_REJECTED",
+        orderId: input.orderId,
+        code: "FOK_NOT_FILLABLE",
+      },
+    ];
+  }
+  if (
+    executionPolicy === "POST_ONLY" &&
+    hasCrossingMaker(state, side, input.priceTicks)
+  ) {
+    return [
+      {
+        type: "PLACE_REJECTED",
+        orderId: input.orderId,
+        code: "POST_ONLY_WOULD_TAKE",
+      },
+    ];
+  }
+
   const acceptedSequence = state.acceptedSequence + 1n;
   let remaining = input.quantityLots;
   const accepted: LifecycleEntry = {
@@ -968,6 +1075,7 @@ function executePlaceCommand(
       side,
       priceTicks: input.priceTicks,
       quantityLots: input.quantityLots,
+      executionPolicy,
     },
   ];
 
@@ -1001,7 +1109,22 @@ function executePlaceCommand(
     }
   }
 
-  if (remaining > 0n) {
+  if (remaining > 0n && executionPolicy === "IOC") {
+    accepted.remainingQuantityLots = 0n;
+    accepted.canceledQuantityLots = remaining;
+    accepted.lifecycle = "CANCELED";
+    batch.push({
+      type: "REMAINDER_CANCELED",
+      sequence: acceptedSequence,
+      orderId: input.orderId,
+      side,
+      priceTicks: input.priceTicks,
+      canceledQuantityLots: remaining,
+      reason: "IOC_REMAINDER",
+    });
+  } else if (remaining > 0n) {
+    if (executionPolicy === "FOK")
+      throw new Error("fillable FOK retained an unexpected remainder");
     accepted.remainingQuantityLots = remaining;
     state.orders.push(accepted);
     batch.push({
@@ -1023,11 +1146,12 @@ function executePlaceCommand(
 function executeCancelCommand(
   state: ModelState,
   input: ModelCancelInput,
-  instrumentId: string,
+  config: BrowserModelConfig,
 ): ModelEvent[] {
-  if (input.instrumentId !== instrumentId)
+  if (input.instrumentId !== config.instrumentId)
     return rejected("UNKNOWN_INSTRUMENT", "instrumentId");
-  if (input.orderId <= 0n) return rejected("INVALID_ORDER_ID", "orderId");
+  if (input.orderId <= 0n || input.orderId > BigInt(config.maxOrderId))
+    return rejected("INVALID_ORDER_ID", "orderId");
 
   const order = state.registry.get(input.orderId.toString());
   if (!order) {
@@ -1075,16 +1199,21 @@ function executeCancelCommand(
   ];
 }
 
-function formatModelEvent(event: ModelEvent): string {
+function formatModelEvent(
+  event: ModelEvent,
+  showExecutionPolicy: boolean,
+): string {
   switch (event.type) {
     case "REJECTED":
       return `Rejected(code=${event.code}, field=${event.field})`;
     case "ACCEPTED":
-      return `Accepted(seq=${event.sequence}, orderId=${event.orderId}, side=${event.side}, price=${event.priceTicks}, qty=${event.quantityLots})`;
+      return `Accepted(seq=${event.sequence}, orderId=${event.orderId}, side=${event.side}, price=${event.priceTicks}, qty=${event.quantityLots}${showExecutionPolicy ? `, policy=${event.executionPolicy}` : ""})`;
     case "TRADE":
       return `Trade(maker=${event.makerOrderId}/seq${event.makerSequence}, taker=${event.takerOrderId}/seq${event.takerSequence}, price=${event.priceTicks}, qty=${event.quantityLots})`;
     case "RESTED":
       return `Rested(seq=${event.sequence}, orderId=${event.orderId}, side=${event.side}, price=${event.priceTicks}, remaining=${event.remainingQuantityLots})`;
+    case "REMAINDER_CANCELED":
+      return `RemainderCanceled(seq=${event.sequence}, orderId=${event.orderId}, side=${event.side}, price=${event.priceTicks}, canceled=${event.canceledQuantityLots}, reason=${event.reason})`;
     case "PLACE_REJECTED":
       return `PlaceRejected(orderId=${event.orderId}, code=${event.code})`;
     case "CANCEL_REJECTED":
@@ -1100,8 +1229,23 @@ function predictionFor(events: ModelEvent[], command: CommandType): Prediction {
       ? "CANCEL_SUCCEEDS"
       : "CANCEL_REJECTED";
   }
+  if (
+    events[0]?.type === "PLACE_REJECTED" &&
+    (events[0].code === "FOK_NOT_FILLABLE" ||
+      events[0].code === "POST_ONLY_WOULD_TAKE")
+  ) {
+    return "POLICY_REJECTED";
+  }
   const traded = events.some((event) => event.type === "TRADE");
   const rested = events.some((event) => event.type === "RESTED");
+  const remainderCanceled = events.some(
+    (event) => event.type === "REMAINDER_CANCELED",
+  );
+  if (remainderCanceled) {
+    return traded
+      ? "TRADES_AND_REMAINDER_CANCELED"
+      : "REMAINDER_CANCELED_ONLY";
+  }
   if (!traded) return "RESTS_ONLY";
   return rested ? "TRADES_AND_RESTS" : "TRADES_ONLY";
 }
@@ -1114,6 +1258,12 @@ function predictionLabel(prediction: Prediction): string {
       return "全部成交";
     case "TRADES_AND_RESTS":
       return "成交后挂余量";
+    case "POLICY_REJECTED":
+      return "策略准入拒绝";
+    case "REMAINDER_CANCELED_ONLY":
+      return "只取消 IOC 余量";
+    case "TRADES_AND_REMAINDER_CANCELED":
+      return "成交后取消 IOC 余量";
     case "CANCEL_SUCCEEDS":
       return "撤单成功";
     case "CANCEL_REJECTED":
@@ -1159,6 +1309,33 @@ function modelBook(state: ModelState): GoldenBook {
   return { bids: levels("BUY"), asks: levels("SELL") };
 }
 
+function eventsMatchGoldenCorpus(
+  actualEvents: ModelEvent[],
+  expectedEvents: GoldenEvent[],
+  requireAcceptedExecutionPolicy: boolean,
+): boolean {
+  if (
+    requireAcceptedExecutionPolicy &&
+    expectedEvents.some(
+      (event) => event.type === "ACCEPTED" && !event.executionPolicy,
+    )
+  ) {
+    throw new Error("Accepted event is missing required executionPolicy");
+  }
+  const comparableActual = actualEvents.map((event, index) => {
+    if (
+      event.type !== "ACCEPTED" ||
+      requireAcceptedExecutionPolicy ||
+      expectedEvents[index]?.executionPolicy !== undefined
+    ) {
+      return event;
+    }
+    const { executionPolicy: _executionPolicy, ...legacyAccepted } = event;
+    return legacyAccepted;
+  });
+  return sameValue(comparableActual, expectedEvents);
+}
+
 function verifyBrowserModelAgainstCorpus(
   pack: GoldenScenarioPack,
   config: BrowserModelConfig,
@@ -1187,7 +1364,7 @@ function verifyBrowserModelAgainstCorpus(
             instrumentId: command.input.instrumentId,
             orderId: BigInt(command.input.orderId),
           },
-          config.instrumentId,
+          config,
         );
       } else {
         if (!isGoldenPlaceInput(command.input)) {
@@ -1203,11 +1380,18 @@ function verifyBrowserModelAgainstCorpus(
             side: command.input.side,
             priceTicks: BigInt(command.input.priceTicks),
             quantityLots: BigInt(command.input.quantityLots),
+            executionPolicy: command.input.executionPolicy ?? "GTC",
           },
-          config.instrumentId,
+          config,
         );
       }
-      if (!sameValue(actualEvents, command.expected.events)) {
+      if (
+        !eventsMatchGoldenCorpus(
+          actualEvents,
+          command.expected.events,
+          config.requireAcceptedExecutionPolicy,
+        )
+      ) {
         throw new Error(
           `event mismatch at ${scenario.scenarioId}/${command.caseId}`,
         );
@@ -1315,6 +1499,9 @@ function initializeBrowserModel(
     root,
     "[data-model-side]",
   );
+  const executionPolicyInput = root.querySelector<HTMLSelectElement>(
+    "[data-model-execution-policy]",
+  );
   const priceInput = requiredElement<HTMLInputElement>(
     root,
     "[data-model-price]",
@@ -1371,6 +1558,13 @@ function initializeBrowserModel(
   const maxQuantity = BigInt(config.maxQuantityLots);
   const maxOrderId = BigInt(config.maxOrderId);
   const firstOrderId = BigInt(config.firstGeneratedOrderId);
+  const showExecutionPolicy = config.supportedExecutionPolicies.length > 1;
+  if (
+    !config.supportedExecutionPolicies.includes(config.defaultExecutionPolicy) ||
+    (showExecutionPolicy && !executionPolicyInput)
+  ) {
+    throw new Error("Matching Lab execution-policy configuration is invalid");
+  }
   let state: ModelState;
   let modelReady = false;
 
@@ -1460,6 +1654,7 @@ function initializeBrowserModel(
     renderCommandFields();
     clearFeedback();
   });
+  executionPolicyInput?.addEventListener("change", clearFeedback);
 
   form.addEventListener("submit", (formEvent) => {
     formEvent.preventDefault();
@@ -1486,7 +1681,7 @@ function initializeBrowserModel(
         batch = executeCancelCommand(
           state,
           { instrumentId: config.instrumentId, orderId: targetOrderId },
-          config.instrumentId,
+          config,
         );
         commandText = `CancelOrder(${config.instrumentId}, #${targetOrderId})`;
       } else {
@@ -1506,6 +1701,8 @@ function initializeBrowserModel(
           "quantityLots",
         );
         const generatedOrderId = state.nextOrderId;
+        const executionPolicy =
+          executionPolicyInput?.value ?? config.defaultExecutionPolicy;
         batch = executePlaceCommand(
           state,
           {
@@ -1514,17 +1711,12 @@ function initializeBrowserModel(
             side,
             priceTicks,
             quantityLots,
+            executionPolicy,
           },
-          config.instrumentId,
+          config,
         );
-        if (
-          batch[0]?.type === "REJECTED" ||
-          batch[0]?.type === "PLACE_REJECTED"
-        ) {
-          throw new Error("自动生成的有界 Place 意外被模型拒绝");
-        }
-        state.nextOrderId += 1n;
-        commandText = `PlaceLimitOrder(${config.instrumentId}, #${generatedOrderId}, ${side}, price=${priceTicks}, qty=${quantityLots}, ${config.timeInForce})`;
+        if (batch[0]?.type === "ACCEPTED") state.nextOrderId += 1n;
+        commandText = `PlaceLimitOrder(${config.instrumentId}, #${generatedOrderId}, ${side}, price=${priceTicks}, qty=${quantityLots}, ${executionPolicy})`;
       }
       state.commandCount += 1;
       const revealed = predictionFor(batch, type);
@@ -1537,7 +1729,13 @@ function initializeBrowserModel(
         events,
         ...batch.map((event) => {
           const item = makeElement("li");
-          item.append(makeElement("code", undefined, formatModelEvent(event)));
+          item.append(
+            makeElement(
+              "code",
+              undefined,
+              formatModelEvent(event, showExecutionPolicy),
+            ),
+          );
           return item;
         }),
       );

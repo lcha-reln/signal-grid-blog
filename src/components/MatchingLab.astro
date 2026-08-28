@@ -81,6 +81,14 @@ const scenarioPackLabel = lab.goldenReplay.scenarioPackPath.split("/").at(-1);
 const eventBatchesLabel = lab.goldenReplay.eventBatchesPath.split("/").at(-1);
 const canonicalHistoryLabel = lab.goldenReplay.canonicalHistoryPath.split("/").at(-1);
 const supportedCommandLabel = lab.browserModel.supportedCommands.join(" / ");
+const supportedExecutionPolicyLabel =
+  lab.browserModel.supportedExecutionPolicies.join(" / ");
+const showExecutionPolicySelector =
+  lab.browserModel.supportedExecutionPolicies.length > 1;
+const supportsPolicyAdmission = lab.browserModel.supportedExecutionPolicies.some(
+  (policy) => policy === "FOK" || policy === "POST_ONLY",
+);
+const supportsIoc = lab.browserModel.supportedExecutionPolicies.includes("IOC");
 ---
 
 <div class="matching-lab" id={instanceId} data-matching-lab>
@@ -238,7 +246,7 @@ const supportedCommandLabel = lab.browserModel.supportedCommands.join(" / ");
         </div>
         <p>
           只支持 <code>{lab.browserModel.instrumentId}</code>、<code>{supportedCommandLabel}</code> 与
-          <code>{lab.browserModel.timeInForce}</code>。所有算术使用 BigInt，最多执行
+          <code>{supportedExecutionPolicyLabel}</code>。所有算术使用 BigInt，最多执行
           {lab.browserModel.maxCommands} 条命令。
         </p>
       </header>
@@ -254,9 +262,17 @@ const supportedCommandLabel = lab.browserModel.supportedCommands.join(" / ");
           </p>
           <dl class="matching-model-fixed">
             <div><dt>instrumentId</dt><dd>{lab.browserModel.instrumentId}</dd></div>
-            <div><dt>timeInForce</dt><dd>{lab.browserModel.timeInForce}</dd></div>
+            <div>
+              <dt>{showExecutionPolicySelector ? "defaultPolicy" : "timeInForce"}</dt>
+              <dd>{lab.browserModel.defaultExecutionPolicy}</dd>
+            </div>
           </dl>
-          <div class="matching-model-fields">
+          <div
+            class:list={[
+              "matching-model-fields",
+              { "matching-model-fields-policy": showExecutionPolicySelector },
+            ]}
+          >
             <label class="matching-model-command-type">
               <span>command</span>
               <select data-model-command-type>
@@ -273,6 +289,21 @@ const supportedCommandLabel = lab.browserModel.supportedCommands.join(" / ");
                   <option value="SELL">SELL</option>
                 </select>
               </label>
+              {showExecutionPolicySelector && (
+                <label>
+                  <span>executionPolicy</span>
+                  <select data-model-execution-policy>
+                    {lab.browserModel.supportedExecutionPolicies.map((policy) => (
+                      <option
+                        value={policy}
+                        selected={policy === lab.browserModel.defaultExecutionPolicy}
+                      >
+                        {policy}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              )}
               <label>
                 <span>priceTicks</span>
                 <input
@@ -319,6 +350,21 @@ const supportedCommandLabel = lab.browserModel.supportedCommands.join(" / ");
                 <option value="RESTS_ONLY" data-command="PLACE">只挂单：Accepted → Rested</option>
                 <option value="TRADES_ONLY" data-command="PLACE">全部成交：Accepted → Trade+</option>
                 <option value="TRADES_AND_RESTS" data-command="PLACE">成交后挂余量：Accepted → Trade+ → Rested</option>
+                {supportsPolicyAdmission && (
+                  <option value="POLICY_REJECTED" data-command="PLACE">
+                    策略拒绝：PlaceRejected，盘口与身份不变
+                  </option>
+                )}
+                {supportsIoc && (
+                  <option value="REMAINDER_CANCELED_ONLY" data-command="PLACE">
+                    只取消余量：Accepted → RemainderCanceled
+                  </option>
+                )}
+                {supportsIoc && (
+                  <option value="TRADES_AND_REMAINDER_CANCELED" data-command="PLACE">
+                    成交后取消余量：Accepted → Trade+ → RemainderCanceled
+                  </option>
+                )}
                 <option value="CANCEL_SUCCEEDS" data-command="CANCEL">撤单成功：Canceled</option>
                 <option value="CANCEL_REJECTED" data-command="CANCEL">稳定拒绝：CancelRejected</option>
               </select>

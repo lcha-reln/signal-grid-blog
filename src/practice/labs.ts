@@ -3,6 +3,12 @@ export const MATCHING_LAB_MODES = [
   "BROWSER_MODEL",
 ] as const;
 export const MATCHING_LAB_COMMANDS = ["PLACE", "CANCEL"] as const;
+export const MATCHING_EXECUTION_POLICIES = [
+  "GTC",
+  "IOC",
+  "FOK",
+  "POST_ONLY",
+] as const;
 export const GOLDEN_REPLAY_PRESENTATIONS = [
   "GOLDEN_HISTORY",
   "COUNTEREXAMPLE",
@@ -11,6 +17,8 @@ export const GOLDEN_REPLAY_SUPPORT_ROLES = ["REPLAY", "MUTANTS"] as const;
 
 export type MatchingLabMode = (typeof MATCHING_LAB_MODES)[number];
 export type MatchingLabCommand = (typeof MATCHING_LAB_COMMANDS)[number];
+export type MatchingExecutionPolicy =
+  (typeof MATCHING_EXECUTION_POLICIES)[number];
 export type GoldenReplayPresentation =
   (typeof GOLDEN_REPLAY_PRESENTATIONS)[number];
 export type GoldenReplaySupportRole =
@@ -62,7 +70,9 @@ export interface BrowserModelSeedOrder {
 
 export interface BrowserModelDefinition {
   instrumentId: string;
-  timeInForce: "GTC";
+  supportedExecutionPolicies: readonly MatchingExecutionPolicy[];
+  defaultExecutionPolicy: MatchingExecutionPolicy;
+  requireAcceptedExecutionPolicy: boolean;
   minPriceTicks: string;
   maxPriceTicks: string;
   minQuantityLots: string;
@@ -171,7 +181,9 @@ export const PRACTICE_LABS: readonly MatchingLabDefinition[] = [
     },
     browserModel: {
       instrumentId: "BTC-USDT",
-      timeInForce: "GTC",
+      supportedExecutionPolicies: ["GTC"],
+      defaultExecutionPolicy: "GTC",
+      requireAcceptedExecutionPolicy: false,
       minPriceTicks: "1",
       maxPriceTicks: "1000000000000",
       minQuantityLots: "1",
@@ -289,7 +301,9 @@ export const PRACTICE_LABS: readonly MatchingLabDefinition[] = [
     },
     browserModel: {
       instrumentId: "BTC-USDT",
-      timeInForce: "GTC",
+      supportedExecutionPolicies: ["GTC"],
+      defaultExecutionPolicy: "GTC",
+      requireAcceptedExecutionPolicy: false,
       minPriceTicks: "1",
       maxPriceTicks: "1000000000000",
       minQuantityLots: "1",
@@ -387,7 +401,9 @@ export const PRACTICE_LABS: readonly MatchingLabDefinition[] = [
     },
     browserModel: {
       instrumentId: "BTC-USDT",
-      timeInForce: "GTC",
+      supportedExecutionPolicies: ["GTC"],
+      defaultExecutionPolicy: "GTC",
+      requireAcceptedExecutionPolicy: false,
       minPriceTicks: "1",
       maxPriceTicks: "1000000000000",
       minQuantityLots: "1",

@@ -791,6 +791,10 @@
   margin-top: 18px;
 }
 
+.matching-model-fields-policy {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
 .matching-model-fields label {
   min-width: 0;
 }

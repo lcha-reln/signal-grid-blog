@@ -34,7 +34,7 @@ const lessonFields = [
 
 const { PRACTICE_CASES } = await import(configUrl.href);
 const { PRACTICE_UNITS } = await import(unitsUrl.href);
-const { PRACTICE_LABS } = await import(labsUrl.href);
+const { MATCHING_EXECUTION_POLICIES, PRACTICE_LABS } = await import(labsUrl.href);
 
 function assert(condition, message) {
   if (!condition) errors.push(message);
@@ -618,6 +618,30 @@ for (const forbidden of ["STUDENT_FAILURE", "SYSTEM_ERROR", "innerHTML", "outerH
     `Matching Lab browser runtime contains forbidden capability or judge term ${forbidden}`,
   );
 }
+for (const requiredRuntimeToken of [
+  "INVALID_EXECUTION_POLICY",
+  "FOK_NOT_FILLABLE",
+  "POST_ONLY_WOULD_TAKE",
+  "REMAINDER_CANCELED",
+  "IOC_REMAINDER",
+  "requireAcceptedExecutionPolicy",
+]) {
+  assert(
+    matchingLabSource.includes(requiredRuntimeToken),
+    `Matching Lab browser runtime is missing execution-policy contract ${requiredRuntimeToken}`,
+  );
+}
+for (const requiredUiToken of [
+  "data-model-execution-policy",
+  "POLICY_REJECTED",
+  "REMAINDER_CANCELED_ONLY",
+  "TRADES_AND_REMAINDER_CANCELED",
+]) {
+  assert(
+    matchingLabComponent.includes(requiredUiToken),
+    `Matching Lab component is missing execution-policy control ${requiredUiToken}`,
+  );
+}
 
 for (const lab of PRACTICE_LABS) {
   const key = `${lab.projectSlug}/${lab.unitCode}`;
@@ -839,6 +863,61 @@ for (const lab of PRACTICE_LABS) {
     JSON.stringify(eventBatches?.scenarios) === JSON.stringify(expectedEventScenarios),
     `${key}: lab scenario pack and event-batches are not the same Golden corpus`,
   );
+  for (const scenario of sourceScenarios) {
+    for (const command of scenario.commands ?? []) {
+      if ((command.type ?? "PLACE") !== "PLACE") continue;
+      const rawPolicy = command.input?.executionPolicy ?? "GTC";
+      assert(
+        typeof rawPolicy === "string" && rawPolicy.length > 0,
+        `${key}/${scenario.scenarioId}/${command.caseId}: raw executionPolicy is invalid`,
+      );
+      const normalizedPolicy = MATCHING_EXECUTION_POLICIES.includes(rawPolicy)
+        ? rawPolicy
+        : undefined;
+      if (normalizedPolicy) {
+        assert(
+          lab.browserModel.supportedExecutionPolicies?.includes(normalizedPolicy),
+          `${key}/${scenario.scenarioId}/${command.caseId}: corpus policy is unsupported by the browser model`,
+        );
+      }
+      const events = command.expected?.events ?? [];
+      const accepted = events.find((event) => event.type === "ACCEPTED");
+      if (accepted) {
+        assert(
+          !lab.browserModel.requireAcceptedExecutionPolicy ||
+            Object.hasOwn(accepted, "executionPolicy"),
+          `${key}/${scenario.scenarioId}/${command.caseId}: Accepted omits required executionPolicy`,
+        );
+        if (Object.hasOwn(accepted, "executionPolicy")) {
+          assert(
+            MATCHING_EXECUTION_POLICIES.includes(accepted.executionPolicy) &&
+              accepted.executionPolicy === normalizedPolicy,
+            `${key}/${scenario.scenarioId}/${command.caseId}: Accepted executionPolicy is not the normalized input`,
+          );
+        }
+      }
+      const remainderIndex = events.findIndex(
+        (event) => event.type === "REMAINDER_CANCELED",
+      );
+      if (remainderIndex >= 0) {
+        const remainder = events[remainderIndex];
+        let canceledQuantityIsPositive = false;
+        try {
+          canceledQuantityIsPositive = BigInt(remainder.canceledQuantityLots) > 0n;
+        } catch {
+          canceledQuantityIsPositive = false;
+        }
+        assert(
+          normalizedPolicy === "IOC" &&
+            remainder.reason === "IOC_REMAINDER" &&
+            canceledQuantityIsPositive &&
+            remainderIndex === events.length - 1 &&
+            !events.some((event) => event.type === "RESTED"),
+          `${key}/${scenario.scenarioId}/${command.caseId}: invalid IOC RemainderCanceled event`,
+        );
+      }
+    }
+  }
   if (Object.hasOwn(eventBatches ?? {}, "status")) {
     assert(eventBatches.status === "PASS", `${key}: lab event report is not PASS`);
   }
@@ -978,8 +1057,56 @@ for (const lab of PRACTICE_LABS) {
   }
 
   const model = lab.browserModel;
+  const modelFields = new Set([
+    "instrumentId",
+    "supportedExecutionPolicies",
+    "defaultExecutionPolicy",
+    "requireAcceptedExecutionPolicy",
+    "minPriceTicks",
+    "maxPriceTicks",
+    "minQuantityLots",
+    "maxQuantityLots",
+    "maxOrderId",
+    "maxCommands",
+    "firstGeneratedOrderId",
+    "supportedCommands",
+    "showLifecycleRegistry",
+    "seedOrders",
+  ]);
+  assert(
+    model && Object.keys(model).every((field) => modelFields.has(field)),
+    `${key}: browser model contains an undeclared field`,
+  );
   assert(model.instrumentId === "BTC-USDT", `${key}: browser model instrument drifted`);
-  assert(model.timeInForce === "GTC", `${key}: browser model TIF drifted`);
+  assert(
+    Array.isArray(model.supportedExecutionPolicies) &&
+      model.supportedExecutionPolicies.length > 0 &&
+      model.supportedExecutionPolicies.every((policy) =>
+        MATCHING_EXECUTION_POLICIES.includes(policy),
+      ) &&
+      new Set(model.supportedExecutionPolicies).size ===
+        model.supportedExecutionPolicies.length,
+    `${key}: browser model execution-policy set is invalid`,
+  );
+  assert(
+    model.supportedExecutionPolicies?.includes(model.defaultExecutionPolicy),
+    `${key}: browser model default execution policy is unsupported`,
+  );
+  assert(
+    typeof model.requireAcceptedExecutionPolicy === "boolean",
+    `${key}: Accepted execution-policy requirement is invalid`,
+  );
+  if (
+    lab.projectSlug === "high-availability-cex" &&
+    ["M01", "M02", "M03"].includes(lab.unitCode)
+  ) {
+    assert(
+      sameOrderedStrings(model.supportedExecutionPolicies, ["GTC"]) &&
+        model.defaultExecutionPolicy === "GTC" &&
+        model.requireAcceptedExecutionPolicy === false,
+      `${key}: published pre-M04 browser policy contract drifted`,
+    );
+  }
   assert(
     Array.isArray(model.supportedCommands) &&
       model.supportedCommands.length > 0 &&
