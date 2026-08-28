@@ -12,7 +12,7 @@ export const SITE = {
   title: "RE-LN / Signal Grid",
   shortTitle: "RE/LN",
   description:
-    "从 Aeron、交易系统与有状态服务，到 Java 低延迟和生产级 AI Agent 后端工程。",
+    "从存储引擎、Aeron、交易系统与有状态服务，到 Java 低延迟和生产级 AI Agent 后端工程。",
   author: "lcha-reln",
   locale: "zh-CN",
   url: "https://lcha-reln.github.io/signal-grid-blog/",
@@ -26,6 +26,7 @@ export type SeriesKey =
   | "availability"
   | "performance"
   | "agent"
+  | "storage"
   | "meta";
 
 export interface SeriesStage {
@@ -331,6 +332,45 @@ export const SERIES: readonly SeriesDefinition[] = [
         description:
           "建立 Trace、SLO、容量、发布、隔离和事故恢复能力，并抽取稳定的平台边界。",
         fromOrder: 800,
+      },
+    ],
+  },
+  {
+    key: "storage",
+    title: "存储引擎与数据库内核",
+    eyebrow: "STORAGE ENGINE INTERNALS",
+    description:
+      "从 Page、Buffer Pool、WAL 与 Manifest 的恢复边界出发，进入 B+Tree、MVCC 和 LSM Tree 的状态转换，再用放大、尾延迟、Checksum、Scrubbing 与格式演进建立可测量、可修复的存储内核心智模型。",
+    prerequisite:
+      "理解基本数据结构、文件 I/O 和事务概念；建议了解 WAL 与崩溃恢复，但不要求熟悉某一种数据库源码。",
+    outcome:
+      "能够区分页、缓存、日志、元数据和版本状态的权威边界，解释 B+Tree、MVCC 与 LSM Tree 在并发、回收和恢复中的核心不变量，测量读写与空间放大及 Compaction Stall，并设计可审计的完整性修复与格式演进协议。",
+    color: "lime",
+    index: "06",
+    stages: [
+      {
+        index: "01",
+        eyebrow: "PAGES, TREES & VERSIONS",
+        title: "页式引擎、索引与可见性",
+        description:
+          "先建立 Page、Buffer Pool、WAL 和 Manifest 的全局地图，再深入 B+Tree 的结构变更与 MVCC 的版本可见性。",
+        fromOrder: 10,
+      },
+      {
+        index: "02",
+        eyebrow: "SORTED RUNS & AMPLIFICATION",
+        title: "LSM 与放大控制",
+        description:
+          "理解 MemTable、SSTable、Compaction 与 Tombstone，再把读、写、空间放大和后台债务连接到尾延迟与容量信封。",
+        fromOrder: 40,
+      },
+      {
+        index: "03",
+        eyebrow: "INTEGRITY & EVOLUTION",
+        title: "完整性与格式演进",
+        description:
+          "用 Checksum、Scrubbing、权威修复和混合版本格式协议守住长期数据与安全回滚边界。",
+        fromOrder: 60,
       },
     ],
   },

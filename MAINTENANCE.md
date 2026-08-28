@@ -175,6 +175,7 @@ Mermaid 只在实际存在图表的页面加载。语法问题不一定让 Astro
 - `availability`：有状态系统可靠性
 - `performance`：Java 低延迟工程
 - `agent`：AI Agent 后端工程
+- `storage`：存储引擎与数据库内核
 - `meta`：站点指南，仅用于站点说明类内容
 
 `seriesOrder` 只负责排序：数值越小越靠前，页面会自动显示连续的 Chapter 编号。使用 10、20、30 这样的间隔值，便于中途插入章节；同一路径内不要重复。

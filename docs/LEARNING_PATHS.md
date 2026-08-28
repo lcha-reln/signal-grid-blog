@@ -2,7 +2,7 @@
 
 这份文件记录专题的 canonical 阅读顺序。页面中的连续 Chapter 编号由 `seriesOrder` 排序后生成；修改标题或文件名时，不应同时改变已经发布的 `permalink`。
 
-顶层专题只表达已经形成系统课程的稳定知识主线：`aeron`、`trading`、`availability`、`performance`、`agent`。普通产品或组件名仍使用 `tags` 表示；Aeron 因同时覆盖 Transport、Archive 与 Cluster 的完整系统栈，单独形成顶层学习路径。`categories` 仅为兼容早期文章保留，不参与前台导航。
+顶层专题只表达已经形成系统课程的稳定知识主线：`aeron`、`trading`、`availability`、`performance`、`agent`、`storage`。普通产品或组件名仍使用 `tags` 表示；Aeron 因同时覆盖 Transport、Archive 与 Cluster 的完整系统栈，存储引擎因同时覆盖页式结构、版本并发、LSM、放大与长期完整性，分别形成顶层学习路径。`categories` 仅为兼容早期文章保留，不参与前台导航。
 
 ## Aeron 系统工程
 
@@ -135,3 +135,16 @@
 | 系统边界与后端基础 |      02 |           110 | Python AI 后端：类型、Pydantic、精确数值与可复现工程 | `python-ai-backend-typing-pydantic` |
 
 这条路径研究的不是怎样把更多 Prompt 和工具堆进循环，而是怎样把概率模型放进一个状态明确、权限受控、可以恢复、能够评测并且便于审计的后端系统。Chapter 01 先划清模型、Workflow、Agent Runtime、Tool Gateway、领域系统和生产治理的职责；Chapter 02 再把确定性边界落实为 Python 类型关系、Pydantic 运行时 Schema、精确领域值、事务约束与可复现环境。后续章节会沿可靠异步、模型契约、工具运行时、RAG、持久化编排、Eval、安全与平台化逐层展开。完整的 42 篇 canonical 规划记录在 [AI Agent 后端工程博客系列规划](./AI_AGENT_BACKEND_SERIES_PLAN.md)。
+
+## 存储引擎与数据库内核
+
+| 阶段                   | Chapter | `seriesOrder` | 标题                                                               | `permalink`                                                         |
+| ---------------------- | ------: | ------------: | ------------------------------------------------------------------ | ------------------------------------------------------------------- |
+| 页式引擎、索引与可见性 |      01 |            10 | 存储引擎全景：Page、Buffer Pool、WAL、Manifest 与恢复边界          | `storage-engine-pages-buffer-pool-wal-manifest-recovery-boundaries` |
+| 页式引擎、索引与可见性 |      02 |            20 | B+Tree：页分裂、Latch、Copy-on-Write 与范围扫描                    | `b-plus-tree-page-splits-latches-copy-on-write-range-scans`         |
+| 页式引擎、索引与可见性 |      03 |            30 | MVCC：版本链、Snapshot、Visibility、Vacuum 与长事务                | `mvcc-version-chains-snapshots-visibility-vacuum-long-transactions` |
+| LSM 与放大控制         |      04 |            40 | LSM Tree：MemTable、SSTable、Compaction 与 Tombstone               | `lsm-tree-memtable-sstable-compaction-tombstones`                   |
+| LSM 与放大控制         |      05 |            50 | 放大与尾延迟：Read、Write、Space Amplification 与 Compaction Stall | `storage-amplification-tail-latency-compaction-stalls`              |
+| 完整性与格式演进       |      06 |            60 | 存储完整性：Checksum、Scrubbing、Repair 与格式演进                 | `storage-integrity-checksum-scrubbing-repair-format-evolution`      |
+
+这条路径先把数据库内核拆成数据页、缓存、日志、元数据与恢复切点，明确“已经返回”“已经持久化”和“能够从哪些材料恢复”不是同一个边界。B+Tree 章节把有序键空间映射到会分裂、合并和并发访问的物理页，MVCC 再把逻辑行扩展成受 Snapshot 与 Visibility 约束的版本历史。随后 LSM Tree 用不可变 SSTable 与 Compaction 建立另一种写入和回收路径，放大与尾延迟章节则把结构选择转换成可测量的读、写、空间和后台债务。最后，Checksum 与 Scrubbing 只负责发现和定位损坏，Repair 必须证明权威来源与修复血缘，格式演进还要守住混合版本读写与安全回滚边界。专题中的 WAL、Checkpoint、历史回收和静默损坏会连接到“有状态系统可靠性”，但这里只讨论存储引擎内部的页、版本、文件与元数据合同，不重复分布式复制协议。
