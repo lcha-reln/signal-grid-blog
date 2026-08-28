@@ -2,7 +2,7 @@
 title: Agrona 2：DirectBuffer、并发队列与 Agent 执行模型
 description: 基于 Agrona 2.5.0，围绕 Buffer 与内存顺序、SPSC/MPSC 队列、Agent/IdleStrategy 和低分配集合，解释所有权、背压与生命周期，并纠正“零 GC、零拷贝、无锁就一定更快”的常见误区。
 date: 2026-03-10T11:15:21+08:00
-updated: 2026-08-27T20:02:00+08:00
+updated: 2026-08-28T11:24:00+08:00
 tags:
   - Agrona
   - Java 并发
@@ -60,6 +60,8 @@ Aeron 1.52.2 使用 Agrona 2.5.0，但这是一条**实现依赖**，不是要�
 
 后续遇到 `UnsafeBuffer`、`IdleStrategy`、counters 或 mark file 时，可以回到本文相应章节查底层语义；Aeron 专题只讲这些原语如何参与 Transport、Archive 和 Cluster，不会重复整篇 Agrona。反过来，本文提到的跨进程可靠传输、流录制和复制状态机，也会分别在 Aeron 的三个阶段中展开。
 
+边界在“业务位置”处还要再切一次。Agrona primitive map、counter 或映射内存可以承载派生索引，但它们不会把 Aeron position 自动变成业务序列，也不会证明索引、Checkpoint 与外部效果位于同一恢复切点；这部分归属于 [Recording Position、业务 Index 与 Range Replay](/signal-grid-blog/posts/aeron-recording-position-business-timeline-index-checkpoint-range-replay-rebuild/)。本文只负责索引容器依赖的内存视图、发布顺序和单写者执行约束，不重复那篇文章的重建协议。
+
 依赖很简单：
 
 ```xml
@@ -114,6 +116,8 @@ Agrona 的 Buffer 层次可以这样理解：
 “DirectBuffer”这个名字不代表数据一定在 off-heap；`UnsafeBuffer` 也不会替你管理一段原始地址的存活期。它只是附着在现有内存上的视图。底层对象被释放、unmap 或复用后，旧视图不能继续访问。
 
 `UnsafeBuffer` 成功 wrap 后可以被多个线程访问，但这只说明视图本身不再变化；普通读写仍必须遵守应用的并发协议。`wrap(...)` 会改变视图指向，本身不是线程安全操作，不能和读写并发发生。
+
+本文到这里有意停止继续罗列 Buffer API。只要底层是 native allocation、由 Arena 管理的 `MemorySegment` 或 `mmap` 映射，真正必须证明的是谁分配、谁关闭、哪些线程可以访问、旧视图何时失效，以及 `force()` 能否覆盖所需持久性边界；这些时间、空间和线程生命周期统一交给[Java 堆外内存与 FFM](/signal-grid-blog/posts/java-off-heap-memory-ffm-memorysegment-arena-mmap-lifecycle/)。Agrona 的职责是给既有内存建立高效视图，不是替底层内存颁发所有权。
 
 ### 字节序必须写进协议
 

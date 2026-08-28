@@ -1,8 +1,8 @@
 ---
 title: "保证金风险引擎：权益、维持保证金与标记价格"
-description: "用明确的账户作用域拆开钱包余额、权益、保证金余额、可用保证金与维持保证金，解释标记价格的数据链路、风险比率方向和简化强平公式的适用边界。"
+description: "从版本化风险快照出发，拆开权益、保证金与价格口径，并建立 Index/Mark 质量状态机、输入降级、增量重算和模型版本的恢复不变量。"
 date: 2026-03-10T01:00:00+08:00
-updated: 2026-08-27T21:50:00+08:00
+updated: 2026-08-28T11:25:00+08:00
 categories:
   - 交易系统
 tags:
@@ -21,7 +21,7 @@ draft: false
 
 保证金风险最容易在术语层出错。同一个“保证金率”，有的平台用 `maintenance requirement / effective equity`，数值上升到 100% 触发清算；另一些资料用相反的 `effective equity / maintenance requirement`，数值下降到 100% 才触发。钱包余额、权益、保证金余额和可用保证金也不是可互换的名字。
 
-因此，风险引擎不能先背一个公式再套所有产品。它必须先确定**账户作用域、抵押品规则、价格快照、持仓模式和比率方向**，再计算当前规则版本下的 IM、MM 与风险动作。
+因此，风险引擎不能先背一个公式再套所有产品。它必须先确定**账户作用域、抵押品规则、价格快照、持仓模式和比率方向**，再计算当前规则版本下的 IM、MM 与风险动作。更重要的是，结果必须说明“这次计算用了哪一组输入、这些输入是否仍有资格驱动权威动作，以及增量计算能否由同一切点重放出来”。
 
 本文是交易系统学习路径的 Chapter 19。[Chapter 15：永续资金费用](/signal-grid-blog/posts/perpetual-funding-rate/) 会改变账户现金与风险缓冲，[Chapter 17：交易账本与双重记账](/signal-grid-blog/posts/trading-ledger-double-entry-accounting-and-reconciliation/) 已把现金流拆成 posted、pending 与 available 等可审计状态，[Chapter 18：数字资产托管与充提](/signal-grid-blog/posts/digital-asset-custody-deposits-withdrawals-reconciliation/) 又划清内部权益与外部资产控制的边界；这里再把账本余额和仓位估值接入同一风险快照。
 
@@ -38,9 +38,13 @@ RiskSnapshot {
   marginMode,
   productVersions,
   collateralRuleVersion,
-  positionAndOrderSequence,
+  riskModelVersion,
+  accountSequence,
   priceSnapshotId,
-  calculatedAt
+  priceQualityState,
+  evaluationId,
+  calculatedAt,
+  effectiveAt
 }
 ```
 
@@ -55,7 +59,9 @@ RiskSnapshot {
 - 借贷负债、利息、费用和期权价值如何进入分母；
 - IM/MM 档位由入场名义还是当前 mark notional 决定。
 
-快照还要固定金额、数量、价格和比率的精度及舍入规则。只有输入位置、价格版本、规则版本与数值口径同时可追溯，重启后的风险引擎才可能从同一输入恢复出同一判断。
+快照还要固定金额、数量、价格和比率的精度及舍入规则。`calculatedAt` 是系统完成计算的时间，`effectiveAt` 是这组输入在业务时间线上生效的切点，两者不能互换。只有账户序列、价格版本、规则版本与数值口径同时可追溯，重启后的风险引擎才可能从同一输入恢复出同一判断。
+
+`riskModelVersion` 也不能只是一个可覆盖的配置名。一个可回放版本至少要绑定公式实现或制品摘要、输入 schema、参数集、舍入规则、风险单元定义和生效边界。历史事件只保存“当前版本”而不保留旧制品，日后即使找回相同余额和价格，也无法证明得到了当时的风险结果。
 
 ## 五个常被混用的量
 
@@ -179,7 +185,7 @@ marginLevel = effectiveEquity / totalMM
 
 接口、监控和文章都应同时记录 numerator、denominator、单位与 comparator。只保存字段名 `MMR=80%`，换平台后几乎必然产生歧义。
 
-## Index、Mark 与 Last 是三种事实
+## Index、Mark 与 Last 是三种事实，质量状态决定它们能做什么
 
 ### Last Price
 
@@ -211,7 +217,55 @@ movingAverageBasis
   = MA(contractMidPrice - indexPrice)
 ```
 
-其他平台可能使用不同的 fair-basis、funding basis、边界和取中值算法。不能仅凭算法名称给交易所贴“更安全”或“更危险”的标签；需要按具体产品检验异常源、响应速度、边界和历史变更。价格源 stale、outlier 或不足时，系统也必须进入确定的降级状态，不能静默沿用旧价格继续作出权威清算决定。
+其他平台可能使用不同的 fair-basis、funding basis、边界和取中值算法。不能仅凭算法名称给交易所贴“更安全”或“更危险”的标签；需要按具体产品检验异常源、响应速度、边界和历史变更。
+
+生产系统不应只发布一个 `price`，而应发布带证据的价格事实：
+
+```text
+PriceSnapshot {
+  instrumentId,
+  indexPrice,
+  markPrice,
+  constituentSetVersion,
+  acceptedConstituents,
+  rejectedConstituentsAndReasons,
+  basisModelVersion,
+  sourceWatermarks,
+  qualityState,
+  validUntil
+}
+```
+
+其中 `qualityState` 是会约束后续动作的状态机，而不是监控标签：
+
+```mermaid
+stateDiagram-v2
+  [*] --> Warming
+  Warming --> Healthy: 足够成分且时间水位一致
+  Healthy --> Degraded: 少量来源 stale / outlier
+  Degraded --> Healthy: 连续满足恢复窗口
+  Healthy --> Frozen: 无法形成新权威价格
+  Degraded --> Frozen: 低于最小来源或偏离上界
+  Frozen --> Recovering: 来源恢复并完成回补
+  Recovering --> Healthy: 新快照通过连续性校验
+  Frozen --> Invalid: 超过最大冻结期限或完整性失败
+  Invalid --> Recovering: 人工或协议化恢复
+```
+
+状态转移要带原因、观察窗口和恢复滞回，避免某个成分源抖动时在 `Healthy` 与 `Degraded` 之间频繁切换。Index 仍然健康而衍生品盘口 stale 时，系统也许还能发布 index，却不能假装 basis 与 mark 同样健康。
+
+### 输入降级必须改变准入和清算权限
+
+降级策略不能概括成“继续使用上一次价格”。风险增加和风险减少的不可逆性不同，因而需要一张显式决策表：
+
+| 价格状态   | 展示与估值                 | 新增风险                       | 降低风险               | 权威清算                                     |
+| ---------- | -------------------------- | ------------------------------ | ---------------------- | -------------------------------------------- |
+| `Healthy`  | 发布当前快照               | 按正常限额                     | 允许                   | 按当前模型执行                               |
+| `Degraded` | 标记来源缺失并缩短有效期   | 收紧限额、缩量或拒绝高风险请求 | 优先保留               | 仅按预先批准的保守规则与证据执行             |
+| `Frozen`   | 显示冻结时间与最后健康版本 | 拒绝                           | 允许可验证的撤单、减仓 | 不得把陈旧价格伪装成新触发；进入专门处置协议 |
+| `Invalid`  | 不发布权威估值             | 拒绝                           | 由人工或隔离通道处理   | 暂停自动决策并保全证据                       |
+
+“冻结时绝不清算”同样不是普适答案：若市场已经长时间不可用，继续保留无限风险也可能更危险。正确做法是预先定义保守价格、可用外部证据、人工权限和最大冻结时间，并把进入该分支记录成独立规则版本，而不是在事故中临时挑一个对平台有利的价格。
 
 ```mermaid
 flowchart LR
@@ -230,6 +284,50 @@ flowchart LR
 ```
 
 Bybit 当前还明确区分 UI 默认按 last 展示的未实现 PnL 与悬停时按 mark 查看、并以 mark 参与清算判断的数值。这再次说明“未实现盈亏使用什么价格”也必须标注用途。
+
+## 增量重算只有与全量结果等价才可信
+
+风险引擎不可能在每个行情 tick 上扫描全账户、重估所有期权和重新聚合全部订单。常见实现会把依赖关系显式化：价格变化先标记受影响的 instrument，再传播到 position、risk unit、collateral bucket，最后只重算相关账户。
+
+```mermaid
+flowchart LR
+  P["PriceSnapshot v42"] --> I["Dirty instruments"]
+  E["Account event seq 918"] --> X["Dirty positions / orders"]
+  I --> U["Affected risk units"]
+  X --> U
+  M["RiskModel v17"] --> U
+  U --> C["Revalue cached components"]
+  C --> A["Re-aggregate account"]
+  A --> D["RiskDecision evaluationId"]
+```
+
+性能优化不能改变语义。增量路径必须满足：
+
+```text
+incrementalEvaluate(snapshot, priorState, dirtySet)
+  == fullEvaluate(snapshot)
+```
+
+这里的相等包括金额、阈值比较结果、舍入、约束情景和解释分解，而不只是最终的 `Healthy/Liquidate` 标签。以下情况应使缓存失效并退回全量计算：模型或抵押品规则换版、风险单元成员关系改变、事件序列缺口、价格快照跨过未消费水位、非线性产品超过近似有效区间，以及恢复后无法证明缓存基线来自同一快照。
+
+实现上可以维护 instrument-to-account 反向索引与风险单元局部缓存，但索引只是加速器，不是权威状态。它必须能由仓位、订单和模型定义重建；属性测试则应随机生成事件顺序和脏集合，持续比较增量与全量结果，专门覆盖部分成交、撤单与成交交叉、档位跃迁和参数切换。
+
+### 风险快照切点要消除 torn read
+
+账户事件和价格事件来自不同序列域，没有天然的“同时”。读取了 `accountSequence=918` 的仓位、`priceSnapshot=42` 的 mark，却遗漏本应在 918 之前生效的资金费用，就是一次 torn read。
+
+可行的实现包括由单线程 reducer 串行消费两类输入、在事件日志中插入 barrier，或用 MVCC 读取各来源不超过某个协调水位的版本。无论选择哪一种，决策都要记录输入向量，例如：
+
+```text
+RiskCut {
+  accountSequence: 918,
+  priceSnapshotId: 42,
+  fundingSequence: 77,
+  modelVersion: 17
+}
+```
+
+恢复时先恢复到 checkpoint 中声明的输入向量，再从各自下一位置重放；不能先加载最新价格、后加载旧账户快照，再让中间结果触发清算。风险快照保证的是**这次判断内部自洽且可重放**，不保证分布式世界在物理上同时停在这一刻。
 
 ## 简化强平价公式只适用于窄场景
 
@@ -292,13 +390,15 @@ flowchart LR
 
 OKX 当前公开清算说明就包含先撤活动订单、较高档位先部分减仓的路径。其他平台的先后顺序、触发阈值、清算价格和保险基金处理可能不同，所以这张图只能作为参考状态机。
 
-每一次状态迁移都应以风险快照 ID 和动作 ID 幂等执行；服务重启后，必须能从同一 position/order sequence、price snapshot 和 rule version 恢复到相同阶段。验证时应重点覆盖边界值、档位跃迁、价格跳空、多资产联动，以及 equity、haircut、liability、order loss 和费用缓冲是否各只应用一次。UI 展示的估算值可以使用不同刷新节奏，但必须与权威 liquidation decision 明确分开。
+每一次状态迁移都应以 `evaluationId + actionType + actionOrdinal` 组成稳定的幂等键；服务重启后，必须能从同一 RiskCut、price quality state 和 model version 恢复到相同阶段。当更新的 RiskCut 启动了更高 risk-action epoch 时，OMS 或清算命令接收端必须原子拒绝旧 epoch，防止旧 evaluator 在延迟恢复后继续产生效果；只在 evaluator 本地把 token 标成失效并不构成 fencing。
+
+验证时应重点覆盖边界值、档位跃迁、价格跳空、多资产联动，以及 equity、haircut、liability、order loss 和费用缓冲是否各只应用一次。还应保留影子计算结果：新模型在生效前用相同历史输入与旧模型双跑，比较阈值翻转、保证金差异和解释项；只有差异被批准后，才能在一个明确账户序列或业务时间边界切换。UI 展示的估算值可以使用不同刷新节奏，但必须与权威 liquidation decision 明确分开。
 
 ## 结论：风险判断是绑定版本的快照决策
 
-保证金风险不是某一个百分比，而是对明确账户作用域、账本余额、仓位与订单位置、价格快照和规则版本的一次联合判断。Equity、available balance、IM、MM 和风险比率各自回答不同问题，任何重复计入或口径混用都会改变清算边界。
+保证金风险不是某一个百分比，而是对明确账户作用域、账本余额、仓位与订单位置、价格质量和模型版本的一次联合判断。Equity、available balance、IM、MM 和风险比率各自回答不同问题，任何重复计入或口径混用都会改变清算边界。
 
-风险动作也不是由一个显示价格直接触发的一刀切操作。系统必须在每一步重新计算同一个可解释约束，并把估算、权威决定和恢复位置分别记录下来。
+风险动作也不是由一个显示价格直接触发的一刀切操作。系统必须在每一步重新计算同一个可解释约束；增量路径要证明与全量路径等价，降级路径要显式收缩权限，最终把估算、权威决定和恢复输入向量分别记录下来。
 
 下一章进入 [期权估值与波动率曲面](/signal-grid-blog/posts/options-valuation-greeks-volatility-surface/)：保证金快照中的期权价格和 Greeks 不是静态主数据，而是绑定市场输入、模型、曲面版本与质量状态的风险事实。
 

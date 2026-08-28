@@ -2,7 +2,7 @@
 title: "如何证明恢复协议真的可靠：Failpoint、确定性模拟、历史检查与故障注入"
 description: "从可证伪的恢复主张出发，讲清不变量、状态化负载、Failpoint、虚拟时间与存储、确定性调度、History Checker、trace replay，以及如何分别测量 safety、liveness、RPO 与 RTO。"
 date: 2026-08-18T14:15:00+08:00
-updated: 2026-08-27T16:55:00+08:00
+updated: 2026-08-28T11:30:00+08:00
 tags:
   - 故障注入
   - Deterministic Simulation
@@ -287,6 +287,63 @@ while queue not empty and step < budget:
 
 只有在这些前提成立后，`commitIndex`、服务成功响应或 recovery phase 仍长期不前进，才是 liveness counterexample。若模型没有提供足够长的稳定窗口，结果只能记为 stall/inconclusive，不能归罪于协议活性。安全性则不需要公平：即使消息永远延迟，协议也不能提交冲突历史。
 
+## 模型检查约束抽象行为，Refinement 才把实现 trace 接进来
+
+[《从协议伪代码到形式化规格》](/signal-grid-blog/posts/protocol-pseudocode-to-tla-invariants-counterexamples-refinement/)已经说明：TLC 探索的是有限配置下抽象规格允许的状态与动作，不会执行生产代码里的 `fsync`、消息队列、线程回调或 readiness 发布。要让模型反例真正约束恢复实现，中间还需要一份版本化的 **refinement / trace projection**：把具体状态投影成抽象状态，再判断每个具体步骤映射后是抽象 `Next`，还是合法的 stuttering。
+
+```mermaid
+flowchart LR
+  A["抽象规格<br/>Init · Next · Invariant"] --> M["TLC / proof<br/>允许的抽象行为"]
+  C["生产实现<br/>事件 + 状态摘要"] --> P["trace projector<br/>具体状态 → 抽象状态"]
+  P --> R{"映射后的相邻状态<br/>stutter 或满足 Next？"}
+  M --> R
+  R -->|"否"| X["refinement counterexample<br/>保留原始 trace"]
+  R -->|"是"| E["本条 trace 符合抽象规格"]
+  E --> H["外部 History / 对账<br/>再验证公开语义"]
+```
+
+### 抽象动作与实现事件不是一一对应
+
+抽象模型应保留影响恢复正确性的状态差异，而不是复刻类名。下面是一种映射形状；实际字段必须绑定具体协议和版本：
+
+| 抽象状态变化                        | 需要从实现 trace 还原的事实                                       | 不能过早映射的事件                          |
+| ----------------------------------- | ----------------------------------------------------------------- | ------------------------------------------- |
+| `InstallCheckpoint(cut, digest)`    | manifest、schema/config、状态摘要与 source cursor 均验证并安装    | 开始下载、文件打开、只校验某个分片          |
+| `Replay(i -> i+1)`                  | 业务状态、dedupe、timer/outbox 与 cursor 已按同一恢复原子边界推进 | record 已 decode、已入队或只改了内存 cursor |
+| `InstallFence(epoch, owner)`        | 权威存储和所有 required sink 已接受同一代际                       | 本地变量变成 Leader、只写了控制面元数据     |
+| `Activate(epoch, recoveryFrontier)` | checkpoint、追赶、fencing 与不变量证据同时满足                    | 端口监听、Pod Ready 或网关开始刷新路由      |
+
+一次抽象 `Activate` 可能对应几十个实现事件；日志刷新指标、下载块或重试也可能完全不改变抽象状态，映射为 stutter。反过来，一个原子元数据提交也可能同时改变多个抽象变量。按函数名强行一一对应会把代码组织方式误当成协议语义。
+
+投影检查器的核心可以缩成：
+
+```text
+concrete = reconstruct(initialImage, traceHeader)
+abstract = project(concrete)
+require AbstractInit(abstract)
+
+for event in trace:
+    concreteNext = reduce(concrete, event)
+    abstractNext = project(concreteNext)
+    require abstractNext == abstract
+         or AbstractNext(abstract, abstractNext)
+    require AbstractInvariant(abstractNext)
+    concrete, abstract = concreteNext, abstractNext
+```
+
+这段伪代码成立的前提是 `reduce` 能完整重建所有影响投影变量的事实。trace 必须绑定 build、事件 schema、配置和 projector 版本；事件序列要有可验证的连续性与足够的因果顺序；未知事件、序号缺口或丢失的 source 必须让结果变成 `inconclusive`，不能把缺失步骤当作 stutter。对 counter、调试日志或采样 span 做 best-effort 转换，只能辅助诊断，不能提供 refinement evidence。
+
+### Refinement evidence 有层次，不能互相冒名
+
+| 证据层                    | 它实际支持的主张                              | 仍然没有证明什么                 |
+| ------------------------- | --------------------------------------------- | -------------------------------- |
+| 抽象模型检查              | 有界模型中的抽象行为未发现不变量反例          | 无界规格、生产代码和模型忠实度   |
+| 具体规格到抽象规格的映射  | 检查边界内的具体行为投影后符合抽象规格        | Java/C++ 实现确实实现了具体规格  |
+| 实现 trace conformance    | 这批完整、可重放 trace 投影后都是合法抽象行为 | 没有被执行或没有被观测的实现路径 |
+| 外部 History 与副作用对账 | 调用方观察和真实外部效果满足公开合同          | 未外显内部状态以及未来所有执行   |
+
+模型反例应继续向下生成 targeted failpoint：例如抽象反例是 `old request -> commit new owner while sink fence remains old -> accept old request`，实现 schedule 就要在控制面提交与 required sink 安装 fence 之间暂停，再释放旧请求并保存完整 trace。修复后的证据不是“同一个 seed 变绿”，而是该 trace 经相同 projector 不再违反 `Next/Invariant`，模型生成的相邻反例族也被纳入回归。这样，模型检查负责扩展抽象交错，确定性模拟负责执行更多真实代码，refinement 映射负责说明两者谈的是同一个协议事实。
+
 ## Oracle 要分层：模型、History 与蜕变关系各证明一件事
 
 没有 oracle 的故障注入只是在制造日志。一个成熟 harness 通常同时运行多层 oracle，由便宜的局部断言尽早截断，再由更昂贵的全局检查分析完整 History。
@@ -551,7 +608,7 @@ FoundationDB 的 Code Probe 就是一个有界例子：它允许声明“某个�
 - Byzantine、恶意输入和安全攻击已被 crash-fault 测试覆盖；
 - RTO 在任何数据规模和相关故障下都成立。
 
-形式化规范可以对抽象模型做更广的状态探索或证明，却仍要验证实现 refinement；确定性模拟直接运行更多生产代码，却只搜索有限 trace；History Checker 从黑盒观察寻找反例，却受 workload 与可见信息限制；真实故障演练最接近部署，却慢、贵且难穷举。可靠性来自这些证据彼此交叉，而不是给某个工具冠以“证明器”名称。
+形式化规范可以对抽象模型做更广的状态探索或证明，却仍要用版本化投影和完整 trace 建立实现 refinement evidence；确定性模拟直接运行更多生产代码，却只搜索有限 trace；History Checker 从黑盒观察寻找反例，却受 workload 与可见信息限制；真实故障演练最接近部署，却慢、贵且难穷举。可靠性来自这些证据彼此交叉，而不是给某个工具冠以“证明器”名称。
 
 这套方法最终把“Chaos 跑过了”改写成可审计结论：在固定 build、schema、拓扑、故障模型和 trace budget 下，哪些不变量逐步成立，哪些 History 被 Checker 接受，哪些恢复游标满足 RPO，系统在什么服务等级下达到 RTO，以及哪些状态空间仍未覆盖。
 
@@ -561,6 +618,8 @@ FoundationDB 的 Code Probe 就是一个有界例子：它允许声明“某个�
 
 - Maurice Herlihy、Jeannette Wing：[Linearizability: A Correctness Condition for Concurrent Objects](https://www.cs.cmu.edu/~wing/publications/HerlihyWing90.pdf)
 - Leslie Lamport：[Time, Clocks, and the Ordering of Events in a Distributed System](https://lamport.azurewebsites.net/pubs/time-clocks.pdf)
+- Leslie Lamport：[Specifying Systems: The TLA+ Language and Tools for Hardware and Software Engineers](https://lamport.azurewebsites.net/tla/book.html?back-link=learning.html)
+- Martín Abadi、Leslie Lamport：[The Existence of Refinement Mappings](https://lamport.azurewebsites.net/pubs/abadi-existence.pdf)
 - FoundationDB SIGMOD 2021：[FoundationDB: A Distributed Unbundled Transactional Key Value Store](https://www.foundationdb.org/files/fdb-paper.pdf)
 - FoundationDB Documentation：[Simulation and Testing](https://apple.github.io/foundationdb/testing.html)
 - FoundationDB Documentation：[Client Testing、determinism 与 simulation workload](https://apple.github.io/foundationdb/client-testing.html)
