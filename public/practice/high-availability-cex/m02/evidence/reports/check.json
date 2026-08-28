@@ -1,0 +1,91 @@
+{
+  "schemaVersion" : "matching.m02.check.v2",
+  "unit" : "M02",
+  "status" : "PASS",
+  "contractPlanVersion" : "0.4",
+  "scenarioCorpus" : {
+    "path" : "matching-testkit/src/test/resources/m02/fixtures/order-lifecycle-v1.json",
+    "schemaPath" : "schemas/matching.m02.scenario.v1.schema.json",
+    "sha256" : "7e0be70259dcf1b4b422d68742b5c24f1a4d11b05643e2d9e367b67733d4a90a",
+    "scenarios" : 10,
+    "commands" : 34,
+    "placeCommands" : 22,
+    "cancelCommands" : 12,
+    "schemaProbes" : 8
+  },
+  "m01Regression" : {
+    "status" : "PASS",
+    "artifact" : "m00-m01-regression.json",
+    "m01Scenarios" : 8,
+    "m01Commands" : 22,
+    "m00Status" : "PASS"
+  },
+  "eventBatches" : {
+    "status" : "PASS",
+    "artifact" : "cancel-event-batches.json",
+    "commands" : 34
+  },
+  "lifecycle" : {
+    "status" : "PASS",
+    "artifact" : "lifecycle.json",
+    "commands" : 34,
+    "canceled" : 5,
+    "cancelRejected" : 5,
+    "validationPriorityProbes" : 4
+  },
+  "registryInvariants" : {
+    "status" : "PASS",
+    "artifact" : "registry-invariants.json",
+    "checks" : 34
+  },
+  "canonical" : {
+    "format" : "M02H1",
+    "digest" : "sha256:32054d63accba99b19db823c41f74bda73dc3b8a009b528f2834d2bc70839d16",
+    "lines" : 181,
+    "bytes" : 17160,
+    "artifact" : "canonical-history.utf8"
+  },
+  "replays" : {
+    "requested" : 100,
+    "completed" : 100,
+    "distinctDigests" : 1
+  },
+  "mutants" : {
+    "status" : "PASS",
+    "artifact" : "mutants.json",
+    "required" : 4,
+    "killed" : 4,
+    "systemErrorControl" : "SYSTEM_ERROR",
+    "requiredMutants" : [ {
+      "id" : "M02-CANCEL-WRONG-FIFO-ORDER",
+      "classification" : "STUDENT_FAILURE",
+      "killed" : true,
+      "scenarioId" : "cancel-middle-preserves-fifo",
+      "caseId" : "cancel-middle-maker-only"
+    }, {
+      "id" : "M02-GHOST-RESTING-ORDER",
+      "classification" : "STUDENT_FAILURE",
+      "killed" : true,
+      "scenarioId" : "cancel-only-resting-order-removes-level",
+      "caseId" : "cancel-only-ask-removes-level"
+    }, {
+      "id" : "M02-TERMINAL-ID-REUSE",
+      "classification" : "STUDENT_FAILURE",
+      "killed" : true,
+      "scenarioId" : "duplicate-canceled-order-id-does-not-resurrect",
+      "caseId" : "duplicate-canceled-place-rejected"
+    }, {
+      "id" : "M02-REPEATED-CANCEL-SUCCEEDS",
+      "classification" : "STUDENT_FAILURE",
+      "killed" : true,
+      "scenarioId" : "repeat-cancel-stable",
+      "caseId" : "repeat-cancel-reports-canceled-terminal"
+    } ]
+  },
+  "architecture" : {
+    "status" : "PASS",
+    "artifact" : "architecture.json",
+    "sourceFiles" : 20
+  },
+  "artifacts" : [ "m00-m01-regression.json", "cancel-event-batches.json", "lifecycle.json", "registry-invariants.json", "canonical-history.utf8", "mutants.json", "architecture.json" ]
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion" : "matching.m02.m00-m01-regression.v1",
+  "unit" : "M02",
+  "status" : "PASS",
+  "m01CheckStatus" : "PASS",
+  "m01Scenarios" : 8,
+  "m01Commands" : 22,
+  "m01CanonicalDigest" : "sha256:74585489c50e81cc3e6a10044263186ce66a7f1b20e1f45015fed68614c3e5a1",
+  "m00Regression" : {
+    "status" : "PASS",
+    "records" : 17,
+    "completedReplays" : 100,
+    "distinctDigests" : 1,
+    "canonicalDigest" : "sha256:2d287d677d5f200f2b5bd1dd18dabbd40e865779489ce6da36d0411a3b670669"
+  },
+  "message" : "M01 completion check and inherited M00 contract preserved"
+}

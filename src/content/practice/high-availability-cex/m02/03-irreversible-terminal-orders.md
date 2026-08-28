@@ -11,8 +11,10 @@ tags:
   - 撮合引擎
   - 终态
   - 确定性
-draft: true
+draft: false
 ---
+
+> 阅读基线：本文从 `course/m02-start` 的局部 RED/GREEN 推进；最终可复验结果冻结在 annotated `course/m02-complete`。
 
 上一篇让 RESTING 订单可以被精确撤销，但如果 engine 在订单离开簿后顺手从 `ordersById` 删除它，所有结构检查依然可能通过：订单簿与活动索引都不再含该 ID。真正的错误只会在未来命令到来时显现——迟到 Cancel 被误报为 unknown，或相同 ID 的 Place 被当成新订单接受，已经发生过的身份从历史中“复活”。
 
@@ -261,10 +263,10 @@ if (ordersById.containsKey(command.orderId())) {
 冻结 corpus 的第 10 个场景专门防一个常见误解：
 
 ```text
-PLACE  id=1000 BUY 99 × 2 → Accepted(sequence=1), Rested
-CANCEL id=1000            → Canceled
-PLACE  id=1000 BUY 99 × 2 → PlaceRejected(DUPLICATE_ORDER_ID)
-PLACE  id=1001 BUY 98 × 1 → Accepted(sequence=2), Rested
+PLACE  id=1000 SELL 100 × 3 → Accepted(sequence=1), Rested
+CANCEL id=1000              → Canceled
+PLACE  id=1000 SELL 100 × 3 → PlaceRejected(DUPLICATE_ORDER_ID)
+PLACE  id=1001 BUY 99 × 1   → Accepted(sequence=2), Rested
 ```
 
 第三条与第一条 payload 逐字段相同，仍必须 Duplicate。Cancel 只终止该订单的活动余量，不把业务身份归还给调用者；第三条也不消耗 sequence，所以新 ID 1001 连续取得 2。
@@ -339,4 +341,4 @@ if (maker.remainingQuantityLots == 0) {
 
 到这里，内存 core 的订单生命周期已经形成闭环：唯一 registry 保留每个已接受 ID，RESTING 可精确变为 CANCELED，fully-filled maker 与 taker 都进入 FILLED，两个终态不可逆，重复结果也没有被误称为命令幂等。
 
-现在必须停下。不要创建第 4 篇教程、Matching Lab、Golden evidence、完成 ref 或公开路由；不要引入 Cancel/Replace、Mass Cancel、账户、预占释放、持久化、网络、线程或 Aeron。下一阶段只有一个任务：用冻结的 10/34 corpus、确定性历史、结构不变量和 semantic mutants 独立证明这份 core，而不是继续增加产品功能。
+现在必须停下，不要继续增加产品功能，也不要引入 Cancel/Replace、Mass Cancel、账户、预占释放、持久化、网络、线程或 Aeron。下一篇只有一个任务：用冻结的 10/34 corpus、确定性历史、结构不变量和 semantic mutants 独立证明这份 core。

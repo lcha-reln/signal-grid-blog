@@ -47,6 +47,8 @@ const goldenCommandCount = lab.goldenReplay.scenarios.reduce(
   (total, scenario) => total + scenario.commands,
   0,
 );
+const scenarioPackLabel = lab.goldenReplay.scenarioPackPath.split("/").at(-1);
+const supportedCommandLabel = lab.browserModel.supportedCommands.join(" / ");
 ---
 
 <div class="matching-lab" id={instanceId} data-matching-lab>
@@ -85,14 +87,17 @@ const goldenCommandCount = lab.goldenReplay.scenarios.reduce(
       </div>
     </noscript>
 
-    <nav class="matching-lab-tabs" aria-label="Matching Lab 模式">
+    <nav class="matching-lab-tabs" aria-label="Matching Lab 模式" role="tablist">
       {lab.modes.map((mode, index) => (
         <button
           type="button"
           class="matching-lab-tab"
+          id={`${instanceId}-${mode.toLowerCase()}-tab`}
           data-lab-mode={mode}
+          role="tab"
           aria-controls={`${instanceId}-${mode.toLowerCase()}`}
           aria-selected={index === 0 ? "true" : "false"}
+          tabindex={index === 0 ? 0 : -1}
         >
           <code>{mode}</code>
           <strong>{modeLabels[mode].title}</strong>
@@ -105,7 +110,8 @@ const goldenCommandCount = lab.goldenReplay.scenarios.reduce(
       class="matching-lab-panel"
       id={`${instanceId}-java_golden_replay`}
       data-lab-panel="JAVA_GOLDEN_REPLAY"
-      aria-labelledby={`${instanceId}-golden-heading`}
+      role="tabpanel"
+      aria-labelledby={`${instanceId}-java_golden_replay-tab`}
     >
       <header class="matching-lab-panel-head">
         <div>
@@ -170,7 +176,7 @@ const goldenCommandCount = lab.goldenReplay.scenarios.reduce(
       <footer class="matching-lab-sources">
         <span>STATIC SOURCES</span>
         <a href={publicEvidence.manifest}>manifest.json</a>
-        <a href={publicEvidence.scenarios}>price-time-v1.json</a>
+        <a href={publicEvidence.scenarios}>{scenarioPackLabel}</a>
         <a href={publicEvidence.events}>event-batches.json</a>
         <a href={publicEvidence.canonical}>canonical-history.utf8</a>
       </footer>
@@ -180,7 +186,8 @@ const goldenCommandCount = lab.goldenReplay.scenarios.reduce(
       class="matching-lab-panel"
       id={`${instanceId}-browser_model`}
       data-lab-panel="BROWSER_MODEL"
-      aria-labelledby={`${instanceId}-model-heading`}
+      role="tabpanel"
+      aria-labelledby={`${instanceId}-browser_model-tab`}
       hidden
     >
       <header class="matching-lab-panel-head">
@@ -189,7 +196,7 @@ const goldenCommandCount = lab.goldenReplay.scenarios.reduce(
           <h2 id={`${instanceId}-model-heading`}>先写下预测，再揭示一次状态迁移</h2>
         </div>
         <p>
-          只支持 <code>{lab.browserModel.instrumentId}</code>、<code>PlaceLimitOrder</code> 与
+          只支持 <code>{lab.browserModel.instrumentId}</code>、<code>{supportedCommandLabel}</code> 与
           <code>{lab.browserModel.timeInForce}</code>。所有算术使用 BigInt，最多执行
           {lab.browserModel.maxCommands} 条命令。
         </p>
@@ -198,8 +205,8 @@ const goldenCommandCount = lab.goldenReplay.scenarios.reduce(
       <div class="matching-model-grid">
         <form class="matching-model-form" data-model-form novalidate>
           <header>
-            <span>PLACE LIMIT ORDER</span>
-            <code data-model-order-id>orderId = {lab.browserModel.firstGeneratedOrderId}</code>
+            <span>BOUNDED MATCHING COMMAND</span>
+            <code data-model-order-id>next Place orderId = {lab.browserModel.firstGeneratedOrderId}</code>
           </header>
           <p class="matching-model-readiness" data-model-readiness aria-live="polite">
             等待 {goldenScenarioCount} 场景 / {goldenCommandCount} 命令 corpus 自检，模型暂未解锁。
@@ -209,50 +216,76 @@ const goldenCommandCount = lab.goldenReplay.scenarios.reduce(
             <div><dt>timeInForce</dt><dd>{lab.browserModel.timeInForce}</dd></div>
           </dl>
           <div class="matching-model-fields">
-            <label>
-              <span>side</span>
-              <select data-model-side>
-                <option value="BUY">BUY</option>
-                <option value="SELL">SELL</option>
+            <label class="matching-model-command-type">
+              <span>command</span>
+              <select data-model-command-type>
+                {lab.browserModel.supportedCommands.map((command) => (
+                  <option value={command}>{command}</option>
+                ))}
               </select>
             </label>
-            <label>
-              <span>priceTicks</span>
-              <input
-                type="text"
-                inputmode="numeric"
-                autocomplete="off"
-                value="102"
-                maxlength={lab.browserModel.maxPriceTicks.length}
-                data-model-price
-              />
-              <small>{lab.browserModel.minPriceTicks} – {lab.browserModel.maxPriceTicks}</small>
-            </label>
-            <label>
-              <span>quantityLots</span>
-              <input
-                type="text"
-                inputmode="numeric"
-                autocomplete="off"
-                value="4"
-                maxlength={lab.browserModel.maxQuantityLots.length}
-                data-model-quantity
-              />
-              <small>{lab.browserModel.minQuantityLots} – {lab.browserModel.maxQuantityLots}</small>
-            </label>
+            <div class="matching-model-command-fields" data-model-place-fields>
+              <label>
+                <span>side</span>
+                <select data-model-side>
+                  <option value="BUY">BUY</option>
+                  <option value="SELL">SELL</option>
+                </select>
+              </label>
+              <label>
+                <span>priceTicks</span>
+                <input
+                  type="text"
+                  inputmode="numeric"
+                  autocomplete="off"
+                  value="102"
+                  maxlength={lab.browserModel.maxOrderId.length}
+                  data-model-price
+                />
+                <small>{lab.browserModel.minPriceTicks} – {lab.browserModel.maxPriceTicks}</small>
+              </label>
+              <label>
+                <span>quantityLots</span>
+                <input
+                  type="text"
+                  inputmode="numeric"
+                  autocomplete="off"
+                  value="4"
+                  maxlength={lab.browserModel.maxQuantityLots.length}
+                  data-model-quantity
+                />
+                <small>{lab.browserModel.minQuantityLots} – {lab.browserModel.maxQuantityLots}</small>
+              </label>
+            </div>
+            <div class="matching-model-command-fields" data-model-cancel-fields hidden>
+              <label>
+                <span>target orderId</span>
+                <input
+                  type="text"
+                  inputmode="numeric"
+                  autocomplete="off"
+                  value={lab.browserModel.seedOrders[0]?.orderId ?? "1"}
+                  maxlength={lab.browserModel.maxPriceTicks.length}
+                  data-model-cancel-order-id
+                />
+                <small>可输入活动、终态或未知 orderId</small>
+              </label>
+            </div>
             <label class="matching-model-prediction">
               <span>先预测 event batch</span>
               <select data-model-prediction>
                 <option value="">请选择预测…</option>
-                <option value="RESTS_ONLY">只挂单：Accepted → Rested</option>
-                <option value="TRADES_ONLY">全部成交：Accepted → Trade+</option>
-                <option value="TRADES_AND_RESTS">成交后挂余量：Accepted → Trade+ → Rested</option>
+                <option value="RESTS_ONLY" data-command="PLACE">只挂单：Accepted → Rested</option>
+                <option value="TRADES_ONLY" data-command="PLACE">全部成交：Accepted → Trade+</option>
+                <option value="TRADES_AND_RESTS" data-command="PLACE">成交后挂余量：Accepted → Trade+ → Rested</option>
+                <option value="CANCEL_SUCCEEDS" data-command="CANCEL">撤单成功：Canceled</option>
+                <option value="CANCEL_REJECTED" data-command="CANCEL">稳定拒绝：CancelRejected</option>
               </select>
             </label>
           </div>
           <p class="matching-model-error" data-model-error role="alert" hidden></p>
           <div class="matching-model-actions">
-            <button type="button" class="button primary" data-model-submit disabled>锁定预测并揭示</button>
+            <button type="submit" class="button primary" data-model-submit disabled>锁定预测并揭示</button>
             <button type="button" class="button ghost" data-model-reset>重置到初始盘口</button>
             <button type="button" class="button ghost" data-model-empty>从空盘口开始</button>
           </div>
@@ -307,9 +340,20 @@ const goldenCommandCount = lab.goldenReplay.scenarios.reduce(
         </div>
       </section>
 
+      <section class="matching-registry" hidden={!lab.browserModel.showLifecycleRegistry}>
+        <header>
+          <div>
+            <span>MODEL LIFECYCLE REGISTRY</span>
+            <h3>所有已接受 orderId</h3>
+          </div>
+          <p>RESTING 与 book 一一对应；FILLED / CANCELED 保留终态身份</p>
+        </header>
+        <div data-model-registry></div>
+      </section>
+
       <footer class="matching-model-boundary-note">
         <strong>这不是 Java 撮合器，也不是课程裁判。</strong>
-        <span>它不处理撤单、重复 orderId、账户、手续费、持久化、线程、网络、Aeron、性能或高可用。</span>
+        <span>它只覆盖本单元声明的命令与内存语义，不处理账户、手续费、持久化、线程、网络、Aeron、性能或高可用。</span>
       </footer>
     </section>
   </div>

@@ -1,6 +1,6 @@
 # 高可用 CEX 交易核心实战课程设计
 
-> 状态：M02 已启动，当前 `IN_PROGRESS`（M00、M01 均已发布；M02 已从冻结起点进入实现与写作窗口）
+> 状态：M02 当前 `PUBLISHED`（M00～M02 均已发布；M03 尚未签约）
 >
 > 规划日期：2026-08-26
 >
@@ -16,7 +16,7 @@
 >
 > 当前规划基线：`SPOT-CEX-1.0` 的 30 个候选交付单元，3 个按门禁顺序创建的代码仓库
 >
-> 当前实施窗口：M00、M01 保持 `PUBLISHED`；M02 是全专题唯一 `IN_PROGRESS` 单元，权威起点为 `course/m02-start`（peeled commit `fbaa744912147fdb1d802fb16cf4a9f9d62e8112`）；M03 及以后仍是可调整的候选课程地图
+> 当前实施窗口：M00～M02 保持 `PUBLISHED`；当前没有 `READY` 或 `IN_PROGRESS` 单元。M02 的权威完成身份为 `course/m02-complete`（commit `b54b4dfb51b61a5041d60c50dc1ff3404d73b27d`）；M03 及以后仍是可调整的候选课程地图
 
 ## 1. 这份文档决定什么
 
@@ -28,7 +28,7 @@
 
 > 怎样从一个可证明正确的限价单撮合内核开始，先交付边界清楚、可恢复、可运维、证据完整的高可用现货核心，再在每个前置 Profile 真正通过资格审查后，分别引入债务、持仓重估、到期结算和非线性风险？
 
-路线图可以完整，实施级设计只能覆盖当前和下一个单元；代码窗口永远只有当前单元。M01 的价格时间优先合同与交付证据已经冻结，M02 的可寻址订单生命周期已在 PLAN v0.4 签约，并由可复现的 `course/m02-start` 把 `m02Check=GOAL_NOT_IMPLEMENTED` 冻结为 RED 起点。M02 现在处于 `IN_PROGRESS`：允许在 `unit/m02` 实现 core 和编写草稿，但第 4 篇 Golden 教程、Matching Lab、evidence、完成身份与公开发布仍未开始。M03 及以后的教学顺序仍只是候选课程地图，不代表实现字段已经冻结。任何超出已签约单元合同的能力，必须删除等量范围、拆分单元或进入 backlog。
+路线图可以完整，实施级设计只能覆盖当前和下一个单元；代码窗口永远只有当前单元。M01 的价格时间优先合同与交付证据已经冻结；M02 由 `course/m02-start` 的结构化 RED 演进到 `course/m02-complete`，可寻址撤单、不可逆终态、完整裁判、四篇教程、Matching Lab 与持久 evidence 已原子发布。当前没有开放代码窗口。M03 及以后的教学顺序仍只是候选课程地图，不代表实现字段已经冻结。任何超出已签约单元合同的能力，必须删除等量范围、拆分单元或进入 backlog。
 
 ## 2. 旧专题为何失败，以及本次怎样避免重演
 
@@ -233,7 +233,7 @@ Rest 初期是一个仓库和一个部署应用，内部划分 PriAPI、OpenAPI�
 
 | 顺序 | 仓库 | 创建条件 | 主要制品 |
 | ---: | --- | --- | --- |
-| 1 | [`cex-matching`](https://github.com/lcha-reln/cex-matching) | 已创建；M00、M01 均为 `PUBLISHED`，M02 已从冻结起点进入 `IN_PROGRESS` | Matching core、testkit、runtime、协议、故障实验 |
+| 1 | [`cex-matching`](https://github.com/lcha-reln/cex-matching) | 已创建；M00～M02 均为 `PUBLISHED`，M03 尚未签约 | Matching core、testkit、runtime、协议、故障实验 |
 | 2 | `counter` | `matching-1.0.0` 发布并从干净环境复验 | Counter core、Cluster runtime、bridge、sync、query |
 | 3 | `rest` | `counter-1.0.0` 发布并从干净环境复验 | PriAPI、OpenAPI、WS、system tests |
 
@@ -246,6 +246,8 @@ course/m00-start
 course/m00-complete
 course/m01-start
 course/m01-complete
+course/m02-start
+course/m02-complete
 ```
 
 发现错误时发布递增的补丁 tag，不移动旧 tag，例如 `course/m00.1-start`、`course/m00.2-start` 或 `course/m00.1-complete`。只有命名停止点才另外发布 `matching-0.1.0` 等产品 release；普通单元没有产品 release。
@@ -290,7 +292,7 @@ rest     = rest-1.0.0
 | --- | --- | --- | --- | --- |
 | M00 | `PUBLISHED` | `CONTRACT` | `CREATED` | 代码、反例、四篇教程与持久 evidence 已验证并公开；停止在 VALID，不提前实现订单簿 |
 | M01 | `PUBLISHED` | `CONTRACT` | 随 `cex-matching` 仓库 | 单交易对 GTC 的价格时间优先、业务事件、固定历史、四篇教程、Matching Lab 与持久 evidence 已验证并公开 |
-| M02 | `IN_PROGRESS` | `CONTRACT` | 随 `cex-matching` 仓库 | `course/m02-start` 已冻结；当前实现订单索引、撤单和不可逆终态并编写前三篇草稿，第 4 篇、Lab、evidence 与完成身份尚未创建 |
+| M02 | `PUBLISHED` | `CONTRACT` | 随 `cex-matching` 仓库 | 可寻址撤单、不可逆终态、10/34 corpus、四篇教程、Matching Lab、语义变异体与 tag 绑定 evidence 已公开；停止在不持久的内存生命周期 |
 | M03–M12 | `CANDIDATE` | `RISK_MAP` | 随 `cex-matching` 仓库 | 记录能力、关键不变量和危险故障，不冻结类、Schema 字段编号、依赖版本或文章标题 |
 | C00–C09 | `CANDIDATE` | `RISK_MAP` | `LOCKED` | 记录权威边界和关键故障；Matching 1.0 前不创建仓库 |
 | R00–R06 | `CANDIDATE` | `RISK_MAP` | `LOCKED` | 记录外部契约边界和关键故障；Counter 1.0 前不创建仓库 |
@@ -455,7 +457,7 @@ Matching 是唯一优先启动的项目。它先证明业务语义，再证明�
 | --- | --- | --- | --- |
 | M00 最小可执行规格 | 输入域、规范化和确定性验证合同 | 能重放 fixture 并比较验证结果和 history digest | `PUBLISHED / CONTRACT` |
 | M01 单交易对 GTC 限价撮合 | 价格时间优先撮合语义 | 正确处理挂单、部分成交和连续吃单 | `PUBLISHED / CONTRACT` |
-| M02 可寻址订单生命周期 | 撤单和不可逆终态 | 能撤单并防止订单复活 | `IN_PROGRESS / CONTRACT` |
+| M02 可寻址订单生命周期 | 撤单和不可逆终态 | 能撤单并防止订单复活 | `PUBLISHED / CONTRACT` |
 | M03 参考模型与性质测试 | 自动寻找反例 | 发布 `matching-0.1.0` | `CANDIDATE / RISK_MAP` |
 | M04 执行与准入策略 | TIF、请求保护和参与者策略 | 支持 IOC、FOK、Post-only、受保护 aggressive order、price band 和 STP | `CANDIDATE / RISK_MAP` |
 | M05 版本化市场控制 | RuleSet fence 和 operating mode | 支持版本激活、停市和 Mass Cancel | `CANDIDATE / RISK_MAP` |
@@ -621,7 +623,7 @@ Matching 是唯一优先启动的项目。它先证明业务语义，再证明�
 
 > M02 单元合同 `planVersion`：`0.4`
 >
-> 生命周期：`IN_PROGRESS`。M01 是已发布前置；权威起点为 annotated [`course/m02-start`](https://github.com/lcha-reln/cex-matching/tree/course/m02-start)，peeled commit 是 `fbaa744912147fdb1d802fb16cf4a9f9d62e8112`。该起点在干净 checkout 中通过 M00/M01 回归，并让 `m02Check` 以结构化 `GOAL_NOT_IMPLEMENTED` 暴露唯一缺口。当前 `unit/m02` 的 core 实现基线为 `8908a86`；前三篇教程只以草稿推进，不登记第 4 篇、Lab、evidence、完成身份或产品 release。
+> 生命周期：`PUBLISHED`。M01 是已发布前置；权威起点为 annotated [`course/m02-start`](https://github.com/lcha-reln/cex-matching/tree/course/m02-start)，peeled commit 是 `fbaa744912147fdb1d802fb16cf4a9f9d62e8112`。权威完成身份为 annotated [`course/m02-complete`](https://github.com/lcha-reln/cex-matching/tree/course/m02-complete)，commit 是 `b54b4dfb51b61a5041d60c50dc1ff3404d73b27d`。完成门禁为 10 场景、34 命令、4 个状态化验证优先级探针、100 次 fresh replay、4 个 required mutant 与 `SYSTEM_ERROR` control；M02 不发布产品 release。
 
 **Objective**
 
@@ -731,7 +733,7 @@ M02 起点必须签入严格的 `matching.m02.scenario.v1` 命令联合，comman
 
 **Matching Lab 合同**
 
-M02 达到 `PUBLISHED` 后才允许在 `src/practice/labs.ts` 登记 Lab；当前 `IN_PROGRESS` 阶段不创建空入口。M01–M03 继续共享同一个 Matching Lab 壳和两种模式：
+M02 已在 `src/practice/labs.ts` 登记 Lab；M01 与 M02 共享同一个数据驱动 Matching Lab 壳和两种模式，M03 只有签约并发布后才可接入：
 
 - `JAVA_GOLDEN_REPLAY` 只读加载 complete tag CI 固化并由本站托管的 M02 manifest、scenario pack、event batches 与 canonical history；
 - `BROWSER_MODEL` 使用有界 BigInt、同源静态输入和隔离内存状态，让读者先预测 Place 或 Cancel disposition，再揭示事件、盘口、registry 中的活动/终态身份和生命周期；
@@ -747,9 +749,9 @@ M02 达到 `PUBLISHED` 后才允许在 `src/practice/labs.ts` 登记 Lab；当�
 - `M02-CANCEL-WRONG-FIFO-ORDER`、`M02-GHOST-RESTING-ORDER`、`M02-TERMINAL-ID-REUSE`、`M02-REPEATED-CANCEL-SUCCEEDS` 四个 required mutant 必须由共享业务断言分类为 `STUDENT_FAILURE`；异常 control 必须为 `SYSTEM_ERROR` 并失败关闭；
 - 相同严格 scenario pack 经 100 次 fresh parse、fresh engine replay，生成逐字节一致的 `M02H1` command/input/event/book history 和唯一 SHA-256 digest；生命周期由同一命令序列的结果与结构不变量单独证明，内部 Map、对象身份、路径、主机、时间与 Git 元数据不得进入 semantic history；
 - matching core 继续保持单写者、无 I/O、数据库、网络、线程、时钟、随机数和 Aeron 依赖；M02 不增加 runtime、protocol、storage 或 cluster 模块；
-- evidence 计划保存 M00/M01 回归、lifecycle scenario pack、event batches、book/index/terminal invariants、canonical history、mutants 和 architecture report。只有 `CODE_VERIFIED` 后才冻结完成身份、完整提交、manifest hash、artifact hash 和 `reportFacts`，当前 `IN_PROGRESS` 阶段不得预造通过报告。
+- evidence 已保存 M00/M01 回归、lifecycle scenario pack、event batches、book/index/terminal observations、canonical history、mutants 和 architecture report，并冻结完成身份、完整提交、manifest/artifact SHA-256、精确 limitations 与 `reportFacts`。
 
-未来 manifest 的 claim ID 与顺序冻结为：
+M02 manifest 的 claim ID 与顺序冻结为：
 
 ```text
 m00-m01-regression
@@ -762,7 +764,7 @@ semantic-mutants
 architecture-boundary
 ```
 
-未来 manifest 的 limitation 文本与顺序冻结为：
+M02 manifest 的 limitation 文本与顺序冻结为：
 
 ```text
 Only one in-memory BTC-USDT GTC limit-order book with place and cancel is implemented.
@@ -979,7 +981,7 @@ signal-grid-blog
 ```
 
 - 实战章节使用独立 `practiceLessons` collection，不进入 `posts`、文章归档和主 RSS；
-- `config.ts` 管案例与 Profile，`units.ts` 管已签约单元，Markdown 只管一篇教程；当前注册表包含已发布的 M00、M01 和正在实施的 M02。M02 只创建前三篇 `draft: true` 教程，不创建第 4 篇、Lab、evidence 或完成信息，也不为 M03 及其余候选地图创建空内容；
+- `config.ts` 管案例与 Profile，`units.ts` 管已签约单元，Markdown 只管一篇教程；当前注册表包含已发布的 M00～M02，M02 的四篇教程、Lab、evidence 和完成信息一次公开，不为 M03 及其余候选地图创建空内容；
 - 教程用 `project / profileVersion / unitCode` 关联单元，同单元的 `lessonOrder` 和 `permalink` 必须唯一；路由为 `/practice/<project>/<unit>/<lesson>/`；
 - 教程一律从 `draft: true` 开始。单元达到 `PUBLISHED` 前不得公开；草稿不生成生产路由，不进入搜索、sitemap、文章统计或主 RSS；`CONTENT_VERIFIED` 冻结预期教程的排序与 permalink，`PUBLISHED` 必须原子公开完整集合；`CODE_VERIFIED` 冻结 complete tag、完整提交 SHA、仓库内 evidence 路径和发布证据合同。M00、M01 的 evidence 都托管到 Signal Grid 的固定静态路径，由 verifier 复核 CI manifest SHA-256、来源、精确 claim/限制、全部 artifact hash，以及 `reportFacts` 中冻结的业务状态和关键报告字段；
 - `pnpm verify:practice` 拒绝缺失或 `LOCKED` 单元、重复排序/地址、未 `PUBLISHED` 非草稿和 `main`、`unit/*` 等浮动 ref。它不联网读取课程仓；跨仓 tag/evidence 在发布前独立核验；
@@ -1096,6 +1098,7 @@ git switch -c unit/m01 course/m01-start
 
 | 日期 | 单元 | 生命周期 | 记录 |
 | --- | --- | --- | --- |
+| 2026-08-28 | M02 | `PUBLISHED` | `course/m02-complete`、commit `b54b4dfb51b61a5041d60c50dc1ff3404d73b27d`、四篇教程、Matching Lab 与 persistent evidence 原子公开；M02H1 为 181 行 / 17,160 bytes / `sha256:32054d63accba99b19db823c41f74bda73dc3b8a009b528f2834d2bc70839d16`，100/100 重放和 4/4 required mutants 通过 |
 | 2026-08-28 | M02 | `IN_PROGRESS` | annotated `course/m02-start` 已冻结，peeled commit 为 `fbaa744912147fdb1d802fb16cf4a9f9d62e8112`；M00/M01 回归保持 GREEN，`m02Check` 以 `GOAL_NOT_IMPLEMENTED` 形成 RED 起点。当前只推进 core 与前三篇 draft 教程，不创建第 4 篇、Lab、evidence、完成身份或产品 release |
 | 2026-08-28 | M02 | `CONTRACTED` | PLAN v0.4 冻结订单索引、Cancel API、不可逆终态、10 场景 34 命令、四篇教程、Matching Lab 与 evidence/limitation 边界；尚未创建 start ref、代码、教程、Lab、evidence 或产品 release |
 | 2026-08-27 | M01 | `PUBLISHED` | M01·01～04、Matching Lab 与 tag CI evidence 原子公开；站点门禁绑定四篇教程、完成 SHA、manifest SHA、七项 claim/限制和全部 artifact hash |

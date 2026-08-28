@@ -1,0 +1,47 @@
+{
+  "schemaVersion" : "matching.m02.mutants.v1",
+  "unit" : "M02",
+  "productionControl" : {
+    "id" : "M02-PRODUCTION-CONTROL",
+    "classification" : "PASS",
+    "scenarioId" : null,
+    "caseId" : null,
+    "message" : "all frozen scenarios, lifecycle transitions, and registry invariants matched"
+  },
+  "requiredMutants" : [ {
+    "id" : "M02-CANCEL-WRONG-FIFO-ORDER",
+    "classification" : "STUDENT_FAILURE",
+    "scenarioId" : "cancel-middle-preserves-fifo",
+    "caseId" : "cancel-middle-maker-only",
+    "message" : "scenario cancel-middle-preserves-fifo, case cancel-middle-maker-only: expected events=[Canceled[sequence=2, orderId=301, side=SELL, priceTicks=100, canceledQuantityLots=1]], bookAfter=Book[bids=[], asks=[Level[priceTicks=100, orders=[RestingOrder[sequence=1, orderId=300, remainingQuantityLots=1], RestingOrder[sequence=3, orderId=302, remainingQuantityLots=1]]]]], actual events=[Canceled[sequence=2, orderId=301, side=SELL, priceTicks=100, canceledQuantityLots=1]], bookAfter=Book[bids=[], asks=[Level[priceTicks=100, orders=[RestingOrder[sequence=3, orderId=302, remainingQuantityLots=1], RestingOrder[sequence=1, orderId=300, remainingQuantityLots=1]]]]]",
+    "killed" : true
+  }, {
+    "id" : "M02-GHOST-RESTING-ORDER",
+    "classification" : "STUDENT_FAILURE",
+    "scenarioId" : "cancel-only-resting-order-removes-level",
+    "caseId" : "cancel-only-ask-removes-level",
+    "message" : "scenario cancel-only-resting-order-removes-level, case cancel-only-ask-removes-level: expected events=[Canceled[sequence=1, orderId=200, side=SELL, priceTicks=100, canceledQuantityLots=5]], bookAfter=Book[bids=[], asks=[]], actual events=[Canceled[sequence=1, orderId=200, side=SELL, priceTicks=100, canceledQuantityLots=5]], bookAfter=Book[bids=[], asks=[Level[priceTicks=100, orders=[RestingOrder[sequence=1, orderId=200, remainingQuantityLots=5]]]]]",
+    "killed" : true
+  }, {
+    "id" : "M02-TERMINAL-ID-REUSE",
+    "classification" : "STUDENT_FAILURE",
+    "scenarioId" : "duplicate-canceled-order-id-does-not-resurrect",
+    "caseId" : "duplicate-canceled-place-rejected",
+    "message" : "scenario duplicate-canceled-order-id-does-not-resurrect, case duplicate-canceled-place-rejected: expected events=[PlaceRejected[orderId=1000, code=DUPLICATE_ORDER_ID]], bookAfter=Book[bids=[], asks=[]], actual events=[Accepted[sequence=2, orderId=1000, side=SELL, priceTicks=100, quantityLots=3], Rested[sequence=2, orderId=1000, side=SELL, priceTicks=100, remainingQuantityLots=3]], bookAfter=Book[bids=[], asks=[Level[priceTicks=100, orders=[RestingOrder[sequence=2, orderId=1000, remainingQuantityLots=3]]]]]",
+    "killed" : true
+  }, {
+    "id" : "M02-REPEATED-CANCEL-SUCCEEDS",
+    "classification" : "STUDENT_FAILURE",
+    "scenarioId" : "repeat-cancel-stable",
+    "caseId" : "repeat-cancel-reports-canceled-terminal",
+    "message" : "scenario repeat-cancel-stable, case repeat-cancel-reports-canceled-terminal: expected events=[CancelRejected[orderId=700, code=ORDER_ALREADY_CANCELED]], bookAfter=Book[bids=[], asks=[]], actual events=[Canceled[sequence=1, orderId=700, side=SELL, priceTicks=100, canceledQuantityLots=4]], bookAfter=Book[bids=[], asks=[]]",
+    "killed" : true
+  } ],
+  "systemErrorControl" : {
+    "id" : "M02-THROWING-CONTROL",
+    "classification" : "SYSTEM_ERROR",
+    "scenarioId" : null,
+    "caseId" : null,
+    "message" : "candidate raised IllegalStateException"
+  }
+}

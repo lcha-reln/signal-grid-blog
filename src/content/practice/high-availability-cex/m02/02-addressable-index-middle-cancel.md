@@ -11,8 +11,10 @@ tags:
   - 撮合引擎
   - 订单索引
   - FIFO
-draft: true
+draft: false
 ---
+
+> 阅读基线：本文从 `course/m02-start` 的局部 RED/GREEN 推进；最终可复验结果冻结在 annotated `course/m02-complete`。
 
 上一篇冻结了 Cancel 的输入与结果，但“知道 orderId”不等于“能安全撤单”。M01 的价位队列只为撮合优化：它能迅速找到最佳价和队首 maker，却不能在不知道 side、price 与队列位置时高效找到任意订单。粗暴扫描整个订单簿虽然可能在小测试里工作，却没有建立任何身份一致性保证。
 

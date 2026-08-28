@@ -1,0 +1,182 @@
+{
+  "schemaVersion" : "cex.lab-evidence.v1",
+  "case" : "high-availability-cex",
+  "project" : "matching",
+  "unit" : "M02",
+  "unitTag" : "course/m02-complete",
+  "productRelease" : null,
+  "planVersion" : "0.4",
+  "source" : {
+    "commit" : "b54b4dfb51b61a5041d60c50dc1ff3404d73b27d",
+    "dirty" : false
+  },
+  "environment" : {
+    "java" : "25.0.4.1+1-LTS",
+    "os" : "Mac OS X",
+    "arch" : "aarch64"
+  },
+  "claims" : [ {
+    "id" : "m00-m01-regression",
+    "category" : "correctness",
+    "statement" : "The frozen M00 input contract and completed M01 price-time matcher remain PASS under M02.",
+    "status" : "pass",
+    "command" : "./gradlew m02Check m02Evidence -Pm02.unitTag=course/m02-complete --no-daemon",
+    "observations" : {
+      "status" : "PASS",
+      "artifact" : "m00-m01-regression.json",
+      "m01Scenarios" : 8,
+      "m01Commands" : 22,
+      "m00Status" : "PASS"
+    },
+    "artifacts" : [ {
+      "path" : "reports/m00-m01-regression.json",
+      "sha256" : "d8dab70628a16bd7447c8ca9b52274b4515a4779c16b6f0675ad1aa0335e56c6"
+    } ]
+  }, {
+    "id" : "cancel-event-batches",
+    "category" : "correctness",
+    "statement" : "Every Cancel emits exactly one frozen validation, business rejection, or cancellation result.",
+    "status" : "pass",
+    "command" : "./gradlew m02Check m02Evidence -Pm02.unitTag=course/m02-complete --no-daemon",
+    "observations" : {
+      "status" : "PASS",
+      "artifact" : "cancel-event-batches.json",
+      "commands" : 34
+    },
+    "artifacts" : [ {
+      "path" : "reports/cancel-event-batches.json",
+      "sha256" : "32d139a1b785f5abae4729fbe6ea5d43a977d6cd7486ce1a37f699e9bf2ae24c"
+    } ]
+  }, {
+    "id" : "addressable-order-cancellation",
+    "category" : "correctness",
+    "statement" : "The frozen 10-scenario, 34-command corpus proves exact cancellation by accepted order ID.",
+    "status" : "pass",
+    "command" : "./gradlew m02Check m02Evidence -Pm02.unitTag=course/m02-complete --no-daemon",
+    "observations" : {
+      "path" : "matching-testkit/src/test/resources/m02/fixtures/order-lifecycle-v1.json",
+      "schemaPath" : "schemas/matching.m02.scenario.v1.schema.json",
+      "sha256" : "7e0be70259dcf1b4b422d68742b5c24f1a4d11b05643e2d9e367b67733d4a90a",
+      "scenarios" : 10,
+      "commands" : 34,
+      "placeCommands" : 22,
+      "cancelCommands" : 12,
+      "schemaProbes" : 8
+    },
+    "artifacts" : [ {
+      "path" : "inputs/order-lifecycle-v1.json",
+      "sha256" : "7e0be70259dcf1b4b422d68742b5c24f1a4d11b05643e2d9e367b67733d4a90a"
+    } ]
+  }, {
+    "id" : "irreversible-terminal-states",
+    "category" : "correctness",
+    "statement" : "Filled and canceled identities remain terminal while unknown cancellation creates no tombstone.",
+    "status" : "pass",
+    "command" : "./gradlew m02Check m02Evidence -Pm02.unitTag=course/m02-complete --no-daemon",
+    "observations" : {
+      "status" : "PASS",
+      "artifact" : "lifecycle.json",
+      "commands" : 34,
+      "canceled" : 5,
+      "cancelRejected" : 5,
+      "validationPriorityProbes" : 4
+    },
+    "artifacts" : [ {
+      "path" : "reports/lifecycle.json",
+      "sha256" : "cda55bd1860cf0e142fc41fbd2525a92e14ccf2a8374bd472d7aaea0f227507b"
+    } ]
+  }, {
+    "id" : "order-registry-book-invariants",
+    "category" : "correctness",
+    "statement" : "Across the frozen history, an independent lifecycle ledger and returned resting book nodes remain bijective and FIFO-safe.",
+    "status" : "pass",
+    "command" : "./gradlew m02Check m02Evidence -Pm02.unitTag=course/m02-complete --no-daemon",
+    "observations" : {
+      "status" : "PASS",
+      "artifact" : "registry-invariants.json",
+      "checks" : 34
+    },
+    "artifacts" : [ {
+      "path" : "reports/registry-invariants.json",
+      "sha256" : "907f2f62ed913e24bca833c7994b42417b16c95557a3f99d8fc21d54f9560201"
+    } ]
+  }, {
+    "id" : "deterministic-lifecycle-history",
+    "category" : "correctness",
+    "statement" : "One hundred fresh corpus parses and engines produce one M02H1 byte history and digest.",
+    "status" : "pass",
+    "command" : "./gradlew m02Check m02Evidence -Pm02.unitTag=course/m02-complete --no-daemon",
+    "observations" : {
+      "requested" : 100,
+      "completed" : 100,
+      "distinctDigests" : 1
+    },
+    "artifacts" : [ {
+      "path" : "reports/canonical-history.utf8",
+      "sha256" : "32054d63accba99b19db823c41f74bda73dc3b8a009b528f2834d2bc70839d16"
+    } ]
+  }, {
+    "id" : "semantic-mutants",
+    "category" : "mutation-testing",
+    "statement" : "All required M02 lifecycle mutants are killed by business assertions; system errors do not count.",
+    "status" : "pass",
+    "command" : "./gradlew m02Check m02Evidence -Pm02.unitTag=course/m02-complete --no-daemon",
+    "observations" : {
+      "status" : "PASS",
+      "artifact" : "mutants.json",
+      "required" : 4,
+      "killed" : 4,
+      "systemErrorControl" : "SYSTEM_ERROR",
+      "requiredMutants" : [ {
+        "id" : "M02-CANCEL-WRONG-FIFO-ORDER",
+        "classification" : "STUDENT_FAILURE",
+        "killed" : true,
+        "scenarioId" : "cancel-middle-preserves-fifo",
+        "caseId" : "cancel-middle-maker-only"
+      }, {
+        "id" : "M02-GHOST-RESTING-ORDER",
+        "classification" : "STUDENT_FAILURE",
+        "killed" : true,
+        "scenarioId" : "cancel-only-resting-order-removes-level",
+        "caseId" : "cancel-only-ask-removes-level"
+      }, {
+        "id" : "M02-TERMINAL-ID-REUSE",
+        "classification" : "STUDENT_FAILURE",
+        "killed" : true,
+        "scenarioId" : "duplicate-canceled-order-id-does-not-resurrect",
+        "caseId" : "duplicate-canceled-place-rejected"
+      }, {
+        "id" : "M02-REPEATED-CANCEL-SUCCEEDS",
+        "classification" : "STUDENT_FAILURE",
+        "killed" : true,
+        "scenarioId" : "repeat-cancel-stable",
+        "caseId" : "repeat-cancel-reports-canceled-terminal"
+      } ]
+    },
+    "artifacts" : [ {
+      "path" : "reports/mutants.json",
+      "sha256" : "c071b10a0321fe1cebe13b04474f3a66d023ba33bc756d3801d8e07da50142e8"
+    } ]
+  }, {
+    "id" : "architecture-boundary",
+    "category" : "architecture",
+    "statement" : "matching-core remains deterministic and free of I/O, runtime adapters, persistence, and Aeron.",
+    "status" : "pass",
+    "command" : "./gradlew m02Check m02Evidence -Pm02.unitTag=course/m02-complete --no-daemon",
+    "observations" : {
+      "status" : "PASS",
+      "artifact" : "architecture.json",
+      "sourceFiles" : 20
+    },
+    "artifacts" : [ {
+      "path" : "reports/architecture.json",
+      "sha256" : "ddacbda233fcae6b72d53d9f073340ac6f295bf815144b6953add7069e22f2e8"
+    }, {
+      "path" : "reports/check.json",
+      "sha256" : "8e9fa897c58c2a3b2826ebb4a1c3d0eb0c3fa7bd765b4ed006dfa8d04ba30547"
+    } ]
+  } ],
+  "limitations" : [ "Only one in-memory BTC-USDT GTC limit-order book with place and cancel is implemented.", "Accepted order IDs are unique for the lifetime of one engine process; terminal identity records are retained without pruning.", "A repeated place command is rejected as a duplicate order ID; command-level idempotency and prior-result replay are not implemented.", "There is no Cancel/Replace, amendment, mass cancel, IOC, FOK, post-only, market order, STP, market state, or price band.", "There is no account, asset, position, fee, settlement, reservation-release, or risk logic.", "Fixed scenarios and semantic mutants are not the independent generated reference model or property proof deferred to M03.", "The unit has no persistence, networking, database, threads, Aeron, or high availability.", "The evidence makes no throughput, latency, recovery, durable-idempotency, or production-readiness claim." ],
+  "supersedes" : null,
+  "generatedAt" : "2026-08-28T03:17:32.870560Z"
+}

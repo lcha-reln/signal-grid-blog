@@ -1,6 +1,11 @@
-export const MATCHING_LAB_MODES = ["JAVA_GOLDEN_REPLAY", "BROWSER_MODEL"] as const;
+export const MATCHING_LAB_MODES = [
+  "JAVA_GOLDEN_REPLAY",
+  "BROWSER_MODEL",
+] as const;
+export const MATCHING_LAB_COMMANDS = ["PLACE", "CANCEL"] as const;
 
 export type MatchingLabMode = (typeof MATCHING_LAB_MODES)[number];
+export type MatchingLabCommand = (typeof MATCHING_LAB_COMMANDS)[number];
 
 export interface GoldenReplayScenario {
   id: string;
@@ -39,8 +44,11 @@ export interface BrowserModelDefinition {
   maxPriceTicks: string;
   minQuantityLots: string;
   maxQuantityLots: string;
+  maxOrderId: string;
   maxCommands: number;
   firstGeneratedOrderId: string;
+  supportedCommands: readonly MatchingLabCommand[];
+  showLifecycleRegistry: boolean;
   seedOrders: readonly BrowserModelSeedOrder[];
 }
 
@@ -66,12 +74,14 @@ export const PRACTICE_LABS: readonly MatchingLabDefinition[] = [
     modes: MATCHING_LAB_MODES,
     goldenReplay: {
       manifestPath: "practice/high-availability-cex/m01/evidence/manifest.json",
-      scenarioPackPath: "practice/high-availability-cex/m01/evidence/inputs/price-time-v1.json",
+      scenarioPackPath:
+        "practice/high-availability-cex/m01/evidence/inputs/price-time-v1.json",
       eventBatchesPath:
         "practice/high-availability-cex/m01/evidence/reports/event-batches.json",
       canonicalHistoryPath:
         "practice/high-availability-cex/m01/evidence/reports/canonical-history.utf8",
-      digest: "sha256:74585489c50e81cc3e6a10044263186ce66a7f1b20e1f45015fed68614c3e5a1",
+      digest:
+        "sha256:74585489c50e81cc3e6a10044263186ce66a7f1b20e1f45015fed68614c3e5a1",
       metrics: [
         { label: "SCENARIOS", value: "08", note: "固定价格时间场景" },
         { label: "COMMANDS", value: "22", note: "逐命令事件与盘口" },
@@ -136,8 +146,122 @@ export const PRACTICE_LABS: readonly MatchingLabDefinition[] = [
       maxPriceTicks: "1000000000000",
       minQuantityLots: "1",
       maxQuantityLots: "1000000000000",
+      maxOrderId: "9223372036854775807",
       maxCommands: 24,
       firstGeneratedOrderId: "10001",
+      supportedCommands: ["PLACE"],
+      showLifecycleRegistry: false,
+      seedOrders: [
+        { orderId: "9001", side: "BUY", priceTicks: "99", quantityLots: "2" },
+        { orderId: "9002", side: "SELL", priceTicks: "101", quantityLots: "2" },
+        { orderId: "9003", side: "SELL", priceTicks: "102", quantityLots: "1" },
+      ],
+    },
+  },
+  {
+    kind: "MATCHING",
+    projectSlug: "high-availability-cex",
+    unitCode: "M02",
+    title: "可寻址订单生命周期 Matching Lab",
+    summary:
+      "先逐条回放固定 Java lifecycle evidence，再在隔离的浏览器模型中预测 PLACE 或 CANCEL 对事件、盘口与终态身份的影响。",
+    modes: MATCHING_LAB_MODES,
+    goldenReplay: {
+      manifestPath: "practice/high-availability-cex/m02/evidence/manifest.json",
+      scenarioPackPath:
+        "practice/high-availability-cex/m02/evidence/inputs/order-lifecycle-v1.json",
+      eventBatchesPath:
+        "practice/high-availability-cex/m02/evidence/reports/cancel-event-batches.json",
+      canonicalHistoryPath:
+        "practice/high-availability-cex/m02/evidence/reports/canonical-history.utf8",
+      digest:
+        "sha256:32054d63accba99b19db823c41f74bda73dc3b8a009b528f2834d2bc70839d16",
+      metrics: [
+        { label: "SCENARIOS", value: "10", note: "固定生命周期场景" },
+        { label: "COMMANDS", value: "22 + 12", note: "PLACE + CANCEL" },
+        { label: "FRESH REPLAYS", value: "100 / 100", note: "唯一历史摘要" },
+        { label: "FORMAT", value: "M02H1", note: "181 行 canonical 历史" },
+      ],
+      scenarios: [
+        {
+          id: "invalid-cancel-does-not-mutate-or-consume-sequence",
+          title: "非法撤单不污染状态",
+          focus:
+            "错误交易对与非正 orderId 只产生 Rejected，下一笔 Place 仍取得连续 sequence。",
+          commands: 4,
+        },
+        {
+          id: "cancel-only-resting-order-removes-level",
+          title: "撤掉价位唯一订单",
+          focus: "成功撤销精确余量，并在最后一笔离开时删除空价位。",
+          commands: 2,
+        },
+        {
+          id: "cancel-middle-preserves-fifo",
+          title: "中间撤单保留 FIFO",
+          focus:
+            "从同价三笔订单中移除中间节点，随后成交顺序仍为第一笔到第三笔。",
+          commands: 5,
+        },
+        {
+          id: "cancel-partially-filled-remainder",
+          title: "撤销部分成交余量",
+          focus: "Canceled 报告当前 remaining，而不是原始委托量或零。",
+          commands: 3,
+        },
+        {
+          id: "cancel-unknown-order",
+          title: "未知撤单不建 tombstone",
+          focus: "ORDER_NOT_FOUND 不占用身份，之后同 ID 首次 Place 仍可接受。",
+          commands: 2,
+        },
+        {
+          id: "late-cancel-filled-order",
+          title: "迟到撤单识别 FILLED",
+          focus: "完全成交的 maker 与立即完全成交的 taker 都保留 FILLED 终态。",
+          commands: 4,
+        },
+        {
+          id: "repeat-cancel-stable",
+          title: "重复撤单结果稳定",
+          focus:
+            "首次返回 Canceled，之后稳定返回 ORDER_ALREADY_CANCELED；这不是命令幂等。",
+          commands: 3,
+        },
+        {
+          id: "duplicate-active-order-id",
+          title: "活动 ID 不可重复",
+          focus:
+            "重复 Place 只产生 DUPLICATE_ORDER_ID，原挂单和 sequence 都不变。",
+          commands: 3,
+        },
+        {
+          id: "duplicate-filled-order-id-does-not-resurrect",
+          title: "FILLED ID 不复活",
+          focus: "完全成交身份不能被同 ID Place 重建，迟到撤单仍看到 FILLED。",
+          commands: 4,
+        },
+        {
+          id: "duplicate-canceled-order-id-does-not-resurrect",
+          title: "CANCELED ID 不复活",
+          focus:
+            "逐字节相同的 Place 仍是重复身份，新 ID 才取得下一个 acceptance sequence。",
+          commands: 4,
+        },
+      ],
+    },
+    browserModel: {
+      instrumentId: "BTC-USDT",
+      timeInForce: "GTC",
+      minPriceTicks: "1",
+      maxPriceTicks: "1000000000000",
+      minQuantityLots: "1",
+      maxQuantityLots: "1000000000000",
+      maxOrderId: "9223372036854775807",
+      maxCommands: 24,
+      firstGeneratedOrderId: "10001",
+      supportedCommands: ["PLACE", "CANCEL"],
+      showLifecycleRegistry: true,
       seedOrders: [
         { orderId: "9001", side: "BUY", priceTicks: "99", quantityLots: "2" },
         { orderId: "9002", side: "SELL", priceTicks: "101", quantityLots: "2" },
@@ -153,6 +277,7 @@ export function getPracticeLab(
 ): MatchingLabDefinition | undefined {
   const normalizedUnitCode = unitCode.toUpperCase();
   return PRACTICE_LABS.find(
-    (lab) => lab.projectSlug === projectSlug && lab.unitCode === normalizedUnitCode,
+    (lab) =>
+      lab.projectSlug === projectSlug && lab.unitCode === normalizedUnitCode,
   );
 }

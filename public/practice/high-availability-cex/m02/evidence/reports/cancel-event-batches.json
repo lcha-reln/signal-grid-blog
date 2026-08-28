@@ -1,0 +1,1034 @@
+{
+  "schemaVersion" : "matching.m02.cancel-event-batches.v1",
+  "unit" : "M02",
+  "status" : "PASS",
+  "fixtureSha256" : "7e0be70259dcf1b4b422d68742b5c24f1a4d11b05643e2d9e367b67733d4a90a",
+  "scenarios" : [ {
+    "scenarioId" : "invalid-cancel-does-not-mutate-or-consume-sequence",
+    "cases" : [ {
+      "caseId" : "seed-resting-bid-before-invalid-cancels",
+      "type" : "PLACE",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 100,
+        "side" : "BUY",
+        "priceTicks" : 99,
+        "quantityLots" : 4
+      },
+      "events" : [ {
+        "type" : "ACCEPTED",
+        "sequence" : 1,
+        "orderId" : 100,
+        "side" : "BUY",
+        "priceTicks" : 99,
+        "quantityLots" : 4
+      }, {
+        "type" : "RESTED",
+        "sequence" : 1,
+        "orderId" : 100,
+        "side" : "BUY",
+        "priceTicks" : 99,
+        "remainingQuantityLots" : 4
+      } ],
+      "bookAfter" : {
+        "bids" : [ {
+          "priceTicks" : 99,
+          "orders" : [ {
+            "sequence" : 1,
+            "orderId" : 100,
+            "remainingQuantityLots" : 4
+          } ]
+        } ],
+        "asks" : [ ]
+      }
+    }, {
+      "caseId" : "reject-cancel-unknown-instrument",
+      "type" : "CANCEL",
+      "input" : {
+        "instrumentId" : "ETH-USDT",
+        "orderId" : 0
+      },
+      "events" : [ {
+        "type" : "REJECTED",
+        "code" : "UNKNOWN_INSTRUMENT",
+        "field" : "instrumentId"
+      } ],
+      "bookAfter" : {
+        "bids" : [ {
+          "priceTicks" : 99,
+          "orders" : [ {
+            "sequence" : 1,
+            "orderId" : 100,
+            "remainingQuantityLots" : 4
+          } ]
+        } ],
+        "asks" : [ ]
+      }
+    }, {
+      "caseId" : "reject-cancel-nonpositive-order-id",
+      "type" : "CANCEL",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 0
+      },
+      "events" : [ {
+        "type" : "REJECTED",
+        "code" : "INVALID_ORDER_ID",
+        "field" : "orderId"
+      } ],
+      "bookAfter" : {
+        "bids" : [ {
+          "priceTicks" : 99,
+          "orders" : [ {
+            "sequence" : 1,
+            "orderId" : 100,
+            "remainingQuantityLots" : 4
+          } ]
+        } ],
+        "asks" : [ ]
+      }
+    }, {
+      "caseId" : "next-place-still-sequence-two",
+      "type" : "PLACE",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 101,
+        "side" : "SELL",
+        "priceTicks" : 100,
+        "quantityLots" : 3
+      },
+      "events" : [ {
+        "type" : "ACCEPTED",
+        "sequence" : 2,
+        "orderId" : 101,
+        "side" : "SELL",
+        "priceTicks" : 100,
+        "quantityLots" : 3
+      }, {
+        "type" : "RESTED",
+        "sequence" : 2,
+        "orderId" : 101,
+        "side" : "SELL",
+        "priceTicks" : 100,
+        "remainingQuantityLots" : 3
+      } ],
+      "bookAfter" : {
+        "bids" : [ {
+          "priceTicks" : 99,
+          "orders" : [ {
+            "sequence" : 1,
+            "orderId" : 100,
+            "remainingQuantityLots" : 4
+          } ]
+        } ],
+        "asks" : [ {
+          "priceTicks" : 100,
+          "orders" : [ {
+            "sequence" : 2,
+            "orderId" : 101,
+            "remainingQuantityLots" : 3
+          } ]
+        } ]
+      }
+    } ]
+  }, {
+    "scenarioId" : "cancel-only-resting-order-removes-level",
+    "cases" : [ {
+      "caseId" : "rest-only-ask-before-cancel",
+      "type" : "PLACE",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 200,
+        "side" : "SELL",
+        "priceTicks" : 100,
+        "quantityLots" : 5
+      },
+      "events" : [ {
+        "type" : "ACCEPTED",
+        "sequence" : 1,
+        "orderId" : 200,
+        "side" : "SELL",
+        "priceTicks" : 100,
+        "quantityLots" : 5
+      }, {
+        "type" : "RESTED",
+        "sequence" : 1,
+        "orderId" : 200,
+        "side" : "SELL",
+        "priceTicks" : 100,
+        "remainingQuantityLots" : 5
+      } ],
+      "bookAfter" : {
+        "bids" : [ ],
+        "asks" : [ {
+          "priceTicks" : 100,
+          "orders" : [ {
+            "sequence" : 1,
+            "orderId" : 200,
+            "remainingQuantityLots" : 5
+          } ]
+        } ]
+      }
+    }, {
+      "caseId" : "cancel-only-ask-removes-level",
+      "type" : "CANCEL",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 200
+      },
+      "events" : [ {
+        "type" : "CANCELED",
+        "sequence" : 1,
+        "orderId" : 200,
+        "side" : "SELL",
+        "priceTicks" : 100,
+        "canceledQuantityLots" : 5
+      } ],
+      "bookAfter" : {
+        "bids" : [ ],
+        "asks" : [ ]
+      }
+    } ]
+  }, {
+    "scenarioId" : "cancel-middle-preserves-fifo",
+    "cases" : [ {
+      "caseId" : "fifo-survivor-one-rests",
+      "type" : "PLACE",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 300,
+        "side" : "SELL",
+        "priceTicks" : 100,
+        "quantityLots" : 1
+      },
+      "events" : [ {
+        "type" : "ACCEPTED",
+        "sequence" : 1,
+        "orderId" : 300,
+        "side" : "SELL",
+        "priceTicks" : 100,
+        "quantityLots" : 1
+      }, {
+        "type" : "RESTED",
+        "sequence" : 1,
+        "orderId" : 300,
+        "side" : "SELL",
+        "priceTicks" : 100,
+        "remainingQuantityLots" : 1
+      } ],
+      "bookAfter" : {
+        "bids" : [ ],
+        "asks" : [ {
+          "priceTicks" : 100,
+          "orders" : [ {
+            "sequence" : 1,
+            "orderId" : 300,
+            "remainingQuantityLots" : 1
+          } ]
+        } ]
+      }
+    }, {
+      "caseId" : "fifo-middle-maker-rests",
+      "type" : "PLACE",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 301,
+        "side" : "SELL",
+        "priceTicks" : 100,
+        "quantityLots" : 1
+      },
+      "events" : [ {
+        "type" : "ACCEPTED",
+        "sequence" : 2,
+        "orderId" : 301,
+        "side" : "SELL",
+        "priceTicks" : 100,
+        "quantityLots" : 1
+      }, {
+        "type" : "RESTED",
+        "sequence" : 2,
+        "orderId" : 301,
+        "side" : "SELL",
+        "priceTicks" : 100,
+        "remainingQuantityLots" : 1
+      } ],
+      "bookAfter" : {
+        "bids" : [ ],
+        "asks" : [ {
+          "priceTicks" : 100,
+          "orders" : [ {
+            "sequence" : 1,
+            "orderId" : 300,
+            "remainingQuantityLots" : 1
+          }, {
+            "sequence" : 2,
+            "orderId" : 301,
+            "remainingQuantityLots" : 1
+          } ]
+        } ]
+      }
+    }, {
+      "caseId" : "fifo-survivor-three-rests",
+      "type" : "PLACE",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 302,
+        "side" : "SELL",
+        "priceTicks" : 100,
+        "quantityLots" : 1
+      },
+      "events" : [ {
+        "type" : "ACCEPTED",
+        "sequence" : 3,
+        "orderId" : 302,
+        "side" : "SELL",
+        "priceTicks" : 100,
+        "quantityLots" : 1
+      }, {
+        "type" : "RESTED",
+        "sequence" : 3,
+        "orderId" : 302,
+        "side" : "SELL",
+        "priceTicks" : 100,
+        "remainingQuantityLots" : 1
+      } ],
+      "bookAfter" : {
+        "bids" : [ ],
+        "asks" : [ {
+          "priceTicks" : 100,
+          "orders" : [ {
+            "sequence" : 1,
+            "orderId" : 300,
+            "remainingQuantityLots" : 1
+          }, {
+            "sequence" : 2,
+            "orderId" : 301,
+            "remainingQuantityLots" : 1
+          }, {
+            "sequence" : 3,
+            "orderId" : 302,
+            "remainingQuantityLots" : 1
+          } ]
+        } ]
+      }
+    }, {
+      "caseId" : "cancel-middle-maker-only",
+      "type" : "CANCEL",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 301
+      },
+      "events" : [ {
+        "type" : "CANCELED",
+        "sequence" : 2,
+        "orderId" : 301,
+        "side" : "SELL",
+        "priceTicks" : 100,
+        "canceledQuantityLots" : 1
+      } ],
+      "bookAfter" : {
+        "bids" : [ ],
+        "asks" : [ {
+          "priceTicks" : 100,
+          "orders" : [ {
+            "sequence" : 1,
+            "orderId" : 300,
+            "remainingQuantityLots" : 1
+          }, {
+            "sequence" : 3,
+            "orderId" : 302,
+            "remainingQuantityLots" : 1
+          } ]
+        } ]
+      }
+    }, {
+      "caseId" : "taker-observes-survivor-fifo",
+      "type" : "PLACE",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 303,
+        "side" : "BUY",
+        "priceTicks" : 100,
+        "quantityLots" : 2
+      },
+      "events" : [ {
+        "type" : "ACCEPTED",
+        "sequence" : 4,
+        "orderId" : 303,
+        "side" : "BUY",
+        "priceTicks" : 100,
+        "quantityLots" : 2
+      }, {
+        "type" : "TRADE",
+        "makerSequence" : 1,
+        "makerOrderId" : 300,
+        "takerSequence" : 4,
+        "takerOrderId" : 303,
+        "priceTicks" : 100,
+        "quantityLots" : 1
+      }, {
+        "type" : "TRADE",
+        "makerSequence" : 3,
+        "makerOrderId" : 302,
+        "takerSequence" : 4,
+        "takerOrderId" : 303,
+        "priceTicks" : 100,
+        "quantityLots" : 1
+      } ],
+      "bookAfter" : {
+        "bids" : [ ],
+        "asks" : [ ]
+      }
+    } ]
+  }, {
+    "scenarioId" : "cancel-partially-filled-remainder",
+    "cases" : [ {
+      "caseId" : "partial-maker-rests-five",
+      "type" : "PLACE",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 400,
+        "side" : "SELL",
+        "priceTicks" : 100,
+        "quantityLots" : 5
+      },
+      "events" : [ {
+        "type" : "ACCEPTED",
+        "sequence" : 1,
+        "orderId" : 400,
+        "side" : "SELL",
+        "priceTicks" : 100,
+        "quantityLots" : 5
+      }, {
+        "type" : "RESTED",
+        "sequence" : 1,
+        "orderId" : 400,
+        "side" : "SELL",
+        "priceTicks" : 100,
+        "remainingQuantityLots" : 5
+      } ],
+      "bookAfter" : {
+        "bids" : [ ],
+        "asks" : [ {
+          "priceTicks" : 100,
+          "orders" : [ {
+            "sequence" : 1,
+            "orderId" : 400,
+            "remainingQuantityLots" : 5
+          } ]
+        } ]
+      }
+    }, {
+      "caseId" : "partial-maker-trades-two",
+      "type" : "PLACE",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 401,
+        "side" : "BUY",
+        "priceTicks" : 100,
+        "quantityLots" : 2
+      },
+      "events" : [ {
+        "type" : "ACCEPTED",
+        "sequence" : 2,
+        "orderId" : 401,
+        "side" : "BUY",
+        "priceTicks" : 100,
+        "quantityLots" : 2
+      }, {
+        "type" : "TRADE",
+        "makerSequence" : 1,
+        "makerOrderId" : 400,
+        "takerSequence" : 2,
+        "takerOrderId" : 401,
+        "priceTicks" : 100,
+        "quantityLots" : 2
+      } ],
+      "bookAfter" : {
+        "bids" : [ ],
+        "asks" : [ {
+          "priceTicks" : 100,
+          "orders" : [ {
+            "sequence" : 1,
+            "orderId" : 400,
+            "remainingQuantityLots" : 3
+          } ]
+        } ]
+      }
+    }, {
+      "caseId" : "cancel-only-partial-remainder",
+      "type" : "CANCEL",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 400
+      },
+      "events" : [ {
+        "type" : "CANCELED",
+        "sequence" : 1,
+        "orderId" : 400,
+        "side" : "SELL",
+        "priceTicks" : 100,
+        "canceledQuantityLots" : 3
+      } ],
+      "bookAfter" : {
+        "bids" : [ ],
+        "asks" : [ ]
+      }
+    } ]
+  }, {
+    "scenarioId" : "cancel-unknown-order",
+    "cases" : [ {
+      "caseId" : "cancel-never-seen-order",
+      "type" : "CANCEL",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 500
+      },
+      "events" : [ {
+        "type" : "CANCEL_REJECTED",
+        "orderId" : 500,
+        "code" : "ORDER_NOT_FOUND"
+      } ],
+      "bookAfter" : {
+        "bids" : [ ],
+        "asks" : [ ]
+      }
+    }, {
+      "caseId" : "place-after-unknown-cancel-uses-sequence-one",
+      "type" : "PLACE",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 500,
+        "side" : "BUY",
+        "priceTicks" : 100,
+        "quantityLots" : 1
+      },
+      "events" : [ {
+        "type" : "ACCEPTED",
+        "sequence" : 1,
+        "orderId" : 500,
+        "side" : "BUY",
+        "priceTicks" : 100,
+        "quantityLots" : 1
+      }, {
+        "type" : "RESTED",
+        "sequence" : 1,
+        "orderId" : 500,
+        "side" : "BUY",
+        "priceTicks" : 100,
+        "remainingQuantityLots" : 1
+      } ],
+      "bookAfter" : {
+        "bids" : [ {
+          "priceTicks" : 100,
+          "orders" : [ {
+            "sequence" : 1,
+            "orderId" : 500,
+            "remainingQuantityLots" : 1
+          } ]
+        } ],
+        "asks" : [ ]
+      }
+    } ]
+  }, {
+    "scenarioId" : "late-cancel-filled-order",
+    "cases" : [ {
+      "caseId" : "filled-maker-rests-before-trade",
+      "type" : "PLACE",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 600,
+        "side" : "SELL",
+        "priceTicks" : 100,
+        "quantityLots" : 2
+      },
+      "events" : [ {
+        "type" : "ACCEPTED",
+        "sequence" : 1,
+        "orderId" : 600,
+        "side" : "SELL",
+        "priceTicks" : 100,
+        "quantityLots" : 2
+      }, {
+        "type" : "RESTED",
+        "sequence" : 1,
+        "orderId" : 600,
+        "side" : "SELL",
+        "priceTicks" : 100,
+        "remainingQuantityLots" : 2
+      } ],
+      "bookAfter" : {
+        "bids" : [ ],
+        "asks" : [ {
+          "priceTicks" : 100,
+          "orders" : [ {
+            "sequence" : 1,
+            "orderId" : 600,
+            "remainingQuantityLots" : 2
+          } ]
+        } ]
+      }
+    }, {
+      "caseId" : "maker-becomes-filled",
+      "type" : "PLACE",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 601,
+        "side" : "BUY",
+        "priceTicks" : 100,
+        "quantityLots" : 2
+      },
+      "events" : [ {
+        "type" : "ACCEPTED",
+        "sequence" : 2,
+        "orderId" : 601,
+        "side" : "BUY",
+        "priceTicks" : 100,
+        "quantityLots" : 2
+      }, {
+        "type" : "TRADE",
+        "makerSequence" : 1,
+        "makerOrderId" : 600,
+        "takerSequence" : 2,
+        "takerOrderId" : 601,
+        "priceTicks" : 100,
+        "quantityLots" : 2
+      } ],
+      "bookAfter" : {
+        "bids" : [ ],
+        "asks" : [ ]
+      }
+    }, {
+      "caseId" : "late-cancel-reports-filled-terminal",
+      "type" : "CANCEL",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 600
+      },
+      "events" : [ {
+        "type" : "CANCEL_REJECTED",
+        "orderId" : 600,
+        "code" : "ORDER_ALREADY_FILLED"
+      } ],
+      "bookAfter" : {
+        "bids" : [ ],
+        "asks" : [ ]
+      }
+    }, {
+      "caseId" : "late-cancel-filled-taker-reports-filled-terminal",
+      "type" : "CANCEL",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 601
+      },
+      "events" : [ {
+        "type" : "CANCEL_REJECTED",
+        "orderId" : 601,
+        "code" : "ORDER_ALREADY_FILLED"
+      } ],
+      "bookAfter" : {
+        "bids" : [ ],
+        "asks" : [ ]
+      }
+    } ]
+  }, {
+    "scenarioId" : "repeat-cancel-stable",
+    "cases" : [ {
+      "caseId" : "repeat-target-rests",
+      "type" : "PLACE",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 700,
+        "side" : "SELL",
+        "priceTicks" : 100,
+        "quantityLots" : 4
+      },
+      "events" : [ {
+        "type" : "ACCEPTED",
+        "sequence" : 1,
+        "orderId" : 700,
+        "side" : "SELL",
+        "priceTicks" : 100,
+        "quantityLots" : 4
+      }, {
+        "type" : "RESTED",
+        "sequence" : 1,
+        "orderId" : 700,
+        "side" : "SELL",
+        "priceTicks" : 100,
+        "remainingQuantityLots" : 4
+      } ],
+      "bookAfter" : {
+        "bids" : [ ],
+        "asks" : [ {
+          "priceTicks" : 100,
+          "orders" : [ {
+            "sequence" : 1,
+            "orderId" : 700,
+            "remainingQuantityLots" : 4
+          } ]
+        } ]
+      }
+    }, {
+      "caseId" : "first-cancel-succeeds",
+      "type" : "CANCEL",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 700
+      },
+      "events" : [ {
+        "type" : "CANCELED",
+        "sequence" : 1,
+        "orderId" : 700,
+        "side" : "SELL",
+        "priceTicks" : 100,
+        "canceledQuantityLots" : 4
+      } ],
+      "bookAfter" : {
+        "bids" : [ ],
+        "asks" : [ ]
+      }
+    }, {
+      "caseId" : "repeat-cancel-reports-canceled-terminal",
+      "type" : "CANCEL",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 700
+      },
+      "events" : [ {
+        "type" : "CANCEL_REJECTED",
+        "orderId" : 700,
+        "code" : "ORDER_ALREADY_CANCELED"
+      } ],
+      "bookAfter" : {
+        "bids" : [ ],
+        "asks" : [ ]
+      }
+    } ]
+  }, {
+    "scenarioId" : "duplicate-active-order-id",
+    "cases" : [ {
+      "caseId" : "active-original-rests",
+      "type" : "PLACE",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 800,
+        "side" : "BUY",
+        "priceTicks" : 100,
+        "quantityLots" : 3
+      },
+      "events" : [ {
+        "type" : "ACCEPTED",
+        "sequence" : 1,
+        "orderId" : 800,
+        "side" : "BUY",
+        "priceTicks" : 100,
+        "quantityLots" : 3
+      }, {
+        "type" : "RESTED",
+        "sequence" : 1,
+        "orderId" : 800,
+        "side" : "BUY",
+        "priceTicks" : 100,
+        "remainingQuantityLots" : 3
+      } ],
+      "bookAfter" : {
+        "bids" : [ {
+          "priceTicks" : 100,
+          "orders" : [ {
+            "sequence" : 1,
+            "orderId" : 800,
+            "remainingQuantityLots" : 3
+          } ]
+        } ],
+        "asks" : [ ]
+      }
+    }, {
+      "caseId" : "duplicate-active-place-rejected",
+      "type" : "PLACE",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 800,
+        "side" : "SELL",
+        "priceTicks" : 99,
+        "quantityLots" : 3
+      },
+      "events" : [ {
+        "type" : "PLACE_REJECTED",
+        "orderId" : 800,
+        "code" : "DUPLICATE_ORDER_ID"
+      } ],
+      "bookAfter" : {
+        "bids" : [ {
+          "priceTicks" : 100,
+          "orders" : [ {
+            "sequence" : 1,
+            "orderId" : 800,
+            "remainingQuantityLots" : 3
+          } ]
+        } ],
+        "asks" : [ ]
+      }
+    }, {
+      "caseId" : "place-after-active-duplicate-uses-sequence-two",
+      "type" : "PLACE",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 801,
+        "side" : "BUY",
+        "priceTicks" : 99,
+        "quantityLots" : 1
+      },
+      "events" : [ {
+        "type" : "ACCEPTED",
+        "sequence" : 2,
+        "orderId" : 801,
+        "side" : "BUY",
+        "priceTicks" : 99,
+        "quantityLots" : 1
+      }, {
+        "type" : "RESTED",
+        "sequence" : 2,
+        "orderId" : 801,
+        "side" : "BUY",
+        "priceTicks" : 99,
+        "remainingQuantityLots" : 1
+      } ],
+      "bookAfter" : {
+        "bids" : [ {
+          "priceTicks" : 100,
+          "orders" : [ {
+            "sequence" : 1,
+            "orderId" : 800,
+            "remainingQuantityLots" : 3
+          } ]
+        }, {
+          "priceTicks" : 99,
+          "orders" : [ {
+            "sequence" : 2,
+            "orderId" : 801,
+            "remainingQuantityLots" : 1
+          } ]
+        } ],
+        "asks" : [ ]
+      }
+    } ]
+  }, {
+    "scenarioId" : "duplicate-filled-order-id-does-not-resurrect",
+    "cases" : [ {
+      "caseId" : "filled-identity-maker-rests",
+      "type" : "PLACE",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 900,
+        "side" : "SELL",
+        "priceTicks" : 100,
+        "quantityLots" : 2
+      },
+      "events" : [ {
+        "type" : "ACCEPTED",
+        "sequence" : 1,
+        "orderId" : 900,
+        "side" : "SELL",
+        "priceTicks" : 100,
+        "quantityLots" : 2
+      }, {
+        "type" : "RESTED",
+        "sequence" : 1,
+        "orderId" : 900,
+        "side" : "SELL",
+        "priceTicks" : 100,
+        "remainingQuantityLots" : 2
+      } ],
+      "bookAfter" : {
+        "bids" : [ ],
+        "asks" : [ {
+          "priceTicks" : 100,
+          "orders" : [ {
+            "sequence" : 1,
+            "orderId" : 900,
+            "remainingQuantityLots" : 2
+          } ]
+        } ]
+      }
+    }, {
+      "caseId" : "filled-identity-maker-completes",
+      "type" : "PLACE",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 901,
+        "side" : "BUY",
+        "priceTicks" : 100,
+        "quantityLots" : 2
+      },
+      "events" : [ {
+        "type" : "ACCEPTED",
+        "sequence" : 2,
+        "orderId" : 901,
+        "side" : "BUY",
+        "priceTicks" : 100,
+        "quantityLots" : 2
+      }, {
+        "type" : "TRADE",
+        "makerSequence" : 1,
+        "makerOrderId" : 900,
+        "takerSequence" : 2,
+        "takerOrderId" : 901,
+        "priceTicks" : 100,
+        "quantityLots" : 2
+      } ],
+      "bookAfter" : {
+        "bids" : [ ],
+        "asks" : [ ]
+      }
+    }, {
+      "caseId" : "duplicate-filled-place-rejected",
+      "type" : "PLACE",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 900,
+        "side" : "BUY",
+        "priceTicks" : 99,
+        "quantityLots" : 1
+      },
+      "events" : [ {
+        "type" : "PLACE_REJECTED",
+        "orderId" : 900,
+        "code" : "DUPLICATE_ORDER_ID"
+      } ],
+      "bookAfter" : {
+        "bids" : [ ],
+        "asks" : [ ]
+      }
+    }, {
+      "caseId" : "filled-identity-remains-filled-after-duplicate",
+      "type" : "CANCEL",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 900
+      },
+      "events" : [ {
+        "type" : "CANCEL_REJECTED",
+        "orderId" : 900,
+        "code" : "ORDER_ALREADY_FILLED"
+      } ],
+      "bookAfter" : {
+        "bids" : [ ],
+        "asks" : [ ]
+      }
+    } ]
+  }, {
+    "scenarioId" : "duplicate-canceled-order-id-does-not-resurrect",
+    "cases" : [ {
+      "caseId" : "canceled-identity-original-rests",
+      "type" : "PLACE",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 1000,
+        "side" : "SELL",
+        "priceTicks" : 100,
+        "quantityLots" : 3
+      },
+      "events" : [ {
+        "type" : "ACCEPTED",
+        "sequence" : 1,
+        "orderId" : 1000,
+        "side" : "SELL",
+        "priceTicks" : 100,
+        "quantityLots" : 3
+      }, {
+        "type" : "RESTED",
+        "sequence" : 1,
+        "orderId" : 1000,
+        "side" : "SELL",
+        "priceTicks" : 100,
+        "remainingQuantityLots" : 3
+      } ],
+      "bookAfter" : {
+        "bids" : [ ],
+        "asks" : [ {
+          "priceTicks" : 100,
+          "orders" : [ {
+            "sequence" : 1,
+            "orderId" : 1000,
+            "remainingQuantityLots" : 3
+          } ]
+        } ]
+      }
+    }, {
+      "caseId" : "canceled-identity-enters-terminal-state",
+      "type" : "CANCEL",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 1000
+      },
+      "events" : [ {
+        "type" : "CANCELED",
+        "sequence" : 1,
+        "orderId" : 1000,
+        "side" : "SELL",
+        "priceTicks" : 100,
+        "canceledQuantityLots" : 3
+      } ],
+      "bookAfter" : {
+        "bids" : [ ],
+        "asks" : [ ]
+      }
+    }, {
+      "caseId" : "duplicate-canceled-place-rejected",
+      "type" : "PLACE",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 1000,
+        "side" : "SELL",
+        "priceTicks" : 100,
+        "quantityLots" : 3
+      },
+      "events" : [ {
+        "type" : "PLACE_REJECTED",
+        "orderId" : 1000,
+        "code" : "DUPLICATE_ORDER_ID"
+      } ],
+      "bookAfter" : {
+        "bids" : [ ],
+        "asks" : [ ]
+      }
+    }, {
+      "caseId" : "place-after-canceled-duplicate-uses-sequence-two",
+      "type" : "PLACE",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 1001,
+        "side" : "BUY",
+        "priceTicks" : 99,
+        "quantityLots" : 1
+      },
+      "events" : [ {
+        "type" : "ACCEPTED",
+        "sequence" : 2,
+        "orderId" : 1001,
+        "side" : "BUY",
+        "priceTicks" : 99,
+        "quantityLots" : 1
+      }, {
+        "type" : "RESTED",
+        "sequence" : 2,
+        "orderId" : 1001,
+        "side" : "BUY",
+        "priceTicks" : 99,
+        "remainingQuantityLots" : 1
+      } ],
+      "bookAfter" : {
+        "bids" : [ {
+          "priceTicks" : 99,
+          "orders" : [ {
+            "sequence" : 2,
+            "orderId" : 1001,
+            "remainingQuantityLots" : 1
+          } ]
+        } ],
+        "asks" : [ ]
+      }
+    } ]
+  } ]
+}

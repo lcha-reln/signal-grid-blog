@@ -54,6 +54,19 @@ function assertIncludes(haystack, needle, context) {
   assert(haystack.includes(needle), `${context}: missing ${JSON.stringify(needle)}`);
 }
 
+function normalizeMarkdownTableRow(value) {
+  return value.trim().split("|").map((cell) => cell.trim()).join("|");
+}
+
+function assertTableIncludes(haystack, needle, context) {
+  const normalizedNeedle = normalizeMarkdownTableRow(needle);
+  const found = haystack
+    .split(/\r?\n/)
+    .filter((line) => line.trim().startsWith("|"))
+    .some((line) => normalizeMarkdownTableRow(line).includes(normalizedNeedle));
+  assert(found, `${context}: missing table row ${JSON.stringify(needle)}`);
+}
+
 function parsePlanVersion(value) {
   const match = /^(\d+)\.(\d+)$/.exec(value ?? "");
   return match ? [Number(match[1]), Number(match[2])] : undefined;
@@ -696,6 +709,11 @@ for (const lab of PRACTICE_LABS) {
     (total, scenario) => total + (scenario.commands?.length ?? 0),
     0,
   );
+  const sourceCommandTypes = new Set(
+    sourceScenarios.flatMap((scenario) =>
+      (scenario.commands ?? []).map((command) => command.type ?? "PLACE"),
+    ),
+  );
   assert(
     sourceIds.length === scenarioIds.size &&
       sourceIds.every((id, index) => id === replay.scenarios[index]?.id) &&
@@ -710,6 +728,7 @@ for (const lab of PRACTICE_LABS) {
     scenarioId: scenario.scenarioId,
     cases: scenario.commands.map((command) => ({
       caseId: command.caseId,
+      ...(command.type ? { type: command.type } : {}),
       input: command.input,
       events: command.expected.events,
       bookAfter: command.expected.bookAfter,
@@ -728,10 +747,11 @@ for (const lab of PRACTICE_LABS) {
   );
   try {
     const check = JSON.parse(await readFile(checkPath, "utf8"));
+    const reportedCommands = check.scenarioCorpus?.commands ?? check.scenarioCorpus?.cases;
     assert(check.canonical?.digest === replay.digest, `${key}: lab digest differs from check.json`);
     assert(
       check.scenarioCorpus?.scenarios === scenarioIds.size &&
-        check.scenarioCorpus?.cases === configuredCommands,
+        reportedCommands === configuredCommands,
       `${key}: lab counts differ from check.json`,
     );
   } catch (error) {
@@ -739,8 +759,28 @@ for (const lab of PRACTICE_LABS) {
   }
 
   const model = lab.browserModel;
-  assert(model.instrumentId === "BTC-USDT", `${key}: M01 browser model instrument drifted`);
-  assert(model.timeInForce === "GTC", `${key}: M01 browser model TIF drifted`);
+  assert(model.instrumentId === "BTC-USDT", `${key}: browser model instrument drifted`);
+  assert(model.timeInForce === "GTC", `${key}: browser model TIF drifted`);
+  assert(
+    Array.isArray(model.supportedCommands) &&
+      model.supportedCommands.length > 0 &&
+      model.supportedCommands.every((command) => command === "PLACE" || command === "CANCEL") &&
+      new Set(model.supportedCommands).size === model.supportedCommands.length,
+    `${key}: browser model command set is invalid`,
+  );
+  assert(
+    typeof model.showLifecycleRegistry === "boolean",
+    `${key}: browser model lifecycle visibility is invalid`,
+  );
+  assert(
+    model.supportedCommands?.includes("CANCEL") === model.showLifecycleRegistry,
+    `${key}: cancel support and lifecycle registry visibility must advance together`,
+  );
+  assert(
+    sourceCommandTypes.size === model.supportedCommands?.length &&
+      [...sourceCommandTypes].every((command) => model.supportedCommands.includes(command)),
+    `${key}: browser model command set differs from the Golden corpus`,
+  );
   assert(
     Number.isInteger(model.maxCommands) && model.maxCommands > 0 && model.maxCommands <= 100,
     `${key}: browser model command bound is invalid`,
@@ -750,22 +790,38 @@ for (const lab of PRACTICE_LABS) {
     const maxPrice = BigInt(model.maxPriceTicks);
     const minQuantity = BigInt(model.minQuantityLots);
     const maxQuantity = BigInt(model.maxQuantityLots);
+    const maxOrderId = BigInt(model.maxOrderId);
     const firstOrderId = BigInt(model.firstGeneratedOrderId);
     assert(
       minPrice > 0n && minPrice <= maxPrice && minQuantity > 0n && minQuantity <= maxQuantity,
       `${key}: browser model numeric bounds are invalid`,
     );
-    assert(firstOrderId > 0n, `${key}: browser model first order ID is invalid`);
+    assert(maxOrderId > 0n, `${key}: browser model order ID bound is invalid`);
+    assert(
+      firstOrderId > 0n && firstOrderId <= maxOrderId,
+      `${key}: browser model first order ID is invalid`,
+    );
+    const seedIds = new Set();
     for (const seed of model.seedOrders ?? []) {
       const price = BigInt(seed.priceTicks);
       const quantity = BigInt(seed.quantityLots);
+      const orderId = BigInt(seed.orderId);
       assert(seed.side === "BUY" || seed.side === "SELL", `${key}: invalid seed side`);
+      assert(
+        orderId > 0n && orderId <= maxOrderId && !seedIds.has(seed.orderId),
+        `${key}: invalid or duplicate seed order ID`,
+      );
+      seedIds.add(seed.orderId);
       assert(price >= minPrice && price <= maxPrice, `${key}: seed price is outside bounds`);
       assert(
         quantity >= minQuantity && quantity <= maxQuantity,
         `${key}: seed quantity is outside bounds`,
       );
     }
+    assert(
+      !seedIds.has(model.firstGeneratedOrderId),
+      `${key}: generated order ID collides with a seed identity`,
+    );
   } catch (error) {
     assert(false, `${key}: browser model contains a non-integer bound (${error.message})`);
   }
@@ -907,11 +963,11 @@ for (const practiceCase of PRACTICE_CASES) {
   assertIncludes(design, practiceCase.profileRoadmapTitle, practiceCase.slug);
   assertIncludes(design, practiceCase.profileRoadmapDescription, practiceCase.slug);
   for (const profile of profiles) {
-    assertIncludes(design, `| \`${profile.version}\` | \`${profile.status}\` | ${profile.title} | ${profile.description} | ${profile.gate} |`, `${practiceCase.slug}/${profile.version}`);
+    assertTableIncludes(design, `| \`${profile.version}\` | \`${profile.status}\` | ${profile.title} | ${profile.description} | ${profile.gate} |`, `${practiceCase.slug}/${profile.version}`);
   }
   if (currentUnit) {
-    assertIncludes(design, `> 状态：${currentUnit.code} 已启动，当前 \`${currentUnit.lifecycle}\``, practiceCase.slug);
-    assertIncludes(design, `| ${currentUnit.code} | \`${currentUnit.lifecycle}\` |`, practiceCase.slug);
+    assertIncludes(design, `> 状态：${currentUnit.code} 当前 \`${currentUnit.lifecycle}\``, practiceCase.slug);
+    assertTableIncludes(design, `| ${currentUnit.code} | \`${currentUnit.lifecycle}\` |`, practiceCase.slug);
   }
   for (const unit of caseUnits) {
     const key = `${practiceCase.slug}/${unit.code}`;

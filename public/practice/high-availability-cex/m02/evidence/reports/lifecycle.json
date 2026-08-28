@@ -1,0 +1,24 @@
+{
+  "schemaVersion" : "matching.m02.lifecycle.v1",
+  "unit" : "M02",
+  "status" : "PASS",
+  "commands" : 34,
+  "placeCommands" : 22,
+  "cancelCommands" : 12,
+  "accepted" : 19,
+  "validationRejected" : 2,
+  "placeRejected" : 3,
+  "cancelRejected" : 5,
+  "canceled" : 5,
+  "trades" : 5,
+  "checks" : {
+    "eventBatchGrammar" : 34,
+    "independentBookTransition" : 34,
+    "lifecycleTransition" : 34
+  },
+  "statefulValidationPriority" : {
+    "status" : "PASS",
+    "checks" : 4,
+    "message" : "stateful validation priority matched"
+  }
+}

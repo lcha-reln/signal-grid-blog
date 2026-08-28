@@ -1,0 +1,13 @@
+{
+  "schemaVersion" : "matching.m02.registry-invariants.v1",
+  "unit" : "M02",
+  "status" : "PASS",
+  "checks" : {
+    "registryBookBijection" : 34,
+    "quantityPartition" : 52,
+    "terminalAbsentFromBook" : 26,
+    "bookStructureAndNoCross" : 68
+  },
+  "quantityArithmetic" : "BigInteger",
+  "lifecycleAuthority" : "INDEPENDENT_TESTKIT_LEDGER"
+}
