@@ -1,12 +1,14 @@
 # 高可用 CEX 交易核心实战课程设计
 
-> 状态：M01 已启动，当前 `PUBLISHED`（M00、M01 均已发布；M02 仍是尚未签约的候选能力地图）
+> 状态：M01 已启动，当前 `PUBLISHED`（M00、M01 均已发布；M02 已签约为 `CONTRACTED`，尚未创建起点）
 >
 > 规划日期：2026-08-26
 >
-> `planVersion`：`0.3`
+> `planVersion`：`0.4`
 >
 > 当前单元合同 `planVersion`：`0.3`
+>
+> 下一单元 M02 合同 `planVersion`：`0.4`
 >
 > 案例 slug：`high-availability-cex`
 >
@@ -14,7 +16,7 @@
 >
 > 当前规划基线：`SPOT-CEX-1.0` 的 30 个候选交付单元，3 个按门禁顺序创建的代码仓库
 >
-> 当前实施窗口：M00、M01 保持 `PUBLISHED`；当前没有 `IN_PROGRESS` 或 `READY` 单元；M02 及以后仍只是可调整的候选课程地图
+> 当前实施窗口：M00、M01 保持 `PUBLISHED`；M02 为 `CONTRACTED`，等待另行创建可复现起点；当前没有 `IN_PROGRESS` 或 `READY` 单元，M03 及以后仍是可调整的候选课程地图
 
 ## 1. 这份文档决定什么
 
@@ -26,7 +28,7 @@
 
 > 怎样从一个可证明正确的限价单撮合内核开始，先交付边界清楚、可恢复、可运维、证据完整的高可用现货核心，再在每个前置 Profile 真正通过资格审查后，分别引入债务、持仓重估、到期结算和非线性风险？
 
-路线图可以完整，实施级设计只能覆盖当前和下一个单元；代码窗口永远只有当前单元。M01 的价格时间优先合同与交付证据已经冻结，M02–M03 的教学顺序仍只是候选课程地图，不代表实现字段已经冻结；M02 通过合同评审前不创建新分支、起点或教程。任何超出已签约单元合同的能力，必须删除等量范围、拆分单元或进入 backlog。
+路线图可以完整，实施级设计只能覆盖当前和下一个单元；代码窗口永远只有当前单元。M01 的价格时间优先合同与交付证据已经冻结，M02 的可寻址订单生命周期已在 PLAN v0.4 签约，但尚未创建分支、起点、教程、Lab 或 evidence；只有可复现的 `GOAL_NOT_IMPLEMENTED` 起点通过独立检查后，M02 才能从 `CONTRACTED` 进入 `READY`。M03 及以后的教学顺序仍只是候选课程地图，不代表实现字段已经冻结。任何超出已签约单元合同的能力，必须删除等量范围、拆分单元或进入 backlog。
 
 ## 2. 旧专题为何失败，以及本次怎样避免重演
 
@@ -231,7 +233,7 @@ Rest 初期是一个仓库和一个部署应用，内部划分 PriAPI、OpenAPI�
 
 | 顺序 | 仓库 | 创建条件 | 主要制品 |
 | ---: | --- | --- | --- |
-| 1 | [`cex-matching`](https://github.com/lcha-reln/cex-matching) | 已创建；M00、M01 均为 `PUBLISHED`，M02 尚未签约 | Matching core、testkit、runtime、协议、故障实验 |
+| 1 | [`cex-matching`](https://github.com/lcha-reln/cex-matching) | 已创建；M00、M01 均为 `PUBLISHED`，M02 已签约但尚无起点 | Matching core、testkit、runtime、协议、故障实验 |
 | 2 | `counter` | `matching-1.0.0` 发布并从干净环境复验 | Counter core、Cluster runtime、bridge、sync、query |
 | 3 | `rest` | `counter-1.0.0` 发布并从干净环境复验 | PriAPI、OpenAPI、WS、system tests |
 
@@ -288,7 +290,8 @@ rest     = rest-1.0.0
 | --- | --- | --- | --- | --- |
 | M00 | `PUBLISHED` | `CONTRACT` | `CREATED` | 代码、反例、四篇教程与持久 evidence 已验证并公开；停止在 VALID，不提前实现订单簿 |
 | M01 | `PUBLISHED` | `CONTRACT` | 随 `cex-matching` 仓库 | 单交易对 GTC 的价格时间优先、业务事件、固定历史、四篇教程、Matching Lab 与持久 evidence 已验证并公开 |
-| M02–M12 | `CANDIDATE` | `RISK_MAP` | 随 `cex-matching` 仓库 | 记录能力、关键不变量和危险故障，不冻结类、Schema 字段编号、依赖版本或文章标题 |
+| M02 | `CONTRACTED` | `CONTRACT` | 随 `cex-matching` 仓库 | 订单索引、撤单、不可逆终态、10 场景 34 命令和四篇教程合同已冻结；不创建 ref、代码、Lab 或 evidence |
+| M03–M12 | `CANDIDATE` | `RISK_MAP` | 随 `cex-matching` 仓库 | 记录能力、关键不变量和危险故障，不冻结类、Schema 字段编号、依赖版本或文章标题 |
 | C00–C09 | `CANDIDATE` | `RISK_MAP` | `LOCKED` | 记录权威边界和关键故障；Matching 1.0 前不创建仓库 |
 | R00–R06 | `CANDIDATE` | `RISK_MAP` | `LOCKED` | 记录外部契约边界和关键故障；Counter 1.0 前不创建仓库 |
 
@@ -452,7 +455,7 @@ Matching 是唯一优先启动的项目。它先证明业务语义，再证明�
 | --- | --- | --- | --- |
 | M00 最小可执行规格 | 输入域、规范化和确定性验证合同 | 能重放 fixture 并比较验证结果和 history digest | `PUBLISHED / CONTRACT` |
 | M01 单交易对 GTC 限价撮合 | 价格时间优先撮合语义 | 正确处理挂单、部分成交和连续吃单 | `PUBLISHED / CONTRACT` |
-| M02 可寻址订单生命周期 | 撤单和不可逆终态 | 能撤单并防止订单复活 | `CANDIDATE / RISK_MAP` |
+| M02 可寻址订单生命周期 | 撤单和不可逆终态 | 能撤单并防止订单复活 | `CONTRACTED / CONTRACT` |
 | M03 参考模型与性质测试 | 自动寻找反例 | 发布 `matching-0.1.0` | `CANDIDATE / RISK_MAP` |
 | M04 执行与准入策略 | TIF、请求保护和参与者策略 | 支持 IOC、FOK、Post-only、受保护 aggressive order、price band 和 STP | `CANDIDATE / RISK_MAP` |
 | M05 版本化市场控制 | RuleSet fence 和 operating mode | 支持版本激活、停市和 Mass Cancel | `CANDIDATE / RISK_MAP` |
@@ -616,16 +619,165 @@ Matching 是唯一优先启动的项目。它先证明业务语义，再证明�
 
 ### 8.4 M02：可寻址订单、撤单与终态闭合
 
-> M02 以后均为候选能力地图；只说明问题和风险，不冻结字段、文章、实验或具体实现。
+> M02 单元合同 `planVersion`：`0.4`
+>
+> 生命周期：`CONTRACTED`。M01 是已发布前置；当前没有 `course/m02-start`、实施分支、完成 ref、产品 release、教程、Lab 注册或 evidence。只有干净 clone 能构建且 `m02Check` 以结构化 `GOAL_NOT_IMPLEMENTED` 表达预期缺口后，才允许进入 `READY`。
 
-| 项目 | 候选内容 |
-| --- | --- |
-| 问题 | M01 的订单只能在撮合循环中存在，尚不能可靠撤销或证明终态不可逆 |
-| 候选新增维度 | 可寻址订单生命周期 |
-| 累计能力 | 支持挂单和部分成交余量的撤销；不存在、迟到和重复撤单有稳定结果；终态订单不能复活 |
-| 关键风险 | 撤销价位中间订单破坏同价 FIFO，或只更新一个索引导致幽灵订单 |
-| 明确不做 | command 级幂等、Cancel/Replace、批量撤单、资产释放、WAL、Snapshot 和 Aeron |
-| 停止点 | 生命周期闭合的内存撮合器，但尚未承诺请求重试幂等 |
+**Objective**
+
+在不改变 M01 价格时间优先、maker price 和 event batch 语义的前提下，让每个已接受订单拥有可寻址且不可复活的内存生命周期，并稳定解释未知、迟到、重复撤单和重复 `orderId`。
+
+**Adds**
+
+唯一新增复杂度是：**可寻址订单生命周期——权威 lifecycle registry、精确撤单与不可逆 `FILLED/CANCELED` 终态**。
+
+M02 不借“撤单”之名引入请求幂等、账户资产、Cancel/Replace、Mass Cancel、持久化或网络。订单簿和 lifecycle registry 不是两份可独立修改的订单数据：`RESTING` entry 必须与簿中节点指向同一个内部订单身份，`FILLED/CANCELED` entry 则只保留终态身份，所有变化仍由调用方串行化的一条命令原子完成。
+
+**冻结的命令与 API**
+
+M01 的 `place(PlaceLimitOrderInput)` 与 `snapshot()` 保持兼容；M02 只增加一条命令边界：
+
+```text
+CancelOrderInput(String instrumentId, BigInteger orderId)
+
+SingleInstrumentMatchingEngine
+├── ExecutionBatch place(PlaceLimitOrderInput input)
+├── ExecutionBatch cancel(CancelOrderInput input)
+└── OrderBookSnapshot snapshot()
+```
+
+`CancelOrderInput` 的 `instrumentId` 规范化与 `orderId` 数值域复用 M00 已冻结语义。非法 Place 或 Cancel 都只产生既有的 `Rejected(ValidationCode code, String field)`，不占用订单 ID、不分配 `acceptedSequence`、不创建终态记录且不修改盘口。
+
+M02 在 `MatchingEvent` 中增加三类业务结果：
+
+```text
+PlaceRejected(OrderId orderId, PlaceRejectionCode code)
+└── code = DUPLICATE_ORDER_ID
+
+Canceled(AcceptanceSequence sequence, OrderId orderId, Side side,
+         PriceTicks priceTicks, QuantityLots canceledQuantityLots)
+
+CancelRejected(OrderId orderId, CancelRejectionCode code)
+└── code = ORDER_NOT_FOUND | ORDER_ALREADY_FILLED | ORDER_ALREADY_CANCELED
+```
+
+`ExecutionBatch.bookAfter` 继续是命令完成后的完整不可变盘口。Place batch 只能是 `Rejected`、`PlaceRejected` 或 M01 已冻结的 `Accepted → Trade* → Rested?`；Cancel batch 只能是 `Rejected`、单条 `Canceled` 或单条 `CancelRejected`。Cancel 不产生 `Accepted`、`Trade` 或 `Rested`，也不消耗 `acceptedSequence`。
+
+这些是 Matching 内部执行语义，不是面向用户的 OMS API。Counter 后续仍负责用户订单、资产、预占和查询状态；M02 不在 Matching 中复制账户订单表。
+
+**冻结的生命周期状态矩阵**
+
+`UNSEEN` 表示当前 engine 生命周期内从未成功接受该 ID；`ACTIVE` 包括未成交和仍有余量的部分成交订单；`FILLED` 与 `CANCELED` 是不可逆终态。
+
+| 当前状态 | 命令 | 结果 | 状态和 sequence |
+| --- | --- | --- | --- |
+| `UNSEEN` | 非法 Place | `Rejected(code, field)` | 保持 `UNSEEN`；不消耗 sequence |
+| `UNSEEN` | 合法 Place | M01 Place batch | 有余量则 `ACTIVE`，完全成交则 `FILLED`；消耗一次 sequence |
+| `ACTIVE` | 相同 ID 的合法 Place | `PlaceRejected(DUPLICATE_ORDER_ID)` | 原订单不变；不消耗 sequence |
+| `FILLED` / `CANCELED` | 相同 ID 的合法 Place | `PlaceRejected(DUPLICATE_ORDER_ID)` | 终态不变；不消耗 sequence |
+| `UNSEEN` | 非法 Cancel | `Rejected(code, field)` | 保持 `UNSEEN`；不消耗 sequence |
+| `UNSEEN` | 合法 Cancel | `CancelRejected(ORDER_NOT_FOUND)` | 不创建 tombstone；之后首次合法 Place 仍可接受 |
+| `ACTIVE` | 合法 Cancel | `Canceled(..., canceledQuantityLots=remaining)` | 原子移出订单簿，并让同一 registry entry 进入 `CANCELED`；不消耗 sequence |
+| `FILLED` | 合法 Cancel | `CancelRejected(ORDER_ALREADY_FILLED)` | `FILLED` 不变；不消耗 sequence |
+| `CANCELED` | 合法 Cancel | `CancelRejected(ORDER_ALREADY_CANCELED)` | `CANCELED` 不变；不消耗 sequence |
+
+重复 Cancel 得到稳定的当前状态结果，但这不是 command 级幂等：系统不会识别某次网络重试，也不会重放第一次成功 Cancel 的原始 `Canceled` batch。重复 Place 同样返回业务拒绝，而不是重放旧 Place 结果。
+
+**Delivers 与 Freezes**
+
+- 已接受 `orderId` 在当前 engine 生命周期内只允许首次使用一次；非法输入和未知撤单不占用 ID；
+- lifecycle registry 为每个已接受 ID 保留且只保留一个 entry；其中 `RESTING` 当且仅当恰好对应一个订单簿节点，两条访问路径的 ID、side、price、sequence 和 remaining 必须一致；
+- 每个 registry entry 恰好处于 `RESTING`、`FILLED` 或 `CANCELED` 之一；`FILLED/CANCELED` 不得出现在订单簿，终态身份也不得从 registry 删除；
+- fully-filled maker、fully-filled taker 和成功 Cancel 都必须在同一命令状态迁移中移出订单簿并把同一 registry entry 写成正确终态；
+- 部分成交后仍有余量的订单保持 `ACTIVE`、原 `acceptedSequence` 和队列位置，Cancel 的 `canceledQuantityLots` 精确等于当时 remaining；
+- 撤销同价队列任意位置只删除目标节点，幸存订单不重新编号且相对 FIFO 不变；仅在最后一笔活动订单离开时删除 price level；
+- Cancel 成功后盘口数量只减少被撤订单的 remaining，不产生 Trade；失败 Cancel、重复 Place 和非法输入必须保持 event 前后的 book、registry 与 next acceptance sequence 完全不变；
+- terminal tombstone 在 M02 内不回收。没有 durable command window、snapshot 或恢复边界前，禁止按墙钟猜测安全过期。
+
+**Excludes**
+
+- `commandId`、请求重放、durable idempotency、Cancel/Replace 和 Mass Cancel；
+- IOC、FOK、Post-only、市价单、STP、市场状态、价格带和多交易对；
+- 账户、资产、预占释放、仓位、手续费、结算和用户可见 OMS 查询；
+- terminal tombstone 回收、墙钟过期、WAL、Snapshot、数据库、网络、线程、性能内存布局和 Aeron；
+- M03 才引入的独立参考模型、生成式测试、反例缩小和 `matching-0.1.0` release。
+
+**冻结的 Golden corpus**
+
+M02 起点必须签入严格的 `matching.m02.scenario.v1` 命令联合，command type 只能是 `PLACE` 或 `CANCEL`。固定 corpus 恰好 10 个 scenario、34 条 command；每个 scenario 使用 fresh engine，Schema 负例另计，不可用增删业务命令掩盖失败：
+
+| 顺序 | scenarioId | 命令数 | 必须证明 |
+| --- | --- | ---: | --- |
+| 1 | `invalid-cancel-does-not-mutate-or-consume-sequence` | 4 | 多字段非法 Cancel 按 instrumentId → orderId 拒绝，不改变非空盘口或 next sequence |
+| 2 | `cancel-only-resting-order-removes-level` | 2 | 撤销价位唯一挂单时同时删除空价位 |
+| 3 | `cancel-middle-preserves-fifo` | 5 | 同价 `#1 → #2 → #3` 撤销 `#2` 后，taker 仍按 `#1 → #3` 成交 |
+| 4 | `cancel-partially-filled-remainder` | 3 | maker 部分成交后只撤精确 remaining，不撤原始 quantity |
+| 5 | `cancel-unknown-order` | 2 | 未知 Cancel 不建 tombstone，同 ID 随后首次 Place 可接受 |
+| 6 | `late-cancel-filled-order` | 4 | 同一成交中的 fully-filled maker 与立即全成 taker 的迟到 Cancel 都为 `ORDER_ALREADY_FILLED` |
+| 7 | `repeat-cancel-stable` | 3 | 第二次 Cancel 为 `ORDER_ALREADY_CANCELED`，不再次产生成功事实 |
+| 8 | `duplicate-active-order-id` | 3 | ACTIVE 重复 ID 被拒，下一合法订单取得连续 sequence |
+| 9 | `duplicate-filled-order-id-does-not-resurrect` | 4 | FILLED ID 不能复用，重复 Place 后仍保持 FILLED |
+| 10 | `duplicate-canceled-order-id-does-not-resurrect` | 4 | 与原 Place 完全相同的重复 payload 仍被拒；新 ID 取得 sequence 2，证明 Cancel 与 duplicate 均不耗序列 |
+| **合计** |  | **34** |  |
+
+**教程实施顺序与 RED → GREEN 停止点**
+
+1. `order-lifecycle-result-contract`：用状态矩阵冻结 Place/Cancel 结果代数。RED 是 unknown、duplicate、late 和 repeat 尚无稳定分类；GREEN 只完成命令、事件和表驱动合同，`m02Check` 仍保持未完成。
+2. `addressable-index-middle-cancel`：证明 registry 不是第二本订单簿。RED 是同价三单无法可靠撤掉中间节点；GREEN 完成 `RESTING` 精确撤单、book/registry 双向一致和 `#1 → #3` FIFO，终态闭合测试仍保持 RED。
+3. `irreversible-terminal-orders`：让 fully-filled maker/taker、成功 Cancel 和重复 ID 收敛到不可逆结果。RED 是终态 ID 可复活或迟到 Cancel 退化成 unknown；GREEN 完成 terminal registry 和全部状态矩阵，完整 Golden、mutant 与 evidence 仍未通过。
+4. `lifecycle-golden-evidence`：用 10/34 Golden、M02H1 history、结构不变量和 semantic mutant 证明不存在幽灵订单。GREEN 终点是 `m02Check` 完整通过；clean-tree evidence、complete tag 和站点发布仍按后续生命周期门禁执行。
+
+每篇只引入上述同一生命周期模型的一项证明义务，不增加新的产品维度。这四个 permalink 和顺序已随 v0.4 合同登记为 `expectedLessons`；教程文件仍必须以 `draft: true` 创建，`CONTENT_VERIFIED` 必须验证实际集合与合同完全一致，达到 `PUBLISHED` 时才原子公开。
+
+**Matching Lab 合同**
+
+M02 达到 `PUBLISHED` 后才允许在 `src/practice/labs.ts` 登记 Lab；`CONTRACTED` 阶段不创建空入口。M01–M03 继续共享同一个 Matching Lab 壳和两种模式：
+
+- `JAVA_GOLDEN_REPLAY` 只读加载 complete tag CI 固化并由本站托管的 M02 manifest、scenario pack、event batches 与 canonical history；
+- `BROWSER_MODEL` 使用有界 BigInt、同源静态输入和隔离内存状态，让读者先预测 Place 或 Cancel disposition，再揭示事件、盘口、registry 中的活动/终态身份和生命周期；
+- registry 以 `supportedCommands` 或等价的命令联合配置 M01 的 Place-only 与 M02 的 Place+Cancel，通用组件和 runtime 禁止 `unitCode === "M02"` 一类案例分支；
+- 浏览器模型解锁前必须 fresh-state 重放全部 10/34 corpus，并逐命令与静态 Golden 比较 events、book 和 lifecycle observation；任一 Schema、目录、计数、hash 或语义不一致都保持禁用；
+- 未识别 command/event/schema 必须失败关闭，不得显示 Unknown 后继续；不上传源码、不编译或执行 Java、不连接远程 Judge、账户或外部服务，也不输出课程裁判结论。
+
+**Gate 与 Evidence**
+
+- M00 输入、验证、canonical history 与 digest，以及 M01 的 8 场景、22 命令价格时间 Golden corpus 全部回归；
+- 10/34 corpus 逐命令检查事件语法、盘口、lifecycle registry 和终态结果；`RESTING` entry 与 book 节点双向一一对应、terminal 不入簿、已接受 ID 不丢失且终态单调不可逆；
+- Cancel 成功精确减少 remaining 并保持幸存 FIFO；失败 Cancel、非法输入和重复 Place 不改变任何状态或 next sequence；
+- `M02-CANCEL-WRONG-FIFO-ORDER`、`M02-GHOST-RESTING-ORDER`、`M02-TERMINAL-ID-REUSE`、`M02-REPEATED-CANCEL-SUCCEEDS` 四个 required mutant 必须由共享业务断言分类为 `STUDENT_FAILURE`；异常 control 必须为 `SYSTEM_ERROR` 并失败关闭；
+- 相同严格 scenario pack 经 100 次 fresh parse、fresh engine replay，生成逐字节一致的 `M02H1` command/input/event/book history 和唯一 SHA-256 digest；生命周期由同一命令序列的结果与结构不变量单独证明，内部 Map、对象身份、路径、主机、时间与 Git 元数据不得进入 semantic history；
+- matching core 继续保持单写者、无 I/O、数据库、网络、线程、时钟、随机数和 Aeron 依赖；M02 不增加 runtime、protocol、storage 或 cluster 模块；
+- evidence 计划保存 M00/M01 回归、lifecycle scenario pack、event batches、book/index/terminal invariants、canonical history、mutants 和 architecture report。只有 `CODE_VERIFIED` 后才冻结 complete tag、完整提交、manifest hash、artifact hash 和 `reportFacts`，`CONTRACTED` 阶段不得预造通过报告。
+
+未来 manifest 的 claim ID 与顺序冻结为：
+
+```text
+m00-m01-regression
+cancel-event-batches
+addressable-order-cancellation
+irreversible-terminal-states
+order-registry-book-invariants
+deterministic-lifecycle-history
+semantic-mutants
+architecture-boundary
+```
+
+未来 manifest 的 limitation 文本与顺序冻结为：
+
+```text
+Only one in-memory BTC-USDT GTC limit-order book with place and cancel is implemented.
+Accepted order IDs are unique for the lifetime of one engine process; terminal identity records are retained without pruning.
+A repeated place command is rejected as a duplicate order ID; command-level idempotency and prior-result replay are not implemented.
+There is no Cancel/Replace, amendment, mass cancel, IOC, FOK, post-only, market order, STP, market state, or price band.
+There is no account, asset, position, fee, settlement, reservation-release, or risk logic.
+Fixed scenarios and semantic mutants are not the independent generated reference model or property proof deferred to M03.
+The unit has no persistence, networking, database, threads, Aeron, or high availability.
+The evidence makes no throughput, latency, recovery, durable-idempotency, or production-readiness claim.
+```
+
+**Stop Point**
+
+到这里得到一个生命周期闭合的单交易对 GTC 内存撮合器：活动挂单和部分成交余量可以精确撤销，未知、迟到、重复命令有稳定业务结果，`FILLED/CANCELED` 订单不会复活。它仍不承诺请求重试幂等、tombstone 回收、持久化、网络、性能或高可用；M02 不是命名停止点，只创建 `course/m02-complete`，`matching-0.1.0` 继续留给 M03。
 
 ### 8.5 M03：独立参考模型与性质测试
 
@@ -827,7 +979,7 @@ signal-grid-blog
 ```
 
 - 实战章节使用独立 `practiceLessons` collection，不进入 `posts`、文章归档和主 RSS；
-- `config.ts` 管案例与 Profile，`units.ts` 管已签约单元，Markdown 只管一篇教程；当前注册表只有已发布的 M00、M01，不为 M02 及其余候选地图创建空内容；
+- `config.ts` 管案例与 Profile，`units.ts` 管已签约单元，Markdown 只管一篇教程；当前注册表包含已发布的 M00、M01 和已签约但未启动的 M02，不为 M02 创建空教程、Lab 或 evidence，也不为 M03 及其余候选地图创建空内容；
 - 教程用 `project / profileVersion / unitCode` 关联单元，同单元的 `lessonOrder` 和 `permalink` 必须唯一；路由为 `/practice/<project>/<unit>/<lesson>/`；
 - 教程一律从 `draft: true` 开始。单元达到 `PUBLISHED` 前不得公开；草稿不生成生产路由，不进入搜索、sitemap、文章统计或主 RSS；`CONTENT_VERIFIED` 冻结预期教程的排序与 permalink，`PUBLISHED` 必须原子公开完整集合；`CODE_VERIFIED` 冻结 complete tag、完整提交 SHA、仓库内 evidence 路径和发布证据合同。M00、M01 的 evidence 都托管到 Signal Grid 的固定静态路径，由 verifier 复核 CI manifest SHA-256、来源、精确 claim/限制、全部 artifact hash，以及 `reportFacts` 中冻结的业务状态和关键报告字段；
 - `pnpm verify:practice` 拒绝缺失或 `LOCKED` 单元、重复排序/地址、未 `PUBLISHED` 非草稿和 `main`、`unit/*` 等浮动 ref。它不联网读取课程仓；跨仓 tag/evidence 在发布前独立核验；
@@ -894,7 +1046,7 @@ M00 已在独立公开仓库 [`lcha-reln/cex-matching`](https://github.com/lcha-
 
 生命周期现为 `PUBLISHED`：17 条固定记录、37 行/3199 字节 canonical history、100 次 fresh replay、必需 semantic mutant、架构边界和 evidence manifest 都已通过；M00·01～04 已按冻结顺序原子公开。tag CI 的原始 bundle 已固化为[持久 evidence](https://lcha-reln.github.io/signal-grid-blog/practice/high-availability-cex/m00/evidence/manifest.json)，manifest SHA-256 为 `a8962136833f185bee24fd45f22ea58b0db0ac1c837106f02dba7d2483f9deee`，站点 verifier 会继续复核来源、五项 claim、五条限制和全部 artifact hash。
 
-PLAN v0.3 冻结 M01 的价格时间优先合同；M00 输入、验证、canonical history、digest 与 evidence 合同不变。因此 M00 的 `course.properties` 与不可移动起点继续记录合同 `planVersion=0.1`，网站另行公开当前计划版本和这条兼容说明，不改 tag、不回写冻结证据。
+PLAN v0.4 冻结 M02 的可寻址订单生命周期合同；M00 输入、验证、canonical history、digest 与 evidence 合同不变。因此 M00 的 `course.properties` 与不可移动起点继续记录合同 `planVersion=0.1`，网站另行公开当前计划版本和这条兼容说明，不改 tag、不回写冻结证据。
 
 Bootstrap 已冻结这些维护选择：
 
@@ -918,6 +1070,8 @@ M01 已按 v0.3 合同完成并发布。不可移动练习起点是 annotated [`
 
 M01·01～04 已按冻结 `expectedLessons` 原子公开；[Matching Lab](https://lcha-reln.github.io/signal-grid-blog/practice/high-availability-cex/m01/lab/)把 Java Golden 回放与有界浏览器模型分成两个模式。浏览器模型在解锁前必须 fresh-state 重放全部 8/22 corpus，逐事件和逐盘口与静态 evidence 一致；任何读取或语义差异都会保持禁用。它只用于预测和解释，不上传源码、不运行 Java，也不输出课程裁判结论。M01 不是命名停止点，因此 `productRelease` 仍为 `null`，`matching-0.1.0` 继续留给 M03。
 
+PLAN v0.4 冻结 M02 的订单索引、撤单与不可逆终态合同；M01 价格时间优先、事件 batch、Golden corpus 与 evidence 合同不变。因此 M01 的 `course.properties`、起点、完成 tag、教程与持久 evidence 继续保留合同 `planVersion=0.3`，不因 M02 签约而回写或重新生成。
+
 权威本地入口保持最小：
 
 ```bash
@@ -933,6 +1087,7 @@ git switch -c unit/m01 course/m01-start
 
 | 日期 | 版本 | 变更 |
 | --- | --- | --- |
+| 2026-08-28 | v0.4 | M02 从候选地图升级为正式合同：唯一新增可寻址订单生命周期，冻结 Cancel API、事件语法、状态矩阵、10 场景 34 命令、四篇教程、Matching Lab、失败关闭门禁、limitations 与停止点；M03 及以后保持候选 |
 | 2026-08-27 | v0.3 | M01 从候选地图升级为正式合同：只新增单交易对 GTC 的价格时间优先状态迁移，冻结 acceptedSequence、maker price、event batch、数量/盘口不变量、互动和 evidence 边界；M02 及以后保持候选 |
 | 2026-08-26 | v0.2 | 新增 `SPOT → MARGIN SPOT → PERP → DELIVERY FUTURES → OPTIONS` 顶层 Profile 路线；后四个 Profile 保持 `LOCKED`，不改变当前 SPOT 的 30 单元、3 仓库和 M00 v0.1 合同 |
 | 2026-08-26 | v0.1 | 建立 30 个候选单元、三仓库门禁、Matching 单机到 Aeron Cluster、Counter Changefeed/Sync、独立 Rest 和本地优先互动教学的课程基线 |
@@ -941,6 +1096,7 @@ git switch -c unit/m01 course/m01-start
 
 | 日期 | 单元 | 生命周期 | 记录 |
 | --- | --- | --- | --- |
+| 2026-08-28 | M02 | `CONTRACTED` | PLAN v0.4 冻结订单索引、Cancel API、不可逆终态、10 场景 34 命令、四篇教程、Matching Lab 与 evidence/limitation 边界；尚未创建 start ref、代码、教程、Lab、evidence 或产品 release |
 | 2026-08-27 | M01 | `PUBLISHED` | M01·01～04、Matching Lab 与 tag CI evidence 原子公开；站点门禁绑定四篇教程、完成 SHA、manifest SHA、七项 claim/限制和全部 artifact hash |
 | 2026-08-27 | M01 | `CODE_VERIFIED` | `unit/m01`、`main` 与 annotated `course/m01-complete` 收敛到 `be2e3b8`；分支、tag、默认分支 CI、54 项测试、独立场景重放和 evidence 安全反例均成功 |
 | 2026-08-27 | M01 | `IN_PROGRESS` | M00 已发布；M01 v0.3 合同与 `course/m01-start` 起点身份进入实施窗口，只允许价格时间优先、业务事件、固定历史和失败关闭裁判，不创建教程、evidence 或完成 tag |
