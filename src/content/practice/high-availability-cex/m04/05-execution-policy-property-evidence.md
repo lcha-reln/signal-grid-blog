@@ -38,7 +38,7 @@ POST_ONLY 能挂单
 | 证明面 | 必须观察的事实 | 只看最终 book 会漏掉什么 |
 | --- | --- | --- |
 | raw validation | 五字段 → policy → duplicate → admission 的首错顺序 | 错误码随状态变化、非法 policy 占 ID |
-| GTC 兼容 | 旧 `place(input)` 与显式 GTC 的 events/book/lifecycle 一致 | Accepted policy 或 canonical bytes 漂移 |
+| legacy GTC 继承 | 旧 `place(input)` 和五参数 `Accepted` 仍可调用；业务 events/book/lifecycle 语义等价；M03G1 command canonical lines/bytes/digest 不变 | 把 Java event shape 或 event bytes 漂移误写成“完全兼容” |
 | IOC | 限价内 Trade、正余量独立取消、无 Rested、late Cancel 稳定 | 先挂后撤、越价成交、ID 被删除 |
 | FOK | 不足路径所有状态不变；成功路径完整 Trade+ | 先部分成交再回滚、sequence 洞 |
 | POST_ONLY | touch/cross pre-accept 拒绝；non-cross 完整 Rested | touch 被接受、先成交再补拒绝 |
@@ -46,6 +46,8 @@ POST_ONLY 能挂单
 | architecture | core 仍无 I/O、线程、时钟、随机数和 Aeron | 用外部副作用掩盖本地状态缺陷 |
 
 这些观察必须在**每条 command 边界**完成。只在整段历史结束比较 book，无法发现中途短暂 Rested 的 IOC、被回滚的 maker FIFO 或曾经消耗过的 sequence。
+
+这里不冻结超出事实的 ABI/wire 承诺。`Accepted` record 已新增 `executionPolicy` 组件，sealed `MatchingEvent` 已新增 `RemainderCanceled`；依赖反射、Jackson 默认 record 形状、`toString()`、sealed exhaustive switch 或旧 event bytes 的代码需要适配。M10 前没有外部 wire codec 合同，因此 M04 只证明旧调用入口仍可用、legacy GTC 业务语义等价与 M03G1 command canonical 身份稳定。
 
 ## reference 也必须从 raw policy 开始
 
@@ -154,6 +156,8 @@ large-quantity preflight without cumulative overflow
 随后才能评审 strict Schema、scenario ID、命令数、PRNG/seed、lane、canonical format 与 digest。发布数字必须来自最终 clean run 的 artifact，而不是从设计稿复制预期值。
 
 一个合格 fixture 还要保留 raw `executionPolicy`，并提供未知字段、非法 policy、数字 token 和 command union 的负向 Schema probes。Schema 失败属于 `SYSTEM_ERROR`，不能被算作“业务成功拒绝 unknown policy”。
+
+raw policy 还有两个不能合并的证明面：固定/生成语料中的 `UNKNOWN` 负责业务级 `INVALID_EXECUTION_POLICY`、优先级、零状态变化和 unknown-default mutant；core 的参数化边界测试用 `gtc`、`Gtc`、` GTC`、`GTC ` 四个值证明精确大小写与空白语法。前者需要有状态因果历史，后者只守词法闭集，任何一组通过都不能替代另一组。
 
 在数据冻结前，本篇不会写类似“共 N 场景、M 条命令、digest 为 X”的句子。将来补充这些完成事实时，必须同时给出 artifact 路径、Schema、来源 commit 与 SHA-256，且正文值能从报告交叉核对。
 
@@ -268,12 +272,12 @@ M04 不是命名产品停止点，所以没有新的 `matching-*` product releas
 
 在当前草稿阶段，可以运行局部 production 与 reference tests，检查 API 与手算语义是否一致；不能声称整仓 M04 通过。真正的单元停止点必须同时满足：
 
-- 旧五字段入口与显式 GTC 的公开 outcome 完全兼容；
+- 旧 `place(input)` 与五参数 `Accepted` 构造仍可调用，legacy GTC 的业务 events/book/lifecycle 语义等价，M03G1 command canonical lines/bytes/digest 不变；同时明确不承诺 Java event shape、反射/Jackson/`toString()`、sealed exhaustive switch 或 event bytes 完全兼容；
 - raw policy 验证和所有 pre-accept 优先级稳定；
 - IOC/FOK/Post-only 的 BUY/SELL、价格边界、数量与生命周期性质逐命令通过；
 - production 与结构独立的 linear reference exact differential；
 - 八项 semantic mutant 均为 `STUDENT_FAILURE`，throwing control 为 `SYSTEM_ERROR`；
-- fresh replay、canonical output、累计 M00～M03 回归和 architecture gate 通过；
+- fresh replay、M03 语义/canonical 回归与 M04 自己的 architecture gate 通过，不用当前源码清单伪装 M03 历史架构身份；
 - clean complete identity、manifest、artifact hashes 和 limitations 真实生成并复核；
 - 五篇教程与可能的 Matching Lab 只消费同一份已发布 Golden/evidence，不另造前端权威语义。
 

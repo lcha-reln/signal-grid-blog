@@ -105,7 +105,7 @@ public record PlaceLimitOrderRequest(
 }
 ```
 
-`null` 属于 schema/调用边界错误；`"UNKNOWN"`、`"gtc"`、前后带空格的 `" IOC "` 则是可确定分类的业务非法值。M04 不做大小写转换或 trim，因为静默归一会扩大输入协议，掩盖调用方错误。
+`null` 属于 schema/调用边界错误。业务层只接受精确大写的四个成员；`"UNKNOWN"`、`"gtc"`、`"Gtc"`、`" GTC"` 与 `"GTC "` 都是可确定分类的业务非法值。M04 不做大小写转换或 `trim`，因为静默归一会扩大输入协议，掩盖调用方错误。
 
 只有验证通过后，raw String 才能进入内部闭集：
 
@@ -174,6 +174,8 @@ new PlaceLimitOrderRequest(input)
 ```
 
 `Accepted` 事件也携带归一后的 `ExecutionPolicy`，让事件语法能检查后续尾部是否与策略一致。为了保留旧代码的构造语义，五参数兼容构造明确补入 `GTC`；它不是从线程上下文或配置读取默认值。
+
+这里的“兼容”必须收窄到可验证事实：旧 `place(input)` 与 `Accepted` 五参数构造仍可调用；把新增 policy 视为 GTC 后，legacy GTC 的业务 event 含义、book 与 lifecycle 语义等价；M03G1 的 command canonical lines/bytes/digest 不变。它不等于 Java 事件形状完全不变：`Accepted` record 现在有第六个 `executionPolicy` 组件，sealed `MatchingEvent` 也多了 `RemainderCanceled`，所以依赖 record 反射、Jackson 默认形状、`toString()`、sealed exhaustive switch 或旧 event bytes 的调用方必须适配。M10 前没有冻结外部 wire codec，本篇也不声称已经提供这种 wire 兼容。
 
 ## 验证优先级决定客户端看到哪个事实
 
@@ -282,6 +284,8 @@ D. instrument=BTC-USDT, orderId=8, side=BUY,
 
 将这些关系写成参数化测试，而不是分别写四段互不关联的 arrange/act/assert。测试的关键观察不是错误码本身，而是错误前后的状态摘要完全一致。
 
+还要把两类 raw-policy 证据分开。固定/生成语料里的 `UNKNOWN` 用于证明业务拒绝、五字段/policy/duplicate 优先级、拒绝后零状态变化，并为 `M04-UNKNOWN-POLICY-DEFAULTS-GTC` 提供因果历史；`gtc`、`Gtc`、` GTC`、`GTC ` 则是同一个参数化词法边界测试的四个值，只证明“不折叠大小写、不 trim”。四个词法值不能替代有状态的 `UNKNOWN` 语料，`UNKNOWN` 语料也不能证明所有大小写与空白边界。
+
 ## 本篇的可验证停止点
 
 完成本篇后，至少应能聚焦运行兼容入口与优先级测试：
@@ -290,10 +294,11 @@ D. instrument=BTC-USDT, orderId=8, side=BUY,
 ./gradlew :matching-core:test \
   --tests '*SingleInstrumentExecutionPolicyTest.legacyPlaceRemainsAnExplicitGtcRequest' \
   --tests '*SingleInstrumentExecutionPolicyTest.frozenInputValidationPrecedesPolicyAndPolicyRejectionDoesNotConsumeIdentity' \
+  --tests '*SingleInstrumentExecutionPolicyTest.policyGrammarIsExactWithoutCaseFoldingOrTrimming' \
   --tests '*SingleInstrumentExecutionPolicyTest.duplicateIdentityPrecedesFokAndPostOnlyBookDependentRejections' \
   --no-daemon
 ```
 
-GREEN 只证明这三项局部合同：旧入口显式等价 GTC、raw policy 在正确位置被验证、duplicate 位于策略准入之前。它还不能证明 IOC 不挂单、FOK 不泄漏部分成交或 Post-only 在 touch 边界拒绝。
+GREEN 只证明这些局部合同：旧入口显式映射 GTC、raw policy 在正确位置被验证且精确匹配、duplicate 位于策略准入之前。它还不能证明 IOC 不挂单、FOK 不泄漏部分成交或 Post-only 在 touch 边界拒绝。
 
 完整 `m04Check` 在这些能力、独立 reference、Golden/property corpus、八项 mutant 和 evidence writer 都完成前必须继续 RED。下一篇只推进一个结果分支：**让 aggressive IOC 在既有 `priceTicks` 内尽可能成交，并把任何正余量以独立事件原子收敛到 CANCELED。**
