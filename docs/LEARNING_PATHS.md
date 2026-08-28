@@ -129,12 +129,22 @@
 
 ## AI Agent 后端工程
 
-| 阶段               | Chapter | `seriesOrder` | 标题                                                 | `permalink`                         |
-| ------------------ | ------: | ------------: | ---------------------------------------------------- | ----------------------------------- |
-| 系统边界与后端基础 |      01 |           100 | AI Agent 后端工程地图：概率模型与确定性系统的边界    | `ai-agent-backend-engineering-map`  |
-| 系统边界与后端基础 |      02 |           110 | Python AI 后端：类型、Pydantic、精确数值与可复现工程 | `python-ai-backend-typing-pydantic` |
+| 阶段                       | Chapter | `seriesOrder` | 标题                                                         | `permalink`                                                   |
+| -------------------------- | ------: | ------------: | ------------------------------------------------------------ | ------------------------------------------------------------- |
+| 系统边界与后端基础         |      01 |           100 | AI Agent 后端工程地图：概率模型与确定性系统的边界            | `ai-agent-backend-engineering-map`                            |
+| 系统边界与后端基础         |      02 |           110 | Python AI 后端：类型、Pydantic、精确数值与可复现工程         | `python-ai-backend-typing-pydantic`                           |
+| 系统边界与后端基础         |      03 |           120 | asyncio 可靠并发：Deadline、取消、限流与部分失败             | `python-asyncio-deadlines-cancellation-backpressure`          |
+| 系统边界与后端基础         |      04 |           130 | FastAPI 长任务接口：SSE、生命周期与可测试边界                | `fastapi-long-running-tasks-sse-testing`                      |
+| 模型接口与结构化契约       |      05 |           200 | LLM 后端心智模型：Token、上下文、Embedding 与不确定性        | `llm-backend-token-context-embeddings-uncertainty`            |
+| 模型接口与结构化契约       |      06 |           210 | Model Gateway：流式事件、限流、预算与可替换模型              | `model-gateway-streaming-rate-limits-fake-model`              |
+| 模型接口与结构化契约       |      07 |           220 | Prompt 不是接口：Structured Output、JSON Schema 与版本演进   | `structured-outputs-json-schema-prompt-versioning`            |
+| 工具调用与权限边界         |      08 |           300 | 从零实现 Tool Calling Loop：选择、执行、观察与终止           | `tool-calling-loop-from-scratch`                              |
+| 工具调用与权限边界         |      09 |           310 | 生产级 Tool 契约：Schema、错误模型、来源与版本               | `production-tool-contracts-errors-provenance`                 |
+| 工具调用与权限边界         |      10 |           320 | Agent 权限模型：风险分级、最小权限与参数绑定审批             | `agent-permissions-risk-approval-binding`                     |
+| 工具调用与权限边界         |      11 |           330 | Tool 失败语义：Deadline、重试、幂等与结果未知                | `tool-retries-idempotency-unknown-results`                    |
+| RAG 与知识治理             |      12 |           400 | RAG 的正确边界：语料、Chunk、元数据与评测问题集              | `rag-boundaries-corpus-chunking-metadata`                     |
 
-这条路径研究的不是怎样把更多 Prompt 和工具堆进循环，而是怎样把概率模型放进一个状态明确、权限受控、可以恢复、能够评测并且便于审计的后端系统。Chapter 01 先划清模型、Workflow、Agent Runtime、Tool Gateway、领域系统和生产治理的职责；Chapter 02 再把确定性边界落实为 Python 类型关系、Pydantic 运行时 Schema、精确领域值、事务约束与可复现环境。后续章节会沿可靠异步、模型契约、工具运行时、RAG、持久化编排、Eval、安全与平台化逐层展开。完整的 42 篇 canonical 规划记录在 [AI Agent 后端工程博客系列规划](./AI_AGENT_BACKEND_SERIES_PLAN.md)。
+这条路径研究的不是怎样把更多 Prompt 和工具堆进循环，而是怎样把概率模型放进一个状态明确、权限受控、可以恢复、能够评测并且便于审计的后端系统。Chapter 01–02 先划清概率能力与确定性后端的职责，再用 Python 类型、运行时 Schema、领域值和事务约束建立可信输入；Chapter 03–04 把这条边界扩展到结构化并发、端到端 Deadline、长任务资源与可重连事件流。Chapter 05–07 将 Token、上下文和不确定性收敛成可替换 Model Gateway 与版本化结构化输出；Chapter 08–11 则从原生 Tool Loop 进入长期契约、最小权限、参数绑定审批、幂等和结果未知。Chapter 12 建立 RAG 的语料、Chunk、元数据与评测边界，为后续摄取、索引、检索和安全治理提供共同语言。持久化编排、Eval、安全与平台化会继续沿这些确定性合同展开。完整的 42 篇 canonical 规划记录在 [AI Agent 后端工程博客系列规划](./AI_AGENT_BACKEND_SERIES_PLAN.md)。
 
 ## 存储引擎与数据库内核
 
