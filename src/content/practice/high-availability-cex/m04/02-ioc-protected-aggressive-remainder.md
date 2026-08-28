@@ -11,10 +11,10 @@ tags:
   - 撮合引擎
   - IOC
   - 价格保护
-draft: true
+draft: false
 ---
 
-> 本篇继续从 annotated [`course/m04-start`](https://github.com/lcha-reln/cex-matching/tree/course/m04-start) 演进。M04 尚无 complete tag 或公开 evidence；文中的事件和值用于推导合同与编写测试，不代表已经发布 Golden 报告。
+> 本篇继续从 annotated [`course/m04-start`](https://github.com/lcha-reln/cex-matching/tree/course/m04-start) 演进；发布正文固定到 annotated [`course/m04-complete`](https://github.com/lcha-reln/cex-matching/tree/course/m04-complete)，完成 commit 为 `9d1bca13da6b13aa97a8002baff37fbc2393abe4`。本文推导的 IOC 结果已由[固定 Golden event batches](/signal-grid-blog/practice/high-availability-cex/m04/evidence/reports/fixed-event-batches.json)与生成式性质报告交叉验证。
 
 上一篇把 `ExecutionPolicy` 固定成一条请求与结果轴。现在遇到第一个真正改变余量命运的策略：IOC。它经常被口语化为“马上能成交多少就成交多少，剩下撤掉”，但这句话遗漏了三个会直接造成资金风险的边界：什么价格算“能成交”、余量是否曾经入簿、零成交的订单是否仍然占用身份。
 
@@ -124,7 +124,7 @@ enum RemainderCancelReason {
 
 若把两者合并，事件消费者无法判断释放的是“曾经挂在盘口上的预占”还是“本次即时执行没有使用的余量”，也无法验证 IOC 从未进入 book。
 
-事件 grammar 还要求 `RemainderCanceled` 必须是 batch 最后一项，且 sequence、orderId、side、price 与 Accepted 完全相同，取消量精确等于所有 Trade 后的 positive remaining，reason 只能是 `IOC_REMAINDER`。
+事件 grammar 还要求 `RemainderCanceled` 必须是 batch 最后一项，且 sequence、orderId、side、price 与 Accepted 完全相同，取消量精确等于所有 Trade 后的 positive remaining。M04 的 `RemainderCancelReason` 只有 `IOC_REMAINDER` 一个非 null 成员：事件构造器先拒绝 null，batch grammar 再校验它确实是 `IOC_REMAINDER`。因此当前类型系统内无法构造“另一个非 null 错误 reason”；这项校验为未来扩展 enum 保持失败关闭。
 
 ## 实现只在共享匹配循环之后分叉
 
@@ -236,15 +236,17 @@ Bid  99: orderId=2, sequence=2, remaining=5
   --tests '*SingleInstrumentExecutionPolicyTest.iocZeroFillIsAcceptedThenCanceledWithoutResting' \
   --tests '*SingleInstrumentExecutionPolicyTest.iocTradesAllAvailableLiquidityInsideItsLimitAndCancelsOnlyTheRemainder' \
   --tests '*SingleInstrumentExecutionPolicyTest.fullyFilledIocHasNoRemainderEvent' \
+  --tests '*SingleInstrumentExecutionPolicyTest.sellIocAndPostOnlyMirrorBuyAcrossPartialCrossAndNonCrossingBoundaries' \
   --no-daemon
 ```
 
-还应运行 event grammar 测试，主动构造 `IOC → Rested`、取消量不等于 remaining、reason 错误或尾部事件后仍有 Trade 的非法 batch，并确认构造器失败关闭：
+再运行 event grammar 聚焦测试。第一个方法直接构造 `IOC → Rested` 并证明该 batch 被拒绝，同时构造合法的 `IOC → RemainderCanceled` 作为对照；第二个方法分别构造“取消量不等于 Trade 后 remaining”和“`RemainderCanceled` 后仍有 Trade”，两者都必须失败关闭。
 
 ```bash
 ./gradlew :matching-core:test \
   --tests '*ExecutionBatchPolicyGrammarTest.iocRequiresItsPositiveRemainderToBeCanceledNotRested' \
+  --tests '*ExecutionBatchPolicyGrammarTest.iocRemainderMustEqualTheUnfilledQuantityAndTerminateTheBatch' \
   --no-daemon
 ```
 
-本篇 GREEN 只能说明 IOC 的价格边界、数量分区、事件尾部和终态闭合。它不证明“必须全成”的原子准入。下一篇将把 FOK 的关键动作放在 Accepted 之前：**只读扫描限价内全部真实流动性，足够才进入共享匹配循环，不足时任何 maker、identity 或 sequence 都不能改变。**
+本篇阶段性 GREEN 只能说明 IOC 的 BUY/SELL 价格边界、数量分区、主要事件尾部和终态闭合。发布完成态还由 [`invariants.json`](/signal-grid-blog/practice/high-availability-cex/m04/evidence/reports/invariants.json)、八项变异体和 [M04 Matching Lab](/signal-grid-blog/practice/high-availability-cex/m04/lab/) 复核同一语义。下一篇将把 FOK 的关键动作放在 Accepted 之前：**只读扫描限价内全部真实流动性，足够才进入共享匹配循环，不足时任何 maker、identity 或 sequence 都不能改变。**

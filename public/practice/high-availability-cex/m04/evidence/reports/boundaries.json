@@ -1,0 +1,11 @@
+{
+  "schemaVersion" : "matching.m04.boundaries-report.v1",
+  "status" : "PASS",
+  "exactRawPolicyVariants" : 4,
+  "exactRawPolicyPaths" : 2,
+  "longMaxFokDeductionPaths" : 2,
+  "rejectedRawPolicies" : [ "gtc", "Gtc", " GTC", "GTC " ],
+  "paths" : [ "matching-core", "matching-reference" ],
+  "generatedQuantityMaximum" : 5,
+  "longMaxCoveredByGeneratedSuite" : false
+}

@@ -1,0 +1,176 @@
+{
+  "schemaVersion" : "matching.m04.coverage-report.v1",
+  "status" : "PASS",
+  "declared" : {
+    "ioc" : [ "ZERO_FILL", "PARTIAL_FILL", "FULL_FILL" ],
+    "fok" : [ "INSUFFICIENT", "EXACT", "MULTI_LEVEL", "OUTSIDE_LIMIT_EXCLUDED" ],
+    "postOnly" : [ "EMPTY_BOOK", "NON_CROSSING", "TOUCH", "CROSS" ],
+    "rejectionIdentityAndSequence" : true,
+    "buyAndSell" : true
+  },
+  "counts" : {
+    "IOC_ZERO_FILL" : 733,
+    "IOC_PARTIAL_FILL" : 165,
+    "IOC_FULL_FILL" : 292,
+    "FOK_INSUFFICIENT" : 713,
+    "FOK_ACCEPTED" : 285,
+    "FOK_EXACT" : 115,
+    "FOK_MULTI_LEVEL" : 78,
+    "FOK_OUTSIDE_LIMIT_EXCLUDED" : 214,
+    "POST_ONLY_EMPTY_BOOK" : 88,
+    "POST_ONLY_NON_CROSSING" : 331,
+    "POST_ONLY_TOUCH" : 202,
+    "POST_ONLY_CROSS" : 209,
+    "BASE_VALID_UNKNOWN" : 423,
+    "BASE_VALID_UNUSED_ID_UNKNOWN" : 295,
+    "REJECTED_ID_LATER_REUSED" : 458,
+    "SIDE_POLICY_BUY_GTC" : 887,
+    "SIDE_POLICY_BUY_IOC" : 671,
+    "SIDE_POLICY_BUY_FOK" : 551,
+    "SIDE_POLICY_BUY_POST_ONLY" : 574,
+    "SIDE_POLICY_SELL_GTC" : 1054,
+    "SIDE_POLICY_SELL_IOC" : 519,
+    "SIDE_POLICY_SELL_FOK" : 447,
+    "SIDE_POLICY_SELL_POST_ONLY" : 473
+  },
+  "firstWitnesses" : {
+    "SIDE_POLICY_SELL_GTC" : {
+      "historyIndex" : 0,
+      "commandIndex" : 0,
+      "seed" : "c1b2b1c8c43402ba",
+      "lane" : "LEGACY_GTC"
+    },
+    "SIDE_POLICY_BUY_GTC" : {
+      "historyIndex" : 0,
+      "commandIndex" : 1,
+      "seed" : "c1b2b1c8c43402ba",
+      "lane" : "LEGACY_GTC"
+    },
+    "SIDE_POLICY_SELL_FOK" : {
+      "historyIndex" : 0,
+      "commandIndex" : 4,
+      "seed" : "c1b2b1c8c43402ba",
+      "lane" : "LEGACY_GTC"
+    },
+    "FOK_INSUFFICIENT" : {
+      "historyIndex" : 0,
+      "commandIndex" : 4,
+      "seed" : "c1b2b1c8c43402ba",
+      "lane" : "LEGACY_GTC"
+    },
+    "REJECTED_ID_LATER_REUSED" : {
+      "historyIndex" : 0,
+      "commandIndex" : 6,
+      "seed" : "c1b2b1c8c43402ba",
+      "lane" : "LEGACY_GTC"
+    },
+    "SIDE_POLICY_SELL_POST_ONLY" : {
+      "historyIndex" : 0,
+      "commandIndex" : 8,
+      "seed" : "c1b2b1c8c43402ba",
+      "lane" : "LEGACY_GTC"
+    },
+    "POST_ONLY_CROSS" : {
+      "historyIndex" : 0,
+      "commandIndex" : 8,
+      "seed" : "c1b2b1c8c43402ba",
+      "lane" : "LEGACY_GTC"
+    },
+    "POST_ONLY_TOUCH" : {
+      "historyIndex" : 0,
+      "commandIndex" : 9,
+      "seed" : "c1b2b1c8c43402ba",
+      "lane" : "LEGACY_GTC"
+    },
+    "SIDE_POLICY_SELL_IOC" : {
+      "historyIndex" : 0,
+      "commandIndex" : 10,
+      "seed" : "c1b2b1c8c43402ba",
+      "lane" : "LEGACY_GTC"
+    },
+    "IOC_PARTIAL_FILL" : {
+      "historyIndex" : 0,
+      "commandIndex" : 10,
+      "seed" : "c1b2b1c8c43402ba",
+      "lane" : "LEGACY_GTC"
+    },
+    "IOC_ZERO_FILL" : {
+      "historyIndex" : 0,
+      "commandIndex" : 25,
+      "seed" : "c1b2b1c8c43402ba",
+      "lane" : "LEGACY_GTC"
+    },
+    "SIDE_POLICY_BUY_FOK" : {
+      "historyIndex" : 0,
+      "commandIndex" : 27,
+      "seed" : "c1b2b1c8c43402ba",
+      "lane" : "LEGACY_GTC"
+    },
+    "FOK_ACCEPTED" : {
+      "historyIndex" : 0,
+      "commandIndex" : 27,
+      "seed" : "c1b2b1c8c43402ba",
+      "lane" : "LEGACY_GTC"
+    },
+    "FOK_MULTI_LEVEL" : {
+      "historyIndex" : 0,
+      "commandIndex" : 27,
+      "seed" : "c1b2b1c8c43402ba",
+      "lane" : "LEGACY_GTC"
+    },
+    "FOK_OUTSIDE_LIMIT_EXCLUDED" : {
+      "historyIndex" : 0,
+      "commandIndex" : 30,
+      "seed" : "c1b2b1c8c43402ba",
+      "lane" : "LEGACY_GTC"
+    },
+    "IOC_FULL_FILL" : {
+      "historyIndex" : 0,
+      "commandIndex" : 32,
+      "seed" : "c1b2b1c8c43402ba",
+      "lane" : "LEGACY_GTC"
+    },
+    "SIDE_POLICY_BUY_IOC" : {
+      "historyIndex" : 0,
+      "commandIndex" : 62,
+      "seed" : "c1b2b1c8c43402ba",
+      "lane" : "LEGACY_GTC"
+    },
+    "POST_ONLY_EMPTY_BOOK" : {
+      "historyIndex" : 1,
+      "commandIndex" : 5,
+      "seed" : "f2b4ce0f72f08065",
+      "lane" : "IOC_ZERO_PARTIAL_FULL"
+    },
+    "BASE_VALID_UNKNOWN" : {
+      "historyIndex" : 1,
+      "commandIndex" : 17,
+      "seed" : "f2b4ce0f72f08065",
+      "lane" : "IOC_ZERO_PARTIAL_FULL"
+    },
+    "BASE_VALID_UNUSED_ID_UNKNOWN" : {
+      "historyIndex" : 1,
+      "commandIndex" : 26,
+      "seed" : "f2b4ce0f72f08065",
+      "lane" : "IOC_ZERO_PARTIAL_FULL"
+    },
+    "SIDE_POLICY_BUY_POST_ONLY" : {
+      "historyIndex" : 1,
+      "commandIndex" : 35,
+      "seed" : "f2b4ce0f72f08065",
+      "lane" : "IOC_ZERO_PARTIAL_FULL"
+    },
+    "FOK_EXACT" : {
+      "historyIndex" : 2,
+      "commandIndex" : 3,
+      "seed" : "349266cde8e7474c",
+      "lane" : "FOK_INSUFFICIENT_EXACT_MULTI_LEVEL"
+    },
+    "POST_ONLY_NON_CROSSING" : {
+      "historyIndex" : 3,
+      "commandIndex" : 1,
+      "seed" : "d186c7cb50434fed",
+      "lane" : "POST_ONLY_EMPTY_NON_CROSS_TOUCH_CROSS"
+    }
+  }
+}

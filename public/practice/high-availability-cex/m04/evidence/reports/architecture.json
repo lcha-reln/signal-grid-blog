@@ -1,0 +1,10 @@
+{
+  "schemaVersion" : "matching.m04.architecture-report.v1",
+  "status" : "PASS",
+  "coreSourceFiles" : 24,
+  "referenceSourceFiles" : 7,
+  "referenceRepresentation" : "FLAT_LIST_LINEAR_SCAN",
+  "productionImports" : 0,
+  "coreRuntimeDependencies" : 0,
+  "violations" : [ ]
+}

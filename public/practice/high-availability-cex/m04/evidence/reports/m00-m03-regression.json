@@ -1,0 +1,77 @@
+{
+  "schemaVersion" : "matching.m04.m03-regression-report.v1",
+  "status" : "PASS",
+  "historicalArchitectureGateExecuted" : false,
+  "histories" : 256,
+  "commands" : 16384,
+  "bytes" : 1682592,
+  "lines" : 16641,
+  "digest" : "sha256:1920d6b8a480998825c72636d446854d9e795e91b0ab29520f203b12186979ce",
+  "differentialComparisons" : 16384,
+  "eventLedgerChecks" : 16384,
+  "bookChecks" : 16384,
+  "mutantsKilled" : 6,
+  "counterexamplesOneMinimal" : 6,
+  "systemErrorControl" : "SYSTEM_ERROR",
+  "mutants" : [ {
+    "id" : "M03-BEST-PRICE-LAST",
+    "fingerprint" : "PRICE_TIME_PRIORITY/WRONG_MAKER_ORDER",
+    "historyIndex" : 0,
+    "lane" : "BEST_PRICE",
+    "seed" : "017c2abb12062b72",
+    "originalCommands" : 64,
+    "minimizedCommands" : 3,
+    "shrinkTrials" : 246,
+    "oneMinimal" : true
+  }, {
+    "id" : "M03-SAME-PRICE-LIFO",
+    "fingerprint" : "PRICE_TIME_PRIORITY/WRONG_MAKER_ORDER",
+    "historyIndex" : 0,
+    "lane" : "BEST_PRICE",
+    "seed" : "017c2abb12062b72",
+    "originalCommands" : 64,
+    "minimizedCommands" : 3,
+    "shrinkTrials" : 243,
+    "oneMinimal" : true
+  }, {
+    "id" : "M03-TAKER-PRICE-TRADE",
+    "fingerprint" : "MAKER_PRICE/TRADE_PRICE",
+    "historyIndex" : 0,
+    "lane" : "BEST_PRICE",
+    "seed" : "017c2abb12062b72",
+    "originalCommands" : 64,
+    "minimizedCommands" : 2,
+    "shrinkTrials" : 132,
+    "oneMinimal" : true
+  }, {
+    "id" : "M03-TRADE-QUANTITY-OVERFLOW",
+    "fingerprint" : "QUANTITY_PARTITION/TRADE_EXCEEDS_REMAINDER",
+    "historyIndex" : 0,
+    "lane" : "BEST_PRICE",
+    "seed" : "017c2abb12062b72",
+    "originalCommands" : 64,
+    "minimizedCommands" : 2,
+    "shrinkTrials" : 72,
+    "oneMinimal" : true
+  }, {
+    "id" : "M03-CANCEL-GHOST-BOOK",
+    "fingerprint" : "BOOK_LIFECYCLE_BIJECTION/ACTIVE_ID_SET",
+    "historyIndex" : 0,
+    "lane" : "BEST_PRICE",
+    "seed" : "017c2abb12062b72",
+    "originalCommands" : 64,
+    "minimizedCommands" : 2,
+    "shrinkTrials" : 69,
+    "oneMinimal" : true
+  }, {
+    "id" : "M03-CANCELED-ID-REUSE",
+    "fingerprint" : "LIFECYCLE_IRREVERSIBILITY/TERMINAL_OR_ACTIVE_ID_REUSED",
+    "historyIndex" : 0,
+    "lane" : "BEST_PRICE",
+    "seed" : "017c2abb12062b72",
+    "originalCommands" : 64,
+    "minimizedCommands" : 3,
+    "shrinkTrials" : 148,
+    "oneMinimal" : true
+  } ]
+}

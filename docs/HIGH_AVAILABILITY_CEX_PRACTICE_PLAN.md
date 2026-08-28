@@ -1,6 +1,6 @@
 # 高可用 CEX 交易核心实战课程设计
 
-> 状态：M04 当前 `IN_PROGRESS`（M00～M03 均已发布）
+> 状态：M04 当前 `PUBLISHED`（M00～M04 均已发布）
 >
 > 规划日期：2026-08-26
 >
@@ -8,7 +8,7 @@
 >
 > 当前单元合同 `planVersion`：`0.6`
 >
-> 下一单元：M05 仍为可调整候选；当前唯一代码窗口是已从 `course/m04-start` 启动的 M04
+> 下一单元：M05 仍为可调整候选；M04 已关闭实施窗口，当前没有新的代码窗口
 >
 > 案例 slug：`high-availability-cex`
 >
@@ -16,7 +16,7 @@
 >
 > 当前规划基线：`SPOT-CEX-1.0` 的 31 个候选交付单元，3 个按门禁顺序创建的代码仓库
 >
-> 当前发布边界：M00～M03 均为 `PUBLISHED`。annotated `course/m03-complete` 与 annotated `matching-0.1.0` peeled 到同一提交 `dab4a2a1dccf06d6b9769c979a6ae5af6d1d2bdc`，四篇教程、Matching Lab 与持久 evidence 已公开。M04 已冻结 `course/m04-start` 并进入 `IN_PROGRESS`，当前只实现 GTC/IOC/FOK/POST_ONLY 的 ExecutionPolicy 合同；五篇教程草稿已按冻结 permalink 创建但仍为 `draft: true`，尚无 complete tag、Lab 登记、公开 evidence 或 product release。M05 及以后仍可调整
+> 当前发布边界：M00～M04 均为 `PUBLISHED`。M04 的 annotated `course/m04-complete` peeled 到提交 `9d1bca13da6b13aa97a8002baff37fbc2393abe4`；GTC/IOC/FOK/POST_ONLY 的 ExecutionPolicy、五篇教程、Matching Lab 与持久 evidence 已公开，manifest SHA-256 为 `d036782ccdaff6b13a8e3f7f86c9c6eb5f285aa79b296485899b1a711783b52d`。M04 是普通课程单元，`productRelease=null`，最新命名产品停止点仍是 `matching-0.1.0`。M05 及以后仍可调整
 
 ## 1. 这份文档决定什么
 
@@ -28,7 +28,7 @@
 
 > 怎样从一个可证明正确的限价单撮合内核开始，先交付边界清楚、可恢复、可运维、证据完整的高可用现货核心，再在每个前置 Profile 真正通过资格审查后，分别引入债务、持仓重估、到期结算和非线性风险？
 
-路线图可以完整，实施级设计只能覆盖当前和下一个单元；代码窗口永远只有当前单元。M01 的价格时间优先合同与交付证据已经冻结；M02 由 `course/m02-start` 的结构化 RED 演进到 `course/m02-complete`，可寻址撤单、不可逆终态、完整裁判、四篇教程、Matching Lab 与持久 evidence 已原子发布。M03 也已从 `course/m03-start` 演进到 `course/m03-complete`：test-only 独立参考模型、确定性生成式裁判、反例缩小/重放、四篇教程、共享 Matching Lab、持久 evidence 与首个命名产品停止点 `matching-0.1.0` 已闭合。M04 只把五字段限价单与 GTC/IOC/FOK/POST_ONLY 组合成一条 ExecutionPolicy 轴，并已从 `course/m04-start` 的结构化 RED 进入实施；price band、STP、WAL 分别留给 M05、M06、M07。M05 及以后的教学顺序仍只是候选课程地图，不代表实现字段已经冻结。任何超出已签约单元合同的能力，必须删除等量范围、拆分单元或进入 backlog。
+路线图可以完整，实施级设计只能覆盖当前和下一个单元；代码窗口永远只有当前单元。M01 的价格时间优先合同与交付证据已经冻结；M02 由 `course/m02-start` 的结构化 RED 演进到 `course/m02-complete`，可寻址撤单、不可逆终态、完整裁判、四篇教程、Matching Lab 与持久 evidence 已原子发布。M03 也已从 `course/m03-start` 演进到 `course/m03-complete`：test-only 独立参考模型、确定性生成式裁判、反例缩小/重放、四篇教程、共享 Matching Lab、持久 evidence 与首个命名产品停止点 `matching-0.1.0` 已闭合。M04 已从 `course/m04-start` 的结构化 RED 演进到 `course/m04-complete`：五字段限价单与 GTC/IOC/FOK/POST_ONLY 组成的 ExecutionPolicy 轴、五篇教程、Matching Lab 和持久 evidence 已闭合；price band、STP、WAL 仍分别留给 M05、M06、M07。M05 及以后的教学顺序仍只是候选课程地图，不代表实现字段已经冻结。任何超出已签约单元合同的能力，必须删除等量范围、拆分单元或进入 backlog。
 
 ## 2. 旧专题为何失败，以及本次怎样避免重演
 
@@ -233,7 +233,7 @@ Rest 初期是一个仓库和一个部署应用，内部划分 PriAPI、OpenAPI�
 
 | 顺序 | 仓库 | 创建条件 | 主要制品 |
 | ---: | --- | --- | --- |
-| 1 | [`cex-matching`](https://github.com/lcha-reln/cex-matching) | 已创建；M00～M03 均为 `PUBLISHED`，M04 为 `IN_PROGRESS`，最新产品停止点仍为 `matching-0.1.0` | Matching core、test-only reference、testkit、runtime、协议、故障实验 |
+| 1 | [`cex-matching`](https://github.com/lcha-reln/cex-matching) | 已创建；M00～M04 均为 `PUBLISHED`，最新产品停止点仍为 `matching-0.1.0` | Matching core、test-only reference、testkit、runtime、协议、故障实验 |
 | 2 | `counter` | `matching-1.0.0` 发布并从干净环境复验 | Counter core、Cluster runtime、bridge、sync、query |
 | 3 | `rest` | `counter-1.0.0` 发布并从干净环境复验 | PriAPI、OpenAPI、WS、system tests |
 
@@ -251,6 +251,7 @@ course/m02-complete
 course/m03-start
 course/m03-complete
 course/m04-start
+course/m04-complete
 ```
 
 发现错误时发布递增的补丁 tag，不移动旧 tag，例如 `course/m00.1-start`、`course/m00.2-start` 或 `course/m00.1-complete`。只有命名停止点才另外发布 `matching-0.1.0` 等产品 release；普通单元没有产品 release。
@@ -297,7 +298,7 @@ rest     = rest-1.0.0
 | M01 | `PUBLISHED` | `CONTRACT` | 随 `cex-matching` 仓库 | 单交易对 GTC 的价格时间优先、业务事件、固定历史、四篇教程、Matching Lab 与持久 evidence 已验证并公开 |
 | M02 | `PUBLISHED` | `CONTRACT` | 随 `cex-matching` 仓库 | 可寻址撤单、不可逆终态、10/34 corpus、四篇教程、Matching Lab、语义变异体与 tag 绑定 evidence 已公开；停止在不持久的内存生命周期 |
 | M03 | `PUBLISHED` | `CONTRACT` | 随 `cex-matching` 仓库 | 独立线性参考模型、SplitMix64 seed 6824、256×64 生成历史、四个 coverage lane、六项 mutant、反例缩小/持久化/重放、四篇教程、Matching Lab、持久 evidence 与 `matching-0.1.0` 已发布 |
-| M04 | `IN_PROGRESS` | `CONTRACT` | 随 `cex-matching` 仓库 | 只实现 GTC/IOC/FOK/POST_ONLY 的 ExecutionPolicy、Accepted 后的 IOC 余量取消、FOK 只读预检和 POST_ONLY 原子准入；五篇冻结 permalink 对应的草稿已存在但未公开，complete tag、Lab 登记与公开 evidence 尚不存在 |
+| M04 | `PUBLISHED` | `CONTRACT` | 随 `cex-matching` 仓库 | GTC/IOC/FOK/POST_ONLY 的 ExecutionPolicy、Accepted 后 IOC 余量取消、FOK 只读预检、POST_ONLY 原子准入、五篇教程、Matching Lab 与 tag-bound evidence 已公开；普通单元不创建产品 release |
 | M05–M13 | `CANDIDATE` | `RISK_MAP` | 随 `cex-matching` 仓库 | 记录能力、关键不变量和危险故障，不冻结类、Schema 字段编号、依赖版本或文章标题 |
 | C00–C09 | `CANDIDATE` | `RISK_MAP` | `LOCKED` | 记录权威边界和关键故障；Matching 1.0 前不创建仓库 |
 | R00–R06 | `CANDIDATE` | `RISK_MAP` | `LOCKED` | 记录外部契约边界和关键故障；Counter 1.0 前不创建仓库 |
@@ -465,7 +466,7 @@ Matching 是唯一优先启动的项目。它先证明业务语义，再证明�
 | M01 单交易对 GTC 限价撮合 | 价格时间优先撮合语义 | 正确处理挂单、部分成交和连续吃单 | `PUBLISHED / CONTRACT` |
 | M02 可寻址订单生命周期 | 撤单和不可逆终态 | 能撤单并防止订单复活 | `PUBLISHED / CONTRACT` |
 | M03 独立参考模型与性质测试 | 自动寻找、缩小、持久化并重放反例 | 已发布 `matching-0.1.0` | `PUBLISHED / CONTRACT` |
-| M04 ExecutionPolicy 与原子准入 | 一条订单执行策略轴 | 五字段限价单支持 GTC、IOC、FOK、POST_ONLY，priceTicks 同时保护 aggressive IOC | `IN_PROGRESS / CONTRACT` |
+| M04 ExecutionPolicy 与原子准入 | 一条订单执行策略轴 | 五字段限价单支持 GTC、IOC、FOK、POST_ONLY，priceTicks 同时保护 aggressive IOC | `PUBLISHED / CONTRACT` |
 | M05 版本化市场控制与 price band | RuleSet fence、价格带和 operating mode | 支持版本激活、价格带、停市和 Mass Cancel | `CANDIDATE / RISK_MAP` |
 | M06 自成交保护 | opaque participant group 与冲突 disposition | Matching 在不拥有账户资产的前提下阻止 self trade | `CANDIDATE / RISK_MAP` |
 | M07 WAL 与确认边界 | 单机持久确认和 durable idempotency | 已确认命令可重放且不会重复执行 | `CANDIDATE / RISK_MAP` |
@@ -927,7 +928,7 @@ M03-CANCELED-ID-REUSE
 
 > M04 单元合同 `planVersion`：`0.6`
 >
-> 当前生命周期：`IN_PROGRESS`；annotated `course/m04-start` 已冻结，五篇教程草稿已存在但未公开；complete tag、Lab 登记、公开 evidence 和 product release 均不存在
+> 当前生命周期：`PUBLISHED`；annotated `course/m04-complete` peeled 到提交 `9d1bca13da6b13aa97a8002baff37fbc2393abe4`，五篇教程、Matching Lab 与公开 evidence 已闭合；本单元 `productRelease=null`
 
 **目标**
 
@@ -975,7 +976,7 @@ IOC 数量分区冻结为 `original = traded + IOC_REMAINDER canceled`。FOK pre
 
 IOC 即使零成交也已经 `Accepted`，因此必须永久占用 orderId 并以 CANCELED 终态闭合；策略拒绝则从未创建生命周期身份。M02 的 FILLED/CANCELED 不可逆性继续成立，不增加第二套终态。
 
-**Gate 与 Evidence 计划**
+**Gate 与 Evidence 结果**
 
 - M00～M03 累计业务回归保持 PASS：旧 `place(input)` 和五参数 `Accepted` 仍可调用，legacy GTC 的业务 events/book/lifecycle 语义等价，M03G1 command canonical lines/bytes/digest 不变；不把新增 `Accepted.executionPolicy` 与 `RemainderCanceled` 伪装成 Java event shape 或 event bytes 完全兼容；
 - M03 已发布 evidence 保持不可变；M04 复跑 M03 语义证明，但以自己的架构门禁核对新增源码，不要求当前树伪装成 M03 当时的源码清单；
@@ -987,6 +988,8 @@ IOC 即使零成交也已经 `Accepted`，因此必须永久占用 orderId 并�
 - `M04-IOC-REMAINDER-RESTS`、`M04-IOC-BEHAVES-LIKE-FOK`、`M04-FOK-PARTIAL-STATE-LEAK`、`M04-FOK-BEST-LEVEL-ONLY`、`M04-FOK-IGNORES-LIMIT-PRICE`、`M04-POST-ONLY-TOUCH-ACCEPTED`、`M04-POLICY-REJECT-CONSUMES-IDENTITY`、`M04-UNKNOWN-POLICY-DEFAULTS-GTC` 八项 required semantic mutant 必须以 `STUDENT_FAILURE` 被杀死；异常 control 必须保持 `SYSTEM_ERROR`；
 - `matching-core` 继续保持单写者、无 I/O、数据库、网络、线程、时钟、随机数和 Aeron 依赖；M04 不预建 runtime、protocol 或 future-policy 空模块。
 
+最终 clean-tree evidence 记录 14 个固定场景、48 条命令和 `M04F1` digest `sha256:68de35e41358ea72c9852fdf3fd652db116774964360f0b526f43612576bfa77`；192×64 共 12,288 个生成边界形成 `M04H1` digest `sha256:6005c674d0c42927989f1c8c4d1ddce224d06ceff0b95bf58615d23c4496ba51`，23/23 覆盖义务全部满足。八项 mutant 均以 `STUDENT_FAILURE` 被杀死，最小反例共 15 条命令，`M04X1` digest 为 `sha256:60076a395fe365ba9eaa6bf91ae148dc42120ddb95ad01cac988ab90dd8550cb`；throwing control 保持 `SYSTEM_ERROR`。
+
 **冻结教程合同**
 
 | Order | Permalink | 教学职责 |
@@ -997,7 +1000,7 @@ IOC 即使零成交也已经 `Accepted`，因此必须永久占用 orderId 并�
 | 40 | `post-only-maker-admission` | maker-only 准入、touch/cross 边界和状态不变性 |
 | 50 | `execution-policy-property-evidence` | 累计性质、变异体、Golden history 和发布 evidence |
 
-五篇教程已按上述合同以 `draft: true` 创建，但当前仍不生成公开路由；在 complete identity、最终 Java Golden 与内容门禁闭合前，不登记 M04 Lab，也不创建 public evidence。计划中的 L2 Lab 仍复用通用 Matching 壳，并且必须先 fresh-state 自检最终 Java Golden corpus，网页不能把草稿中的目标语义冒充成已发布完成事实。
+五篇教程已按上述合同从草稿原子公开。M04 Lab 复用通用 Matching 壳，先 fresh-state 自检同一份 14/48 Java Golden corpus，再启用有界浏览器模型；网页只做预测、揭示和 corpus 自检，不编译 Java，也不把教学模型冒充课程裁判。
 
 **Excludes**
 
@@ -1012,12 +1015,13 @@ IOC 即使零成交也已经 `Accepted`，因此必须永久占用 orderId 并�
 
 一个在 `matching-0.1.0` 正确性基线上增加 GTC、IOC、FOK 与 POST_ONLY 确定性执行策略的单交易对内存撮合器；仍无 price band、STP、持久化、网络、性能或高可用保证。M04 是普通课程单元，不创建新的产品 release。
 
-当前本地入口只有：
+从冻结起点重做并复核完整停止点的本地入口是：
 
 ```bash
 git switch -c unit/m04 course/m04-start
 ./gradlew clean build --no-daemon
 ./gradlew m04Check --no-daemon
+./gradlew m04Evidence -Pm04.unitTag=course/m04-complete --no-daemon
 ```
 
 ### 8.7 M05–M13 候选能力地图
@@ -1210,9 +1214,9 @@ signal-grid-blog
 ```
 
 - 实战章节使用独立 `practiceLessons` collection，不进入 `posts`、文章归档和主 RSS；
-- `config.ts` 管案例与 Profile，`units.ts` 管已签约单元，Markdown 只管一篇教程；当前注册表包含已发布的 M00～M03，以及从 annotated `course/m04-start` 进入 `IN_PROGRESS` 的 M04。M04 已登记 ExecutionPolicy 合同与五篇冻结 permalink，对应五篇 Markdown 草稿已存在但保持 `draft: true`；尚不登记 complete ref、Lab、evidence 或 product release，M05 及以后候选不创建空单元或空内容；
+- `config.ts` 管案例与 Profile，`units.ts` 管已签约单元，Markdown 只管一篇教程；当前注册表包含已发布的 M00～M04。M04 已登记 annotated complete ref、完整提交、evidence contract、五篇教程与 Matching Lab，且明确没有产品 release；M05 及以后候选不创建空单元或空内容；
 - 教程用 `project / profileVersion / unitCode` 关联单元，同单元的 `lessonOrder` 和 `permalink` 必须唯一；路由为 `/practice/<project>/<unit>/<lesson>/`；
-- 教程一律从 `draft: true` 开始。单元达到 `PUBLISHED` 前不得公开；草稿不生成生产路由，不进入搜索、sitemap、文章统计或主 RSS；`CONTENT_VERIFIED` 冻结预期教程的排序与 permalink，`PUBLISHED` 必须原子公开完整集合；`CODE_VERIFIED` 冻结 complete tag、完整提交 SHA、仓库内 evidence 路径和发布证据合同。M00～M03 的 evidence 都托管到 Signal Grid 的固定静态路径，由 verifier 复核 CI manifest SHA-256、来源、精确 claim/限制、全部 artifact hash，以及 `reportFacts` 中冻结的业务状态和关键报告字段；
+- 教程一律从 `draft: true` 开始。单元达到 `PUBLISHED` 前不得公开；草稿不生成生产路由，不进入搜索、sitemap、文章统计或主 RSS；`CONTENT_VERIFIED` 冻结预期教程的排序与 permalink，`PUBLISHED` 必须原子公开完整集合；`CODE_VERIFIED` 冻结 complete tag、完整提交 SHA、仓库内 evidence 路径和发布证据合同。M00～M04 的 evidence 都托管到 Signal Grid 的固定静态路径，由 verifier 复核 CI manifest SHA-256、来源、精确 claim/限制、全部 artifact hash，以及 `reportFacts` 中冻结的业务状态和关键报告字段；
 - `pnpm verify:practice` 拒绝缺失或 `LOCKED` 单元、重复排序/地址、未 `PUBLISHED` 非草稿和 `main`、`unit/*` 等浮动 ref。它不联网读取课程仓；跨仓 tag/evidence 在发布前独立核验；
 - 案例驾驶舱把 Profile 路线与项目路线分层展示，把“真实已发布数”和“当前 Profile 候选规划数”分开显示，并只给出一个当前推荐动作；
 - `LOCKED` Profile 只展示能力增量和解锁门禁，不创建单元、仓库、起点 tag、空教程或虚假进度；
@@ -1318,7 +1322,7 @@ git switch -c unit/m01 course/m01-start
 
 | 日期 | 版本 | 变更 |
 | --- | --- | --- |
-| 2026-08-28 | v0.6 | M04 从候选地图升级为正式合同：只增加 GTC/IOC/FOK/POST_ONLY 的单一 ExecutionPolicy 轴，冻结五字段输入与组合 `PlaceLimitOrderRequest`、验证优先级、IOC 的 `RemainderCanceled(..., IOC_REMAINDER)` 与 CANCELED 生命周期、FOK 只读流动性预检、POST_ONLY maker 准入、八项 mutant 和五篇教程 permalink；price band、STP 与持久化分别后移到 M05、M06、M07，原后续输出顺延至 M13，Matching 调整为 14 个单元、SPOT 合计 31 个单元；签约时只有 start ref 与结构化 RED，随后已创建五篇 `draft: true` 教程，当前仍无 complete、Lab 登记、公开 evidence 或 product release |
+| 2026-08-28 | v0.6 | M04 从候选地图升级为正式合同：只增加 GTC/IOC/FOK/POST_ONLY 的单一 ExecutionPolicy 轴，冻结五字段输入与组合 `PlaceLimitOrderRequest`、验证优先级、IOC 的 `RemainderCanceled(..., IOC_REMAINDER)` 与 CANCELED 生命周期、FOK 只读流动性预检、POST_ONLY maker 准入、八项 mutant 和五篇教程 permalink；price band、STP 与持久化分别后移到 M05、M06、M07，原后续输出顺延至 M13，Matching 调整为 14 个单元、SPOT 合计 31 个单元；签约时只有 start ref 与结构化 RED，随后创建的五篇教程当时仍为草稿且尚无 complete、Lab、公开 evidence 或 product release |
 | 2026-08-28 | v0.5 | M03 从候选地图升级为正式合同：只新增 test-only 独立线性参考模型与确定性 generated-history judge，冻结 SplitMix64 seed 6824、256×64 命令边界、四 lane、六项 mutant、fresh-state shrink/persist/replay、四篇教程 permalink、`matching-0.1.0` release target 与明确非目标；M04 及以后保持候选 |
 | 2026-08-28 | v0.4 | M02 从候选地图升级为正式合同：唯一新增可寻址订单生命周期，冻结 Cancel API、事件语法、状态矩阵、10 场景 34 命令、四篇教程、Matching Lab、失败关闭门禁、limitations 与停止点；M03 及以后保持候选 |
 | 2026-08-27 | v0.3 | M01 从候选地图升级为正式合同：只新增单交易对 GTC 的价格时间优先状态迁移，冻结 acceptedSequence、maker price、event batch、数量/盘口不变量、互动和 evidence 边界；M02 及以后保持候选 |
@@ -1329,6 +1333,7 @@ git switch -c unit/m01 course/m01-start
 
 | 日期 | 单元 | 生命周期 | 记录 |
 | --- | --- | --- | --- |
+| 2026-08-28 | M04 | `PUBLISHED` | annotated `course/m04-complete` peeled 到 `9d1bca13da6b13aa97a8002baff37fbc2393abe4`；五篇教程、Matching Lab 与 persistent evidence 原子公开。14/48 固定 Golden、12,288 个生成边界、23/23 覆盖义务和 8/8 mutant 通过；M04F1 为 `sha256:68de35e41358ea72c9852fdf3fd652db116774964360f0b526f43612576bfa77`，M04H1 为 `sha256:6005c674d0c42927989f1c8c4d1ddce224d06ceff0b95bf58615d23c4496ba51`，M04X1 为 `sha256:60076a395fe365ba9eaa6bf91ae148dc42120ddb95ad01cac988ab90dd8550cb`，manifest SHA-256 为 `d036782ccdaff6b13a8e3f7f86c9c6eb5f285aa79b296485899b1a711783b52d`；本单元无产品 release |
 | 2026-08-28 | M04 | `IN_PROGRESS` | annotated `course/m04-start` 已冻结并形成结构化 RED；当前唯一实施轴是 GTC/IOC/FOK/POST_ONLY 的 ExecutionPolicy，五篇冻结 permalink 对应的教程草稿已创建但未公开，尚无 Lab 登记、public evidence、complete tag 或 product release |
 | 2026-08-28 | M04 | `CONTRACTED` | PLAN v0.6 冻结五字段 `PlaceLimitOrderInput` 与组合 `PlaceLimitOrderRequest`、五字段后 policy 再 duplicate/策略准入的验证顺序、IOC 余量 `RemainderCanceled(..., IOC_REMAINDER)` 与 CANCELED 终态、FOK 只读预检、POST_ONLY maker 准入、晚到 Cancel 语义、八项 required mutant 和五篇 permalink；price band、STP 与持久化继续留给 M05、M06、M07 |
 | 2026-08-28 | M03 | `PUBLISHED` | annotated `course/m03-complete` 与 annotated `matching-0.1.0` 均 peeled 到 `dab4a2a1dccf06d6b9769c979a6ae5af6d1d2bdc`；四篇教程、Matching Lab 与 persistent evidence 原子公开。256×64 共 16,384 个边界全部通过；六项反例最小长度为 `3/3/2/2/2/3`，M03X1 digest 为 `sha256:3c23c1f08975d9ad57260d8a16a8201710ee7f56671824648e4e32c477afcac1`，manifest SHA-256 为 `14ea367d5f08029679b22a5efd2a9c0a34b16f97bb28273771b3c5125c851b52` |

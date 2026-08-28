@@ -1,6 +1,6 @@
 ---
 title: "M04·03：FOK 的原子性从只读流动性预检开始"
-description: "在 Accepted 之前按真实价格时间顺序扣减需求，证明限价内流动性足够；不足时保持盘口、身份、sequence 与 maker 余量逐字段不变。"
+description: "在 Accepted 之前只读扫描真实 RESTING 且限价内的流动性，逐笔扣减需求；不足时保持盘口、身份、sequence 与 maker 余量逐字段不变。"
 date: 2026-08-28T19:00:00+08:00
 project: high-availability-cex
 profileVersion: SPOT-CEX-1.0
@@ -11,16 +11,16 @@ tags:
   - 撮合引擎
   - FOK
   - 原子准入
-draft: true
+draft: false
 ---
 
-> M04 仍从 annotated [`course/m04-start`](https://github.com/lcha-reln/cex-matching/tree/course/m04-start) 的结构化 RED 演进。本篇只建立 FOK 的实现与证明义务；尚不存在可引用的 M04 complete ref、Golden digest 或 evidence manifest。
+> M04 仍从 annotated [`course/m04-start`](https://github.com/lcha-reln/cex-matching/tree/course/m04-start) 的结构化 RED 演进；发布正文固定到 annotated [`course/m04-complete`](https://github.com/lcha-reln/cex-matching/tree/course/m04-complete)，完成 commit 为 `9d1bca13da6b13aa97a8002baff37fbc2393abe4`。完成证据由 [`manifest.json`](/signal-grid-blog/practice/high-availability-cex/m04/evidence/manifest.json) 与 M04F1/M04H1/M04X1 三份 canonical 身份共同绑定。
 
 IOC 接受“能成交多少就成交多少”，FOK 则要求“现在立即全部成交，否则没有这笔订单”。这句话看似只需在撮合后检查 remaining 是否为零，却隐藏着最危险的实现诱惑：先修改真实订单簿，发现不足后再把变化回滚。
 
 回滚很难恢复所有可观察事实。maker 的 remaining、生命周期、价位节点、队列位置、taker identity、acceptance sequence 和已经生成的 Trade event 都必须逐项还原；任何遗漏都会制造幽灵成交或 FIFO 漂移。
 
-本篇只证明一个命题：**FOK 必须在 Accepted 之前完成只读 liquidity preflight；预检按真实价格时间顺序、只统计 `priceTicks` 内流动性，并用“逐笔扣减剩余需求”避免累计深度溢出。只有足够时才进入一次正常匹配，失败时状态逐字段不变。**
+本篇只证明一个命题：**FOK 必须在 Accepted 之前完成只读 liquidity preflight；预检只统计真实 RESTING、对侧且在 `priceTicks` 内的流动性，并用“逐笔扣减剩余需求”避免累计深度溢出。只有足够时才进入一次严格价格时间优先的正常匹配，失败时状态逐字段不变。**
 
 ## FOK 拒绝发生在订单身份诞生之前
 
@@ -133,7 +133,7 @@ private boolean canFillCompletely(PlaceLimitOrder command) {
 }
 ```
 
-`required` 从一个合法正 `long` 开始，只在 `maker.remaining < required` 时做减法，因此始终保持正值且不会下溢。遍历 `NavigableMap` 与价位内 FIFO 的只读 view，顺序和真实匹配循环一致。
+`required` 从一个合法正 `long` 开始，只在 `maker.remaining < required` 时做减法，因此始终保持正值且不会下溢。production 遍历 `NavigableMap` 与价位内 FIFO 的只读 view，使预检视图与真实匹配循环易于逐档对照。
 
 独立 reference 刻意不用生产的 TreeMap 结构。它在线性订单列表上筛选 RESTING、对侧且 crossing 的 maker，再用 `BigInteger` 做同样的逐笔需求扣减：
 
@@ -155,7 +155,7 @@ private boolean isFullyExecutable(ReferenceCommand.Place taker) {
 }
 ```
 
-reference 与 production 共享业务合同，但不共享 book node、价位集合或累计变量类型。两条表示路径能共同发现“只看最佳一档”“忽略 limit”或“深度累加溢出”等错误。
+reference 与 production 共享业务合同，但不共享 book node、价位集合或累计变量类型。对“限价内总量是否足够”这个布尔问题，扣减合法 maker 的先后不改变结果，所以 linear reference 故意保留 flat insertion-list 扫描，不复制 production 的价位顺序。真正产生 Trade 时才必须由独立 `selectMaker()` 严格选择 price-time maker。两条表示路径因此能共同发现“只看最佳一档”“忽略 limit”或“深度累加溢出”等错误。
 
 ## 策略门必须位于所有状态写入之前
 
@@ -204,6 +204,8 @@ Accepted(FOK) → Rested
 Accepted(FOK) → Trade* → RemainderCanceled
 Accepted(FOK) 且无 Trade
 ```
+
+`ExecutionBatchPolicyGrammarTest.fokCannotBeAcceptedWithoutACompleteFill` 直接构造并拒绝四种非法形状：Accepted 后没有 Trade、只有部分 Trade、尾随 `Rested`、尾随 `RemainderCanceled`；再以恰好吃完的 Trade 作为合法对照。M04 event-derived ledger 仍要对真实逐命令历史重复检查这份 grammar，防止 adapter 或 mutant 绕过 core 构造器。
 
 engine 在共享 match 后可以保留防御性断言：
 
@@ -269,6 +271,8 @@ FOK quantity       = Long.MAX_VALUE
 ./gradlew :matching-core:test \
   --tests '*SingleInstrumentExecutionPolicyTest.insufficientFokHasNoBusinessEffectAndDoesNotReserveSequenceOrIdentity' \
   --tests '*SingleInstrumentExecutionPolicyTest.fokPreflightSpansLevelsWithoutOverflowAndThenFillsExactly' \
+  --tests '*SingleInstrumentExecutionPolicyTest.sellPoliciesMirrorBuyLimitsAndTouchSemantics' \
+  --tests '*ExecutionBatchPolicyGrammarTest.fokCannotBeAcceptedWithoutACompleteFill' \
   --no-daemon
 ```
 
@@ -280,6 +284,6 @@ FOK quantity       = Long.MAX_VALUE
   --no-daemon
 ```
 
-当前整仓 testkit 尚未完成 M04 adapter、Golden/property judge 与 evidence 合同，因此这些局部测试不能被称为 `m04Check` 完成，更不能据此创建 complete tag。
+沿着本篇阶段性分支动手时，整仓 testkit 尚未完成 M04 adapter、Golden/property judge 与 evidence 合同，因此这些局部测试不能被称为 `m04Check` 完成，更不能据此提前创建 complete tag。发布完成态已经由最终 testkit 和 clean-tree evidence 收口。
 
-本篇停止时，FOK 只有两种合法业务效果：pre-Accepted `FOK_NOT_FILLABLE` 且零状态变化，或 `Accepted → Trade+` 且完整 FILLED。下一篇会处理另一种 pre-Accepted 策略门：**Post-only 只要在命令开始时会 touch/cross 最佳对手价，就必须在占用身份前拒绝；不成交时则完整挂单。**
+本篇停止时，FOK 只有两种合法业务效果：pre-Accepted `FOK_NOT_FILLABLE` 且零状态变化，或 `Accepted → Trade+` 且完整 FILLED。[M04 Matching Lab](/signal-grid-blog/practice/high-availability-cex/m04/lab/) 同时提供不足、恰好、多价位与限价外流动性场景。下一篇会处理另一种 pre-Accepted 策略门：**Post-only 只要在命令开始时会 touch/cross 最佳对手价，就必须在占用身份前拒绝；不成交时则完整挂单。**

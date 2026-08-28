@@ -11,10 +11,10 @@ tags:
   - 撮合引擎
   - Post-only
   - Maker Admission
-draft: true
+draft: false
 ---
 
-> 本篇仍以 annotated [`course/m04-start`](https://github.com/lcha-reln/cex-matching/tree/course/m04-start) 为练习起点。M04 尚处于 `IN_PROGRESS`，所以本文只冻结可运行的局部合同，不引用不存在的 complete tag、公开 Lab 或 evidence 数字。
+> 本篇仍以 annotated [`course/m04-start`](https://github.com/lcha-reln/cex-matching/tree/course/m04-start) 为练习起点；发布正文固定到 annotated [`course/m04-complete`](https://github.com/lcha-reln/cex-matching/tree/course/m04-complete)，完成 commit 为 `9d1bca13da6b13aa97a8002baff37fbc2393abe4`。Post-only 的 touch/cross、身份复用与 SELL 镜像已进入同一份公开 Golden 与性质证据。
 
 IOC 和 FOK 都允许成为 taker，只是对未成交余量采取不同态度。Post-only 的目标正相反：这笔请求只有在**不会立即成交**时才允许进入订单生命周期。最容易低估的边界是“touch”——买价恰好等于最佳卖价、或卖价恰好等于最佳买价时，订单已经会成交，不能被当作 maker 挂单。
 
@@ -149,6 +149,8 @@ Accepted(POST_ONLY) → Rested(partial quantity)
 
 事件 grammar 不是 engine 单元测试的重复品。它守住所有未来 adapter、reference 或测试构造器：即使某段代码绕过正常 match 直接组装 batch，也不能制造“被接受的 Post-only 曾经成为 taker”的历史。
 
+`ExecutionBatchPolicyGrammarTest.postOnlyCannotTradeAndMustRestItsFullQuantity` 直接锁定了四个形状：缺失 `Rested`、`Trade → Rested` 与 partial `Rested` 必须被拒绝，完整 `Rested` 必须被接受。`RemainderCanceled` 以及真实历史中的 book/lifecycle 对应关系仍由 M04 event-derived ledger 逐命令检查。
+
 ## 真实 API 的表示差异不能反向污染 core
 
 课程把 Post-only 放进互斥 `ExecutionPolicy`，但 venue API 未必如此。[Coinbase Exchange 下单接口](https://docs.cdp.coinbase.com/api-reference/exchange-api/rest-api/orders/create-new-order)使用独立 `post_only` flag，并把它与 `time_in_force` 的组合限制写在 API 合同中；[OKX API v5](https://www.okx.com/docs-v5/en/#order-book-trading-trade-post-place-order)则把 `post_only` 作为 `ordType` 之一。
@@ -201,7 +203,7 @@ D. SELL orderId=1 price= 99 quantity=1 POST_ONLY
 
 再做一个状态化变体：先让 B 被拒，然后用同一 orderId 2 提交 A。它应被接受并得到 sequence 2；这证明策略拒绝没有消费 identity 或 sequence。
 
-测试不要只断言错误码。保存拒绝前的 full-depth snapshot，并在之后 Cancel orderId 2 得到 `ORDER_NOT_FOUND`；再接受 A 后 Cancel 同 ID，应产生正常 `Canceled`。这两步能区分“未接受”与“接受后挂单”。
+测试不要只断言错误码。保存拒绝前的 full-depth snapshot，并在之后 Cancel orderId 2 得到 `ORDER_NOT_FOUND`；再接受 A 后 Cancel 同 ID，应产生正常 `Canceled`。`postOnlyRejectsTouchWithoutEffectThenAllowsSameIdentityToRestNonCrossing` 会真实执行这两次 Cancel，从结果上区分“从未接受”与“接受后挂单”，而不是从方法名推导证据。
 
 ## 本篇的可验证停止点
 
@@ -210,11 +212,12 @@ D. SELL orderId=1 price= 99 quantity=1 POST_ONLY
 ```bash
 ./gradlew :matching-core:test \
   --tests '*SingleInstrumentExecutionPolicyTest.postOnlyRejectsTouchWithoutEffectThenAllowsSameIdentityToRestNonCrossing' \
+  --tests '*SingleInstrumentExecutionPolicyTest.sellIocAndPostOnlyMirrorBuyAcrossPartialCrossAndNonCrossingBoundaries' \
   --tests '*SingleInstrumentExecutionPolicyTest.sellPoliciesMirrorBuyLimitsAndTouchSemantics' \
   --tests '*ExecutionBatchPolicyGrammarTest.postOnlyCannotTradeAndMustRestItsFullQuantity' \
   --no-daemon
 ```
 
-这些测试通过时，可以声称：在当前单写者内存 core 中，BUY/SELL 的 touch/cross 边界一致，策略拒绝不占状态，被接受的 Post-only 只能完整挂单。
+这些测试通过时，可以声称：在当前单写者内存 core 中，BUY touch 与 SELL touch、cross/non-cross 的直接样例符合共享 crossing 边界，策略拒绝不占状态，被接受的 Post-only 只能完整挂单。BUY cross 与完整 BUY/SELL 对称性还要由独立 reference 与 M04 property corpus 对拍，不由上述几个方法名代替。
 
-仍不能声称 M04 已完成。production core 与线性 reference 的局部测试只是两条实现路径；testkit 还必须把 raw policy、事件 grammar、生命周期、验证优先级和八项 plausible fault 放进同一可重放证明链。下一篇将只处理这个最后问题：**怎样在没有伪造完成数字的前提下，为 ExecutionPolicy 设计 Golden/property、mutant、三态裁判与未来 evidence 合同。**
+沿着本篇阶段性分支时仍不能声称 M04 已完成：production core 与线性 reference 的局部测试只是两条实现路径；testkit 还必须把 raw policy、事件 grammar、生命周期、验证优先级和八项 plausible fault 放进同一可重放证明链。发布完成态已经让 8/8 mutant 与 23/23 覆盖义务通过，[M04 Matching Lab](/signal-grid-blog/practice/high-availability-cex/m04/lab/) 则消费同一 Golden。下一篇处理最后一个问题：**怎样不预写结果，而由 Golden/property、mutant、三态裁判与 clean-tree evidence 共同形成完成事实。**

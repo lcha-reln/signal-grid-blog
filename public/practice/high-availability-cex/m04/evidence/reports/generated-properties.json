@@ -1,0 +1,19 @@
+{
+  "schemaVersion" : "matching.m04.generated-properties-report.v1",
+  "status" : "PASS",
+  "histories" : 192,
+  "commands" : 12288,
+  "differentialComparisons" : 12288,
+  "commandDigest" : "sha256:6005c674d0c42927989f1c8c4d1ddce224d06ceff0b95bf58615d23c4496ba51",
+  "commandBytes" : 1496773,
+  "commandLines" : 12481,
+  "freshGenerations" : 2,
+  "lanes" : {
+    "LEGACY_GTC" : 32,
+    "IOC_ZERO_PARTIAL_FULL" : 32,
+    "FOK_INSUFFICIENT_EXACT_MULTI_LEVEL" : 32,
+    "POST_ONLY_EMPTY_NON_CROSS_TOUCH_CROSS" : 32,
+    "IDENTITY_AND_SEQUENCE_AFTER_REJECTION" : 32,
+    "MIXED_POLICY_CANCEL_DUPLICATE" : 32
+  }
+}

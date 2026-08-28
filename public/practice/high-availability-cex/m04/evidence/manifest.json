@@ -1,0 +1,391 @@
+{
+  "schemaVersion" : "cex.lab-evidence.v1",
+  "case" : "high-availability-cex",
+  "project" : "matching",
+  "unit" : "M04",
+  "unitTag" : "course/m04-complete",
+  "productRelease" : null,
+  "planVersion" : "0.6",
+  "source" : {
+    "commit" : "9d1bca13da6b13aa97a8002baff37fbc2393abe4",
+    "dirty" : false
+  },
+  "environment" : {
+    "java" : "25.0.4.1+1-LTS",
+    "os" : "Mac OS X",
+    "arch" : "aarch64"
+  },
+  "claims" : [ {
+    "id" : "m00-m03-semantic-regression",
+    "category" : "correctness",
+    "statement" : "The frozen M03 command bytes, neutral GTC business semantics, six mutants, and six minimal counterexamples remain valid without rebinding its historical architecture gate.",
+    "status" : "pass",
+    "command" : "./gradlew m04Check m04Evidence -Pm04.unitTag=course/m04-complete --no-daemon",
+    "observations" : {
+      "status" : "PASS",
+      "artifact" : "m00-m03-regression.json",
+      "histories" : 256,
+      "commands" : 16384,
+      "bytes" : 1682592,
+      "lines" : 16641,
+      "commandDigest" : "sha256:1920d6b8a480998825c72636d446854d9e795e91b0ab29520f203b12186979ce",
+      "differentialComparisons" : 16384,
+      "ledgerChecks" : 16384,
+      "bookChecks" : 16384,
+      "mutantsKilled" : 6,
+      "counterexamples" : 6,
+      "oneMinimal" : 6,
+      "historicalArchitectureGateExecuted" : false
+    },
+    "artifacts" : [ {
+      "path" : "reports/m00-m03-regression.json",
+      "sha256" : "7a7775a68d187e6b2466ed051878cce5afd14149d69208184314a173a560b450"
+    } ]
+  }, {
+    "id" : "fixed-golden-history",
+    "category" : "correctness",
+    "statement" : "All 14 fixed scenarios and 48 commands agree with the independent model and publish replayable scenario-pack, event-batch, and M04F1 artifacts.",
+    "status" : "pass",
+    "command" : "./gradlew m04Check m04Evidence -Pm04.unitTag=course/m04-complete --no-daemon",
+    "observations" : {
+      "status" : "PASS",
+      "artifact" : "fixed-scenario-pack.json",
+      "path" : "matching-testkit/src/test/resources/m04/fixtures/execution-policy-v1.json",
+      "schemaPath" : "schemas/matching.m04.scenario.v1.schema.json",
+      "sha256" : "a8bf834828847a24d316bf6f760d008809901d8e3e2ff132276225b0aa79f596",
+      "scenarios" : 14,
+      "commands" : 48,
+      "placeCommands" : 44,
+      "cancelCommands" : 4,
+      "schemaProbes" : 6,
+      "policyCounts" : {
+        "GTC" : 25,
+        "IOC" : 5,
+        "FOK" : 6,
+        "POST_ONLY" : 6,
+        "UNKNOWN" : 2
+      },
+      "eventBatchesArtifact" : "fixed-event-batches.json",
+      "canonicalArtifact" : "fixed-history.canonical.utf8",
+      "canonicalFormat" : "M04F1",
+      "canonicalDigest" : "sha256:68de35e41358ea72c9852fdf3fd652db116774964360f0b526f43612576bfa77",
+      "canonicalBytes" : 47104,
+      "canonicalLines" : 63
+    },
+    "artifacts" : [ {
+      "path" : "inputs/execution-policy-v1.json",
+      "sha256" : "a8bf834828847a24d316bf6f760d008809901d8e3e2ff132276225b0aa79f596"
+    }, {
+      "path" : "reports/fixed-scenario-pack.json",
+      "sha256" : "d74bd16d347b056f5e5e61293855dfd468b9c6179b0f0441e504c1299518601f"
+    }, {
+      "path" : "reports/fixed-event-batches.json",
+      "sha256" : "94bc6bd0017fcaf7f17c847b164909961e50be4fc1fb241df0edfb9bc747636a"
+    }, {
+      "path" : "reports/fixed-history.canonical.utf8",
+      "sha256" : "68de35e41358ea72c9852fdf3fd652db116774964360f0b526f43612576bfa77"
+    } ]
+  }, {
+    "id" : "generated-property-suite",
+    "category" : "correctness",
+    "statement" : "The frozen SplitMix64 suite regenerates the same M04H1 bytes and agrees at all 12,288 command boundaries.",
+    "status" : "pass",
+    "command" : "./gradlew m04Check m04Evidence -Pm04.unitTag=course/m04-complete --no-daemon",
+    "observations" : {
+      "status" : "PASS",
+      "artifact" : "generated-properties.json",
+      "histories" : 192,
+      "commands" : 12288,
+      "differentialComparisons" : 12288,
+      "ledgerChecks" : 12288,
+      "bookChecks" : 12288,
+      "generator" : {
+        "path" : "matching-testkit/src/test/resources/m04/fixtures/property-suite-v1.json",
+        "schemaPath" : "schemas/matching.m04.generator.v1.schema.json",
+        "sha256" : "33a24417d56b565fe9b25868e70c1faa1637a7997d92486c5d6f30113e00575d",
+        "algorithm" : "splitmix64-v1",
+        "seedDerivation" : "splitmix64(baseSeed+historyIndex).nextLong",
+        "baseSeed" : "4404",
+        "histories" : 192,
+        "commandsPerHistory" : 64,
+        "totalCommands" : 12288,
+        "lanes" : 6,
+        "historiesPerLane" : 32,
+        "schemaProbes" : 6,
+        "canonicalFormat" : "M04H1",
+        "canonicalArtifact" : "generated-history.canonical.utf8",
+        "canonicalDigest" : "sha256:6005c674d0c42927989f1c8c4d1ddce224d06ceff0b95bf58615d23c4496ba51",
+        "canonicalBytes" : 1496773,
+        "canonicalLines" : 12481,
+        "freshGenerations" : 2
+      }
+    },
+    "artifacts" : [ {
+      "path" : "inputs/property-suite-v1.json",
+      "sha256" : "33a24417d56b565fe9b25868e70c1faa1637a7997d92486c5d6f30113e00575d"
+    }, {
+      "path" : "reports/generated-history.canonical.utf8",
+      "sha256" : "6005c674d0c42927989f1c8c4d1ddce224d06ceff0b95bf58615d23c4496ba51"
+    }, {
+      "path" : "reports/generated-properties.json",
+      "sha256" : "c7a996f7c7d4c0146fadf2d19a15e3c066fe417b122e00303904331b5b778678"
+    } ]
+  }, {
+    "id" : "policy-invariants-and-boundaries",
+    "category" : "correctness",
+    "statement" : "The event ledger, semantic pre-state coverage, exact raw-policy grammar, and separate Long.MAX FOK paths pass.",
+    "status" : "pass",
+    "command" : "./gradlew m04Check m04Evidence -Pm04.unitTag=course/m04-complete --no-daemon",
+    "observations" : {
+      "status" : "PASS",
+      "artifact" : "coverage.json",
+      "requiredObligations" : 23,
+      "satisfiedObligations" : 23,
+      "fokOutsideLimit" : 214,
+      "baseValidUnknown" : 423,
+      "baseValidUnusedUnknown" : 295,
+      "boundaries" : {
+        "status" : "PASS",
+        "artifact" : "boundaries.json",
+        "exactRawPolicyVariants" : 4,
+        "exactRawPolicyPaths" : 2,
+        "longMaxFokDeductionPaths" : 2
+      }
+    },
+    "artifacts" : [ {
+      "path" : "reports/invariants.json",
+      "sha256" : "57ef765b992903b9dc96ba5318a2ceffa97589ad7711038182dc48e03decc59a"
+    }, {
+      "path" : "reports/coverage.json",
+      "sha256" : "fe214382f8de3994cd73a706eef4c9aa358ef818b820c50e54dde3756ead2236"
+    }, {
+      "path" : "reports/boundaries.json",
+      "sha256" : "2ce1b9310d2d076318c50a926e009bf3bb76b4d1ffb829782d725b94e6669a35"
+    } ]
+  }, {
+    "id" : "minimal-counterexamples",
+    "category" : "correctness",
+    "statement" : "All eight required semantic faults have generated-source, one-minimal, schema-valid counterexamples with M04X1 bytes.",
+    "status" : "pass",
+    "command" : "./gradlew m04Check m04Evidence -Pm04.unitTag=course/m04-complete --no-daemon",
+    "observations" : {
+      "status" : "PASS",
+      "artifact" : "counterexamples.json",
+      "required" : 8,
+      "shrunk" : 8,
+      "persisted" : 8,
+      "schemaParsed" : 8,
+      "replayed" : 8,
+      "oneMinimal" : 8,
+      "minimizedCommands" : 15,
+      "persistedArtifact" : "counterexamples-v1.json",
+      "canonical" : {
+        "format" : "M04X1",
+        "artifact" : "counterexamples.canonical.utf8",
+        "digest" : "sha256:60076a395fe365ba9eaa6bf91ae148dc42120ddb95ad01cac988ab90dd8550cb",
+        "bytes" : 166483,
+        "lines" : 544
+      }
+    },
+    "artifacts" : [ {
+      "path" : "inputs/counterexamples-v1.json",
+      "sha256" : "7543b9c72248fe2bc315291ecf4207780a1ac196e324a52cd40b255e833e9cf4"
+    }, {
+      "path" : "reports/counterexamples.json",
+      "sha256" : "185246e335ddac929c1f1d884623b15169c2bccc2d5f02f01d5e5c8607a8b94b"
+    }, {
+      "path" : "reports/counterexamples.canonical.utf8",
+      "sha256" : "60076a395fe365ba9eaa6bf91ae148dc42120ddb95ad01cac988ab90dd8550cb"
+    } ]
+  }, {
+    "id" : "counterexample-replay",
+    "category" : "correctness",
+    "statement" : "Strict replay regenerates provenance and reproduces all eight expected STUDENT_FAILURE fingerprints.",
+    "status" : "pass",
+    "command" : "./gradlew m04Check m04Evidence -Pm04.unitTag=course/m04-complete --no-daemon",
+    "observations" : {
+      "status" : "PASS",
+      "artifact" : "counterexamples.json",
+      "required" : 8,
+      "shrunk" : 8,
+      "persisted" : 8,
+      "schemaParsed" : 8,
+      "replayed" : 8,
+      "oneMinimal" : 8,
+      "minimizedCommands" : 15,
+      "persistedArtifact" : "counterexamples-v1.json",
+      "canonical" : {
+        "format" : "M04X1",
+        "artifact" : "counterexamples.canonical.utf8",
+        "digest" : "sha256:60076a395fe365ba9eaa6bf91ae148dc42120ddb95ad01cac988ab90dd8550cb",
+        "bytes" : 166483,
+        "lines" : 544
+      }
+    },
+    "artifacts" : [ {
+      "path" : "reports/replay.json",
+      "sha256" : "c0814901501fcc1bc91b6425dbe3dea0e3bd5866ca08eb251eb285cbf673ee04"
+    } ]
+  }, {
+    "id" : "semantic-mutants",
+    "category" : "mutation-testing",
+    "statement" : "All eight business mutants are killed as STUDENT_FAILURE while a throwing control remains SYSTEM_ERROR.",
+    "status" : "pass",
+    "command" : "./gradlew m04Check m04Evidence -Pm04.unitTag=course/m04-complete --no-daemon",
+    "observations" : {
+      "status" : "PASS",
+      "artifact" : "mutants.json",
+      "required" : 8,
+      "killed" : 8,
+      "systemErrorControl" : "SYSTEM_ERROR",
+      "requiredMutants" : [ {
+        "id" : "M04-IOC-REMAINDER-RESTS",
+        "fingerprint" : "EXECUTION_POLICY_GRAMMAR/IOC_REMAINDER_RESTED",
+        "coverageKey" : "IOC_ZERO_FILL",
+        "classification" : "STUDENT_FAILURE",
+        "killed" : true,
+        "historyIndex" : 1,
+        "sourceFailingCommandIndex" : 0,
+        "lane" : "IOC_ZERO_PARTIAL_FULL",
+        "seed" : "f2b4ce0f72f08065",
+        "originalCommands" : 64,
+        "minimizedCommands" : 1,
+        "shrinkTrials" : 25,
+        "oneMinimal" : true,
+        "replayed" : true
+      }, {
+        "id" : "M04-IOC-BEHAVES-LIKE-FOK",
+        "fingerprint" : "IOC_IMMEDIATE_EXECUTION/IOC_WAS_PRECHECK_REJECTED",
+        "coverageKey" : "IOC_PARTIAL_FILL",
+        "classification" : "STUDENT_FAILURE",
+        "killed" : true,
+        "historyIndex" : 0,
+        "sourceFailingCommandIndex" : 10,
+        "lane" : "LEGACY_GTC",
+        "seed" : "c1b2b1c8c43402ba",
+        "originalCommands" : 64,
+        "minimizedCommands" : 1,
+        "shrinkTrials" : 31,
+        "oneMinimal" : true,
+        "replayed" : true
+      }, {
+        "id" : "M04-FOK-PARTIAL-STATE-LEAK",
+        "fingerprint" : "POLICY_REJECTION_ATOMICITY/FOK_REJECTION_CHANGED_BOOK",
+        "coverageKey" : "FOK_INSUFFICIENT",
+        "classification" : "STUDENT_FAILURE",
+        "killed" : true,
+        "historyIndex" : 2,
+        "sourceFailingCommandIndex" : 2,
+        "lane" : "FOK_INSUFFICIENT_EXACT_MULTI_LEVEL",
+        "seed" : "349266cde8e7474c",
+        "originalCommands" : 64,
+        "minimizedCommands" : 2,
+        "shrinkTrials" : 89,
+        "oneMinimal" : true,
+        "replayed" : true
+      }, {
+        "id" : "M04-FOK-BEST-LEVEL-ONLY",
+        "fingerprint" : "FOK_FILLABILITY/MULTI_LEVEL_LIQUIDITY_IGNORED",
+        "coverageKey" : "FOK_MULTI_LEVEL",
+        "classification" : "STUDENT_FAILURE",
+        "killed" : true,
+        "historyIndex" : 0,
+        "sourceFailingCommandIndex" : 27,
+        "lane" : "LEGACY_GTC",
+        "seed" : "c1b2b1c8c43402ba",
+        "originalCommands" : 64,
+        "minimizedCommands" : 4,
+        "shrinkTrials" : 707,
+        "oneMinimal" : true,
+        "replayed" : true
+      }, {
+        "id" : "M04-FOK-IGNORES-LIMIT-PRICE",
+        "fingerprint" : "FOK_FILLABILITY/OUTSIDE_LIMIT_LIQUIDITY_COUNTED",
+        "coverageKey" : "FOK_OUTSIDE_LIMIT_EXCLUDED",
+        "classification" : "STUDENT_FAILURE",
+        "killed" : true,
+        "historyIndex" : 1,
+        "sourceFailingCommandIndex" : 20,
+        "lane" : "IOC_ZERO_PARTIAL_FULL",
+        "seed" : "f2b4ce0f72f08065",
+        "originalCommands" : 64,
+        "minimizedCommands" : 2,
+        "shrinkTrials" : 191,
+        "oneMinimal" : true,
+        "replayed" : true
+      }, {
+        "id" : "M04-POST-ONLY-TOUCH-ACCEPTED",
+        "fingerprint" : "POST_ONLY_ADMISSION/TOUCH_WAS_ACCEPTED",
+        "coverageKey" : "POST_ONLY_TOUCH",
+        "classification" : "STUDENT_FAILURE",
+        "killed" : true,
+        "historyIndex" : 1,
+        "sourceFailingCommandIndex" : 35,
+        "lane" : "IOC_ZERO_PARTIAL_FULL",
+        "seed" : "f2b4ce0f72f08065",
+        "originalCommands" : 64,
+        "minimizedCommands" : 2,
+        "shrinkTrials" : 112,
+        "oneMinimal" : true,
+        "replayed" : true
+      }, {
+        "id" : "M04-POLICY-REJECT-CONSUMES-IDENTITY",
+        "fingerprint" : "POLICY_REJECTION_ATOMICITY/REJECTED_ID_RESERVED",
+        "coverageKey" : "REJECTED_ID_LATER_REUSED",
+        "classification" : "STUDENT_FAILURE",
+        "killed" : true,
+        "historyIndex" : 0,
+        "sourceFailingCommandIndex" : 6,
+        "lane" : "LEGACY_GTC",
+        "seed" : "c1b2b1c8c43402ba",
+        "originalCommands" : 64,
+        "minimizedCommands" : 2,
+        "shrinkTrials" : 81,
+        "oneMinimal" : true,
+        "replayed" : true
+      }, {
+        "id" : "M04-UNKNOWN-POLICY-DEFAULTS-GTC",
+        "fingerprint" : "VALIDATION_PRIORITY_AND_NO_MUTATION/UNKNOWN_POLICY_ACCEPTED",
+        "coverageKey" : "BASE_VALID_UNUSED_ID_UNKNOWN",
+        "classification" : "STUDENT_FAILURE",
+        "killed" : true,
+        "historyIndex" : 2,
+        "sourceFailingCommandIndex" : 15,
+        "lane" : "FOK_INSUFFICIENT_EXACT_MULTI_LEVEL",
+        "seed" : "349266cde8e7474c",
+        "originalCommands" : 64,
+        "minimizedCommands" : 1,
+        "shrinkTrials" : 30,
+        "oneMinimal" : true,
+        "replayed" : true
+      } ]
+    },
+    "artifacts" : [ {
+      "path" : "reports/mutants.json",
+      "sha256" : "4bd0c6edb5e3498d3adc305e547a9c50b40678884a08fba5bfa90ef94438a988"
+    } ]
+  }, {
+    "id" : "architecture-boundary",
+    "category" : "architecture",
+    "statement" : "The deterministic dependency-free core and independent flat-list reference model pass at the annotated M04 unit tag without a product release.",
+    "status" : "pass",
+    "command" : "./gradlew m04Check m04Evidence -Pm04.unitTag=course/m04-complete --no-daemon",
+    "observations" : {
+      "status" : "PASS",
+      "artifact" : "architecture.json",
+      "coreSourceFiles" : 24,
+      "referenceSourceFiles" : 7,
+      "violations" : 0
+    },
+    "artifacts" : [ {
+      "path" : "reports/architecture.json",
+      "sha256" : "05154c6413a3ab9da1ff7bb8a89bd877aeae15de95fe626c71a11e270b03375c"
+    }, {
+      "path" : "reports/check.json",
+      "sha256" : "4078eec0337bda843b00f4b7d32b26e092b3019350bcb5d72c5062030f9c6931"
+    } ]
+  } ],
+  "limitations" : [ "Only one in-memory BTC-USDT limit-order book with place and cancel is implemented.", "Only GTC, IOC, FOK, and Post-only execution policies are implemented; price bands enter M05 and STP enters M06.", "The generated suite is frozen at 192 histories by 64 commands and is bounded testing, not exhaustive or formal verification.", "The exact raw-policy and Long.MAX FOK boundaries are separate unit tests because generated quantities are limited to one through five.", "Accepted order IDs remain unique for one engine lifetime; terminal identities are retained without pruning.", "There is no account, asset, position, fee, margin, settlement, reservation, or risk logic.", "There is no persistence, networking, database, thread, Aeron, replication, or high availability in this unit.", "The evidence makes no throughput, latency, durability, recovery, or production-readiness claim." ],
+  "supersedes" : null,
+  "generatedAt" : "2026-08-28T09:46:45.938955Z"
+}

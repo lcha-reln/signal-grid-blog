@@ -11,10 +11,10 @@ tags:
   - 撮合引擎
   - ExecutionPolicy
   - 限价单
-draft: true
+draft: false
 ---
 
-> M04 当前唯一权威起点是 annotated [`course/m04-start`](https://github.com/lcha-reln/cex-matching/tree/course/m04-start)。本单元仍处于 `IN_PROGRESS`：没有 complete tag、公开 evidence 或产品 release。本文中的代码是要从该 RED 起点实现并验证的合同形状，不应被引用成已经发布的完成事实。
+> 练习起点是 annotated [`course/m04-start`](https://github.com/lcha-reln/cex-matching/tree/course/m04-start)。发布正文固定到 annotated [`course/m04-complete`](https://github.com/lcha-reln/cex-matching/tree/course/m04-complete)，完成 commit 为 `9d1bca13da6b13aa97a8002baff37fbc2393abe4`；完整源码可从[完成坐标下的仓库树](https://github.com/lcha-reln/cex-matching/tree/course/m04-complete)复核。M04 是普通课程单元，没有新的产品 release。
 
 M03 已经证明：一个只支持 GTC 的单交易对限价撮合器，可以在价格时间优先、撤单、终态和独立参考模型之间形成闭环。M04 不急着加入市价单、价格带、自成交保护或持久化，而只回答一个新问题：同一笔有价格保护的限价单，未成交余量究竟可以挂单、必须取消，还是连“接受”都不应发生？
 
@@ -37,7 +37,9 @@ git switch -c unit/m04 course/m04-start
 ./gradlew m04Check --no-daemon
 ```
 
-累计构建应守住 M00～M03 已发布能力。起点的 `m04Check` 则应以结构化 `GOAL_NOT_IMPLEMENTED` 形成 RED；不能用编译错误、缺 fixture 或异常堆栈冒充课程缺口。当前博客草稿也不会预写未来 Golden 数量、digest、manifest hash 或完成提交。
+累计构建应守住 M00～M03 已发布能力。起点的 `m04Check` 则应以结构化 `GOAL_NOT_IMPLEMENTED` 形成 RED；不能用编译错误、缺 fixture 或异常堆栈冒充课程缺口。
+
+RED 不等于“输入还没定义”。`course/m04-start` 已经冻结 14 个定向场景、48 条固定命令，以及 `baseSeed=4404`、192 条历史 × 每条 64 条命令的 6 条 lane 生成配置；两份输入的 SHA-256 分别是 `a8bf834828847a24d316bf6f760d008809901d8e3e2ff132276225b0aa79f596` 与 `33a24417d56b565fe9b25868e70c1faa1637a7997d92486c5d6f30113e00575d`。这些是可重放的**输入事实**；最终结果证据另由 [`check.json`](/signal-grid-blog/practice/high-availability-cex/m04/evidence/reports/check.json) 和 [`manifest.json`](/signal-grid-blog/practice/high-availability-cex/m04/evidence/manifest.json) 绑定到完成提交。
 
 本单元冻结的唯一输入增量是 `executionPolicy`。以下能力仍明确不进入本篇：
 
@@ -190,7 +192,8 @@ instrumentId
 → executionPolicy
 → DUPLICATE_ORDER_ID
 → FOK_NOT_FILLABLE / POST_ONLY_WOULD_TAKE
-→ 分配 acceptance sequence
+→ acceptance-sequence capacity
+→ 分配 acceptance sequence 并产生 Accepted
 ```
 
 代码形状应让顺序一眼可见：
@@ -228,7 +231,7 @@ nextSequenceAfter == nextSequenceBefore
 makerRemaindersAfter == makerRemaindersBefore
 ```
 
-只有这些门都通过后，才能分配 sequence、占用 orderId 并产生 `Accepted`。若先 `nextAcceptanceSequence++` 再判断 FOK，失败请求会在 FIFO 时间线上留下不可解释的洞。
+只有这些门都通过后，才能检查 acceptance sequence 是否还有可表示的后继值，然后分配 sequence、占用 orderId 并产生 `Accepted`。capacity exhaustion 不是第二种业务拒绝，而是零状态变化的 `SYSTEM_ERROR`；它不得遮蔽更早的 FOK/Post-only 策略拒绝。若先 `nextAcceptanceSequence++` 再判断 FOK，失败请求会在 FIFO 时间线上留下不可解释的洞。
 
 ## 这套 algebra 不是任何交易所 API 的复制品
 
@@ -296,9 +299,10 @@ D. instrument=BTC-USDT, orderId=8, side=BUY,
   --tests '*SingleInstrumentExecutionPolicyTest.frozenInputValidationPrecedesPolicyAndPolicyRejectionDoesNotConsumeIdentity' \
   --tests '*SingleInstrumentExecutionPolicyTest.policyGrammarIsExactWithoutCaseFoldingOrTrimming' \
   --tests '*SingleInstrumentExecutionPolicyTest.duplicateIdentityPrecedesFokAndPostOnlyBookDependentRejections' \
+  --tests '*SingleInstrumentExecutionPolicyTest.policyRejectionsPrecedeAcceptanceSequenceCapacityWithoutReservingIdentity' \
   --no-daemon
 ```
 
-GREEN 只证明这些局部合同：旧入口显式映射 GTC、raw policy 在正确位置被验证且精确匹配、duplicate 位于策略准入之前。它还不能证明 IOC 不挂单、FOK 不泄漏部分成交或 Post-only 在 touch 边界拒绝。
+GREEN 只证明这些局部合同：旧入口显式映射 GTC、raw policy 在正确位置被验证且精确匹配、duplicate 位于策略准入之前，且策略拒绝先于 sequence-capacity 异常并不占用身份。它还不能证明 IOC 不挂单、FOK 不泄漏部分成交或 Post-only 在 touch 边界拒绝。
 
-完整 `m04Check` 在这些能力、独立 reference、Golden/property corpus、八项 mutant 和 evidence writer 都完成前必须继续 RED。下一篇只推进一个结果分支：**让 aggressive IOC 在既有 `priceTicks` 内尽可能成交，并把任何正余量以独立事件原子收敛到 CANCELED。**
+沿着本篇阶段性分支动手时，完整 `m04Check` 在独立 reference、Golden/property corpus、八项 mutant 和 evidence writer 都完成前必须继续 RED。发布完成态已经把这些义务收口；[M04 Matching Lab](/signal-grid-blog/practice/high-availability-cex/m04/lab/) 会从同一份 14/48 Java Golden 回放结果。下一篇只推进一个结果分支：**让 aggressive IOC 在既有 `priceTicks` 内尽可能成交，并把任何正余量以独立事件原子收敛到 CANCELED。**

@@ -1,6 +1,6 @@
 ---
 title: "M04·05：用性质、变异体和证据边界证明执行策略"
-description: "让 production 与独立线性 reference 对拍验证优先级、IOC 数量分区、FOK/Post-only 零副作用，并用八项 semantic mutant 约束未来 M04 evidence。"
+description: "让 production 与独立线性 reference 对拍验证优先级、IOC 数量分区、FOK/Post-only 零副作用，并用八项 semantic mutant 与 clean-tree manifest 收口 M04 evidence。"
 date: 2026-08-28T20:00:00+08:00
 project: high-availability-cex
 profileVersion: SPOT-CEX-1.0
@@ -11,16 +11,16 @@ tags:
   - 撮合引擎
   - 性质测试
   - Release Evidence
-draft: true
+draft: false
 ---
 
-> M04 当前仍是 `IN_PROGRESS`，唯一固定源码起点是 annotated [`course/m04-start`](https://github.com/lcha-reln/cex-matching/tree/course/m04-start)。截至本稿，production core 与独立 reference 只有局部实现和局部测试；跨模块 testkit、Golden/property corpus、mutant runner、evidence writer、complete tag 与公开 evidence 都尚未闭合。因此本文只冻结证明方法和通过条件，不填写尚未生成的 seed、场景数、digest、反例长度、hash 或完成提交。
+> 练习起点是 annotated [`course/m04-start`](https://github.com/lcha-reln/cex-matching/tree/course/m04-start)；发布正文固定到 annotated [`course/m04-complete`](https://github.com/lcha-reln/cex-matching/tree/course/m04-complete)，完成 commit 为 `9d1bca13da6b13aa97a8002baff37fbc2393abe4`。公开 evidence 从 [`manifest.json`](/signal-grid-blog/practice/high-availability-cex/m04/evidence/manifest.json) 开始复核，manifest SHA-256 为 `d036782ccdaff6b13a8e3f7f86c9c6eb5f285aa79b296485899b1a711783b52d`；M04 是普通课程单元，`productRelease=null`。
 
 前四篇已经分别约束请求 algebra、IOC 余量、FOK 原子预检和 Post-only maker 准入。每个局部例子都能通过，仍不足以宣布 M04 完成：production 与 reference 可能共享概念错误，旧 GTC 可能被兼容构造悄悄改写，验证优先级可能只在空簿成立，或测试只能确认当前实现而不能反对 plausible fault。
 
 本篇只证明一个命题：**ExecutionPolicy 的发布资格来自一条可反证的证据链——独立表示执行同一 raw command、逐命令检查结果 grammar 与状态不变量、让八项语义变异体得到 `STUDENT_FAILURE`、让基础设施异常保持 `SYSTEM_ERROR`，最后才在 clean complete identity 上生成可复核 evidence。**
 
-这篇是 M04 的教学终篇，但目前仍是草稿。所有“应当”“必须”都表示发布门禁，而不是已取得的完成事实。
+这篇是 M04 的教学终篇。下文先按实现顺序解释发布门禁，再用最终 clean-tree artifact 给出已经取得的完成事实；规范性的“必须”仍表示未来修改不能破坏的合同。
 
 ## 证明对象不是四个 happy path
 
@@ -106,11 +106,11 @@ record RemainderCanceled(
     implements SemanticEvent {}
 ```
 
-production adapter 必须把 `placeRequest(new PlaceLimitOrderRequest(input, rawPolicy))` 的完整公开 events 转成这些中立值；不能继续调用旧 `place(input)`，否则所有 generated policy 都会被静默降级为 GTC。当前跨模块 testkit 尚未完成这条适配，正是整仓门禁仍应保持 RED 的原因之一。
+production adapter 必须把 `placeRequest(new PlaceLimitOrderRequest(input, rawPolicy))` 的完整公开 events 转成这些中立值；不能继续调用旧 `place(input)`，否则所有 generated policy 都会被静默降级为 GTC。即使 adapter 类已经存在，也只有它在跨模块 testkit 中被 raw-policy 语料真实调用、并与 linear reference 对拍后才算完成；“有一个类名”不是整仓门禁证据。
 
 ## event-derived ledger 应先检查代数，再做 exact differential
 
-M03 的第三事件账本不能只增加一个 switch case。它要把 policy 变成逐命令 proof obligation：
+M03 引入的“第三事件账本”观察模式，在 M04 不能只给旧 `M03EventLedger` 增加一个 switch case。M04 需要独立的 `M04EventLedger`，把 policy 变成逐命令 proof obligation：
 
 ```text
 1. Rejected / PlaceRejected 是否发生在 Accepted 之前且为 singleton
@@ -139,9 +139,23 @@ original = filled + remaining + canceled
 
 ledger 只能从 raw command、public events 与待核对的 `bookAfter` 推导，不能读取 production `ordersById` 或 reference flat list。否则“独立观察”会退化成内部状态自证。
 
-## 生成 corpus 先冻结输入合同，再产生数字
+## 生成 corpus 先冻结输入合同，再产生结果证据
 
-M04 需要同时包含定向 Golden 场景与有界 generated histories，但现在不应提前猜数量。先冻结场景职责：
+M04 同时包含定向场景与有界 generated histories。`course/m04-start` 已经把输入数字冻结为：
+
+```text
+fixed scenarios        = 14
+fixed commands         = 48 (44 PLACE + 4 CANCEL)
+generated histories    = 192
+commands per history   = 64
+generated boundaries   = 12,288
+base seed              = 4404
+lanes                   = 6 (32 histories per lane)
+fixed corpus SHA-256   = a8bf834828847a24d316bf6f760d008809901d8e3e2ff132276225b0aa79f596
+generator SHA-256      = 33a24417d56b565fe9b25868e70c1faa1637a7997d92486c5d6f30113e00575d
+```
+
+这些数字只回答“要重放哪些输入”，不能回答 production 是否正确。定向场景的职责是：
 
 ```text
 validation precedence
@@ -149,21 +163,23 @@ legacy GTC compatibility
 IOC zero / partial / full / multi-level / exact limit
 FOK empty / one-lot-short / exact / multi-level / outside limit
 POST_ONLY empty / non-cross / touch / cross / BUY-SELL mirror
-late Cancel and duplicate identity after each terminal or rejection path
-large-quantity preflight without cumulative overflow
+representative late Cancel / duplicate / rejected-ID reuse paths
+bounded-quantity FOK preflight across exact, insufficient, multi-level and outside-limit liquidity
 ```
 
-随后才能评审 strict Schema、scenario ID、命令数、PRNG/seed、lane、canonical format 与 digest。发布数字必须来自最终 clean run 的 artifact，而不是从设计稿复制预期值。
+固定与生成语料的 `quantityLots` 上限都是 5，所以它们不能证明 `Long.MAX_VALUE` 防溢出。这个边界由 core 与独立 reference 各自的一条确定性单元测试证明：预检逐笔扣减剩余需求，而不先累计总深度；最终 [`boundaries.json`](/signal-grid-blog/practice/high-availability-cex/m04/evidence/reports/boundaries.json) 冻结 `longMaxFokDeductionPaths=2`。同理，14/48 Golden 只提供有代表性的 late Cancel、duplicate 与被拒 ID 复用路径；完整的终态/拒绝矩阵由 core/reference 测试、生成式 ledger 和 23 项 coverage 共同承担。
 
-一个合格 fixture 还要保留 raw `executionPolicy`，并提供未知字段、非法 policy、数字 token 和 command union 的负向 Schema probes。Schema 失败属于 `SYSTEM_ERROR`，不能被算作“业务成功拒绝 unknown policy”。
+输入合同冻结时已经评审 strict Schema、scenario ID、命令数、PRNG/seed 与 lane。只有执行器、事件账本与对拍完成后，才能生成 expected outcome、canonical output format/digest 和反例结果。这些**结果数字**来自最终 clean run 的 artifact，而不是从设计稿复制预期值。
+
+一个合格 fixture 还要保留 raw `executionPolicy`，并提供未知字段、policy 缺失或放错 command、非整数数字 token 与 command union 的负向 Schema probes。`UNKNOWN` 则刻意保持 Schema-valid，再由业务层稳定拒绝；Schema 失败属于 `SYSTEM_ERROR`，不能被算作“业务成功拒绝 unknown policy”。
 
 raw policy 还有两个不能合并的证明面：固定/生成语料中的 `UNKNOWN` 负责业务级 `INVALID_EXECUTION_POLICY`、优先级、零状态变化和 unknown-default mutant；core 的参数化边界测试用 `gtc`、`Gtc`、` GTC`、`GTC ` 四个值证明精确大小写与空白语法。前者需要有状态因果历史，后者只守词法闭集，任何一组通过都不能替代另一组。
 
-在数据冻结前，本篇不会写类似“共 N 场景、M 条命令、digest 为 X”的句子。将来补充这些完成事实时，必须同时给出 artifact 路径、Schema、来源 commit 与 SHA-256，且正文值能从报告交叉核对。
+最终 [`check.json`](/signal-grid-blog/practice/high-availability-cex/m04/evidence/reports/check.json) 与 manifest 现在给出完整结果：14 个固定场景、48 条命令全部通过，M04F1 为 63 行、47,104 bytes、`sha256:68de35e41358ea72c9852fdf3fd652db116774964360f0b526f43612576bfa77`；192×64 共 12,288 个生成边界全部与 reference 对拍，M04H1 为 12,481 行、1,496,773 bytes、`sha256:6005c674d0c42927989f1c8c4d1ddce224d06ceff0b95bf58615d23c4496ba51`。这些值分别由固定场景、event batch、canonical bytes、生成报告和 manifest artifact hash 交叉约束。
 
 ## 八项 semantic mutant 定义裁判必须会反对什么
 
-M04 合同冻结八个 required mutant；它们目前是门禁目标，不是已被杀死的结果：
+M04 合同冻结八个 required mutant；最终门禁已经把它们全部杀死：
 
 | Mutant ID | 注入错误 | 首要被破坏的性质 |
 | --- | --- | --- |
@@ -176,11 +192,11 @@ M04 合同冻结八个 required mutant；它们目前是门禁目标，不是已
 | `M04-POLICY-REJECT-CONSUMES-IDENTITY` | 策略拒绝仍占 ID/sequence | admission atomicity / late Cancel |
 | `M04-UNKNOWN-POLICY-DEFAULTS-GTC` | unknown raw value 静默变 GTC | fail-closed validation |
 
-每个 mutant 必须由 production control 使用的同一 scenario/property judge 分类为 `STUDENT_FAILURE`。专门写一个“检测 mutant 名称”的测试不合格；裁判必须只观察业务 outcome。
+每个 mutant 都由 production control 使用的同一 scenario/property judge 分类为 `STUDENT_FAILURE`。专门写一个“检测 mutant 名称”的测试仍不合格；裁判只观察业务 outcome。
 
 还要保留 throwing control：candidate 在 apply 时抛异常，结果必须是 `SYSTEM_ERROR`，不能计入八项 killed。否则一个完全不可运行的实现会因为让所有测试都红而得到最漂亮的 mutant 分数。
 
-稳定失败记录应保存 property ID、divergence kind、首次失败 command、完整因果前缀和 expected/actual outcome。若后续加入 shrink，它必须从 fresh production/reference/ledger 重放，并保持同一 fingerprint；不能在已经失败的 live engine 上删除命令。
+稳定失败记录保存 property ID、divergence kind、首次失败 command、完整因果前缀和 expected/actual outcome。shrink 从 fresh production/reference/ledger 重放，并保持同一 fingerprint；不能在已经失败的 live engine 上删除命令。最终八项 one-minimal 反例长度为 `1/1/2/4/2/2/2/1`，共 15 条命令；M04X1 为 544 行、166,483 bytes、`sha256:60076a395fe365ba9eaa6bf91ae148dc42120ddb95ad01cac988ab90dd8550cb`。每项都由 [`replay.json`](/signal-grid-blog/practice/high-availability-cex/m04/evidence/reports/replay.json) 重新验证 reference outcome、actual outcome、provenance 与 one-minimal 声明。
 
 ## 错误证据设计比没有报告更危险
 
@@ -194,7 +210,7 @@ digest 相同能证明 canonical bytes 未漂移，不能解释 IOC 是否短暂
 
 ### 把局部 module test 写成 release evidence
 
-production core 与 linear reference 各自 GREEN，只证明两份局部实现。adapter、ledger、Golden/property、mutant、architecture 和累计 M00～M03 回归没有闭合前，不得创建 complete identity。
+production core 与 linear reference 各自 GREEN，只证明两份局部实现。在阶段性分支上，adapter、ledger、Golden/property、mutant、architecture 和累计 M00～M03 回归没有闭合前，不得创建 complete identity。
 
 ### 先写 complete tag 或 manifest hash
 
@@ -235,32 +251,33 @@ Post-only touch accepted:
 
 Policy rejection consumes identity:
   BUY 100×1 FOK on empty book
-  Cancel same orderId
   GTC Place same orderId
 ```
 
-最后一条应同时观察：拒绝后的 Cancel 是 `ORDER_NOT_FOUND`，同 ID GTC 可以首次接受，sequence 连续。若只断言第一条 `FOK_NOT_FILLABLE`，就杀不死“拒绝码正确但偷偷写状态”的 mutant。
+对当前 `M04-POLICY-REJECT-CONSUMES-IDENTITY` mutant，最后一条的 one-minimal 历史只有两条命令：第一条 FOK 在空簿拒绝，第二条用同 ID 提交 GTC。正确实现会把 GTC 当作首次接受，mutant 则返回 `DUPLICATE_ORDER_ID`，稳定 fingerprint 是 `POLICY_REJECTION_ATOMICITY/REJECTED_ID_RESERVED`。在两条命令之间插入 Cancel 是冗余的：删掉它仍会暴露同一 fingerprint，所以它不得出现在 one-minimal 反例里。
 
-## 未来 evidence 的生成顺序必须保持诚实
+Cancel 仍可作为**扩展观察**，但要与最小证明分开：拒绝后立即 Cancel 应是 `ORDER_NOT_FOUND`；同 ID GTC 被接受并 RESTING 后再 Cancel，应产生正常 `Canceled`。若只断言第一条 `FOK_NOT_FILLABLE`，仍然杀不死“拒绝码正确但偷偷预留身份”的 mutant。
 
-在 testkit 合同、实现、累计回归与所有 required mutant 真正完成后，发布流程才允许进入：
+## evidence 的生成顺序与完成身份
+
+最终发布严格按下面的顺序完成：
 
 ```text
 clean build
 → m04Check fresh PASS
 → 独立复核 reports 与 limitations
-→ 创建未来的 annotated complete tag
+→ 创建 annotated complete tag
 → 在同一 clean commit 上生成 tag-bound evidence
 → 博客复制并逐 hash 校验公开 bundle
-→ 五篇 draft 原子转为公开
+→ 五篇教程与 Matching Lab 原子转为公开
 ```
 
-目标命令形状可以预先登记，但现在不得执行它来伪造完成：
+对应的复核命令是：
 
 ```bash
 ./gradlew m04Check --no-daemon
 
-# 只有未来 complete tag 已真实存在、指向当前 clean HEAD 后才允许：
+# complete tag 必须已真实存在并指向当前 clean HEAD：
 ./gradlew m04Evidence \
   -Pm04.unitTag=course/m04-complete \
   --no-daemon
@@ -268,9 +285,9 @@ clean build
 
 M04 不是命名产品停止点，所以没有新的 `matching-*` product release。evidence 的 limitations 至少要继续声明：单交易对、内存、无持久化/网络/Aeron、无账户资产、无 price band/STP、市价单和性能保证；有界 property suite 也不能被称为形式化证明。
 
-## M04 的可验证停止点仍然是 RED 边界
+## M04 的可验证停止点已经闭合
 
-在当前草稿阶段，可以运行局部 production 与 reference tests，检查 API 与手算语义是否一致；不能声称整仓 M04 通过。真正的单元停止点必须同时满足：
+最终 evidence 证明下面的单元停止条件同时满足：
 
 - 旧 `place(input)` 与五参数 `Accepted` 构造仍可调用，legacy GTC 的业务 events/book/lifecycle 语义等价，M03G1 command canonical lines/bytes/digest 不变；同时明确不承诺 Java event shape、反射/Jackson/`toString()`、sealed exhaustive switch 或 event bytes 完全兼容；
 - raw policy 验证和所有 pre-accept 优先级稳定；
@@ -279,8 +296,8 @@ M04 不是命名产品停止点，所以没有新的 `matching-*` product releas
 - 八项 semantic mutant 均为 `STUDENT_FAILURE`，throwing control 为 `SYSTEM_ERROR`；
 - fresh replay、M03 语义/canonical 回归与 M04 自己的 architecture gate 通过，不用当前源码清单伪装 M03 历史架构身份；
 - clean complete identity、manifest、artifact hashes 和 limitations 真实生成并复核；
-- 五篇教程与可能的 Matching Lab 只消费同一份已发布 Golden/evidence，不另造前端权威语义。
+- 五篇教程与 [M04 Matching Lab](/signal-grid-blog/practice/high-availability-cex/m04/lab/) 只消费同一份已发布 Golden/evidence，不另造前端权威语义。
 
-到那时，M04 能准确声称的是：**单交易对内存撮合器在原有 GTC 基线上，增加了有价格保护的 IOC、原子 FOK 与 maker-only Post-only，并用可反证的性质门禁约束其结果。**它仍不拥有 price band、STP、持久化、网络、性能或高可用保证。
+现在，M04 能准确声称的是：**单交易对内存撮合器在原有 GTC 基线上，增加了有价格保护的 IOC、原子 FOK 与 maker-only Post-only，并用可反证的性质门禁约束其结果。**它仍不拥有 price band、STP、持久化、网络、性能或高可用保证。
 
 这条窄结论正是本单元的价值：先把一个执行策略轴做成可证明的状态机，再进入 M05 的版本化市场控制，而不是让下一个功能替尚未闭合的语义背书。

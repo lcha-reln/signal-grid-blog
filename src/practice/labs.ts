@@ -420,6 +420,145 @@ export const PRACTICE_LABS: readonly MatchingLabDefinition[] = [
       ],
     },
   },
+  {
+    kind: "MATCHING",
+    projectSlug: "high-availability-cex",
+    unitCode: "M04",
+    title: "执行策略与原子准入 Matching Lab",
+    summary:
+      "先回放 14 个固定 Java Golden 场景，再在隔离的浏览器模型中预测 GTC、IOC、FOK、POST_ONLY 与 Cancel 对事件、盘口和生命周期的影响。",
+    modes: MATCHING_LAB_MODES,
+    goldenReplay: {
+      presentation: "GOLDEN_HISTORY",
+      manifestPath: "practice/high-availability-cex/m04/evidence/manifest.json",
+      scenarioPackPath:
+        "practice/high-availability-cex/m04/evidence/reports/fixed-scenario-pack.json",
+      eventBatchesPath:
+        "practice/high-availability-cex/m04/evidence/reports/fixed-event-batches.json",
+      canonicalHistoryPath:
+        "practice/high-availability-cex/m04/evidence/reports/fixed-history.canonical.utf8",
+      checkBindings: {
+        digestField: "fixedCorpus.canonicalDigest",
+        scenarioCountField: "fixedCorpus.scenarios",
+        commandCountField: "fixedCorpus.commands",
+      },
+      supportingReports: [],
+      digest:
+        "sha256:68de35e41358ea72c9852fdf3fd652db116774964360f0b526f43612576bfa77",
+      metrics: [
+        { label: "SCENARIOS", value: "14", note: "固定执行策略场景" },
+        { label: "COMMANDS", value: "48", note: "逐命令事件与盘口" },
+        { label: "GENERATED", value: "12,288", note: "独立 reference 对拍边界" },
+        { label: "COVERAGE", value: "23 / 23", note: "语义覆盖义务" },
+      ],
+      scenarios: [
+        {
+          id: "legacy-gtc-and-cancel",
+          title: "Legacy GTC 与撤单",
+          focus: "旧 place 入口继续产生 GTC 业务语义，并保留可寻址撤单和不可逆终态。",
+          commands: 2,
+        },
+        {
+          id: "unknown-policy-priority",
+          title: "未知策略与首错优先级",
+          focus: "五字段验证、非法 policy 与 duplicate 的顺序稳定，拒绝路径不占身份和 sequence。",
+          commands: 3,
+        },
+        {
+          id: "ioc-zero-fill",
+          title: "IOC 零成交",
+          focus: "空流动性仍先 Accepted，再以全部正余量的 RemainderCanceled 进入 CANCELED。",
+          commands: 3,
+        },
+        {
+          id: "ioc-partial-fill",
+          title: "IOC 部分成交",
+          focus: "限价内成交后只取消精确余量，不产生 Rested，也不释放已成交数量。",
+          commands: 3,
+        },
+        {
+          id: "ioc-full-multi-level",
+          title: "IOC 多价位全成",
+          focus: "沿价格时间顺序跨档成交，完全填满时不制造零数量余量事件。",
+          commands: 3,
+        },
+        {
+          id: "ioc-price-protection",
+          title: "IOC 价格保护",
+          focus: "既有 priceTicks 仍是最差成交边界，边界外流动性不能被 IOC 穿透。",
+          commands: 3,
+        },
+        {
+          id: "fok-insufficient-atomic",
+          title: "FOK 不足时原子拒绝",
+          focus: "只读预检不足时在 Accepted 之前拒绝，盘口、maker、身份和 sequence 全部不变。",
+          commands: 4,
+        },
+        {
+          id: "fok-exact-multi-level",
+          title: "FOK 跨档恰好全成",
+          focus: "多价位总量恰好满足时一次接受并全量成交，不留下 Rested 或取消余量。",
+          commands: 4,
+        },
+        {
+          id: "fok-requires-all-levels",
+          title: "FOK 必须读取全部可成交档",
+          focus: "预检不能只看最佳价位，所有不劣于限价的流动性共同决定 fillability。",
+          commands: 3,
+        },
+        {
+          id: "fok-limit-price",
+          title: "FOK 排除限价外流动性",
+          focus: "总盘口看似充足也不够，限价之外的数量不能进入预检需求扣减。",
+          commands: 3,
+        },
+        {
+          id: "post-only-empty-and-noncrossing",
+          title: "Post-only 空簿与非交叉",
+          focus: "不会立即取单时才允许 Accepted 后完整 Rested，并保持 maker 身份。",
+          commands: 2,
+        },
+        {
+          id: "post-only-touch-and-cross",
+          title: "Post-only touch 与 cross",
+          focus: "命令开始时只要触碰或穿越最佳对手价，就在 Accepted 之前零副作用拒绝。",
+          commands: 4,
+        },
+        {
+          id: "policy-rejection-sequence",
+          title: "策略拒绝后的身份与序号",
+          focus: "FOK/Post-only 拒绝不预占 orderId；同 ID 后续合法请求仍获得连续 acceptance sequence。",
+          commands: 5,
+        },
+        {
+          id: "sell-side-symmetry",
+          title: "SELL 方向镜像",
+          focus: "IOC、FOK 与 Post-only 在卖方向复用同一 crossing、价格保护和原子准入合同。",
+          commands: 6,
+        },
+      ],
+    },
+    browserModel: {
+      instrumentId: "BTC-USDT",
+      supportedExecutionPolicies: ["GTC", "IOC", "FOK", "POST_ONLY"],
+      defaultExecutionPolicy: "GTC",
+      requireAcceptedExecutionPolicy: true,
+      minPriceTicks: "1",
+      maxPriceTicks: "1000000000000",
+      minQuantityLots: "1",
+      maxQuantityLots: "1000000000000",
+      maxOrderId: "9223372036854775807",
+      maxCommands: 24,
+      firstGeneratedOrderId: "10001",
+      supportedCommands: ["PLACE", "CANCEL"],
+      showLifecycleRegistry: true,
+      seedOrders: [
+        { orderId: "9001", side: "BUY", priceTicks: "99", quantityLots: "2" },
+        { orderId: "9002", side: "SELL", priceTicks: "101", quantityLots: "2" },
+        { orderId: "9003", side: "SELL", priceTicks: "102", quantityLots: "1" },
+      ],
+    },
+  },
 ];
 
 export function getPracticeLab(

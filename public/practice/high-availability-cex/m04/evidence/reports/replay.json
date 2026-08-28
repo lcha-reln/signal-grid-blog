@@ -1,0 +1,103 @@
+{
+  "schemaVersion" : "matching.m04.replay-report.v1",
+  "status" : "PASS",
+  "requested" : 8,
+  "completed" : 8,
+  "scenarios" : [ {
+    "scenarioId" : "ioc-remainder-rests",
+    "mutantId" : "M04-IOC-REMAINDER-RESTS",
+    "commands" : 1,
+    "expectedFingerprint" : "EXECUTION_POLICY_GRAMMAR/IOC_REMAINDER_RESTED",
+    "actualFingerprint" : "EXECUTION_POLICY_GRAMMAR/IOC_REMAINDER_RESTED",
+    "classification" : "STUDENT_FAILURE",
+    "referenceOutcomesExact" : true,
+    "actualOutcomeExact" : true,
+    "provenanceExact" : true,
+    "oneMinimalReverified" : true,
+    "passed" : true
+  }, {
+    "scenarioId" : "ioc-behaves-like-fok",
+    "mutantId" : "M04-IOC-BEHAVES-LIKE-FOK",
+    "commands" : 1,
+    "expectedFingerprint" : "IOC_IMMEDIATE_EXECUTION/IOC_WAS_PRECHECK_REJECTED",
+    "actualFingerprint" : "IOC_IMMEDIATE_EXECUTION/IOC_WAS_PRECHECK_REJECTED",
+    "classification" : "STUDENT_FAILURE",
+    "referenceOutcomesExact" : true,
+    "actualOutcomeExact" : true,
+    "provenanceExact" : true,
+    "oneMinimalReverified" : true,
+    "passed" : true
+  }, {
+    "scenarioId" : "fok-partial-state-leak",
+    "mutantId" : "M04-FOK-PARTIAL-STATE-LEAK",
+    "commands" : 2,
+    "expectedFingerprint" : "POLICY_REJECTION_ATOMICITY/FOK_REJECTION_CHANGED_BOOK",
+    "actualFingerprint" : "POLICY_REJECTION_ATOMICITY/FOK_REJECTION_CHANGED_BOOK",
+    "classification" : "STUDENT_FAILURE",
+    "referenceOutcomesExact" : true,
+    "actualOutcomeExact" : true,
+    "provenanceExact" : true,
+    "oneMinimalReverified" : true,
+    "passed" : true
+  }, {
+    "scenarioId" : "fok-best-level-only",
+    "mutantId" : "M04-FOK-BEST-LEVEL-ONLY",
+    "commands" : 4,
+    "expectedFingerprint" : "FOK_FILLABILITY/MULTI_LEVEL_LIQUIDITY_IGNORED",
+    "actualFingerprint" : "FOK_FILLABILITY/MULTI_LEVEL_LIQUIDITY_IGNORED",
+    "classification" : "STUDENT_FAILURE",
+    "referenceOutcomesExact" : true,
+    "actualOutcomeExact" : true,
+    "provenanceExact" : true,
+    "oneMinimalReverified" : true,
+    "passed" : true
+  }, {
+    "scenarioId" : "fok-ignores-limit-price",
+    "mutantId" : "M04-FOK-IGNORES-LIMIT-PRICE",
+    "commands" : 2,
+    "expectedFingerprint" : "FOK_FILLABILITY/OUTSIDE_LIMIT_LIQUIDITY_COUNTED",
+    "actualFingerprint" : "FOK_FILLABILITY/OUTSIDE_LIMIT_LIQUIDITY_COUNTED",
+    "classification" : "STUDENT_FAILURE",
+    "referenceOutcomesExact" : true,
+    "actualOutcomeExact" : true,
+    "provenanceExact" : true,
+    "oneMinimalReverified" : true,
+    "passed" : true
+  }, {
+    "scenarioId" : "post-only-touch-accepted",
+    "mutantId" : "M04-POST-ONLY-TOUCH-ACCEPTED",
+    "commands" : 2,
+    "expectedFingerprint" : "POST_ONLY_ADMISSION/TOUCH_WAS_ACCEPTED",
+    "actualFingerprint" : "POST_ONLY_ADMISSION/TOUCH_WAS_ACCEPTED",
+    "classification" : "STUDENT_FAILURE",
+    "referenceOutcomesExact" : true,
+    "actualOutcomeExact" : true,
+    "provenanceExact" : true,
+    "oneMinimalReverified" : true,
+    "passed" : true
+  }, {
+    "scenarioId" : "policy-reject-consumes-identity",
+    "mutantId" : "M04-POLICY-REJECT-CONSUMES-IDENTITY",
+    "commands" : 2,
+    "expectedFingerprint" : "POLICY_REJECTION_ATOMICITY/REJECTED_ID_RESERVED",
+    "actualFingerprint" : "POLICY_REJECTION_ATOMICITY/REJECTED_ID_RESERVED",
+    "classification" : "STUDENT_FAILURE",
+    "referenceOutcomesExact" : true,
+    "actualOutcomeExact" : true,
+    "provenanceExact" : true,
+    "oneMinimalReverified" : true,
+    "passed" : true
+  }, {
+    "scenarioId" : "unknown-policy-defaults-gtc",
+    "mutantId" : "M04-UNKNOWN-POLICY-DEFAULTS-GTC",
+    "commands" : 1,
+    "expectedFingerprint" : "VALIDATION_PRIORITY_AND_NO_MUTATION/UNKNOWN_POLICY_ACCEPTED",
+    "actualFingerprint" : "VALIDATION_PRIORITY_AND_NO_MUTATION/UNKNOWN_POLICY_ACCEPTED",
+    "classification" : "STUDENT_FAILURE",
+    "referenceOutcomesExact" : true,
+    "actualOutcomeExact" : true,
+    "provenanceExact" : true,
+    "oneMinimalReverified" : true,
+    "passed" : true
+  } ]
+}
