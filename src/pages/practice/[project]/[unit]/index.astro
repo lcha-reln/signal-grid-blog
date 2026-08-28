@@ -133,7 +133,10 @@ const lab = unit.lifecycle === "PUBLISHED"
           <div><dt>START</dt><dd>{unit.startRef ? <code>{unit.startRef}</code> : "等待 READY 门禁"}</dd></div>
           <div><dt>COMPLETE</dt><dd>{unit.completeRef ? <code>{unit.completeRef}</code> : "等待代码门禁"}</dd></div>
           <div><dt>COMMIT</dt><dd>{unit.completeCommit ? <code>{unit.completeCommit}</code> : "等待代码门禁"}</dd></div>
-          <div><dt>RELEASE</dt><dd>{unit.productRelease ?? "NOT_APPLICABLE"}</dd></div>
+          <div>
+            <dt>RELEASE</dt>
+            <dd>{unit.productRelease ?? (unit.releaseTarget ? `TARGET · ${unit.releaseTarget}` : "NOT_APPLICABLE")}</dd>
+          </div>
         </dl>
         <div class="hero-actions">
           {startUrl && <a class="button primary" href={startUrl} target="_blank" rel="noreferrer">查看起点 <span>↗</span></a>}

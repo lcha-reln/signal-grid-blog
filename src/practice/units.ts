@@ -51,6 +51,7 @@ export interface PracticeUnit {
   supersededStartRefs?: readonly SupersededPracticeRef[];
   completeRef?: string;
   completeCommit?: string;
+  releaseTarget?: string;
   productRelease?: string;
   evidencePath?: string;
   evidenceUrl?: string;
@@ -543,7 +544,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     order: 10,
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.1",
-    planCompatibility: "PLAN v0.4 冻结 M02 的可寻址订单生命周期合同；M00 输入、验证、canonical history、digest 与 evidence 合同不变。",
+    planCompatibility: "PLAN v0.5 冻结 M03 的独立参考模型、确定性生成历史、反例缩小与 matching-0.1.0 发布合同；M00 输入、验证、canonical history、digest 与 evidence 合同不变。",
     prerequisiteUnitCodes: [],
     startRef: "course/m00.2-start",
     supersededStartRefs: [
@@ -794,7 +795,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     order: 20,
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.3",
-    planCompatibility: "PLAN v0.4 冻结 M02 的订单索引、撤单与不可逆终态合同；M01 价格时间优先、事件 batch、Golden corpus 与 evidence 合同不变。",
+    planCompatibility: "PLAN v0.5 冻结 M03 的独立参考模型、确定性生成历史、反例缩小与 matching-0.1.0 发布合同；M01 价格时间优先、事件 batch、Golden corpus 与 evidence 合同不变。",
     prerequisiteUnitCodes: ["M00"],
     startRef: "course/m01-start",
     completeRef: "course/m01-complete",
@@ -1316,6 +1317,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     order: 30,
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.4",
+    planCompatibility: "PLAN v0.5 冻结 M03 的独立参考模型、确定性生成历史、反例缩小与 matching-0.1.0 发布合同；M02 可寻址生命周期、10/34 corpus、M02H1 与 evidence 合同不变。",
     prerequisiteUnitCodes: ["M01"],
     startRef: "course/m02-start",
     completeRef: "course/m02-complete",
@@ -1381,6 +1383,83 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
       "./gradlew clean build --no-daemon",
       "./gradlew m02Check --no-daemon",
       "./gradlew m02Evidence -Pm02.unitTag=course/m02-complete --no-daemon",
+    ],
+  },
+  {
+    projectSlug: "high-availability-cex",
+    profileVersion: "SPOT-CEX-1.0",
+    code: "M03",
+    trackCode: "M",
+    title: "独立参考模型与性质测试",
+    summary: "在不增加交易功能的前提下，以结构独立的线性参考模型、确定性生成历史和可重放最小反例检验 M00–M02 的累计撮合语义。",
+    objective: "让生产撮合器在每条生成命令后与独立参考结果精确一致，并让六类业务错误都能被发现、缩小、持久化和严格重放。",
+    order: 40,
+    lifecycle: "IN_PROGRESS",
+    contractPlanVersion: "0.5",
+    prerequisiteUnitCodes: ["M02"],
+    startRef: "course/m03-start",
+    releaseTarget: "matching-0.1.0",
+    expectedLessons: [
+      { lessonOrder: 10, permalink: "independent-reference-model-boundary" },
+      { lessonOrder: 20, permalink: "generated-history-differential-testing" },
+      { lessonOrder: 30, permalink: "shrink-replay-minimal-counterexamples" },
+      { lessonOrder: 40, permalink: "property-mutants-release-evidence" },
+    ],
+    adds: [
+      "独立可执行参考模型与确定性生成历史裁判：逐命令对拍、第三方事件账本、反例缩小、持久化和严格重放",
+    ],
+    delivers: [
+      "test-only matching-reference module；其依赖图不包含 matching-core 或 matching-testkit，并以扁平订单列表和完整线性扫描实现独立语义",
+      "repository-owned splitmix64-v1 生成器，以 seed 6824 生成 256 条 fresh-engine 历史、每条恰好 64 个 PLACE/CANCEL 命令",
+      "M03ProductionCandidate、LinearReferenceModel 与 M03PropertyJudge 三条观察路径逐命令比较完整有序事件和 full-depth bookAfter",
+      "六项 required semantic mutant 的确定性发现、ddmin/scalar shrink、完整最小历史持久化、one-minimal 检查和严格 replay 合同",
+      "命名停止点 matching-0.1.0 的发布目标；只有 M03 完成 tag、产品 tag 与 clean-tree evidence 收敛到同一提交后才成为实际 release",
+    ],
+    freezes: [
+      "生产命令和事件面继续严格等于 M02 的 PLACE | CANCEL；M03 不增加订单类型、交易对、服务或运行时能力",
+      "fixture matching-testkit/src/test/resources/m03/fixtures/property-suite-v1.json 由 matching.m03.generator.v1 严格校验，冻结 SHA-256 3e051347b9bd42aac431d02949c0c1b72daa667d10a03cc8aeb09a6b5a74d24e",
+      "生成器只使用 splitmix64-v1、十进制 base seed 6824 和 history index 派生 seed；机器、墙钟、环境、JDK Random 与集合迭代顺序不得影响命令字节",
+      "套件恰好 256 条 history × 64 条 command，共 16384 个逐命令边界；四个 lane 为 BEST_PRICE、SAME_PRICE_FIFO、MAKER_PRICE、CANCELED_IDENTITY，每 lane 恰好 64 条 history",
+      "lane 前缀只构造输入覆盖，不携带手写 expected；其余命令冻结 65/35 Place/Cancel 权重，每个 raw field 有确定性的 1/32 非法分支，orderId 域为 1..32 并有意产生 active/terminal duplicate",
+      "裁判先检查 event grammar、正交易量和数量分区，再检查盘口排序/FIFO/无空价位/无交叉、事件账本与 resting book 双向一致，最后比较 production 与 reference 的完整事件和盘口",
+      "业务不一致必须分类为 STUDENT_FAILURE；candidate 异常、畸形输出、生成器/Schema/文件系统/裁判错误必须分类为 SYSTEM_ERROR 并失败关闭",
+      "shrinker 依次执行 deterministic chunk deletion、single-command fixed point 和 raw scalar simplification；每次从 fresh candidate/reference/ledger 重放，并保持同一 property fingerprint",
+      "matching.m03.counterexamples.v1 必须为每个 required mutant 保存完整最小命令历史、每步 reference outcome、首次 actual mismatch、seed、原始/最小长度、fingerprint 和 one-minimal 结果；M03X1 禁止路径、类名、时间和 Git 元数据",
+      "course/m03-complete 与 annotated matching-0.1.0 必须 peeled 到同一 clean commit，manifest productRelease 必须等于 matching-0.1.0",
+    ],
+    excludes: [
+      "commandId、durable idempotency、Cancel/Replace、Mass Cancel、IOC、FOK、Post-only、市价单、STP、市场状态和价格带",
+      "第二交易对、账户、资产、仓位、手续费、结算、风控与 terminal tombstone 回收",
+      "WAL、Snapshot、数据库、网络、线程、性能布局、benchmark、SBE、Aeron 与高可用",
+      "教程正文、Matching Lab、公开 evidence、course/m03-complete 和实际 matching-0.1.0 release；这些必须等待各自后续生命周期门禁",
+    ],
+    gate: [
+      "M00–M02 累计回归保持 PASS；matching-core 继续满足 M02 的无 I/O、网络、线程、时钟、随机数和 Aeron 架构边界",
+      "同一 fixture 两次 fresh generation 产生逐字节一致的 16384 命令和唯一 digest，全部 production/reference 边界与第三事件账本性质检查通过",
+      "M03-BEST-PRICE-LAST、M03-SAME-PRICE-LIFO、M03-TAKER-PRICE-TRADE、M03-TRADE-QUANTITY-OVERFLOW、M03-CANCEL-GHOST-BOOK、M03-CANCELED-ID-REUSE 六项 mutant 均被生成套件发现",
+      "六项反例都缩短为非空且严格更短的历史，完整持久化，通过 one-minimal 检查，并在 strict schema replay 中复现相同 STUDENT_FAILURE fingerprint",
+      "throwing control 保持 SYSTEM_ERROR，不能被计作 semantic mutant 被杀死",
+      "matching-reference 的 Gradle 依赖与源码架构门禁证明其不依赖 core/testkit，且使用线性扫描而非复制生产 TreeMap + per-level queue 结构",
+      "完成时 course/m03-complete、matching-0.1.0、source commit、manifest、artifact SHA-256 与精确 limitations 一致；当前 IN_PROGRESS 阶段不得提前创建这些身份",
+    ],
+    interaction: [
+      "L0 预测：给定一条有意缺陷历史，先判断最先破坏的是 event grammar、数量、盘口、生命周期还是 differential equality",
+      "worked example：手工比较生产候选、线性参考模型和第三事件账本在 SAME_PRICE_FIFO lane 的逐命令观察",
+      "completion problem：补全 deterministic chunk deletion，使每次尝试都从 fresh state 重放并保持 property fingerprint",
+      "independent variant：对 CANCELED_IDENTITY lane 改变表面价格和方向，验证 shrink 后仍暴露同一终态复活错误",
+      "M03 发布阶段才登记共享 Matching Lab；当前合同阶段不创建页面、静态语料或浏览器模型入口",
+    ],
+    evidence: [
+      "冻结 generator fixture、Schema、两次命令字节 digest、lane/边界覆盖和 16384 次 differential/property 检查报告",
+      "matching-reference 独立依赖/结构报告、M00–M02 回归和 matching-core 架构报告",
+      "六项 mutant 的原始失败、最小 counterexample、one-minimal 结果、strict replay fingerprint 与 throwing SYSTEM_ERROR control",
+      "完成阶段才生成 tag-bound manifest、M03X1 canonical bytes、artifact SHA-256、matching-0.1.0 identity 与不夸大的 limitations",
+    ],
+    stopPoint: "目标停止点 matching-0.1.0：一个经独立参考模型和有界生成式性质门禁验证的单交易对 GTC 限价撮合器，支持可寻址撤单，但仍是单进程内存实现，不持久、不联网、不高可用，也不宣称形式化完备或生产就绪。",
+    localCommands: [
+      "git switch -c unit/m03 course/m03-start",
+      "./gradlew clean build --no-daemon",
+      "./gradlew m03Check --no-daemon",
     ],
   },
 ];

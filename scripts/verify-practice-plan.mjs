@@ -396,6 +396,7 @@ for (const practiceCase of PRACTICE_CASES) {
 
 const unitKeys = new Set();
 const unitOrders = new Set();
+const releaseTargetKeys = new Set();
 const unitsByKey = new Map();
 for (const unit of PRACTICE_UNITS) {
   const key = `${unit.projectSlug}/${unit.code}`;
@@ -424,6 +425,42 @@ for (const unit of PRACTICE_UNITS) {
   assert(typeof unit.stopPoint === "string" && unit.stopPoint.trim(), `${key}: empty stopPoint`);
   assert(/^\d+\.\d+$/.test(unit.contractPlanVersion), `${key}: invalid contractPlanVersion`);
   const lifecycleRank = lifecycleRanks.get(unit.lifecycle) ?? -1;
+  if (unit.releaseTarget) {
+    const releaseTargetKey = `${unit.projectSlug}/${unit.releaseTarget}`;
+    assert(
+      /^[a-z][a-z0-9-]*-\d+\.\d+\.\d+$/.test(unit.releaseTarget),
+      `${key}: invalid releaseTarget`,
+    );
+    assert(
+      practiceCase?.milestones.some((milestone) => milestone.version === unit.releaseTarget),
+      `${key}: releaseTarget is not a declared case milestone`,
+    );
+    assert(
+      unit.stopPoint.includes(unit.releaseTarget),
+      `${key}: stopPoint omits releaseTarget`,
+    );
+    assert(!releaseTargetKeys.has(releaseTargetKey), `${key}: duplicate releaseTarget`);
+    releaseTargetKeys.add(releaseTargetKey);
+  }
+  if (unit.productRelease) {
+    assert(
+      lifecycleRank >= lifecycleRanks.get("CODE_VERIFIED"),
+      `${key}: productRelease cannot exist before CODE_VERIFIED`,
+    );
+    assert(
+      unit.productRelease === unit.releaseTarget,
+      `${key}: productRelease differs from releaseTarget`,
+    );
+  }
+  if (unit.releaseTarget && lifecycleRank >= lifecycleRanks.get("CODE_VERIFIED")) {
+    assert(
+      unit.productRelease === unit.releaseTarget,
+      `${key}: named stop point requires its productRelease from CODE_VERIFIED onward`,
+    );
+  }
+  if (!unit.releaseTarget) {
+    assert(!unit.productRelease, `${key}: productRelease has no declared releaseTarget`);
+  }
   if (lifecycleRank >= lifecycleRanks.get("READY")) {
     assert(isFixedCourseRef(unit.startRef, "start"), `${key}: invalid or floating startRef`);
     assert(unit.startRef?.startsWith(`course/${unit.code.toLowerCase()}`), `${key}: startRef belongs to another unit`);
@@ -985,6 +1022,7 @@ for (const practiceCase of PRACTICE_CASES) {
       }
     }
     if (unit.startRef) assertIncludes(design, unit.startRef, `${key} design`);
+    if (unit.releaseTarget) assertIncludes(design, unit.releaseTarget, `${key} release target design`);
     if (unit.completeCommit) assertIncludes(design, unit.completeCommit, `${key} complete commit design`);
     assertIncludes(
       design,
@@ -1027,6 +1065,7 @@ for (const practiceCase of PRACTICE_CASES) {
         assertIncludes(unitHtml, unit.startRef, `${practiceCase.slug}/${unit.code} dist`);
         if (unit.completeRef) assertIncludes(unitHtml, unit.completeRef, `${practiceCase.slug}/${unit.code} complete ref dist`);
         if (unit.completeCommit) assertIncludes(unitHtml, unit.completeCommit, `${practiceCase.slug}/${unit.code} complete commit dist`);
+        if (unit.releaseTarget) assertIncludes(unitHtml, `TARGET · ${unit.releaseTarget}`, `${practiceCase.slug}/${unit.code} release target dist`);
         if (unit.lifecycle === "PUBLISHED") {
           assertIncludes(unitHtml, unit.evidenceUrl, `${practiceCase.slug}/${unit.code} evidence URL dist`);
           const localEvidence = localEvidenceRelativePath(unit.evidenceUrl);
