@@ -2,7 +2,7 @@
 title: "Aeron 升级工程：协议兼容、Archive 迁移、Cluster 滚动重启与回滚"
 description: "以 Aeron 1.52.2 为固定基线，拆解 client/driver、Archive、Cluster、SBE 与持久化状态的版本合同，说明何时必须停机迁移、何时才有资格逐节点重启，以及怎样保留真正可用的回滚点。"
 date: 2026-08-17T22:56:29+08:00
-updated: 2026-08-17T23:42:09+08:00
+updated: 2026-08-28T10:32:00+08:00
 tags:
   - Aeron
   - Aeron Archive
@@ -25,6 +25,8 @@ draft: false
 本文固定在 **Aeron 1.52.2** 源码与官方文档上讨论。文中的协议号、Archive format 和具体命令都是这个 tag 的事实，不是对未来版本的承诺。核心结论只有一句：
 
 > 只有当精确的旧/新版本组合，已经证明能读取同一份历史、执行相同的确定性语义，并在故障注入后恢复到同一 committed prefix，逐节点重启才是一个可接受方案；否则默认方案应是协调停机、离线迁移和整组恢复。
+
+本文处理的是 Aeron 组件、协议与介质的具体约束。跨产品的 `prepare → activate → finalize`、mixed-version safety、快照迁移与不可逆回滚边界归属于[有状态系统滚动升级](/signal-grid-blog/posts/stateful-system-rolling-upgrades-protocol-snapshot-migration-safe-rollback/)；升级前的隔离恢复基线、恢复顺序和 RPO/RTO 证据则归属于[备份、PITR 与灾难恢复](/signal-grid-blog/posts/backup-pitr-disaster-recovery-and-restore-drills/)。Aeron 的工具和版本字段必须服从这两份更高层合同，而不能替代它们。
 
 ## 升级的对象不是 JAR，而是五份版本合同
 

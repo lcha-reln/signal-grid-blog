@@ -1,8 +1,8 @@
 ---
 title: Aeron 全栈导读：Transport、Archive、Cluster 与 Agrona 的边界
-description: 以 Aeron 1.52.2 为基线，先建立 Transport、SBE、Archive、Cluster 与 Agrona 的完整心智模型，澄清协议、流、Image、Position、持久化、全序和 exactly-once 的真实边界，再进入后续 22 个深挖章节。
+description: 以 Aeron 1.52.2 为基线，先建立 Transport、SBE、Archive、Cluster 与 Agrona 的完整心智模型，澄清协议、流、Image、Position、持久化、全序和 exactly-once 的真实边界，再进入后续 25 个深挖章节。
 date: 2026-08-13T18:05:00+08:00
-updated: 2026-08-17T23:42:09+08:00
+updated: 2026-08-28T10:30:00+08:00
 tags:
   - Aeron
   - Aeron Transport
@@ -227,6 +227,8 @@ while (publication.offer(buffer) < 0)
 
 Cluster ingress、egress、Archive 控制请求和 replay publication 同样会遇到背压。把返回值丢掉，等于把系统最重要的容量信号静默删除。
 
+这里的 `BACK_PRESSURED` 是局部传输容量事实，不自动决定业务应继续排队、拒绝入口还是丢弃低优先级工作。当压力跨越 Gateway、重试队列和下游服务时，完整控制闭环归属于[过载、Admission Control、Retry Budget 与 Load Shedding](/signal-grid-blog/posts/overload-backpressure-admission-control-retry-budget-load-shedding/)：Aeron 暴露信号，系统级容量协议负责决定接受什么以及牺牲什么。
+
 ## 7. 线程与所有权比 API 名称更重要
 
 Aeron/Agrona 的低分配路径大量复用内存与对象。每使用一个 API，都应先标出线程归属和所有权转移：
@@ -296,7 +298,7 @@ aeron:udp?endpoint=10.20.0.12:40123
 
 ## 11. 本专题怎样阅读
 
-后续 22 章按真实依赖分为四段：
+后续 25 章按真实依赖分为五段：
 
 ### 阶段一：Aeron Transport
 
@@ -314,9 +316,13 @@ aeron:udp?endpoint=10.20.0.12:40123
 
 最后把协议、Archive、Snapshot 和混合版本的兼容边界组织成升级与回滚过程，再用三节点故障实验验证 Leader 崩溃、慢 Follower、网络分区、磁盘压力、坏 Snapshot 与 Backup 恢复。完成后，升级成功和“系统可恢复”都必须有位置、状态摘要、请求历史、RPO 与 RTO 证据，而不是只看进程重新启动。
 
+### 阶段五：跨专题高级连接
+
+主线完成后，再深入三个容易被局部 API 掩盖的系统问题：先把 CnC、ClientConductor、Counters 与资源关闭还原成客户端控制协议；再把 recording position、业务索引、Checkpoint 与 Range Replay 组合成可证明的重建时间线；最后把单个 Cluster 作为 shard owner，依赖 Availability 的所有权、代际与 fencing 协议完成多 Cluster 迁移。完成后，应能明确说出哪些事实由 Aeron 提供，哪些正确性合同必须由业务控制面和权威下游共同实现。
+
 Cookbook 中的端口、fragment、timeout、Wireshark、慢客户端、startup task 与 Kubernetes 等问题，会放进对应原理章节，不另做一组脱离上下文的“问答摘抄”。
 
-有了这张地图，后面每个 API 就不再是孤立技巧：Channel 决定匹配与拓扑，Image 给出顺序作用域，Position 连接 live log 与 recording，Archive 连接历史与实时，Cluster 则只把**已经提交的总序事件**交给确定性状态机。Aeron 的价值不只在“快”，更在于它把容量、位置、线程和恢复边界暴露成可以测量和推理的协议。
+有了这张地图，后面每个 API 就不再是孤立技巧：Channel 决定匹配与拓扑，Image 给出顺序作用域，Position 连接 live log 与 recording，Archive 连接历史与实时，Cluster 则只把**已经提交的总序事件**交给确定性状态机。高级连接篇继续把这些局部事实接入结果未知、一致检查点、滚动升级、故障验证与状态所有权迁移。Aeron 的价值不只在“快”，更在于它把容量、位置、线程和恢复边界暴露成可以测量和推理的协议。
 
 ## 参考资料
 

@@ -2,7 +2,7 @@
 title: "Aeron Cluster：生产部署与灾备——拓扑、安全与 Cluster Backup"
 description: "围绕三到五成员拓扑、channel 与磁盘、Kubernetes StatefulSet、安全默认值和 Cluster Backup，说明生产部署的故障域、持久化、认证授权、RPO/RTO 与静态成员边界。"
 date: 2026-08-13T11:40:00+08:00
-updated: 2026-08-17T23:42:09+08:00
+updated: 2026-08-28T10:34:00+08:00
 tags:
   - Aeron Cluster
   - 生产部署
@@ -20,6 +20,8 @@ draft: false
 一个 Aeron Cluster sample 在三台笔记本上跑起来，并不等于获得了生产级高可用。真实部署必须同时处理多数派故障域、UDP 网络、Archive 持久盘、节点身份、认证授权、备份恢复和可测量的 RPO/RTO。
 
 这一章不会给出一份可以原样复制的万能配置。它提供的是配置之间的因果关系：哪个 endpoint 服务哪条路径，哪些目录必须持久化，Backup 为什么不能投票，Kubernetes 的 `/dev/shm` 应放什么，以及默认安全实现究竟允许了什么。
+
+Cluster Backup 是 Aeron 的具体恢复材料生产者，不等于完整的灾难恢复系统。威胁模型、不可变备份、跨故障域复制、schema/config/key 的共同恢复、PITR timeline、恢复顺序、对账与演练归属于[备份、PITR 与灾难恢复](/signal-grid-blog/posts/backup-pitr-disaster-recovery-and-restore-drills/)；本章只说明 Aeron 部署怎样满足其中属于 Cluster、Archive 与 Backup 的那部分合同。
 
 ## 从故障模型推出成员与运行拓扑
 

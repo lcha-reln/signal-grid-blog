@@ -2,7 +2,7 @@
 title: "Aeron 可恢复服务实战：Request/Response、Archive 录制、Checkpoint 与断线追赶"
 description: "以 Aeron 1.52.2 为基线，把 Response Channels、单写者命令日志、Archive 录制位置、业务 Checkpoint、Replay 与 PersistentSubscription 串成一套可验证的服务恢复协议。"
 date: 2026-08-17T22:30:00+08:00
-updated: 2026-08-17T23:42:09+08:00
+updated: 2026-08-28T10:31:00+08:00
 tags:
   - Aeron
   - Aeron Archive
@@ -97,6 +97,8 @@ CommandEnvelope {
 > 对同一个 `(clientId, requestId)`，状态机最多产生一次业务状态转换；无论响应发送多少次，返回的完成结果都相同。
 
 这不是 Transport 的 exactly-once，而是业务状态机利用权威日志与结果台账构造出的效果去重。
+
+Aeron 只让这个窗口更容易定位，并没有改变跨系统副作用的通用结论。稳定意图身份、结果查询、去重生命周期、Outbox/Inbox 与不可补偿效果的完整归属在[结果未知与幂等协议](/signal-grid-blog/posts/cross-system-side-effects-idempotency-outbox-inbox-2pc-saga/)；本章把其中的同一正确性合同落实到 Aeron request/response 与 replay 上。
 
 ## Response Channels 建立回程，但业务协议仍要处理结果未知
 
@@ -373,6 +375,8 @@ ControlledFragmentHandler.Action onCanonicalMessage(
 ### Checkpoint 是一项业务原子提交
 
 Archive recording position 表示“录制摄取到了哪里”，不表示业务“应用到了哪里”。真正可用的 Checkpoint 至少包含：
+
+而且这仍只是单条权威输入流的恢复边界。服务若同时消费多条输入、保存跨组件状态或提交外部 Sink，一个裸 position 不能构成 consistent cut；State、所有 Source Cursor、在途消息与输出决议如何进入同一代次，应回到[分布式快照与一致检查点](/signal-grid-blog/posts/distributed-snapshots-consistent-checkpoints-barriers-recovery-cursors/)的通用协议。
 
 ```text
 Checkpoint {

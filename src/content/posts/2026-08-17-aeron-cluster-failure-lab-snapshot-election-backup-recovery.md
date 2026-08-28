@@ -2,7 +2,7 @@
 title: "Aeron Cluster 故障实验室：三节点、Snapshot、选举、Backup 与恢复验收"
 description: "以 Aeron 1.52.2 三节点集群为实验对象，把 Leader 崩溃、慢 Follower、网络分区、磁盘耗尽、坏 Snapshot 与 Cluster Backup 恢复变成可重复故障剧本，并用请求三态、位置、状态摘要、RPO 与 RTO 判断恢复是否真正成立。"
 date: 2026-08-17T22:55:00+08:00
-updated: 2026-08-17T23:42:09+08:00
+updated: 2026-08-28T10:33:00+08:00
 tags:
   - Aeron Cluster
   - 故障注入
@@ -23,6 +23,8 @@ draft: false
 故障实验必须验证一份可判定的恢复合同：哪些请求一定存在，哪些一定不存在，哪些结果仍然未知；恢复后的状态是否等价于某个合法的已提交历史；旧 Leader 是否无法继续推进权威状态；RPO 与 RTO 是否落在预算内。
 
 本文以 **Aeron 1.52.2** 为固定基线。官方 Cluster Quickstart 提供三节点、管理客户端和 Cluster Backup 的运行骨架；这里不重复 Docker 命令，而是补上从“演示故障切换”到“验证恢复协议”之间缺失的实验方法。选举状态、Snapshot 格式、Backup 内部机制与 counters 可先回看前面的 [选举与 Catch-up](/signal-grid-blog/posts/aeron-cluster-elections-catchup-and-consistency/)、[Timers 与 Snapshots](/signal-grid-blog/posts/aeron-cluster-timers-snapshots-and-recovery/)、[部署与 Cluster Backup](/signal-grid-blog/posts/aeron-cluster-deployment-security-and-backup/) 和 [Cluster 运维](/signal-grid-blog/posts/aeron-cluster-operations-performance-and-troubleshooting/)。
+
+故障实验的方法论不归 Aeron 独占。如何从 invariant 推导 workload 与 fault schedule，怎样设置 Failpoint、接管不确定性、记录 History 并用 oracle 判定 safety/liveness，应以[恢复协议验证：Failpoint、确定性模拟与历史检查](/signal-grid-blog/posts/recovery-protocol-verification-failpoints-simulation-history-checking/)为通用框架；本章提供的是这套框架在 Aeron Cluster 上的产品化实验实例。
 
 ## 故障实验先定义判据，而不是先找一个进程杀掉
 
@@ -495,6 +497,8 @@ Aeron Cluster 已经提供多数派日志、选举、Snapshot、replay、catch-u
 一个合格故障实验不会停在“新 Leader 出现”。它会把故障前后的请求历史、commit/service positions、Snapshot set、Recording Log、Backup cut 和恢复后摘要放在一起，证明系统恢复到了某个合法已提交历史，并准确说出没有被证明的部分。
 
 做到这一点，Leader kill、坏 Snapshot 和远端恢复才不是舞台效果，而是可以在每次协议变更、JDK/Aeron 升级与部署调整后重复执行的回归测试。
+
+至此，Transport、Archive、Cluster、升级与故障验收的主线闭环完成。下一篇进入可选的高级连接阶段，从 [Aeron Client 控制面](/signal-grid-blog/posts/aeron-client-control-plane-cnc-client-conductor-counters-resource-lifecycle/)解释 CnC 注册、ClientConductor、Counters 与资源生命周期怎样组成另一条不能被热路径 API 掩盖的协议。
 
 ## 一手资料
 

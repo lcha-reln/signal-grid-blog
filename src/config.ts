@@ -67,11 +67,11 @@ export const SERIES: readonly SeriesDefinition[] = [
     title: "Aeron 系统工程",
     eyebrow: "AERON SYSTEMS",
     description:
-      "从 Transport 的可靠低延迟传输与 SBE 协议演进，到 Archive 录制、可恢复服务与历史追赶，再到 Cluster 的确定性状态机、边缘一致性、升级和故障验收，建立完整而可验证的 Aeron 心智模型。",
+      "从 Transport 的可靠低延迟传输与 SBE 协议演进，到 Archive 录制、可恢复服务与历史追赶，再到 Cluster 的确定性状态机、升级和故障验收，最后连接客户端控制面、业务时间线与多 Cluster 所有权迁移，建立完整而可验证的 Aeron 心智模型。",
     prerequisite:
       "熟悉 Java 17、线程与网络基础；建议先了解 UDP、背压和二进制 Buffer。Agrona 章节可作为底层原语补充阅读，不要求预先掌握 SBE。",
     outcome:
-      "能够正确设计可演进的 SBE 消息并组合 Transport、Archive 与 Cluster，解释位置、流控、持久化和一致性边界，完成断线追赶、边缘幂等、兼容升级与故障恢复验收。",
+      "能够正确设计可演进的 SBE 消息并组合 Transport、Archive 与 Cluster，解释控制面、位置、流控、持久化和一致性边界，完成断线追赶、业务时间线重建、边缘幂等、兼容升级、故障恢复验收与受 fencing 约束的多 Cluster 所有权迁移。",
     color: "cyan",
     index: "01",
     stages: [
@@ -106,6 +106,14 @@ export const SERIES: readonly SeriesDefinition[] = [
         description:
           "把协议兼容、Archive 与 Snapshot 迁移、回滚边界和三节点故障恢复变成可验证工程。",
         fromOrder: 175,
+      },
+      {
+        index: "05",
+        eyebrow: "ADVANCED SYSTEM CONNECTIONS",
+        title: "控制面、时间线与所有权",
+        description:
+          "把客户端注册与资源生命周期、业务索引和范围重建、多 Cluster 分片迁移连接到通用可靠性不变量。",
+        fromOrder: 190,
       },
     ],
   },

@@ -2,7 +2,7 @@
 title: Aeron Transport：Publication、Log Buffer 与发送热路径
 description: 以 Aeron 1.52.2 源码为准，拆解 ConcurrentPublication、ExclusivePublication、三段 term log、position、offer 返回码、tryClaim 所有权与发送侧背压。
 date: 2026-08-13T09:20:00+08:00
-updated: 2026-08-17T23:42:09+08:00
+updated: 2026-08-28T10:35:00+08:00
 tags:
   - Aeron
   - Aeron Transport
@@ -346,6 +346,8 @@ MDC 的连接判定还可能要求 receiver group 达到最小规模；spy 也�
 ### 6.3 `BACK_PRESSURED` 是容量事实
 
 背压通常意味着 Publication 已推进到 driver 允许的 publication limit。根因可能在不同位置：
+
+这个返回码的概念责任到此为止：它揭示局部容量不足，却不替整个系统决定排队、拒绝、降级或丢弃。跨越入口、重试与多个下游的 queue buildup、deadline propagation、Retry Budget、优先级和 Load Shedding，应回到[过载、Admission Control、Retry Budget 与 Load Shedding](/signal-grid-blog/posts/overload-backpressure-admission-control-retry-budget-load-shedding/)；本章继续负责怎样从 Aeron positions 与 counters 定位压力来自哪一段。
 
 ```mermaid
 flowchart TD

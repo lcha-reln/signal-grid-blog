@@ -31,8 +31,11 @@
 | Aeron Cluster   |      21 |           170 | Aeron Cluster：Counters、ClusterTool、性能与排障 Runbook                     | `aeron-cluster-operations-performance-and-troubleshooting`                            |
 | 升级与故障验收  |      22 |           175 | Aeron 升级工程：协议兼容、Archive 迁移、Cluster 滚动重启与回滚               | `aeron-upgrade-engineering-protocol-archive-cluster-rollback`                         |
 | 升级与故障验收  |      23 |           180 | Aeron Cluster 故障实验室：三节点、Snapshot、选举、Backup 与恢复验收          | `aeron-cluster-failure-lab-snapshot-election-backup-recovery`                         |
+| 跨专题高级连接  |      24 |           190 | Aeron Client 控制面：CnC 注册、ClientConductor、Counters 与资源生命周期      | `aeron-client-control-plane-cnc-client-conductor-counters-resource-lifecycle`         |
+| 跨专题高级连接  |      25 |           200 | 从 Recording Position 到业务时间线：Index、Checkpoint、Range Replay 与重建   | `aeron-recording-position-business-timeline-index-checkpoint-range-replay-rebuild`    |
+| 跨专题高级连接  |      26 |           210 | 多 Cluster 分片与 Ownership Migration                                        | `aeron-multi-cluster-sharding-ownership-migration`                                    |
 
-本路径以 Aeron 1.52.2、SBE 1.39.0 和对应官方文档、源码及 Javadoc 为版本基线。在线 Cookbook 用于补充实战问题，不替代核心概念与 API 事实。Transport 是 Archive 与 Cluster 的共同前提；SBE 把传输字节收敛为可演进协议；Archive 负责可定位的持久化流，并可与业务 Checkpoint 组合成可恢复服务；Cluster 在 Transport 与 Archive 之上建立确定性复制状态机，最后通过升级与故障实验验证整条恢复链。Agrona 不重复放入本路径，阅读 Buffer、Agent 与 IdleStrategy 时可回到 [Java 低延迟工程 Chapter 12](../src/content/posts/2026-03-10-agrona-direct-buffer-queues-and-agents.md)。
+本路径以 Aeron 1.52.2、SBE 1.39.0 和对应官方文档、源码及 Javadoc 为版本基线。在线 Cookbook 用于补充实战问题，不替代核心概念与 API 事实。Transport 是 Archive 与 Cluster 的共同前提；SBE 把传输字节收敛为可演进协议；Archive 负责可定位的持久化流，并可与业务 Checkpoint 组合成可恢复服务；Cluster 在 Transport 与 Archive 之上建立确定性复制状态机，再通过升级与故障实验验证整条恢复链。最后三篇不横向扩成 API 百科，而是把 Client 控制协议、position 到业务时间线的重建，以及多 Cluster shard ownership 接到 Availability 的过载、幂等、一致检查点、PITR、滚动升级、故障验证和状态所有权迁移合同。Agrona 不重复放入本路径，阅读 Buffer、Agent 与 IdleStrategy 时可回到 [Java 低延迟工程 Chapter 12](../src/content/posts/2026-03-10-agrona-direct-buffer-queues-and-agents.md)。
 
 ## 交易系统
 
