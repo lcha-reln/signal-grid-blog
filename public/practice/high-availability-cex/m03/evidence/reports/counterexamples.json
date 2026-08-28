@@ -1,0 +1,518 @@
+{
+  "schemaVersion" : "matching.m03.counterexample-report.v1",
+  "status" : "PASS",
+  "required" : 6,
+  "originalCommands" : 384,
+  "minimizedCommands" : 15,
+  "scenarios" : [ {
+    "scenarioId" : "best-price-last",
+    "cases" : [ {
+      "caseId" : "command-1",
+      "type" : "PLACE",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 1,
+        "side" : "SELL",
+        "priceTicks" : 1,
+        "quantityLots" : 1
+      },
+      "events" : [ {
+        "type" : "ACCEPTED",
+        "sequence" : 1,
+        "orderId" : 1,
+        "side" : "SELL",
+        "priceTicks" : 1,
+        "quantityLots" : 1
+      }, {
+        "type" : "RESTED",
+        "sequence" : 1,
+        "orderId" : 1,
+        "side" : "SELL",
+        "priceTicks" : 1,
+        "remainingQuantityLots" : 1
+      } ],
+      "bookAfter" : {
+        "bids" : [ ],
+        "asks" : [ {
+          "priceTicks" : 1,
+          "orders" : [ {
+            "sequence" : 1,
+            "orderId" : 1,
+            "remainingQuantityLots" : 1
+          } ]
+        } ]
+      }
+    }, {
+      "caseId" : "command-2",
+      "type" : "PLACE",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 2,
+        "side" : "SELL",
+        "priceTicks" : 3,
+        "quantityLots" : 1
+      },
+      "events" : [ {
+        "type" : "ACCEPTED",
+        "sequence" : 2,
+        "orderId" : 2,
+        "side" : "SELL",
+        "priceTicks" : 3,
+        "quantityLots" : 1
+      }, {
+        "type" : "RESTED",
+        "sequence" : 2,
+        "orderId" : 2,
+        "side" : "SELL",
+        "priceTicks" : 3,
+        "remainingQuantityLots" : 1
+      } ],
+      "bookAfter" : {
+        "bids" : [ ],
+        "asks" : [ {
+          "priceTicks" : 1,
+          "orders" : [ {
+            "sequence" : 1,
+            "orderId" : 1,
+            "remainingQuantityLots" : 1
+          } ]
+        }, {
+          "priceTicks" : 3,
+          "orders" : [ {
+            "sequence" : 2,
+            "orderId" : 2,
+            "remainingQuantityLots" : 1
+          } ]
+        } ]
+      }
+    }, {
+      "caseId" : "command-3",
+      "type" : "PLACE",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 3,
+        "side" : "BUY",
+        "priceTicks" : 3,
+        "quantityLots" : 2
+      },
+      "events" : [ {
+        "type" : "ACCEPTED",
+        "sequence" : 3,
+        "orderId" : 3,
+        "side" : "BUY",
+        "priceTicks" : 3,
+        "quantityLots" : 2
+      }, {
+        "type" : "TRADE",
+        "makerSequence" : 1,
+        "makerOrderId" : 1,
+        "takerSequence" : 3,
+        "takerOrderId" : 3,
+        "priceTicks" : 1,
+        "quantityLots" : 1
+      }, {
+        "type" : "TRADE",
+        "makerSequence" : 2,
+        "makerOrderId" : 2,
+        "takerSequence" : 3,
+        "takerOrderId" : 3,
+        "priceTicks" : 3,
+        "quantityLots" : 1
+      } ],
+      "bookAfter" : {
+        "bids" : [ ],
+        "asks" : [ ]
+      }
+    } ]
+  }, {
+    "scenarioId" : "same-price-lifo",
+    "cases" : [ {
+      "caseId" : "command-1",
+      "type" : "PLACE",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 1,
+        "side" : "SELL",
+        "priceTicks" : 101,
+        "quantityLots" : 1
+      },
+      "events" : [ {
+        "type" : "ACCEPTED",
+        "sequence" : 1,
+        "orderId" : 1,
+        "side" : "SELL",
+        "priceTicks" : 101,
+        "quantityLots" : 1
+      }, {
+        "type" : "RESTED",
+        "sequence" : 1,
+        "orderId" : 1,
+        "side" : "SELL",
+        "priceTicks" : 101,
+        "remainingQuantityLots" : 1
+      } ],
+      "bookAfter" : {
+        "bids" : [ ],
+        "asks" : [ {
+          "priceTicks" : 101,
+          "orders" : [ {
+            "sequence" : 1,
+            "orderId" : 1,
+            "remainingQuantityLots" : 1
+          } ]
+        } ]
+      }
+    }, {
+      "caseId" : "command-2",
+      "type" : "PLACE",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 3,
+        "side" : "SELL",
+        "priceTicks" : 101,
+        "quantityLots" : 1
+      },
+      "events" : [ {
+        "type" : "ACCEPTED",
+        "sequence" : 2,
+        "orderId" : 3,
+        "side" : "SELL",
+        "priceTicks" : 101,
+        "quantityLots" : 1
+      }, {
+        "type" : "RESTED",
+        "sequence" : 2,
+        "orderId" : 3,
+        "side" : "SELL",
+        "priceTicks" : 101,
+        "remainingQuantityLots" : 1
+      } ],
+      "bookAfter" : {
+        "bids" : [ ],
+        "asks" : [ {
+          "priceTicks" : 101,
+          "orders" : [ {
+            "sequence" : 1,
+            "orderId" : 1,
+            "remainingQuantityLots" : 1
+          }, {
+            "sequence" : 2,
+            "orderId" : 3,
+            "remainingQuantityLots" : 1
+          } ]
+        } ]
+      }
+    }, {
+      "caseId" : "command-3",
+      "type" : "PLACE",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 2,
+        "side" : "BUY",
+        "priceTicks" : 102,
+        "quantityLots" : 2
+      },
+      "events" : [ {
+        "type" : "ACCEPTED",
+        "sequence" : 3,
+        "orderId" : 2,
+        "side" : "BUY",
+        "priceTicks" : 102,
+        "quantityLots" : 2
+      }, {
+        "type" : "TRADE",
+        "makerSequence" : 1,
+        "makerOrderId" : 1,
+        "takerSequence" : 3,
+        "takerOrderId" : 2,
+        "priceTicks" : 101,
+        "quantityLots" : 1
+      }, {
+        "type" : "TRADE",
+        "makerSequence" : 2,
+        "makerOrderId" : 3,
+        "takerSequence" : 3,
+        "takerOrderId" : 2,
+        "priceTicks" : 101,
+        "quantityLots" : 1
+      } ],
+      "bookAfter" : {
+        "bids" : [ ],
+        "asks" : [ ]
+      }
+    } ]
+  }, {
+    "scenarioId" : "taker-price-trade",
+    "cases" : [ {
+      "caseId" : "command-1",
+      "type" : "PLACE",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 1,
+        "side" : "SELL",
+        "priceTicks" : 1,
+        "quantityLots" : 1
+      },
+      "events" : [ {
+        "type" : "ACCEPTED",
+        "sequence" : 1,
+        "orderId" : 1,
+        "side" : "SELL",
+        "priceTicks" : 1,
+        "quantityLots" : 1
+      }, {
+        "type" : "RESTED",
+        "sequence" : 1,
+        "orderId" : 1,
+        "side" : "SELL",
+        "priceTicks" : 1,
+        "remainingQuantityLots" : 1
+      } ],
+      "bookAfter" : {
+        "bids" : [ ],
+        "asks" : [ {
+          "priceTicks" : 1,
+          "orders" : [ {
+            "sequence" : 1,
+            "orderId" : 1,
+            "remainingQuantityLots" : 1
+          } ]
+        } ]
+      }
+    }, {
+      "caseId" : "command-2",
+      "type" : "PLACE",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 3,
+        "side" : "BUY",
+        "priceTicks" : 3,
+        "quantityLots" : 1
+      },
+      "events" : [ {
+        "type" : "ACCEPTED",
+        "sequence" : 2,
+        "orderId" : 3,
+        "side" : "BUY",
+        "priceTicks" : 3,
+        "quantityLots" : 1
+      }, {
+        "type" : "TRADE",
+        "makerSequence" : 1,
+        "makerOrderId" : 1,
+        "takerSequence" : 2,
+        "takerOrderId" : 3,
+        "priceTicks" : 1,
+        "quantityLots" : 1
+      } ],
+      "bookAfter" : {
+        "bids" : [ ],
+        "asks" : [ ]
+      }
+    } ]
+  }, {
+    "scenarioId" : "trade-quantity-overflow",
+    "cases" : [ {
+      "caseId" : "command-1",
+      "type" : "PLACE",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 1,
+        "side" : "SELL",
+        "priceTicks" : 1,
+        "quantityLots" : 1
+      },
+      "events" : [ {
+        "type" : "ACCEPTED",
+        "sequence" : 1,
+        "orderId" : 1,
+        "side" : "SELL",
+        "priceTicks" : 1,
+        "quantityLots" : 1
+      }, {
+        "type" : "RESTED",
+        "sequence" : 1,
+        "orderId" : 1,
+        "side" : "SELL",
+        "priceTicks" : 1,
+        "remainingQuantityLots" : 1
+      } ],
+      "bookAfter" : {
+        "bids" : [ ],
+        "asks" : [ {
+          "priceTicks" : 1,
+          "orders" : [ {
+            "sequence" : 1,
+            "orderId" : 1,
+            "remainingQuantityLots" : 1
+          } ]
+        } ]
+      }
+    }, {
+      "caseId" : "command-2",
+      "type" : "PLACE",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 3,
+        "side" : "BUY",
+        "priceTicks" : 1,
+        "quantityLots" : 1
+      },
+      "events" : [ {
+        "type" : "ACCEPTED",
+        "sequence" : 2,
+        "orderId" : 3,
+        "side" : "BUY",
+        "priceTicks" : 1,
+        "quantityLots" : 1
+      }, {
+        "type" : "TRADE",
+        "makerSequence" : 1,
+        "makerOrderId" : 1,
+        "takerSequence" : 2,
+        "takerOrderId" : 3,
+        "priceTicks" : 1,
+        "quantityLots" : 1
+      } ],
+      "bookAfter" : {
+        "bids" : [ ],
+        "asks" : [ ]
+      }
+    } ]
+  }, {
+    "scenarioId" : "cancel-ghost-book",
+    "cases" : [ {
+      "caseId" : "command-1",
+      "type" : "PLACE",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 4,
+        "side" : "SELL",
+        "priceTicks" : 1,
+        "quantityLots" : 1
+      },
+      "events" : [ {
+        "type" : "ACCEPTED",
+        "sequence" : 1,
+        "orderId" : 4,
+        "side" : "SELL",
+        "priceTicks" : 1,
+        "quantityLots" : 1
+      }, {
+        "type" : "RESTED",
+        "sequence" : 1,
+        "orderId" : 4,
+        "side" : "SELL",
+        "priceTicks" : 1,
+        "remainingQuantityLots" : 1
+      } ],
+      "bookAfter" : {
+        "bids" : [ ],
+        "asks" : [ {
+          "priceTicks" : 1,
+          "orders" : [ {
+            "sequence" : 1,
+            "orderId" : 4,
+            "remainingQuantityLots" : 1
+          } ]
+        } ]
+      }
+    }, {
+      "caseId" : "command-2",
+      "type" : "CANCEL",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 4
+      },
+      "events" : [ {
+        "type" : "CANCELED",
+        "sequence" : 1,
+        "orderId" : 4,
+        "side" : "SELL",
+        "priceTicks" : 1,
+        "canceledQuantityLots" : 1
+      } ],
+      "bookAfter" : {
+        "bids" : [ ],
+        "asks" : [ ]
+      }
+    } ]
+  }, {
+    "scenarioId" : "canceled-id-reuse",
+    "cases" : [ {
+      "caseId" : "command-1",
+      "type" : "PLACE",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 12,
+        "side" : "SELL",
+        "priceTicks" : 1,
+        "quantityLots" : 1
+      },
+      "events" : [ {
+        "type" : "ACCEPTED",
+        "sequence" : 1,
+        "orderId" : 12,
+        "side" : "SELL",
+        "priceTicks" : 1,
+        "quantityLots" : 1
+      }, {
+        "type" : "RESTED",
+        "sequence" : 1,
+        "orderId" : 12,
+        "side" : "SELL",
+        "priceTicks" : 1,
+        "remainingQuantityLots" : 1
+      } ],
+      "bookAfter" : {
+        "bids" : [ ],
+        "asks" : [ {
+          "priceTicks" : 1,
+          "orders" : [ {
+            "sequence" : 1,
+            "orderId" : 12,
+            "remainingQuantityLots" : 1
+          } ]
+        } ]
+      }
+    }, {
+      "caseId" : "command-2",
+      "type" : "CANCEL",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 12
+      },
+      "events" : [ {
+        "type" : "CANCELED",
+        "sequence" : 1,
+        "orderId" : 12,
+        "side" : "SELL",
+        "priceTicks" : 1,
+        "canceledQuantityLots" : 1
+      } ],
+      "bookAfter" : {
+        "bids" : [ ],
+        "asks" : [ ]
+      }
+    }, {
+      "caseId" : "command-3",
+      "type" : "PLACE",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 12,
+        "side" : "BUY",
+        "priceTicks" : 1,
+        "quantityLots" : 1
+      },
+      "events" : [ {
+        "type" : "PLACE_REJECTED",
+        "orderId" : 12,
+        "code" : "DUPLICATE_ORDER_ID"
+      } ],
+      "bookAfter" : {
+        "bids" : [ ],
+        "asks" : [ ]
+      }
+    } ]
+  } ]
+}

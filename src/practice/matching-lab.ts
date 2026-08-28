@@ -1,5 +1,7 @@
 type Side = "BUY" | "SELL";
 type CommandType = "PLACE" | "CANCEL";
+type GoldenReplayPresentation = "GOLDEN_HISTORY" | "COUNTEREXAMPLE";
+type GoldenReplaySupportRole = "REPLAY" | "MUTANTS";
 type Prediction =
   | "RESTS_ONLY"
   | "TRADES_ONLY"
@@ -63,19 +65,35 @@ interface GoldenEvent {
   canceledQuantityLots?: number | string;
 }
 
+interface GoldenOutcome {
+  events: GoldenEvent[];
+  bookAfter: GoldenBook;
+}
+
 interface GoldenCommand {
   caseId: string;
   type?: CommandType;
   input: GoldenInput;
-  expected: {
-    events: GoldenEvent[];
-    bookAfter: GoldenBook;
-  };
+  expected: GoldenOutcome;
 }
 
 interface GoldenScenario {
   scenarioId: string;
   commands: GoldenCommand[];
+  mutantId?: string;
+  classification?: string;
+  propertyId?: string;
+  divergenceKind?: string;
+  historyIndex?: number;
+  lane?: string;
+  seed?: string;
+  originalCommandCount?: number;
+  minimizedCommandCount?: number;
+  firstFailingCommandIndex?: number;
+  oneMinimal?: boolean;
+  shrinkTrials?: number;
+  originalCommands?: unknown[];
+  actualAtFailure?: GoldenOutcome;
 }
 
 interface GoldenScenarioPack {
@@ -107,8 +125,13 @@ interface BrowserModelConfig {
 
 interface ClientConfig {
   goldenReplay: {
+    presentation: GoldenReplayPresentation;
     scenarioPackUrl: string;
     eventBatchesUrl: string;
+    supportingReports: Array<{
+      role: GoldenReplaySupportRole;
+      url: string;
+    }>;
     scenarios: GoldenScenarioSummary[];
   };
   browserModel: BrowserModelConfig;
@@ -255,6 +278,185 @@ function createGoldenBookSide(
   return section;
 }
 
+function createGoldenOutcome(
+  title: string,
+  outcome: GoldenOutcome,
+  tone: "REFERENCE" | "MUTANT",
+): HTMLElement {
+  const article = makeElement(
+    "article",
+    `matching-counterexample-outcome matching-counterexample-outcome-${tone.toLowerCase()}`,
+  );
+  const heading = makeElement("header");
+  heading.append(
+    makeElement("span", undefined, tone),
+    makeElement("strong", undefined, title),
+  );
+  article.append(heading);
+
+  const events = makeElement("section");
+  events.append(makeElement("h4", undefined, "EVENT BATCH"));
+  const eventList = makeElement("ol");
+  for (const event of outcome.events) {
+    const item = makeElement("li");
+    item.append(makeElement("code", undefined, formatGoldenEvent(event)));
+    eventList.append(item);
+  }
+  events.append(eventList);
+  article.append(events);
+
+  const book = makeElement("section");
+  book.append(makeElement("h4", undefined, "BOOK AFTER"));
+  const sides = makeElement("div");
+  sides.append(
+    createGoldenBookSide("BID · HIGH → LOW", outcome.bookAfter.bids),
+    createGoldenBookSide("ASK · LOW → HIGH", outcome.bookAfter.asks),
+  );
+  book.append(sides);
+  article.append(book);
+  return article;
+}
+
+function createCounterexampleContext(scenario: GoldenScenario): HTMLElement {
+  const context = makeElement("section", "matching-counterexample-context");
+  const heading = makeElement("header");
+  heading.append(
+    makeElement("span", undefined, "MINIMAL COUNTEREXAMPLE"),
+    makeElement("code", undefined, scenario.mutantId ?? "UNKNOWN MUTANT"),
+  );
+  context.append(heading);
+
+  const facts = makeElement("dl");
+  const addFact = (label: string, value: string): void => {
+    const item = makeElement("div");
+    item.append(
+      makeElement("dt", undefined, label),
+      makeElement("dd", undefined, value),
+    );
+    facts.append(item);
+  };
+  addFact(
+    "SHRINK",
+    `${scenario.originalCommandCount ?? "?"} → ${scenario.minimizedCommandCount ?? "?"} · ${scenario.shrinkTrials ?? "?"} trials`,
+  );
+  addFact(
+    "PROVENANCE",
+    `${scenario.lane ?? "UNKNOWN"} · history ${scenario.historyIndex ?? "?"} · seed ${scenario.seed ?? "?"}`,
+  );
+  context.append(facts);
+  return context;
+}
+
+function createCounterexampleComparison(
+  scenario: GoldenScenario,
+  expected: GoldenOutcome,
+  actual: GoldenOutcome,
+): HTMLElement {
+  const comparison = makeElement(
+    "section",
+    "matching-counterexample-comparison",
+  );
+  const comparisonHeading = makeElement("header");
+  comparisonHeading.append(
+    makeElement(
+      "span",
+      undefined,
+      `FIRST DIVERGENCE · COMMAND ${(scenario.firstFailingCommandIndex ?? -1) + 1} / ${scenario.commands.length}`,
+    ),
+    makeElement(
+      "strong",
+      undefined,
+      `${scenario.propertyId} / ${scenario.divergenceKind}`,
+    ),
+  );
+  comparison.append(comparisonHeading);
+  const outcomes = makeElement("div");
+  outcomes.append(
+    createGoldenOutcome("独立参考结果", expected, "REFERENCE"),
+    createGoldenOutcome("缺陷实现实际结果", actual, "MUTANT"),
+  );
+  comparison.append(outcomes);
+  return comparison;
+}
+
+function createCounterexampleReveal(
+  scenario: GoldenScenario,
+  command: GoldenCommand,
+  commandIndex: number,
+): HTMLElement {
+  const reveal = makeElement("section", "matching-counterexample-reveal");
+  const heading = makeElement("header");
+  heading.append(
+    makeElement("span", undefined, "PREDICT BEFORE REVEAL"),
+    makeElement(
+      "strong",
+      undefined,
+      "缺陷实现会在这条命令第一次偏离参考模型吗？",
+    ),
+  );
+  reveal.append(heading);
+
+  const controls = makeElement("div", "matching-counterexample-prediction");
+  const label = makeElement("label");
+  label.append(makeElement("span", undefined, "你的判断"));
+  const select = makeElement("select");
+  select.setAttribute("aria-label", "预测本条命令是否首次分歧");
+  const placeholder = makeElement("option", undefined, "请选择…");
+  placeholder.value = "";
+  const before = makeElement("option", undefined, "尚未出现首次分歧");
+  before.value = "BEFORE";
+  const first = makeElement("option", undefined, "本条就是首次分歧");
+  first.value = "FIRST";
+  select.append(placeholder, before, first);
+  label.append(select);
+
+  const button = makeElement("button", undefined, "锁定预测并揭示对照");
+  button.type = "button";
+  button.disabled = true;
+  controls.append(label, button);
+  reveal.append(controls);
+
+  const feedback = makeElement("p", "matching-counterexample-feedback");
+  feedback.setAttribute("aria-live", "polite");
+  feedback.textContent = "提交预测前，参考事件、盘口与缺陷结果保持隐藏。";
+  reveal.append(feedback);
+
+  const result = makeElement("div", "matching-counterexample-result");
+  result.hidden = true;
+  reveal.append(result);
+
+  select.addEventListener("change", () => {
+    button.disabled = select.value !== "BEFORE" && select.value !== "FIRST";
+  });
+  button.addEventListener("click", () => {
+    const firstFailure = commandIndex === scenario.firstFailingCommandIndex;
+    const predictedFirst = select.value === "FIRST";
+    feedback.textContent = `${predictedFirst ? "你预测本条首次分歧" : "你预测本条尚未分歧"}；固定证据显示${firstFailure ? "分歧从本条开始" : "本条仍与参考结果一致"}。`;
+    if (firstFailure && scenario.actualAtFailure) {
+      replaceChildren(
+        result,
+        createCounterexampleComparison(
+          scenario,
+          command.expected,
+          scenario.actualAtFailure,
+        ),
+      );
+    } else {
+      const outcome = createGoldenOutcome(
+        "参考与缺陷实现的共同结果",
+        command.expected,
+        "REFERENCE",
+      );
+      outcome.classList.add("matching-counterexample-outcome-single");
+      replaceChildren(result, outcome);
+    }
+    result.hidden = false;
+    select.disabled = true;
+    button.disabled = true;
+  });
+  return reveal;
+}
+
 function comparable(value: unknown): unknown {
   if (typeof value === "bigint" || typeof value === "number")
     return String(value);
@@ -293,6 +495,147 @@ function verifyPublishedEventBatches(
   }));
   if (!sameValue(publishedScenarios, expectedScenarios)) {
     throw new Error("scenario pack and event-batches differ");
+  }
+  const metadata = report as {
+    status?: unknown;
+    required?: unknown;
+    minimizedCommands?: unknown;
+  };
+  if (metadata.status !== undefined && metadata.status !== "PASS") {
+    throw new Error("event-batches report is not PASS");
+  }
+  if (
+    metadata.required !== undefined &&
+    metadata.required !== pack.scenarios.length
+  ) {
+    throw new Error("event-batches scenario count differs");
+  }
+  const commands = pack.scenarios.reduce(
+    (total, scenario) => total + scenario.commands.length,
+    0,
+  );
+  if (
+    metadata.minimizedCommands !== undefined &&
+    metadata.minimizedCommands !== commands
+  ) {
+    throw new Error("event-batches command count differs");
+  }
+}
+
+function requiredRecord(
+  value: unknown,
+  label: string,
+): Record<string, unknown> {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    throw new Error(`${label} is not an object`);
+  }
+  return value as Record<string, unknown>;
+}
+
+function requiredRecords(value: unknown, label: string): Record<string, unknown>[] {
+  if (!Array.isArray(value)) throw new Error(`${label} is not an array`);
+  return value.map((entry, index) => requiredRecord(entry, `${label}[${index}]`));
+}
+
+function verifyCounterexampleSupportingReports(
+  pack: GoldenScenarioPack,
+  reports: ReadonlyMap<GoldenReplaySupportRole, unknown>,
+): void {
+  const replay = requiredRecord(reports.get("REPLAY"), "replay report");
+  const mutants = requiredRecord(reports.get("MUTANTS"), "mutant report");
+  const replayScenarios = requiredRecords(replay.scenarios, "replay scenarios");
+  const mutantScenarios = requiredRecords(mutants.mutants, "mutants");
+
+  if (
+    replay.status !== "PASS" ||
+    replay.requested !== pack.scenarios.length ||
+    replay.completed !== pack.scenarios.length ||
+    replayScenarios.length !== pack.scenarios.length
+  ) {
+    throw new Error("replay report does not cover the strict counterexamples");
+  }
+  if (
+    mutants.status !== "PASS" ||
+    mutants.required !== pack.scenarios.length ||
+    mutants.killed !== pack.scenarios.length ||
+    mutantScenarios.length !== pack.scenarios.length
+  ) {
+    throw new Error("mutant report does not cover the strict counterexamples");
+  }
+
+  const mutantIds = new Set<string>();
+  for (const [index, scenario] of pack.scenarios.entries()) {
+    const fingerprint = `${scenario.propertyId}/${scenario.divergenceKind}`;
+    const failureIndex = scenario.firstFailingCommandIndex;
+    const originalCommandCount = scenario.originalCommandCount;
+    const minimizedCommandCount = scenario.minimizedCommandCount;
+    const expectedAtFailure =
+      Number.isInteger(failureIndex) && failureIndex !== undefined
+        ? scenario.commands[failureIndex]?.expected
+        : undefined;
+    if (
+      !scenario.mutantId ||
+      mutantIds.has(scenario.mutantId) ||
+      !scenario.classification ||
+      !scenario.propertyId ||
+      !scenario.divergenceKind ||
+      !scenario.lane ||
+      !scenario.seed ||
+      !Number.isInteger(scenario.historyIndex) ||
+      !Number.isInteger(originalCommandCount) ||
+      originalCommandCount !== scenario.originalCommands?.length ||
+      !Number.isInteger(minimizedCommandCount) ||
+      minimizedCommandCount !== scenario.commands.length ||
+      (minimizedCommandCount ?? 0) >= (originalCommandCount ?? 0) ||
+      !Number.isInteger(failureIndex) ||
+      failureIndex === undefined ||
+      failureIndex < 0 ||
+      failureIndex >= scenario.commands.length ||
+      scenario.oneMinimal !== true ||
+      !Number.isInteger(scenario.shrinkTrials) ||
+      (scenario.shrinkTrials ?? 0) <= 0 ||
+      !expectedAtFailure ||
+      !scenario.actualAtFailure ||
+      sameValue(expectedAtFailure, scenario.actualAtFailure)
+    ) {
+      throw new Error(`counterexample metadata is incomplete for ${scenario.scenarioId}`);
+    }
+    mutantIds.add(scenario.mutantId);
+
+    const replayed = replayScenarios[index];
+    if (
+      replayed.scenarioId !== scenario.scenarioId ||
+      replayed.mutantId !== scenario.mutantId ||
+      replayed.commands !== scenario.commands.length ||
+      replayed.expectedFingerprint !== fingerprint ||
+      replayed.actualFingerprint !== fingerprint ||
+      replayed.classification !== scenario.classification ||
+      replayed.referenceOutcomesExact !== true ||
+      replayed.actualOutcomeExact !== true ||
+      replayed.provenanceExact !== true ||
+      replayed.oneMinimalReverified !== true ||
+      replayed.passed !== true
+    ) {
+      throw new Error(`strict replay differs for ${scenario.scenarioId}`);
+    }
+
+    const mutant = mutantScenarios[index];
+    if (
+      mutant.id !== scenario.mutantId ||
+      mutant.classification !== scenario.classification ||
+      mutant.killed !== true ||
+      mutant.propertyId !== scenario.propertyId ||
+      mutant.divergenceKind !== scenario.divergenceKind ||
+      mutant.historyIndex !== scenario.historyIndex ||
+      mutant.seed !== scenario.seed ||
+      mutant.originalCommands !== scenario.originalCommandCount ||
+      mutant.minimizedCommands !== scenario.minimizedCommandCount ||
+      mutant.shrinkTrials !== scenario.shrinkTrials ||
+      mutant.oneMinimal !== true ||
+      mutant.replayed !== true
+    ) {
+      throw new Error(`mutant proof differs for ${scenario.scenarioId}`);
+    }
   }
 }
 
@@ -360,31 +703,41 @@ async function initializeGoldenReplay(
     );
     fragment.append(heading);
 
+    if (config.presentation === "COUNTEREXAMPLE") {
+      fragment.append(createCounterexampleContext(scenario));
+    }
+
     const input = makeElement("section", "matching-golden-command");
     input.append(makeElement("h3", undefined, "FIXED INPUT"));
     input.append(makeElement("code", undefined, formatGoldenInput(command)));
     fragment.append(input);
 
-    const events = makeElement("section", "matching-golden-events");
-    events.append(makeElement("h3", undefined, "EXPECTED EVENT BATCH"));
-    const eventList = makeElement("ol");
-    for (const event of command.expected.events) {
-      const item = makeElement("li");
-      item.append(makeElement("code", undefined, formatGoldenEvent(event)));
-      eventList.append(item);
-    }
-    events.append(eventList);
-    fragment.append(events);
+    if (config.presentation === "COUNTEREXAMPLE") {
+      fragment.append(
+        createCounterexampleReveal(scenario, command, commandIndex),
+      );
+    } else {
+      const events = makeElement("section", "matching-golden-events");
+      events.append(makeElement("h3", undefined, "EXPECTED EVENT BATCH"));
+      const eventList = makeElement("ol");
+      for (const event of command.expected.events) {
+        const item = makeElement("li");
+        item.append(makeElement("code", undefined, formatGoldenEvent(event)));
+        eventList.append(item);
+      }
+      events.append(eventList);
+      fragment.append(events);
 
-    const book = makeElement("section", "matching-golden-book");
-    book.append(makeElement("h3", undefined, "BOOK AFTER"));
-    const sides = makeElement("div");
-    sides.append(
-      createGoldenBookSide("BID · HIGH → LOW", command.expected.bookAfter.bids),
-      createGoldenBookSide("ASK · LOW → HIGH", command.expected.bookAfter.asks),
-    );
-    book.append(sides);
-    fragment.append(book);
+      const book = makeElement("section", "matching-golden-book");
+      book.append(makeElement("h3", undefined, "BOOK AFTER"));
+      const sides = makeElement("div");
+      sides.append(
+        createGoldenBookSide("BID · HIGH → LOW", command.expected.bookAfter.bids),
+        createGoldenBookSide("ASK · LOW → HIGH", command.expected.bookAfter.asks),
+      );
+      book.append(sides);
+      fragment.append(book);
+    }
     replaceChildren(stage, fragment);
   };
 
@@ -407,9 +760,28 @@ async function initializeGoldenReplay(
 
   const scenarioUrl = new URL(config.scenarioPackUrl, document.baseURI);
   const eventBatchesUrl = new URL(config.eventBatchesUrl, document.baseURI);
+  const supporting = config.supportingReports.map((report) => ({
+    role: report.role,
+    url: new URL(report.url, document.baseURI),
+  }));
+  const supportingRoles = supporting.map((report) => report.role);
+  const requiredCounterexampleRoles: GoldenReplaySupportRole[] = [
+    "REPLAY",
+    "MUTANTS",
+  ];
   if (
-    scenarioUrl.origin !== window.location.origin ||
-    eventBatchesUrl.origin !== window.location.origin
+    new Set(supportingRoles).size !== supportingRoles.length ||
+    (config.presentation === "GOLDEN_HISTORY" && supporting.length !== 0) ||
+    (config.presentation === "COUNTEREXAMPLE" &&
+      supportingRoles.join("\n") !== requiredCounterexampleRoles.join("\n"))
+  ) {
+    progress.textContent = "静态证明报告配置不完整";
+    return Promise.reject(new Error("supporting report roles differ"));
+  }
+  if (
+    [scenarioUrl, eventBatchesUrl, ...supporting.map((report) => report.url)].some(
+      (url) => url.origin !== window.location.origin,
+    )
   ) {
     progress.textContent = "只允许读取本站静态 evidence";
     return Promise.reject(new Error("cross-origin evidence is forbidden"));
@@ -421,8 +793,12 @@ async function initializeGoldenReplay(
       return response.json() as Promise<unknown>;
     });
 
-  return Promise.all([readJson(scenarioUrl), readJson(eventBatchesUrl)])
-    .then(([scenarioDocument, eventDocument]) => {
+  return Promise.all([
+    readJson(scenarioUrl),
+    readJson(eventBatchesUrl),
+    ...supporting.map((report) => readJson(report.url)),
+  ])
+    .then(([scenarioDocument, eventDocument, ...supportingDocuments]) => {
       const loaded = scenarioDocument as GoldenScenarioPack;
       if (!Array.isArray(loaded.scenarios))
         throw new Error("scenarios is not an array");
@@ -453,6 +829,17 @@ async function initializeGoldenReplay(
         throw new Error("command count differs from the published registry");
       }
       verifyPublishedEventBatches(loaded, eventDocument);
+      if (config.presentation === "COUNTEREXAMPLE") {
+        verifyCounterexampleSupportingReports(
+          loaded,
+          new Map(
+            supporting.map((report, index) => [
+              report.role,
+              supportingDocuments[index],
+            ]),
+          ),
+        );
+      }
       pack = loaded;
       commandIndex = 0;
       render();

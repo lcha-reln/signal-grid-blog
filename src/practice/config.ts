@@ -67,7 +67,7 @@ export const PRACTICE_CASES: readonly PracticeCase[] = [
     title: "高可用 CEX 交易核心",
     summary: "从单交易对限价撮合起步，先交付高可用现货核心，再按门禁演进到杠杆、永续、交割与期权。",
     status: "BUILDING",
-    statusLabel: "SPOT · M03 实施中",
+    statusLabel: "SPOT · M03 已发布",
     totalUnits: 30,
     plannedRepositories: 3,
     stack: ["Java", "Aeron Cluster", "Gradle", "Docker", "Astro Labs"],
@@ -76,7 +76,7 @@ export const PRACTICE_CASES: readonly PracticeCase[] = [
     units: ["M00", "M01", "M02", "M03"],
     currentUnitCode: "M03",
     currentAction:
-      "M03 已从 annotated course/m03-start 进入实施窗口：只增加独立线性参考模型、256×64 确定性性质历史、反例缩小与 matching-0.1.0 发布门禁；教程、Lab、evidence 和完成身份尚未创建。",
+      "M03 与 matching-0.1.0 已完成双 annotated tag、四篇教程、Matching Lab 和持久 evidence 发布；下一步只评审 M04 候选合同，不预建空单元或提前实现 WAL。",
     profileRoadmapTitle: "现货是第一份完整交付，不是专题终点",
     profileRoadmapDescription: "只有当前 Profile 展开单元、仓库与实施设计；LOCKED 只冻结产品方向和解锁门禁，不代表已经创建单元、仓库或服务；后续优先复用已发布的 Matching、Counter 与 Rest 边界，具体仓库拓扑在解锁时评审。",
     profileRoadmap: [

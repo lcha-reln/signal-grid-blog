@@ -1,0 +1,144 @@
+{
+  "schemaVersion" : "matching.m03.check.v2",
+  "unit" : "M03",
+  "status" : "PASS",
+  "contractPlanVersion" : "0.5",
+  "generator" : {
+    "path" : "matching-testkit/src/test/resources/m03/fixtures/property-suite-v1.json",
+    "schemaPath" : "schemas/matching.m03.generator.v1.schema.json",
+    "sha256" : "3e051347b9bd42aac431d02949c0c1b72daa667d10a03cc8aeb09a6b5a74d24e",
+    "algorithm" : "splitmix64-v1",
+    "seedDerivation" : "splitmix64(baseSeed+historyIndex).nextLong",
+    "baseSeed" : "6824",
+    "histories" : 256,
+    "commandsPerHistory" : 64,
+    "totalCommands" : 16384,
+    "lanes" : 4,
+    "historiesPerLane" : 64,
+    "schemaProbes" : 6
+  },
+  "m02Regression" : {
+    "status" : "PASS",
+    "artifact" : "m00-m02-regression.json",
+    "checkSchemaVersion" : "matching.m02.check.v2",
+    "scenarios" : 10,
+    "commands" : 34,
+    "digest" : "sha256:32054d63accba99b19db823c41f74bda73dc3b8a009b528f2834d2bc70839d16"
+  },
+  "independence" : {
+    "status" : "PASS",
+    "artifact" : "reference-model.json",
+    "module" : "matching-reference",
+    "coreDependency" : false,
+    "testkitDependency" : false,
+    "representation" : "FLAT_LIST_LINEAR_SCAN",
+    "sourceFiles" : 7
+  },
+  "properties" : {
+    "status" : "PASS",
+    "artifact" : "generated-properties.json",
+    "histories" : 256,
+    "commands" : 16384,
+    "differentialComparisons" : 16384,
+    "ledgerChecks" : 16384,
+    "bookChecks" : 16384
+  },
+  "determinism" : {
+    "generations" : 2,
+    "distinctCommandDigests" : 1,
+    "commandDigest" : "sha256:1920d6b8a480998825c72636d446854d9e795e91b0ab29520f203b12186979ce",
+    "format" : "M03G1"
+  },
+  "counterexamples" : {
+    "status" : "PASS",
+    "artifact" : "counterexamples.json",
+    "required" : 6,
+    "shrunk" : 6,
+    "persisted" : 6,
+    "replayed" : 6,
+    "oneMinimal" : 6,
+    "minimizedCommands" : 15,
+    "canonical" : {
+      "format" : "M03X1",
+      "digest" : "sha256:3c23c1f08975d9ad57260d8a16a8201710ee7f56671824648e4e32c477afcac1",
+      "lines" : 513,
+      "bytes" : 54088,
+      "artifact" : "counterexamples.canonical.utf8"
+    }
+  },
+  "mutants" : {
+    "status" : "PASS",
+    "artifact" : "mutants.json",
+    "required" : 6,
+    "killed" : 6,
+    "systemErrorControl" : "SYSTEM_ERROR",
+    "requiredMutants" : [ {
+      "id" : "M03-BEST-PRICE-LAST",
+      "classification" : "STUDENT_FAILURE",
+      "killed" : true,
+      "propertyId" : "PRICE_TIME_PRIORITY",
+      "originalCommands" : 64,
+      "minimizedCommands" : 3,
+      "oneMinimal" : true,
+      "replayed" : true
+    }, {
+      "id" : "M03-SAME-PRICE-LIFO",
+      "classification" : "STUDENT_FAILURE",
+      "killed" : true,
+      "propertyId" : "PRICE_TIME_PRIORITY",
+      "originalCommands" : 64,
+      "minimizedCommands" : 3,
+      "oneMinimal" : true,
+      "replayed" : true
+    }, {
+      "id" : "M03-TAKER-PRICE-TRADE",
+      "classification" : "STUDENT_FAILURE",
+      "killed" : true,
+      "propertyId" : "MAKER_PRICE",
+      "originalCommands" : 64,
+      "minimizedCommands" : 2,
+      "oneMinimal" : true,
+      "replayed" : true
+    }, {
+      "id" : "M03-TRADE-QUANTITY-OVERFLOW",
+      "classification" : "STUDENT_FAILURE",
+      "killed" : true,
+      "propertyId" : "QUANTITY_PARTITION",
+      "originalCommands" : 64,
+      "minimizedCommands" : 2,
+      "oneMinimal" : true,
+      "replayed" : true
+    }, {
+      "id" : "M03-CANCEL-GHOST-BOOK",
+      "classification" : "STUDENT_FAILURE",
+      "killed" : true,
+      "propertyId" : "BOOK_LIFECYCLE_BIJECTION",
+      "originalCommands" : 64,
+      "minimizedCommands" : 2,
+      "oneMinimal" : true,
+      "replayed" : true
+    }, {
+      "id" : "M03-CANCELED-ID-REUSE",
+      "classification" : "STUDENT_FAILURE",
+      "killed" : true,
+      "propertyId" : "LIFECYCLE_IRREVERSIBILITY",
+      "originalCommands" : 64,
+      "minimizedCommands" : 3,
+      "oneMinimal" : true,
+      "replayed" : true
+    } ]
+  },
+  "architecture" : {
+    "status" : "PASS",
+    "artifact" : "architecture.json",
+    "coreSourceFiles" : 20,
+    "referenceSourceFiles" : 7,
+    "violations" : 0
+  },
+  "releaseTarget" : {
+    "unitTag" : "course/m03-complete",
+    "productRelease" : "matching-0.1.0",
+    "verification" : "M03_EVIDENCE_ONLY"
+  },
+  "artifacts" : [ "m00-m02-regression.json", "reference-model.json", "generated-properties.json", "invariants.json", "counterexamples.json", "counterexamples.canonical.utf8", "replay.json", "mutants.json", "architecture.json" ]
+}

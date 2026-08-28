@@ -651,12 +651,68 @@ for (const lab of PRACTICE_LABS) {
   );
 
   const replay = lab.goldenReplay;
+  const replayFields = new Set([
+    "presentation",
+    "manifestPath",
+    "scenarioPackPath",
+    "eventBatchesPath",
+    "canonicalHistoryPath",
+    "checkBindings",
+    "supportingReports",
+    "digest",
+    "metrics",
+    "scenarios",
+  ]);
+  assert(
+    replay && Object.keys(replay).every((field) => replayFields.has(field)),
+    `${key}: Golden replay contains an undeclared field`,
+  );
+  assert(
+    replay.presentation === "GOLDEN_HISTORY" || replay.presentation === "COUNTEREXAMPLE",
+    `${key}: unsupported Golden presentation ${replay.presentation}`,
+  );
+  const bindingFields = ["digestField", "scenarioCountField", "commandCountField"];
+  assert(
+    replay.checkBindings &&
+      Object.keys(replay.checkBindings).length === bindingFields.length &&
+      bindingFields.every(
+        (field) =>
+          typeof replay.checkBindings[field] === "string" &&
+          /^[A-Za-z0-9_-]+(?:\.[A-Za-z0-9_-]+)*$/.test(replay.checkBindings[field]),
+      ),
+    `${key}: invalid Golden check bindings`,
+  );
+  const supportRoles = (replay.supportingReports ?? []).map((report) => report.role);
+  assert(
+    Array.isArray(replay.supportingReports) &&
+      replay.supportingReports.every(
+        (report) =>
+          report &&
+          Object.keys(report).length === 2 &&
+          Object.hasOwn(report, "role") &&
+          Object.hasOwn(report, "path") &&
+          (report.role === "REPLAY" || report.role === "MUTANTS"),
+      ) &&
+      new Set(supportRoles).size === supportRoles.length,
+    `${key}: invalid Golden supporting reports`,
+  );
+  assert(
+    (replay.presentation === "GOLDEN_HISTORY" && supportRoles.length === 0) ||
+      (replay.presentation === "COUNTEREXAMPLE" &&
+        sameOrderedStrings(supportRoles, ["REPLAY", "MUTANTS"])),
+    `${key}: Golden presentation and supporting reports differ`,
+  );
   const staticPaths = [
     replay.manifestPath,
     replay.scenarioPackPath,
     replay.eventBatchesPath,
     replay.canonicalHistoryPath,
+    ...(replay.supportingReports ?? []).map((report) => report.path),
   ];
+  assert(
+    new Set(staticPaths).size === staticPaths.length,
+    `${key}: duplicate lab static source`,
+  );
   for (const path of staticPaths) {
     assert(
       typeof path === "string" &&
@@ -689,6 +745,7 @@ for (const lab of PRACTICE_LABS) {
     replay.scenarioPackPath,
     replay.eventBatchesPath,
     replay.canonicalHistoryPath,
+    ...(replay.supportingReports ?? []).map((report) => report.path),
   ]) {
     const artifactPath = relative(dirname(replay.manifestPath), path);
     const manifestHash = manifestArtifacts.get(artifactPath);
@@ -734,9 +791,16 @@ for (const lab of PRACTICE_LABS) {
 
   let scenarioPack;
   let eventBatches;
+  const supportingDocuments = new Map();
   try {
     scenarioPack = JSON.parse(await readFile(join(root, "public", replay.scenarioPackPath), "utf8"));
     eventBatches = JSON.parse(await readFile(join(root, "public", replay.eventBatchesPath), "utf8"));
+    for (const report of replay.supportingReports ?? []) {
+      supportingDocuments.set(
+        report.role,
+        JSON.parse(await readFile(join(root, "public", report.path), "utf8")),
+      );
+    }
   } catch (error) {
     assert(false, `${key}: cannot parse lab Golden sources (${error.message})`);
   }
@@ -775,6 +839,21 @@ for (const lab of PRACTICE_LABS) {
     JSON.stringify(eventBatches?.scenarios) === JSON.stringify(expectedEventScenarios),
     `${key}: lab scenario pack and event-batches are not the same Golden corpus`,
   );
+  if (Object.hasOwn(eventBatches ?? {}, "status")) {
+    assert(eventBatches.status === "PASS", `${key}: lab event report is not PASS`);
+  }
+  if (Object.hasOwn(eventBatches ?? {}, "required")) {
+    assert(
+      eventBatches.required === scenarioIds.size,
+      `${key}: lab event report scenario count differs`,
+    );
+  }
+  if (Object.hasOwn(eventBatches ?? {}, "minimizedCommands")) {
+    assert(
+      eventBatches.minimizedCommands === configuredCommands,
+      `${key}: lab event report command count differs`,
+    );
+  }
   const checkPath = join(
     root,
     "public",
@@ -784,15 +863,118 @@ for (const lab of PRACTICE_LABS) {
   );
   try {
     const check = JSON.parse(await readFile(checkPath, "utf8"));
-    const reportedCommands = check.scenarioCorpus?.commands ?? check.scenarioCorpus?.cases;
-    assert(check.canonical?.digest === replay.digest, `${key}: lab digest differs from check.json`);
     assert(
-      check.scenarioCorpus?.scenarios === scenarioIds.size &&
-        reportedCommands === configuredCommands,
+      readObjectField(check, replay.checkBindings.digestField) === replay.digest,
+      `${key}: lab digest differs from check.json#${replay.checkBindings.digestField}`,
+    );
+    assert(
+      readObjectField(check, replay.checkBindings.scenarioCountField) === scenarioIds.size &&
+        readObjectField(check, replay.checkBindings.commandCountField) === configuredCommands,
       `${key}: lab counts differ from check.json`,
     );
   } catch (error) {
     assert(false, `${key}: cannot verify lab check report (${error.message})`);
+  }
+
+  if (replay.presentation === "COUNTEREXAMPLE") {
+    const replayReport = supportingDocuments.get("REPLAY");
+    const mutantReport = supportingDocuments.get("MUTANTS");
+    const replayScenarios = Array.isArray(replayReport?.scenarios)
+      ? replayReport.scenarios
+      : [];
+    const mutantScenarios = Array.isArray(mutantReport?.mutants)
+      ? mutantReport.mutants
+      : [];
+    assert(
+      replayReport?.status === "PASS" &&
+        replayReport.requested === sourceScenarios.length &&
+        replayReport.completed === sourceScenarios.length &&
+        replayScenarios.length === sourceScenarios.length,
+      `${key}: strict replay report does not cover every counterexample`,
+    );
+    assert(
+      mutantReport?.status === "PASS" &&
+        mutantReport.required === sourceScenarios.length &&
+        mutantReport.killed === sourceScenarios.length &&
+        mutantReport.systemErrorControl === "SYSTEM_ERROR" &&
+        mutantScenarios.length === sourceScenarios.length,
+      `${key}: mutant report does not prove every counterexample`,
+    );
+
+    const mutantIds = new Set();
+    for (const [index, scenario] of sourceScenarios.entries()) {
+      const failureIndex = scenario.firstFailingCommandIndex;
+      const expectedAtFailure = Number.isInteger(failureIndex)
+        ? scenario.commands?.[failureIndex]?.expected
+        : undefined;
+      const fingerprint = `${scenario.propertyId}/${scenario.divergenceKind}`;
+      assert(
+        typeof scenario.mutantId === "string" &&
+          scenario.mutantId.trim() &&
+          !mutantIds.has(scenario.mutantId) &&
+          scenario.classification === "STUDENT_FAILURE" &&
+          typeof scenario.propertyId === "string" &&
+          scenario.propertyId.trim() &&
+          typeof scenario.divergenceKind === "string" &&
+          scenario.divergenceKind.trim() &&
+          typeof scenario.lane === "string" &&
+          scenario.lane.trim() &&
+          typeof scenario.seed === "string" &&
+          /^[0-9a-f]{16}$/.test(scenario.seed) &&
+          Number.isInteger(scenario.historyIndex) &&
+          scenario.historyIndex >= 0 &&
+          Number.isInteger(scenario.originalCommandCount) &&
+          scenario.originalCommandCount === scenario.originalCommands?.length &&
+          Number.isInteger(scenario.minimizedCommandCount) &&
+          scenario.minimizedCommandCount === scenario.commands?.length &&
+          scenario.minimizedCommandCount > 0 &&
+          scenario.minimizedCommandCount < scenario.originalCommandCount &&
+          Number.isInteger(failureIndex) &&
+          failureIndex >= 0 &&
+          failureIndex < scenario.commands?.length &&
+          scenario.oneMinimal === true &&
+          Number.isInteger(scenario.shrinkTrials) &&
+          scenario.shrinkTrials > 0 &&
+          expectedAtFailure &&
+          scenario.actualAtFailure &&
+          JSON.stringify(scenario.actualAtFailure) !== JSON.stringify(expectedAtFailure),
+        `${key}: incomplete or non-divergent counterexample ${scenario.scenarioId}`,
+      );
+      mutantIds.add(scenario.mutantId);
+
+      const replayed = replayScenarios[index];
+      assert(
+        replayed?.scenarioId === scenario.scenarioId &&
+          replayed.mutantId === scenario.mutantId &&
+          replayed.commands === scenario.commands?.length &&
+          replayed.expectedFingerprint === fingerprint &&
+          replayed.actualFingerprint === fingerprint &&
+          replayed.classification === scenario.classification &&
+          replayed.referenceOutcomesExact === true &&
+          replayed.actualOutcomeExact === true &&
+          replayed.provenanceExact === true &&
+          replayed.oneMinimalReverified === true &&
+          replayed.passed === true,
+        `${key}: strict replay fields differ for ${scenario.scenarioId}`,
+      );
+
+      const mutant = mutantScenarios[index];
+      assert(
+        mutant?.id === scenario.mutantId &&
+          mutant.classification === scenario.classification &&
+          mutant.killed === true &&
+          mutant.propertyId === scenario.propertyId &&
+          mutant.divergenceKind === scenario.divergenceKind &&
+          mutant.historyIndex === scenario.historyIndex &&
+          mutant.seed === scenario.seed &&
+          mutant.originalCommands === scenario.originalCommandCount &&
+          mutant.minimizedCommands === scenario.minimizedCommandCount &&
+          mutant.shrinkTrials === scenario.shrinkTrials &&
+          mutant.oneMinimal === true &&
+          mutant.replayed === true,
+        `${key}: mutant fields differ for ${scenario.scenarioId}`,
+      );
+    }
   }
 
   const model = lab.browserModel;
@@ -1065,7 +1247,19 @@ for (const practiceCase of PRACTICE_CASES) {
         assertIncludes(unitHtml, unit.startRef, `${practiceCase.slug}/${unit.code} dist`);
         if (unit.completeRef) assertIncludes(unitHtml, unit.completeRef, `${practiceCase.slug}/${unit.code} complete ref dist`);
         if (unit.completeCommit) assertIncludes(unitHtml, unit.completeCommit, `${practiceCase.slug}/${unit.code} complete commit dist`);
-        if (unit.releaseTarget) assertIncludes(unitHtml, `TARGET · ${unit.releaseTarget}`, `${practiceCase.slug}/${unit.code} release target dist`);
+        if (unit.productRelease) {
+          assertIncludes(
+            unitHtml,
+            unit.productRelease,
+            `${practiceCase.slug}/${unit.code} product release dist`,
+          );
+        } else if (unit.releaseTarget) {
+          assertIncludes(
+            unitHtml,
+            `TARGET · ${unit.releaseTarget}`,
+            `${practiceCase.slug}/${unit.code} release target dist`,
+          );
+        }
         if (unit.lifecycle === "PUBLISHED") {
           assertIncludes(unitHtml, unit.evidenceUrl, `${practiceCase.slug}/${unit.code} evidence URL dist`);
           const localEvidence = localEvidenceRelativePath(unit.evidenceUrl);
@@ -1219,6 +1413,11 @@ if (verifyDist) {
       assertIncludes(html, unit.completeRef, `${lab.projectSlug}/${lab.unitCode} lab complete ref`);
       assertIncludes(
         html,
+        `/signal-grid-blog/${lab.goldenReplay.manifestPath}`,
+        `${lab.projectSlug}/${lab.unitCode} lab manifest source`,
+      );
+      assertIncludes(
+        html,
         `/signal-grid-blog/${lab.goldenReplay.scenarioPackPath}`,
         `${lab.projectSlug}/${lab.unitCode} lab scenario source`,
       );
@@ -1227,6 +1426,30 @@ if (verifyDist) {
         `/signal-grid-blog/${lab.goldenReplay.eventBatchesPath}`,
         `${lab.projectSlug}/${lab.unitCode} lab event source`,
       );
+      assertIncludes(
+        html,
+        `/signal-grid-blog/${lab.goldenReplay.canonicalHistoryPath}`,
+        `${lab.projectSlug}/${lab.unitCode} lab canonical source`,
+      );
+      for (const report of lab.goldenReplay.supportingReports ?? []) {
+        assertIncludes(
+          html,
+          `/signal-grid-blog/${report.path}`,
+          `${lab.projectSlug}/${lab.unitCode} lab supporting source ${report.role}`,
+        );
+      }
+      if (lab.goldenReplay.presentation === "COUNTEREXAMPLE") {
+        assertIncludes(
+          html,
+          "PREDICT BEFORE REVEAL",
+          `${lab.projectSlug}/${lab.unitCode} counterexample reveal control`,
+        );
+        assertIncludes(
+          html,
+          "锁定预测并揭示对照",
+          `${lab.projectSlug}/${lab.unitCode} counterexample reveal label`,
+        );
+      }
       assert(!html.includes("data-pagefind-body"), `${lab.projectSlug}/${lab.unitCode}: runtime lab entered Pagefind body`);
       assertIncludes(sitemap, route, `${lab.projectSlug}/${lab.unitCode} lab sitemap`);
       assert(!search.includes(route), `${lab.projectSlug}/${lab.unitCode}: runtime lab entered static search output`);

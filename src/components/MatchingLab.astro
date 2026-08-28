@@ -1,7 +1,11 @@
 ---
 import { sitePath } from "../config";
 import type { PracticeCase } from "../practice/config";
-import type { MatchingLabDefinition, MatchingLabMode } from "../practice/labs";
+import type {
+  GoldenReplayPresentation,
+  MatchingLabDefinition,
+  MatchingLabMode,
+} from "../practice/labs";
 import { getPracticeUnitPath } from "../practice/content";
 import type { PracticeUnit } from "../practice/units";
 import "../styles/matching-lab.css";
@@ -24,16 +28,42 @@ const modeLabels: Readonly<Record<MatchingLabMode, { title: string; description:
     description: "在隔离的有界 BigInt 模型里先预测，再揭示一条命令的事件与盘口。",
   },
 };
+const presentationLabels: Readonly<
+  Record<
+    GoldenReplayPresentation,
+    { heading: string; description: string; digest: string }
+  >
+> = {
+  GOLDEN_HISTORY: {
+    heading: "沿固定场景逐命令检查事件与盘口",
+    description: "场景输入、参考事件与 full-depth 盘口来自同一份固定 Java evidence。",
+    digest: "CANONICAL HISTORY DIGEST",
+  },
+  COUNTEREXAMPLE: {
+    heading: "沿最小反例定位缺陷的第一次分歧",
+    description:
+      "strict counterexample、参考结果、mutant 实际结果与严格重放报告必须相互印证。",
+    digest: "COUNTEREXAMPLE DIGEST",
+  },
+};
+const presentation = presentationLabels[lab.goldenReplay.presentation];
 const publicEvidence = {
   manifest: sitePath(lab.goldenReplay.manifestPath),
   scenarios: sitePath(lab.goldenReplay.scenarioPackPath),
   events: sitePath(lab.goldenReplay.eventBatchesPath),
   canonical: sitePath(lab.goldenReplay.canonicalHistoryPath),
+  supporting: lab.goldenReplay.supportingReports.map((report) => ({
+    role: report.role,
+    url: sitePath(report.path),
+    label: report.path.split("/").at(-1) ?? report.role.toLowerCase(),
+  })),
 };
 const clientConfig = JSON.stringify({
   goldenReplay: {
+    presentation: lab.goldenReplay.presentation,
     scenarioPackUrl: publicEvidence.scenarios,
     eventBatchesUrl: publicEvidence.events,
+    supportingReports: publicEvidence.supporting.map(({ role, url }) => ({ role, url })),
     scenarios: lab.goldenReplay.scenarios,
   },
   browserModel: lab.browserModel,
@@ -48,6 +78,8 @@ const goldenCommandCount = lab.goldenReplay.scenarios.reduce(
   0,
 );
 const scenarioPackLabel = lab.goldenReplay.scenarioPackPath.split("/").at(-1);
+const eventBatchesLabel = lab.goldenReplay.eventBatchesPath.split("/").at(-1);
+const canonicalHistoryLabel = lab.goldenReplay.canonicalHistoryPath.split("/").at(-1);
 const supportedCommandLabel = lab.browserModel.supportedCommands.join(" / ");
 ---
 
@@ -116,11 +148,11 @@ const supportedCommandLabel = lab.browserModel.supportedCommands.join(" / ");
       <header class="matching-lab-panel-head">
         <div>
           <span class="eyebrow">JAVA_GOLDEN_REPLAY / READ ONLY</span>
-          <h2 id={`${instanceId}-golden-heading`}>沿固定场景逐命令检查事件与盘口</h2>
+          <h2 id={`${instanceId}-golden-heading`}>{presentation.heading}</h2>
         </div>
         <p>
-          页面只读取已发布的同源静态文件。摘要对应 <code>{unit.completeRef}</code>，源码提交
-          <code>{unit.completeCommit}</code>。
+          {presentation.description} 页面只读取已发布的同源静态文件；摘要对应
+          <code>{unit.completeRef}</code>，源码提交 <code>{unit.completeCommit}</code>。
         </p>
       </header>
 
@@ -135,7 +167,7 @@ const supportedCommandLabel = lab.browserModel.supportedCommands.join(" / ");
       </dl>
 
       <div class="matching-lab-digest">
-        <span>CANONICAL DIGEST</span>
+        <span>{presentation.digest}</span>
         <code>{lab.goldenReplay.digest}</code>
       </div>
 
@@ -168,7 +200,13 @@ const supportedCommandLabel = lab.browserModel.supportedCommands.join(" / ");
             </div>
           </div>
           <div class="matching-golden-stage" data-golden-stage aria-live="polite">
-            <p>场景目录已经在 HTML 中提供；启用 JavaScript 后可逐条查看固定输入、预期事件和 bookAfter。</p>
+            <p>
+              {lab.goldenReplay.presentation === "COUNTEREXAMPLE" ? (
+                <><code>PREDICT BEFORE REVEAL</code>：启用 JavaScript 后，每条命令都要先判断是否首次分歧，再“锁定预测并揭示对照”。</>
+              ) : (
+                <>场景目录已经在 HTML 中提供；启用 JavaScript 后可逐条查看固定输入、预期事件和 bookAfter。</>
+              )}
+            </p>
           </div>
         </div>
       </div>
@@ -177,8 +215,11 @@ const supportedCommandLabel = lab.browserModel.supportedCommands.join(" / ");
         <span>STATIC SOURCES</span>
         <a href={publicEvidence.manifest}>manifest.json</a>
         <a href={publicEvidence.scenarios}>{scenarioPackLabel}</a>
-        <a href={publicEvidence.events}>event-batches.json</a>
-        <a href={publicEvidence.canonical}>canonical-history.utf8</a>
+        <a href={publicEvidence.events}>{eventBatchesLabel}</a>
+        <a href={publicEvidence.canonical}>{canonicalHistoryLabel}</a>
+        {publicEvidence.supporting.map((report) => (
+          <a href={report.url}>{report.label}</a>
+        ))}
       </footer>
     </section>
 

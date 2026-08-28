@@ -1,0 +1,79 @@
+{
+  "schemaVersion" : "matching.m03.replay-report.v1",
+  "status" : "PASS",
+  "requested" : 6,
+  "completed" : 6,
+  "scenarios" : [ {
+    "scenarioId" : "best-price-last",
+    "mutantId" : "M03-BEST-PRICE-LAST",
+    "commands" : 3,
+    "expectedFingerprint" : "PRICE_TIME_PRIORITY/WRONG_MAKER_ORDER",
+    "actualFingerprint" : "PRICE_TIME_PRIORITY/WRONG_MAKER_ORDER",
+    "classification" : "STUDENT_FAILURE",
+    "referenceOutcomesExact" : true,
+    "actualOutcomeExact" : true,
+    "provenanceExact" : true,
+    "oneMinimalReverified" : true,
+    "passed" : true
+  }, {
+    "scenarioId" : "same-price-lifo",
+    "mutantId" : "M03-SAME-PRICE-LIFO",
+    "commands" : 3,
+    "expectedFingerprint" : "PRICE_TIME_PRIORITY/WRONG_MAKER_ORDER",
+    "actualFingerprint" : "PRICE_TIME_PRIORITY/WRONG_MAKER_ORDER",
+    "classification" : "STUDENT_FAILURE",
+    "referenceOutcomesExact" : true,
+    "actualOutcomeExact" : true,
+    "provenanceExact" : true,
+    "oneMinimalReverified" : true,
+    "passed" : true
+  }, {
+    "scenarioId" : "taker-price-trade",
+    "mutantId" : "M03-TAKER-PRICE-TRADE",
+    "commands" : 2,
+    "expectedFingerprint" : "MAKER_PRICE/TRADE_PRICE",
+    "actualFingerprint" : "MAKER_PRICE/TRADE_PRICE",
+    "classification" : "STUDENT_FAILURE",
+    "referenceOutcomesExact" : true,
+    "actualOutcomeExact" : true,
+    "provenanceExact" : true,
+    "oneMinimalReverified" : true,
+    "passed" : true
+  }, {
+    "scenarioId" : "trade-quantity-overflow",
+    "mutantId" : "M03-TRADE-QUANTITY-OVERFLOW",
+    "commands" : 2,
+    "expectedFingerprint" : "QUANTITY_PARTITION/TRADE_EXCEEDS_REMAINDER",
+    "actualFingerprint" : "QUANTITY_PARTITION/TRADE_EXCEEDS_REMAINDER",
+    "classification" : "STUDENT_FAILURE",
+    "referenceOutcomesExact" : true,
+    "actualOutcomeExact" : true,
+    "provenanceExact" : true,
+    "oneMinimalReverified" : true,
+    "passed" : true
+  }, {
+    "scenarioId" : "cancel-ghost-book",
+    "mutantId" : "M03-CANCEL-GHOST-BOOK",
+    "commands" : 2,
+    "expectedFingerprint" : "BOOK_LIFECYCLE_BIJECTION/ACTIVE_ID_SET",
+    "actualFingerprint" : "BOOK_LIFECYCLE_BIJECTION/ACTIVE_ID_SET",
+    "classification" : "STUDENT_FAILURE",
+    "referenceOutcomesExact" : true,
+    "actualOutcomeExact" : true,
+    "provenanceExact" : true,
+    "oneMinimalReverified" : true,
+    "passed" : true
+  }, {
+    "scenarioId" : "canceled-id-reuse",
+    "mutantId" : "M03-CANCELED-ID-REUSE",
+    "commands" : 3,
+    "expectedFingerprint" : "LIFECYCLE_IRREVERSIBILITY/TERMINAL_OR_ACTIVE_ID_REUSED",
+    "actualFingerprint" : "LIFECYCLE_IRREVERSIBILITY/TERMINAL_OR_ACTIVE_ID_REUSED",
+    "classification" : "STUDENT_FAILURE",
+    "referenceOutcomesExact" : true,
+    "actualOutcomeExact" : true,
+    "provenanceExact" : true,
+    "oneMinimalReverified" : true,
+    "passed" : true
+  } ]
+}

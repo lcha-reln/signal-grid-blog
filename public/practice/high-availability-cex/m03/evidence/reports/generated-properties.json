@@ -1,0 +1,16 @@
+{
+  "schemaVersion" : "matching.m03.generated-properties-report.v1",
+  "status" : "PASS",
+  "histories" : 256,
+  "commands" : 16384,
+  "differentialComparisons" : 16384,
+  "commandDigest" : "sha256:1920d6b8a480998825c72636d446854d9e795e91b0ab29520f203b12186979ce",
+  "commandBytes" : 1682592,
+  "commandLines" : 16641,
+  "lanes" : {
+    "BEST_PRICE" : 64,
+    "SAME_PRICE_FIFO" : 64,
+    "MAKER_PRICE" : 64,
+    "CANCELED_IDENTITY" : 64
+  }
+}

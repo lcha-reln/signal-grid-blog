@@ -1,0 +1,278 @@
+{
+  "schemaVersion" : "cex.lab-evidence.v1",
+  "case" : "high-availability-cex",
+  "project" : "matching",
+  "unit" : "M03",
+  "unitTag" : "course/m03-complete",
+  "productRelease" : "matching-0.1.0",
+  "planVersion" : "0.5",
+  "source" : {
+    "commit" : "dab4a2a1dccf06d6b9769c979a6ae5af6d1d2bdc",
+    "dirty" : false
+  },
+  "environment" : {
+    "java" : "25.0.4.1+1-LTS",
+    "os" : "Mac OS X",
+    "arch" : "aarch64"
+  },
+  "claims" : [ {
+    "id" : "m00-m02-regression",
+    "category" : "correctness",
+    "statement" : "The completed M00 validation, M01 matching, and M02 cancellation contracts remain PASS under M03.",
+    "status" : "pass",
+    "command" : "./gradlew m03Check m03Evidence -Pm03.unitTag=course/m03-complete -Pm03.productRelease=matching-0.1.0 --no-daemon",
+    "observations" : {
+      "status" : "PASS",
+      "artifact" : "m00-m02-regression.json",
+      "checkSchemaVersion" : "matching.m02.check.v2",
+      "scenarios" : 10,
+      "commands" : 34,
+      "digest" : "sha256:32054d63accba99b19db823c41f74bda73dc3b8a009b528f2834d2bc70839d16"
+    },
+    "artifacts" : [ {
+      "path" : "reports/m00-m02-regression.json",
+      "sha256" : "f69bcf110f7b0e35ce3542bd74f3c94c33801d1a75c23f5d9af6fce28b97bedb"
+    } ]
+  }, {
+    "id" : "independent-reference-model",
+    "category" : "correctness",
+    "statement" : "A flat-list linear-scan reference model with no production project dependency independently computes every expected outcome.",
+    "status" : "pass",
+    "command" : "./gradlew m03Check m03Evidence -Pm03.unitTag=course/m03-complete -Pm03.productRelease=matching-0.1.0 --no-daemon",
+    "observations" : {
+      "status" : "PASS",
+      "artifact" : "reference-model.json",
+      "module" : "matching-reference",
+      "coreDependency" : false,
+      "testkitDependency" : false,
+      "representation" : "FLAT_LIST_LINEAR_SCAN",
+      "sourceFiles" : 7
+    },
+    "artifacts" : [ {
+      "path" : "reports/reference-model.json",
+      "sha256" : "7b593c9d8b9acfa56d906b8f8219f886d82540287c08e32070bec73d2b71fbe8"
+    } ]
+  }, {
+    "id" : "generated-property-suite",
+    "category" : "correctness",
+    "statement" : "The frozen SplitMix64 suite agrees with the reference model at all 16,384 command boundaries and regenerates deterministically.",
+    "status" : "pass",
+    "command" : "./gradlew m03Check m03Evidence -Pm03.unitTag=course/m03-complete -Pm03.productRelease=matching-0.1.0 --no-daemon",
+    "observations" : {
+      "status" : "PASS",
+      "artifact" : "generated-properties.json",
+      "histories" : 256,
+      "commands" : 16384,
+      "differentialComparisons" : 16384,
+      "ledgerChecks" : 16384,
+      "bookChecks" : 16384,
+      "generator" : {
+        "path" : "matching-testkit/src/test/resources/m03/fixtures/property-suite-v1.json",
+        "schemaPath" : "schemas/matching.m03.generator.v1.schema.json",
+        "sha256" : "3e051347b9bd42aac431d02949c0c1b72daa667d10a03cc8aeb09a6b5a74d24e",
+        "algorithm" : "splitmix64-v1",
+        "seedDerivation" : "splitmix64(baseSeed+historyIndex).nextLong",
+        "baseSeed" : "6824",
+        "histories" : 256,
+        "commandsPerHistory" : 64,
+        "totalCommands" : 16384,
+        "lanes" : 4,
+        "historiesPerLane" : 64,
+        "schemaProbes" : 6
+      },
+      "determinism" : {
+        "generations" : 2,
+        "distinctCommandDigests" : 1,
+        "commandDigest" : "sha256:1920d6b8a480998825c72636d446854d9e795e91b0ab29520f203b12186979ce",
+        "format" : "M03G1"
+      }
+    },
+    "artifacts" : [ {
+      "path" : "inputs/property-suite-v1.json",
+      "sha256" : "3e051347b9bd42aac431d02949c0c1b72daa667d10a03cc8aeb09a6b5a74d24e"
+    }, {
+      "path" : "reports/generated-properties.json",
+      "sha256" : "a4c4d9dbdf75a375af999b602953a2698ce81c6350989bee2fcf876fc18e7eb2"
+    } ]
+  }, {
+    "id" : "quantity-lifecycle-invariants",
+    "category" : "correctness",
+    "statement" : "An event-derived ledger checks quantity partition, lifecycle, book ordering, FIFO, identity bijection, and uncrossed boundaries after every command.",
+    "status" : "pass",
+    "command" : "./gradlew m03Check m03Evidence -Pm03.unitTag=course/m03-complete -Pm03.productRelease=matching-0.1.0 --no-daemon",
+    "observations" : {
+      "status" : "PASS",
+      "artifact" : "generated-properties.json",
+      "histories" : 256,
+      "commands" : 16384,
+      "differentialComparisons" : 16384,
+      "ledgerChecks" : 16384,
+      "bookChecks" : 16384
+    },
+    "artifacts" : [ {
+      "path" : "reports/invariants.json",
+      "sha256" : "5818c7af1c4c4015868586d525a641dc649581889f27b58439190e888e56e6e1"
+    } ]
+  }, {
+    "id" : "minimal-counterexamples",
+    "category" : "correctness",
+    "statement" : "Every required semantic mutant has one persisted one-minimal counterexample with a stable property fingerprint.",
+    "status" : "pass",
+    "command" : "./gradlew m03Check m03Evidence -Pm03.unitTag=course/m03-complete -Pm03.productRelease=matching-0.1.0 --no-daemon",
+    "observations" : {
+      "status" : "PASS",
+      "artifact" : "counterexamples.json",
+      "required" : 6,
+      "shrunk" : 6,
+      "persisted" : 6,
+      "replayed" : 6,
+      "oneMinimal" : 6,
+      "minimizedCommands" : 15,
+      "canonical" : {
+        "format" : "M03X1",
+        "digest" : "sha256:3c23c1f08975d9ad57260d8a16a8201710ee7f56671824648e4e32c477afcac1",
+        "lines" : 513,
+        "bytes" : 54088,
+        "artifact" : "counterexamples.canonical.utf8"
+      }
+    },
+    "artifacts" : [ {
+      "path" : "inputs/counterexamples-v1.json",
+      "sha256" : "1825cf54f42c03ecc539e166f903d6b48a0951f17bb232c5ebdf697def016c8f"
+    }, {
+      "path" : "reports/counterexamples.canonical.utf8",
+      "sha256" : "3c23c1f08975d9ad57260d8a16a8201710ee7f56671824648e4e32c477afcac1"
+    } ]
+  }, {
+    "id" : "counterexample-replay",
+    "category" : "correctness",
+    "statement" : "Strict replay from persisted bytes reproduces all six STUDENT_FAILURE fingerprints on fresh candidates.",
+    "status" : "pass",
+    "command" : "./gradlew m03Check m03Evidence -Pm03.unitTag=course/m03-complete -Pm03.productRelease=matching-0.1.0 --no-daemon",
+    "observations" : {
+      "status" : "PASS",
+      "artifact" : "counterexamples.json",
+      "required" : 6,
+      "shrunk" : 6,
+      "persisted" : 6,
+      "replayed" : 6,
+      "oneMinimal" : 6,
+      "minimizedCommands" : 15,
+      "canonical" : {
+        "format" : "M03X1",
+        "digest" : "sha256:3c23c1f08975d9ad57260d8a16a8201710ee7f56671824648e4e32c477afcac1",
+        "lines" : 513,
+        "bytes" : 54088,
+        "artifact" : "counterexamples.canonical.utf8"
+      }
+    },
+    "artifacts" : [ {
+      "path" : "reports/replay.json",
+      "sha256" : "62b3fe42307d951aaa6bf1f86db486b58c0b346eec0e95739d98d93321b17ebd"
+    } ]
+  }, {
+    "id" : "semantic-mutants",
+    "category" : "mutation-testing",
+    "statement" : "All six required business mutants are killed while a throwing control remains SYSTEM_ERROR.",
+    "status" : "pass",
+    "command" : "./gradlew m03Check m03Evidence -Pm03.unitTag=course/m03-complete -Pm03.productRelease=matching-0.1.0 --no-daemon",
+    "observations" : {
+      "status" : "PASS",
+      "artifact" : "mutants.json",
+      "required" : 6,
+      "killed" : 6,
+      "systemErrorControl" : "SYSTEM_ERROR",
+      "requiredMutants" : [ {
+        "id" : "M03-BEST-PRICE-LAST",
+        "classification" : "STUDENT_FAILURE",
+        "killed" : true,
+        "propertyId" : "PRICE_TIME_PRIORITY",
+        "originalCommands" : 64,
+        "minimizedCommands" : 3,
+        "oneMinimal" : true,
+        "replayed" : true
+      }, {
+        "id" : "M03-SAME-PRICE-LIFO",
+        "classification" : "STUDENT_FAILURE",
+        "killed" : true,
+        "propertyId" : "PRICE_TIME_PRIORITY",
+        "originalCommands" : 64,
+        "minimizedCommands" : 3,
+        "oneMinimal" : true,
+        "replayed" : true
+      }, {
+        "id" : "M03-TAKER-PRICE-TRADE",
+        "classification" : "STUDENT_FAILURE",
+        "killed" : true,
+        "propertyId" : "MAKER_PRICE",
+        "originalCommands" : 64,
+        "minimizedCommands" : 2,
+        "oneMinimal" : true,
+        "replayed" : true
+      }, {
+        "id" : "M03-TRADE-QUANTITY-OVERFLOW",
+        "classification" : "STUDENT_FAILURE",
+        "killed" : true,
+        "propertyId" : "QUANTITY_PARTITION",
+        "originalCommands" : 64,
+        "minimizedCommands" : 2,
+        "oneMinimal" : true,
+        "replayed" : true
+      }, {
+        "id" : "M03-CANCEL-GHOST-BOOK",
+        "classification" : "STUDENT_FAILURE",
+        "killed" : true,
+        "propertyId" : "BOOK_LIFECYCLE_BIJECTION",
+        "originalCommands" : 64,
+        "minimizedCommands" : 2,
+        "oneMinimal" : true,
+        "replayed" : true
+      }, {
+        "id" : "M03-CANCELED-ID-REUSE",
+        "classification" : "STUDENT_FAILURE",
+        "killed" : true,
+        "propertyId" : "LIFECYCLE_IRREVERSIBILITY",
+        "originalCommands" : 64,
+        "minimizedCommands" : 3,
+        "oneMinimal" : true,
+        "replayed" : true
+      } ]
+    },
+    "artifacts" : [ {
+      "path" : "reports/mutants.json",
+      "sha256" : "be3e70f7340a2eb2aa0804be1e7ff547b1ae40f1be8de5dcf69bf9ebf407506f"
+    }, {
+      "path" : "reports/counterexamples.json",
+      "sha256" : "4a4269d8a5c38fee51b60068d0207c11dccc65c6e679b858b392703b990e1282"
+    } ]
+  }, {
+    "id" : "architecture-boundary",
+    "category" : "architecture",
+    "statement" : "The M02 core boundary is preserved and matching-reference remains structurally independent; both annotated release refs identify this commit.",
+    "status" : "pass",
+    "command" : "./gradlew m03Check m03Evidence -Pm03.unitTag=course/m03-complete -Pm03.productRelease=matching-0.1.0 --no-daemon",
+    "observations" : {
+      "status" : "PASS",
+      "artifact" : "architecture.json",
+      "coreSourceFiles" : 20,
+      "referenceSourceFiles" : 7,
+      "violations" : 0,
+      "release" : {
+        "unitTag" : "course/m03-complete",
+        "productRelease" : "matching-0.1.0",
+        "sameCommit" : true,
+        "verifiedBy" : "M03EvidenceWriter"
+      }
+    },
+    "artifacts" : [ {
+      "path" : "reports/architecture.json",
+      "sha256" : "acea64ec515e2bc9c98e151f888c3b2bc5038468ffba156803bd5bff07c2c919"
+    }, {
+      "path" : "reports/check.json",
+      "sha256" : "2b5b0b1decf39bc02175cac7bda4f989df67d7696cc44fa7b7f555a2eb32ea85"
+    } ]
+  } ],
+  "limitations" : [ "Only one in-memory BTC-USDT GTC limit-order book with place and cancel is implemented.", "The generated suite is frozen at 256 histories by 64 commands and is bounded testing, not exhaustive or formal verification.", "Accepted order IDs are unique for one engine lifetime; terminal identity records are retained without pruning.", "A repeated Place is rejected as a duplicate order ID; durable command idempotency and prior-result replay are not implemented.", "There is no Cancel/Replace, amendment, mass cancel, IOC, FOK, post-only, market order, STP, market state, price band, or multi-instrument routing.", "There is no account, asset, position, fee, settlement, reservation, or risk logic.", "The unit has no persistence, networking, database, threads, Aeron, cluster replication, or high availability.", "The evidence makes no throughput, latency, recovery, durability, or production-readiness claim." ],
+  "supersedes" : null,
+  "generatedAt" : "2026-08-28T07:19:28.252941Z"
+}

@@ -1,6 +1,6 @@
 # 高可用 CEX 交易核心实战课程设计
 
-> 状态：M03 当前 `IN_PROGRESS`（M00～M02 均已发布）
+> 状态：M03 当前 `PUBLISHED`（M00～M03 均已发布）
 >
 > 规划日期：2026-08-26
 >
@@ -8,7 +8,7 @@
 >
 > 当前单元合同 `planVersion`：`0.5`
 >
-> 下一单元：M04 仍为可调整候选，尚未签约
+> 下一单元：M04 仍为可调整候选，尚未签约；当前只进入合同评审，不注册空单元
 >
 > 案例 slug：`high-availability-cex`
 >
@@ -16,7 +16,7 @@
 >
 > 当前规划基线：`SPOT-CEX-1.0` 的 30 个候选交付单元，3 个按门禁顺序创建的代码仓库
 >
-> 当前实施窗口：M00～M02 保持 `PUBLISHED`；M03 已从 annotated `course/m03-start` 进入唯一 `IN_PROGRESS` 窗口，tag peeled commit 为 `4bcf4e060e8bc596d3246f1b98cec346cc66221f`。当前只实施独立参考模型、256×64 确定性生成历史、反例缩小与 `matching-0.1.0` 发布门禁；M04 及以后仍是可调整候选
+> 当前发布边界：M00～M03 均为 `PUBLISHED`。annotated `course/m03-complete` 与 annotated `matching-0.1.0` peeled 到同一提交 `dab4a2a1dccf06d6b9769c979a6ae5af6d1d2bdc`，四篇教程、Matching Lab 与持久 evidence 已公开。当前没有 `IN_PROGRESS` 单元；下一步只评审 M04 候选合同，M04 及以后仍可调整
 
 ## 1. 这份文档决定什么
 
@@ -28,7 +28,7 @@
 
 > 怎样从一个可证明正确的限价单撮合内核开始，先交付边界清楚、可恢复、可运维、证据完整的高可用现货核心，再在每个前置 Profile 真正通过资格审查后，分别引入债务、持仓重估、到期结算和非线性风险？
 
-路线图可以完整，实施级设计只能覆盖当前和下一个单元；代码窗口永远只有当前单元。M01 的价格时间优先合同与交付证据已经冻结；M02 由 `course/m02-start` 的结构化 RED 演进到 `course/m02-complete`，可寻址撤单、不可逆终态、完整裁判、四篇教程、Matching Lab 与持久 evidence 已原子发布。M03 的 v0.5 合同和 `course/m03-start` 现已冻结，只允许增加 test-only 独立参考模型、确定性生成式裁判、反例缩小/重放和首个命名产品停止点；教程正文、Lab、evidence、complete tag 与实际产品 release 尚未创建。M04 及以后的教学顺序仍只是候选课程地图，不代表实现字段已经冻结。任何超出已签约单元合同的能力，必须删除等量范围、拆分单元或进入 backlog。
+路线图可以完整，实施级设计只能覆盖当前和下一个单元；代码窗口永远只有当前单元。M01 的价格时间优先合同与交付证据已经冻结；M02 由 `course/m02-start` 的结构化 RED 演进到 `course/m02-complete`，可寻址撤单、不可逆终态、完整裁判、四篇教程、Matching Lab 与持久 evidence 已原子发布。M03 也已从 `course/m03-start` 演进到 `course/m03-complete`：test-only 独立参考模型、确定性生成式裁判、反例缩小/重放、四篇教程、共享 Matching Lab、持久 evidence 与首个命名产品停止点 `matching-0.1.0` 已闭合。M04 及以后的教学顺序仍只是候选课程地图，不代表实现字段已经冻结。任何超出已签约单元合同的能力，必须删除等量范围、拆分单元或进入 backlog。
 
 ## 2. 旧专题为何失败，以及本次怎样避免重演
 
@@ -233,7 +233,7 @@ Rest 初期是一个仓库和一个部署应用，内部划分 PriAPI、OpenAPI�
 
 | 顺序 | 仓库 | 创建条件 | 主要制品 |
 | ---: | --- | --- | --- |
-| 1 | [`cex-matching`](https://github.com/lcha-reln/cex-matching) | 已创建；M00～M02 均为 `PUBLISHED`，M03 已从 `course/m03-start` 进入 `IN_PROGRESS` | Matching core、test-only reference、testkit、runtime、协议、故障实验 |
+| 1 | [`cex-matching`](https://github.com/lcha-reln/cex-matching) | 已创建；M00～M03 均为 `PUBLISHED`，最新产品停止点为 `matching-0.1.0` | Matching core、test-only reference、testkit、runtime、协议、故障实验 |
 | 2 | `counter` | `matching-1.0.0` 发布并从干净环境复验 | Counter core、Cluster runtime、bridge、sync、query |
 | 3 | `rest` | `counter-1.0.0` 发布并从干净环境复验 | PriAPI、OpenAPI、WS、system tests |
 
@@ -293,7 +293,7 @@ rest     = rest-1.0.0
 | M00 | `PUBLISHED` | `CONTRACT` | `CREATED` | 代码、反例、四篇教程与持久 evidence 已验证并公开；停止在 VALID，不提前实现订单簿 |
 | M01 | `PUBLISHED` | `CONTRACT` | 随 `cex-matching` 仓库 | 单交易对 GTC 的价格时间优先、业务事件、固定历史、四篇教程、Matching Lab 与持久 evidence 已验证并公开 |
 | M02 | `PUBLISHED` | `CONTRACT` | 随 `cex-matching` 仓库 | 可寻址撤单、不可逆终态、10/34 corpus、四篇教程、Matching Lab、语义变异体与 tag 绑定 evidence 已公开；停止在不持久的内存生命周期 |
-| M03 | `IN_PROGRESS` | `CONTRACT` | 随 `cex-matching` 仓库 | 独立线性参考模型、SplitMix64 seed 6824、256×64 生成历史、四个 coverage lane、六项 mutant、反例缩小/持久化/重放和 `matching-0.1.0` target 已冻结；当前不创建教程正文、Lab 或 evidence |
+| M03 | `PUBLISHED` | `CONTRACT` | 随 `cex-matching` 仓库 | 独立线性参考模型、SplitMix64 seed 6824、256×64 生成历史、四个 coverage lane、六项 mutant、反例缩小/持久化/重放、四篇教程、Matching Lab、持久 evidence 与 `matching-0.1.0` 已发布 |
 | M04–M12 | `CANDIDATE` | `RISK_MAP` | 随 `cex-matching` 仓库 | 记录能力、关键不变量和危险故障，不冻结类、Schema 字段编号、依赖版本或文章标题 |
 | C00–C09 | `CANDIDATE` | `RISK_MAP` | `LOCKED` | 记录权威边界和关键故障；Matching 1.0 前不创建仓库 |
 | R00–R06 | `CANDIDATE` | `RISK_MAP` | `LOCKED` | 记录外部契约边界和关键故障；Counter 1.0 前不创建仓库 |
@@ -365,18 +365,19 @@ CANDIDATE
 | L2 浏览器确定性实验 | 修改有界输入、运行教学参考模型、重放反例 | 真实 Aeron 行为或真实性能 |
 | L3 本地工程实验 | Java、Gradle、Docker、三节点 Cluster、故障注入、基准 | 由网页动画替代 |
 
-网站不连接外部 Judge，不上传源码，也不远程启动 Java 或 Aeron。M00 使用最小的 `./gradlew m00Check`；需要重放、故障控制和证据编排后再引入仓库内的 Lab Runner，例如：
+网站不连接外部 Judge，不上传源码，也不远程启动 Java 或 Aeron。M00 使用最小的 `./gradlew m00Check`；M03 的 Java 性质门禁与 evidence 也由读者在本地仓库运行：
 
 ```text
-./lab check M03
-./lab replay M03 --seed 6824
-./lab run M10-leader-failover
-./lab export M10
+./gradlew m03Check --no-daemon
+./gradlew m03Evidence \
+  -Pm03.unitTag=course/m03-complete \
+  -Pm03.productRelease=matching-0.1.0 \
+  --no-daemon
 ```
 
-浏览器后续可以导入 `build/lab-evidence/M10.json` 并在本地展示，但这只叫“本地证据已导入”，不叫服务器权威判题或防作弊认证。
+后续故障单元只有在合同冻结实际 runner 后，才登记对应的 replay、故障注入和 export 命令，不提前展示不存在的 CLI。浏览器以后可以导入本地 evidence 并展示，但这只叫“本地证据已导入”，不叫服务器权威判题或防作弊认证。
 
-M01–M03 共享一个渐进增强的 `MatchingLab`，分别加载 price-time、lifecycle 和 counterexample scenario pack；不创建三个独立 TypeScript 撮合器。Lab 壳、可视化和 Golden corpus adapter 只维护一份。
+M01–M03 已共享一个渐进增强的 `MatchingLab`，分别加载 price-time、lifecycle 和 counterexample scenario pack；不创建三个独立 TypeScript 撮合器。M03 已从持久反例 artifact 登记六个首次分歧场景，Lab 壳、可视化和 Golden corpus adapter 只维护一份。浏览器 runtime 校验输入 Schema、计数和语义自检，但不把 manifest SHA-256 当作浏览器权威身份验证；manifest 与 artifact hash 由构建期 verifier 负责。
 
 ### 6.6 教学设计的研究依据
 
@@ -459,7 +460,7 @@ Matching 是唯一优先启动的项目。它先证明业务语义，再证明�
 | M00 最小可执行规格 | 输入域、规范化和确定性验证合同 | 能重放 fixture 并比较验证结果和 history digest | `PUBLISHED / CONTRACT` |
 | M01 单交易对 GTC 限价撮合 | 价格时间优先撮合语义 | 正确处理挂单、部分成交和连续吃单 | `PUBLISHED / CONTRACT` |
 | M02 可寻址订单生命周期 | 撤单和不可逆终态 | 能撤单并防止订单复活 | `PUBLISHED / CONTRACT` |
-| M03 独立参考模型与性质测试 | 自动寻找、缩小、持久化并重放反例 | 目标发布 `matching-0.1.0` | `IN_PROGRESS / CONTRACT` |
+| M03 独立参考模型与性质测试 | 自动寻找、缩小、持久化并重放反例 | 已发布 `matching-0.1.0` | `PUBLISHED / CONTRACT` |
 | M04 执行与准入策略 | TIF、请求保护和参与者策略 | 支持 IOC、FOK、Post-only、受保护 aggressive order、price band 和 STP | `CANDIDATE / RISK_MAP` |
 | M05 版本化市场控制 | RuleSet fence 和 operating mode | 支持版本激活、停市和 Mass Cancel | `CANDIDATE / RISK_MAP` |
 | M06 WAL 与确认边界 | 单机持久确认和 durable idempotency | 已确认命令可重放且不会重复执行 | `CANDIDATE / RISK_MAP` |
@@ -736,7 +737,7 @@ M02 起点必须签入严格的 `matching.m02.scenario.v1` 命令联合，comman
 
 **Matching Lab 合同**
 
-M02 已在 `src/practice/labs.ts` 登记 Lab；M01 与 M02 共享同一个数据驱动 Matching Lab 壳和两种模式，M03 只有签约并发布后才可接入：
+M02 已在 `src/practice/labs.ts` 登记 Lab；M01～M03 现已共享同一个数据驱动 Matching Lab 壳。M03 在完成签约与发布门禁后接入第三组 counterexample 模式，没有复制新的 TypeScript 撮合器：
 
 - `JAVA_GOLDEN_REPLAY` 只读加载 complete tag CI 固化并由本站托管的 M02 manifest、scenario pack、event batches 与 canonical history；
 - `BROWSER_MODEL` 使用有界 BigInt、同源静态输入和隔离内存状态，让读者先预测 Place 或 Cancel disposition，再揭示事件、盘口、registry 中的活动/终态身份和生命周期；
@@ -788,7 +789,7 @@ The evidence makes no throughput, latency, recovery, durable-idempotency, or pro
 
 > M03 单元合同 `planVersion`：`0.5`
 >
-> 生命周期：`IN_PROGRESS`。M00～M02 均已发布；权威起点是 annotated [`course/m03-start`](https://github.com/lcha-reln/cex-matching/tree/course/m03-start)，tag peeled commit 为 `4bcf4e060e8bc596d3246f1b98cec346cc66221f`。起点保持累计构建 GREEN，并让 `m03Check` 以结构化 `GOAL_NOT_IMPLEMENTED` 形成唯一 RED。`course/m03-complete`、实际 `matching-0.1.0`、教程正文、Matching Lab 和 evidence 尚未创建。
+> 生命周期：`PUBLISHED`。权威起点仍是 annotated [`course/m03-start`](https://github.com/lcha-reln/cex-matching/tree/course/m03-start)，tag peeled commit 为 `4bcf4e060e8bc596d3246f1b98cec346cc66221f`；annotated [`course/m03-complete`](https://github.com/lcha-reln/cex-matching/tree/course/m03-complete) 与 annotated [`matching-0.1.0`](https://github.com/lcha-reln/cex-matching/tree/matching-0.1.0) 均 peeled 到完成提交 `dab4a2a1dccf06d6b9769c979a6ae5af6d1d2bdc`。四篇教程、共享 Matching Lab 与[持久 evidence](https://lcha-reln.github.io/signal-grid-blog/practice/high-availability-cex/m03/evidence/manifest.json) 已原子公开；manifest SHA-256 为 `14ea367d5f08029679b22a5efd2a9c0a34b16f97bb28273771b3c5125c851b52`。
 
 **Objective**
 
@@ -800,12 +801,12 @@ The evidence makes no throughput, latency, recovery, durable-idempotency, or pro
 
 **Delivers**
 
-- `matching-reference` 是 test-only module；Gradle 依赖图不得包含 `matching-core` 或 `matching-testkit`，也不得有外部依赖；
+- `matching-reference` 是 test-only module；其 `main`/runtime 只使用 JDK，不含 `matching-core`、`matching-testkit` 或其他项目/生产依赖，测试源码使用 JUnit；
 - `LinearReferenceModel` 自己验证 raw input，以扁平订单列表保存状态，通过完整线性扫描按 `(best price, acceptanceSequence)` 选择 maker；不得复制生产 `TreeMap + per-level queue` 结构；
 - `M03ProductionCandidate` 只把公开 `SingleInstrumentMatchingEngine` 结果适配为中立不可变值，不包含 expected-result 逻辑；
 - `M03PropertyJudge` 维护第三条 event-derived ledger，先检查业务不变量，再逐命令比较 production 与 reference 的完整有序事件和 full-depth `bookAfter`；
 - required mutant 的失败历史必须经过 fresh-state shrink、持久化、one-minimal 检查和 strict schema replay；
-- 本单元的命名停止点目标是 `matching-0.1.0`，但 `releaseTarget` 不等于已经发布的 `productRelease`。
+- 本单元已经形成命名停止点 `matching-0.1.0`。普通 `m03Check` 的 `releaseTarget` 只声明目标；clean-tree `m03Evidence` 才验证 complete/product 两个 annotated tag 与 HEAD 同一提交，并将其写为已验证 `productRelease`。
 
 **三条独立观察路径**
 
@@ -840,6 +841,8 @@ The evidence makes no throughput, latency, recovery, durable-idempotency, or pro
 
 每个 history seed 只能由 base seed 与 history index 派生；墙钟、环境、JDK Random、机器信息和无序集合迭代均不得进入生成。相同配置 fresh 生成两次必须得到逐字节相同的命令和一个 digest。四个 lane prefix 只是 edge-family 输入构造器，不携带手写 expected；全部 expected event/book 仍由独立 reference 计算。每条 history 都必须创建 fresh production candidate、reference 和 event ledger，不允许跨历史泄漏状态。
 
+完成证据中，两次生成只有一个 `M03G1` digest：`sha256:1920d6b8a480998825c72636d446854d9e795e91b0ab29520f203b12186979ce`；canonical history 为 16,641 行、1,682,592 bytes。全部 256×64，即 16,384 个逐命令边界均完成 production/reference equality、ledger 与 book/lifecycle 检查。
+
 **逐命令性质与失败分类**
 
 裁判在每条 command 后按固定顺序检查：
@@ -854,13 +857,13 @@ The evidence makes no throughput, latency, recovery, durable-idempotency, or pro
 
 **Shrink、persist 与 replay**
 
-每个 required mutant 先由完整生成套件确定性找到失败，再由 fresh-candidate predicate 保持同一 property fingerprint，依次执行：
+每个 required mutant 先由完整生成套件确定性找到失败，再由 fresh-candidate predicate 保持同一 property fingerprint。shrinker 先对首次失败的完整因果前缀做 fresh-state 验证，再依次执行：
 
 1. deterministic chunk deletion (`ddmin`)；
 2. single-command deletion 到 fixed point；
-3. instrument、orderId、side、price、quantity 的 deterministic scalar simplification。
+3. 按 `instrumentId → orderId → side → priceTicks → quantityLots` 固定字段与候选顺序做 deterministic scalar simplification；每次接受 scalar 后回到 single-command deletion，直至两类操作共同到达 fixed point。
 
-每次候选变化都必须从 fresh candidate/reference/ledger 重放完整保留历史，禁止在已经失败的 live engine 上原地删除，也禁止从错误文本推测反例。`matching.m03.counterexamples.v1` 必须为每个 mutant 保存完整最小命令历史、每步 reference outcome、首次 actual mismatch、seed、原始/最小长度、property fingerprint 和 one-minimal 结果。只保存 seed 或 stack trace 不合格。
+每次候选变化都必须从 fresh candidate/reference/ledger 重放完整保留历史，禁止在已经失败的 live engine 上原地删除，也禁止从错误文本推测反例。初始验证、缩小与 one-minimal 复验共享 `MAX_TRIALS = 50_000`，预算耗尽或任何 `SYSTEM_ERROR` 都立即失败关闭。`matching.m03.counterexamples.v1` 必须为每个 mutant 保存完整最小命令历史、每步 reference outcome、首次 actual mismatch、seed、原始/最小长度、property fingerprint 和 one-minimal 结果。只保存 seed 或 stack trace 不合格。
 
 strict replay 必须重新经过 Schema 边界并为六项反例复现同一 `STUDENT_FAILURE` fingerprint。canonical 格式为 `M03X1`；路径、类名、时间、Git 元数据和对象 `toString()` 不得进入 canonical bytes。
 
@@ -875,7 +878,7 @@ M03-CANCEL-GHOST-BOOK
 M03-CANCELED-ID-REUSE
 ```
 
-六项都必须先由 generated suite 分类为 `STUDENT_FAILURE`，再缩成非空且严格更短的 history，完整持久化，通过冻结 one-minimal check，并在 strict replay 中于同一 property fingerprint 失败。最小长度和 M03X1 digest 是完成阶段生成的 evidence，不能在起点猜测。
+六项都已由 generated suite 分类为 `STUDENT_FAILURE`，再从 64 条原始命令分别缩到 `3/3/2/2/2/3` 条；对应 shrink trial 数为 `246/243/132/72/69/148`。完整持久化反例的 `M03X1` 为 513 行、54,088 bytes，digest 是 `sha256:3c23c1f08975d9ad57260d8a16a8201710ee7f56671824648e4e32c477afcac1`。六次 strict replay 的 `referenceOutcomesExact`、`actualOutcomeExact`、`provenanceExact`、`oneMinimalReverified` 均为 `true`；throwing control 保持 `SYSTEM_ERROR`，没有被计为杀死 mutant。
 
 **教程实施顺序与 RED → GREEN 停止点**
 
@@ -884,7 +887,7 @@ M03-CANCELED-ID-REUSE
 3. `shrink-replay-minimal-counterexamples`：实现 fresh-state ddmin、scalar simplification、完整 artifact 与 strict replay。GREEN 是最小反例可复现；完整 mutant/evidence/release 门禁仍保持 RED。
 4. `property-mutants-release-evidence`：杀死六项 required mutant、保留 throwing `SYSTEM_ERROR` control，生成 clean-tree evidence，并最终让 annotated complete tag 与产品 tag 收敛到同一提交。
 
-四篇 `expectedLessons` 已随 v0.5 合同冻结为 lessonOrder `10/20/30/40` 和上述 permalink。当前阶段不得创建教程 Markdown；以后必须先以 `draft: true` 进入实施，达到 `PUBLISHED` 才能原子公开。
+四篇 `expectedLessons` 已按 v0.5 合同冻结的 lessonOrder `10/20/30/40` 与上述 permalink，从草稿经过内容门禁后随 M03 原子公开。
 
 **Interaction**
 
@@ -892,26 +895,26 @@ M03-CANCELED-ID-REUSE
 - Worked example：逐命令手工比较 production、linear reference 和第三 ledger 的 SAME_PRICE_FIFO lane；
 - Completion problem：补全 chunk deletion，使每次尝试从 fresh state 重放并保持 fingerprint；
 - Independent variant：镜像 CANCELED_IDENTITY 的方向和价格，验证 shrink 后仍暴露终态复活；
-- M03 仍计划复用 M01–M03 数据驱动 Matching Lab 壳，但当前合同阶段不登记 Lab、不创建静态语料、不改浏览器模型。
+- [M03 Matching Lab](https://lcha-reln.github.io/signal-grid-blog/practice/high-availability-cex/m03/lab/) 已复用 M01～M03 的数据驱动壳，并从同一持久反例 artifact 加载六个场景；浏览器只做预测、逐步解释与有界重放，不运行 Java、shrinker 或权威裁判。
 
 **Gate 与 Evidence**
 
-- `./gradlew clean build --no-daemon` 保持 M00–M02 累计回归 GREEN；当前 `./gradlew m03Check --no-daemon` 必须只因 `GOAL_NOT_IMPLEMENTED` 非零退出；
-- 完成态 `matching.m03.check.v2` 必须证明 M00–M02 回归、两次生成唯一 digest、16,384 次 production/reference equality 和 16,384 次 ledger/book/lifecycle property check；
-- 六项 mutant 必须全部经过 find → shrink → persist → one-minimal → replay；throwing control 必须为 `SYSTEM_ERROR`；
-- 架构报告证明 `matching-reference` 不依赖 core/testkit 且采用线性扫描，`matching-core` 继续保持 M02 无 I/O、数据库、网络、线程、时钟、随机数和 Aeron 边界；
-- 当前不生成 evidence。完成阶段才允许写 `build/lab-evidence/M03/manifest.json`，绑定 annotated `course/m03-complete` 和同 commit 的 annotated `matching-0.1.0`，冻结 claim、limitations 与全部 artifact SHA-256。
+- `./gradlew clean build --no-daemon` 与完成态 `matching.m03.check.v2` 均已通过：M00–M02 回归保持 GREEN，两次生成只有一个 digest，16,384 次 production/reference equality 和 16,384 次 ledger/book/lifecycle property check 全部通过；
+- 六项 mutant 已全部经过 find → shrink → persist → one-minimal → replay；throwing control 为 `SYSTEM_ERROR`；
+- 架构报告记录 reference source 7 个、core source 20 个、violation 0 个，并证明 `matching-reference` 不依赖 core/testkit 且采用线性扫描；`matching-core` 继续保持 M02 无 I/O、数据库、网络、线程、时钟、随机数和 Aeron 边界；
+- runner 用逐文件临时写与原子替换生成报告，失败时清除固定输出并只保留最小失败 `check.json`；`M03EvidenceWriter` 另用目录 staging + publish 形成完整 bundle，不能把两层原子性混为一谈；
+- `m03Check` 只声明 `releaseTarget`；clean-tree `m03Evidence` 已验证 annotated `course/m03-complete` 与 annotated `matching-0.1.0` 同 commit，生成 `build/lab-evidence/M03/manifest.json`，冻结八项 claim、八条 limitation、全部 artifact SHA-256 与关键 `reportFacts`。浏览器 runtime 只校验托管数据的 schema/语义边界，不把 manifest hash 当成浏览器权威认证。
 
 **Excludes**
 
 - commandId、durable idempotency、Cancel/Replace、Mass Cancel、IOC、FOK、Post-only、市价单、STP、市场状态和价格带；
 - 第二交易对、账户、资产、仓位、手续费、结算、风控和 terminal tombstone 回收；
 - WAL、Snapshot、数据库、网络、线程、performance layout、benchmark、SBE、Aeron 和高可用；
-- 当前实施阶段的教程正文、Matching Lab、公开 evidence、complete tag 与实际产品 release。
+- 任何把教程、Lab 或 bounded generated suite 解释为远程 Java 执行、形式化证明、性能结论或 production-readiness 认证的声明。
 
 **Stop Point**
 
-目标停止点是 annotated `matching-0.1.0`：一个经过独立线性参考模型和有界 generated-property gate 验证的单交易对 GTC 限价撮合器，支持可寻址撤单，仍为单进程内存实现，不持久、不联网、不高可用。256×64 套件强于固定样例，但不是穷尽式形式化证明、吞吐声明、崩溃恢复声明或 production-readiness 证明。
+已发布停止点是 annotated `matching-0.1.0`：一个经过独立线性参考模型和有界 generated-property gate 验证的单交易对 GTC 限价撮合器，支持可寻址撤单，仍为单进程内存实现，不持久、不联网、不高可用。256×64 套件强于固定样例，但不是穷尽式形式化证明、吞吐声明、崩溃恢复声明或 production-readiness 证明。
 
 ### 8.6 M04–M12 候选能力地图
 
@@ -1102,9 +1105,9 @@ signal-grid-blog
 ```
 
 - 实战章节使用独立 `practiceLessons` collection，不进入 `posts`、文章归档和主 RSS；
-- `config.ts` 管案例与 Profile，`units.ts` 管已签约单元，Markdown 只管一篇教程；当前注册表包含已发布的 M00～M02 和 `IN_PROGRESS` 的 M03 合同。M03 只冻结 start ref、性质边界、四篇 permalink 与 release target，不创建教程正文、Lab、evidence、complete ref 或实际 product release；M04 及以后候选不创建空内容；
+- `config.ts` 管案例与 Profile，`units.ts` 管已签约单元，Markdown 只管一篇教程；当前注册表包含已发布的 M00～M03。M03 登记 start/complete ref、同 commit 的 `matching-0.1.0`、四篇教程、Matching Lab 与持久 evidence 合同；M04 及以后候选不创建空单元或空内容；
 - 教程用 `project / profileVersion / unitCode` 关联单元，同单元的 `lessonOrder` 和 `permalink` 必须唯一；路由为 `/practice/<project>/<unit>/<lesson>/`；
-- 教程一律从 `draft: true` 开始。单元达到 `PUBLISHED` 前不得公开；草稿不生成生产路由，不进入搜索、sitemap、文章统计或主 RSS；`CONTENT_VERIFIED` 冻结预期教程的排序与 permalink，`PUBLISHED` 必须原子公开完整集合；`CODE_VERIFIED` 冻结 complete tag、完整提交 SHA、仓库内 evidence 路径和发布证据合同。M00～M02 的 evidence 都托管到 Signal Grid 的固定静态路径，由 verifier 复核 CI manifest SHA-256、来源、精确 claim/限制、全部 artifact hash，以及 `reportFacts` 中冻结的业务状态和关键报告字段；
+- 教程一律从 `draft: true` 开始。单元达到 `PUBLISHED` 前不得公开；草稿不生成生产路由，不进入搜索、sitemap、文章统计或主 RSS；`CONTENT_VERIFIED` 冻结预期教程的排序与 permalink，`PUBLISHED` 必须原子公开完整集合；`CODE_VERIFIED` 冻结 complete tag、完整提交 SHA、仓库内 evidence 路径和发布证据合同。M00～M03 的 evidence 都托管到 Signal Grid 的固定静态路径，由 verifier 复核 CI manifest SHA-256、来源、精确 claim/限制、全部 artifact hash，以及 `reportFacts` 中冻结的业务状态和关键报告字段；
 - `pnpm verify:practice` 拒绝缺失或 `LOCKED` 单元、重复排序/地址、未 `PUBLISHED` 非草稿和 `main`、`unit/*` 等浮动 ref。它不联网读取课程仓；跨仓 tag/evidence 在发布前独立核验；
 - 案例驾驶舱把 Profile 路线与项目路线分层展示，把“真实已发布数”和“当前 Profile 候选规划数”分开显示，并只给出一个当前推荐动作；
 - `LOCKED` Profile 只展示能力增量和解锁门禁，不创建单元、仓库、起点 tag、空教程或虚假进度；
@@ -1220,6 +1223,7 @@ git switch -c unit/m01 course/m01-start
 
 | 日期 | 单元 | 生命周期 | 记录 |
 | --- | --- | --- | --- |
+| 2026-08-28 | M03 | `PUBLISHED` | annotated `course/m03-complete` 与 annotated `matching-0.1.0` 均 peeled 到 `dab4a2a1dccf06d6b9769c979a6ae5af6d1d2bdc`；四篇教程、Matching Lab 与 persistent evidence 原子公开。256×64 共 16,384 个边界全部通过；六项反例最小长度为 `3/3/2/2/2/3`，M03X1 digest 为 `sha256:3c23c1f08975d9ad57260d8a16a8201710ee7f56671824648e4e32c477afcac1`，manifest SHA-256 为 `14ea367d5f08029679b22a5efd2a9c0a34b16f97bb28273771b3c5125c851b52` |
 | 2026-08-28 | M03 | `IN_PROGRESS` | annotated `course/m03-start` 已冻结，peeled commit 为 `4bcf4e060e8bc596d3246f1b98cec346cc66221f`；M00～M02 累计构建保持 GREEN，`m03Check` 校验 generator fixture、SplitMix64 seed 6824、256×64、四 lane 和六个负向 Schema probe 后以 `GOAL_NOT_IMPLEMENTED` 形成 RED。当前不创建教程正文、Lab、evidence、complete tag 或实际 `matching-0.1.0` release |
 | 2026-08-28 | M03 | `CONTRACTED` | PLAN v0.5 冻结独立 reference 边界、三条观察路径、16,384 个逐命令边界、六项 required mutant、fresh-state shrink/persist/replay、四篇 permalink 与 `matching-0.1.0` release target；M04 及以后保持候选 |
 | 2026-08-28 | M02 | `PUBLISHED` | `course/m02-complete`、commit `b54b4dfb51b61a5041d60c50dc1ff3404d73b27d`、四篇教程、Matching Lab 与 persistent evidence 原子公开；M02H1 为 181 行 / 17,160 bytes / `sha256:32054d63accba99b19db823c41f74bda73dc3b8a009b528f2834d2bc70839d16`，100/100 重放和 4/4 required mutants 通过 |

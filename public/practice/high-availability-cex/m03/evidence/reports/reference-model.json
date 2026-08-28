@@ -1,0 +1,10 @@
+{
+  "schemaVersion" : "matching.m03.reference-report.v1",
+  "status" : "PASS",
+  "module" : "matching-reference",
+  "representation" : "FLAT_LIST_LINEAR_SCAN",
+  "productionImports" : 0,
+  "coreDependency" : false,
+  "testkitDependency" : false,
+  "sourceFiles" : 7
+}

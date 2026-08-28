@@ -1,0 +1,8 @@
+{
+  "schemaVersion" : "matching.m03.invariants-report.v1",
+  "status" : "PASS",
+  "commands" : 16384,
+  "eventLedgerChecks" : 16384,
+  "bookLifecycleChecks" : 16384,
+  "properties" : [ "EVENT_GRAMMAR", "VALIDATION_PRIORITY_AND_NO_MUTATION", "ACCEPTANCE_SEQUENCE_CONTIGUITY", "PRICE_TIME_PRIORITY", "MAKER_PRICE", "QUANTITY_PARTITION", "BOOK_ORDER_FIFO_AND_NON_CROSSED", "BOOK_LIFECYCLE_BIJECTION", "LIFECYCLE_IRREVERSIBILITY", "EXACT_BATCH_DIFFERENTIAL" ]
+}

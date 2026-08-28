@@ -1,0 +1,10 @@
+{
+  "schemaVersion" : "matching.m03.regression-report.v1",
+  "status" : "PASS",
+  "m00Status" : "PASS",
+  "m01Status" : "PASS",
+  "m02Status" : "PASS",
+  "m02Scenarios" : 10,
+  "m02Commands" : 34,
+  "m02Digest" : "sha256:32054d63accba99b19db823c41f74bda73dc3b8a009b528f2834d2bc70839d16"
+}

@@ -1,0 +1,7 @@
+{
+  "schemaVersion" : "matching.m03.architecture-report.v1",
+  "status" : "PASS",
+  "coreSourceFiles" : 20,
+  "referenceSourceFiles" : 7,
+  "violations" : [ ]
+}
