@@ -2,6 +2,7 @@
 title: "Python AI 后端：类型、Pydantic、精确数值与可复现工程"
 description: "从静态类型、Pydantic 运行时 Schema、Decimal 与 UTC 值对象，到依赖锁定和数据库约束，建立可校验、可复现、失败关闭的 Python AI 后端边界。"
 date: 2026-08-24T11:30:00+08:00
+updated: 2026-08-28T17:00:00+08:00
 tags:
   - AI Agent
   - Python
@@ -1062,7 +1063,7 @@ Python AI 后端可以同时拥有灵活开发体验和严格工程边界，前�
 
 真正危险的不是 Python 允许动态对象，而是系统无法回答：这个值在哪里变得可信，谁有权改变它，冲突由谁拒绝，失败后用什么证据判断结果。
 
-下一章将进入 `asyncio`，讨论这些同步边界在 Deadline、取消、有界并发和部分失败下如何继续成立。
+下一章 [asyncio 可靠并发](/signal-grid-blog/posts/python-asyncio-deadlines-cancellation-backpressure/) 将讨论这些同步边界在 Deadline、取消、有界并发和部分失败下如何继续成立。
 
 ## 参考资料
 
