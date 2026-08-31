@@ -65,13 +65,13 @@ M05 的 governed Place 必须遵守完整顺序：
 
 ```java
 public record GovernedPlaceLimitOrderRequest(
-    PlaceLimitOrderRequest order,
-    RuleSetIdentity expectedRuleSet) {}
+    PlaceLimitOrderRequest orderRequest,
+    RuleSetIdentity expectedActive) {}
 
 ExecutionBatch placeGoverned(GovernedPlaceLimitOrderRequest request);
 ```
 
-`placeGoverned` 在 duplicate 后比较 `expectedRuleSet` 与 active identity。若不相等，返回 singleton `PlaceRejected(RULE_SET_MISMATCH)`，不继续读取 band 或流动性。
+`placeGoverned` 在 duplicate 后比较 `expectedActive` 与 active identity。若不相等，返回 singleton `PlaceRejected(RULE_SET_MISMATCH)`，不继续读取 band 或流动性。
 
 M00～M04 的 `place` 与 `placeRequest` 仍可调用。为了保持 source compatibility，它们没有 expected identity，因此不执行第 4 步；但它们**仍然遵守当前 active band**。只有启动时的 v0 band `[1, Long.MAX_VALUE]` 让既有回归观察到与 M04 相同的结果。若把 legacy 入口永久写成 bypass，新规则就会出现一条未审计的绕过通道。
 
@@ -109,8 +109,8 @@ no book / registry / market-control mutation
 
 ```java
 boolean inside =
-    priceTicks.compareTo(active.lowerInclusive()) >= 0
-        && priceTicks.compareTo(active.upperInclusive()) <= 0;
+    priceTicks.value() >= active.lowerInclusive().value()
+        && priceTicks.value() <= active.upperInclusive().value();
 ```
 
 不要把 tick 转成 `double`，不要在 Matching 内重新计算百分比，也不要根据行情临时移动边界。artifact 已经是上游完成舍入后冻结的绝对整数事实；重放时只能读取它。
@@ -126,7 +126,7 @@ validateM00Fields(order);
 validateExecutionPolicy(order.executionPolicy());
 
 if (registry.contains(order.orderId())) reject(DUPLICATE_ORDER_ID);
-if (!expectedRuleSet.equals(active.identity())) reject(RULE_SET_MISMATCH);
+if (!expectedActive.equals(active.identity())) reject(RULE_SET_MISMATCH);
 if (!active.admits(order.priceTicks())) reject(PRICE_OUTSIDE_ACTIVE_BAND);
 
 precheckFokOrPostOnly(order, book);

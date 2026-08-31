@@ -98,7 +98,7 @@ GTC 或 POST_ONLY 的 positive remainder 写入 `OrderBookSnapshot.RestingOrderV
 | `Accepted` | taker/order admission identity |
 | `Rested` | remainder admission identity |
 | `Trade` | maker admission、taker admission、execution identity |
-| `RemainderCanceled` | IOC/FOK order admission identity |
+| `RemainderCanceled` | IOC order admission identity |
 | successful `Canceled` | order admission 与 cancel execution identity |
 | resting snapshot | 每个 remainder 的 admission identity |
 | returned batch context | active execution identity 与 control revision |
