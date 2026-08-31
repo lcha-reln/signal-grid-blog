@@ -1,0 +1,3255 @@
+{
+  "schemaVersion" : "matching.m05.fixed-event-batches.v1",
+  "fixtureSha256" : "cd56fbbb0bc56dc809f741ed15ac53c7e8e41162745db7841cb853fc2768c53e",
+  "commandInputDigest" : "sha256:8d756140bad24b25b171830907b68ab394231d7514d462b8ecd6c6238bdd47c4",
+  "status" : "PASS",
+  "scenarios" : [ {
+    "scenarioId" : "legacy-unbounded-regression",
+    "cases" : [ {
+      "caseId" : "legacy-place",
+      "type" : "PLACE",
+      "entrypoint" : "LEGACY",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 1,
+        "side" : "BUY",
+        "priceTicks" : 99,
+        "quantityLots" : 2,
+        "executionPolicy" : "GTC"
+      },
+      "applicationSequence" : 1,
+      "events" : [ {
+        "type" : "ACCEPTED",
+        "acceptanceSequence" : 1,
+        "orderId" : 1,
+        "side" : "BUY",
+        "priceTicks" : 99,
+        "quantityLots" : 2,
+        "executionPolicy" : "GTC",
+        "admissionRuleSet" : {
+          "version" : 0,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "executionRuleSet" : {
+          "version" : 0,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        }
+      }, {
+        "type" : "RESTED",
+        "acceptanceSequence" : 1,
+        "orderId" : 1,
+        "side" : "BUY",
+        "priceTicks" : 99,
+        "remainingQuantityLots" : 2,
+        "admissionRuleSet" : {
+          "version" : 0,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "executionRuleSet" : {
+          "version" : 0,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        }
+      } ],
+      "stateAfter" : {
+        "nextApplicationSequence" : 2,
+        "nextAcceptanceSequence" : 2,
+        "controlRevision" : 0,
+        "activeRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 0,
+          "lowerInclusive" : 1,
+          "upperInclusive" : 9223372036854775807,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "book" : {
+          "bids" : [ {
+            "side" : "BUY",
+            "priceTicks" : 99,
+            "orders" : [ {
+              "acceptanceSequence" : 1,
+              "orderId" : 1,
+              "remainingQuantityLots" : 2,
+              "admissionRuleSet" : {
+                "version" : 0,
+                "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+              }
+            } ]
+          } ],
+          "asks" : [ ]
+        }
+      }
+    }, {
+      "caseId" : "legacy-cancel",
+      "type" : "CANCEL",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 1
+      },
+      "applicationSequence" : 2,
+      "events" : [ {
+        "type" : "CANCELED",
+        "acceptanceSequence" : 1,
+        "orderId" : 1,
+        "side" : "BUY",
+        "priceTicks" : 99,
+        "canceledQuantityLots" : 2,
+        "admissionRuleSet" : {
+          "version" : 0,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "executionRuleSet" : {
+          "version" : 0,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        }
+      } ],
+      "stateAfter" : {
+        "nextApplicationSequence" : 3,
+        "nextAcceptanceSequence" : 2,
+        "controlRevision" : 0,
+        "activeRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 0,
+          "lowerInclusive" : 1,
+          "upperInclusive" : 9223372036854775807,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "book" : {
+          "bids" : [ ],
+          "asks" : [ ]
+        }
+      }
+    } ]
+  }, {
+    "scenarioId" : "prepare-activate-current-fence",
+    "cases" : [ {
+      "caseId" : "prepare-v1",
+      "type" : "PREPARE_RULE_SET",
+      "input" : {
+        "expectedActive" : {
+          "version" : 0,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "artifact" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 90,
+          "upperInclusive" : 110,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        }
+      },
+      "applicationSequence" : 1,
+      "events" : [ {
+        "type" : "RULE_SET_PREPARED",
+        "identity" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "status" : "PREPARED"
+      } ],
+      "stateAfter" : {
+        "nextApplicationSequence" : 2,
+        "nextAcceptanceSequence" : 1,
+        "controlRevision" : 0,
+        "activeRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 0,
+          "lowerInclusive" : 1,
+          "upperInclusive" : 9223372036854775807,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "preparedRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 90,
+          "upperInclusive" : 110,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "book" : {
+          "bids" : [ ],
+          "asks" : [ ]
+        }
+      }
+    }, {
+      "caseId" : "activate-v1",
+      "type" : "ACTIVATE_RULE_SET",
+      "input" : {
+        "expectedApplicationSequence" : 2,
+        "expectedActive" : {
+          "version" : 0,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "target" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        }
+      },
+      "applicationSequence" : 2,
+      "events" : [ {
+        "type" : "RULE_SET_ACTIVATED",
+        "previousActive" : {
+          "version" : 0,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "active" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "fence" : {
+          "applicationSequence" : 2,
+          "controlRevision" : 1,
+          "firstAcceptanceSequence" : 1
+        }
+      } ],
+      "stateAfter" : {
+        "nextApplicationSequence" : 3,
+        "nextAcceptanceSequence" : 1,
+        "controlRevision" : 1,
+        "activeRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 90,
+          "upperInclusive" : 110,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "lastActivationFence" : {
+          "applicationSequence" : 2,
+          "controlRevision" : 1,
+          "firstAcceptanceSequence" : 1
+        },
+        "book" : {
+          "bids" : [ ],
+          "asks" : [ ]
+        }
+      }
+    }, {
+      "caseId" : "place-lower",
+      "type" : "PLACE",
+      "entrypoint" : "GOVERNED",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 2,
+        "side" : "BUY",
+        "priceTicks" : 90,
+        "quantityLots" : 1,
+        "executionPolicy" : "GTC"
+      },
+      "expectedRuleSet" : {
+        "version" : 1,
+        "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+      },
+      "applicationSequence" : 3,
+      "events" : [ {
+        "type" : "ACCEPTED",
+        "acceptanceSequence" : 1,
+        "orderId" : 2,
+        "side" : "BUY",
+        "priceTicks" : 90,
+        "quantityLots" : 1,
+        "executionPolicy" : "GTC",
+        "admissionRuleSet" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "executionRuleSet" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        }
+      }, {
+        "type" : "RESTED",
+        "acceptanceSequence" : 1,
+        "orderId" : 2,
+        "side" : "BUY",
+        "priceTicks" : 90,
+        "remainingQuantityLots" : 1,
+        "admissionRuleSet" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "executionRuleSet" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        }
+      } ],
+      "stateAfter" : {
+        "nextApplicationSequence" : 4,
+        "nextAcceptanceSequence" : 2,
+        "controlRevision" : 1,
+        "activeRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 90,
+          "upperInclusive" : 110,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "lastActivationFence" : {
+          "applicationSequence" : 2,
+          "controlRevision" : 1,
+          "firstAcceptanceSequence" : 1
+        },
+        "book" : {
+          "bids" : [ {
+            "side" : "BUY",
+            "priceTicks" : 90,
+            "orders" : [ {
+              "acceptanceSequence" : 1,
+              "orderId" : 2,
+              "remainingQuantityLots" : 1,
+              "admissionRuleSet" : {
+                "version" : 1,
+                "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+              }
+            } ]
+          } ],
+          "asks" : [ ]
+        }
+      }
+    }, {
+      "caseId" : "place-upper",
+      "type" : "PLACE",
+      "entrypoint" : "GOVERNED",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 3,
+        "side" : "SELL",
+        "priceTicks" : 110,
+        "quantityLots" : 1,
+        "executionPolicy" : "GTC"
+      },
+      "expectedRuleSet" : {
+        "version" : 1,
+        "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+      },
+      "applicationSequence" : 4,
+      "events" : [ {
+        "type" : "ACCEPTED",
+        "acceptanceSequence" : 2,
+        "orderId" : 3,
+        "side" : "SELL",
+        "priceTicks" : 110,
+        "quantityLots" : 1,
+        "executionPolicy" : "GTC",
+        "admissionRuleSet" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "executionRuleSet" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        }
+      }, {
+        "type" : "RESTED",
+        "acceptanceSequence" : 2,
+        "orderId" : 3,
+        "side" : "SELL",
+        "priceTicks" : 110,
+        "remainingQuantityLots" : 1,
+        "admissionRuleSet" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "executionRuleSet" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        }
+      } ],
+      "stateAfter" : {
+        "nextApplicationSequence" : 5,
+        "nextAcceptanceSequence" : 3,
+        "controlRevision" : 1,
+        "activeRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 90,
+          "upperInclusive" : 110,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "lastActivationFence" : {
+          "applicationSequence" : 2,
+          "controlRevision" : 1,
+          "firstAcceptanceSequence" : 1
+        },
+        "book" : {
+          "bids" : [ {
+            "side" : "BUY",
+            "priceTicks" : 90,
+            "orders" : [ {
+              "acceptanceSequence" : 1,
+              "orderId" : 2,
+              "remainingQuantityLots" : 1,
+              "admissionRuleSet" : {
+                "version" : 1,
+                "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+              }
+            } ]
+          } ],
+          "asks" : [ {
+            "side" : "SELL",
+            "priceTicks" : 110,
+            "orders" : [ {
+              "acceptanceSequence" : 2,
+              "orderId" : 3,
+              "remainingQuantityLots" : 1,
+              "admissionRuleSet" : {
+                "version" : 1,
+                "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+              }
+            } ]
+          } ]
+        }
+      }
+    }, {
+      "caseId" : "cancel-lower",
+      "type" : "CANCEL",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 2
+      },
+      "applicationSequence" : 5,
+      "events" : [ {
+        "type" : "CANCELED",
+        "acceptanceSequence" : 1,
+        "orderId" : 2,
+        "side" : "BUY",
+        "priceTicks" : 90,
+        "canceledQuantityLots" : 1,
+        "admissionRuleSet" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "executionRuleSet" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        }
+      } ],
+      "stateAfter" : {
+        "nextApplicationSequence" : 6,
+        "nextAcceptanceSequence" : 3,
+        "controlRevision" : 1,
+        "activeRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 90,
+          "upperInclusive" : 110,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "lastActivationFence" : {
+          "applicationSequence" : 2,
+          "controlRevision" : 1,
+          "firstAcceptanceSequence" : 1
+        },
+        "book" : {
+          "bids" : [ ],
+          "asks" : [ {
+            "side" : "SELL",
+            "priceTicks" : 110,
+            "orders" : [ {
+              "acceptanceSequence" : 2,
+              "orderId" : 3,
+              "remainingQuantityLots" : 1,
+              "admissionRuleSet" : {
+                "version" : 1,
+                "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+              }
+            } ]
+          } ]
+        }
+      }
+    } ]
+  }, {
+    "scenarioId" : "hash-mismatch-and-retry",
+    "cases" : [ {
+      "caseId" : "reject-tampered-hash",
+      "type" : "PREPARE_RULE_SET",
+      "input" : {
+        "expectedActive" : {
+          "version" : 0,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "artifact" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 90,
+          "upperInclusive" : 110,
+          "contentHash" : "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+        }
+      },
+      "applicationSequence" : 1,
+      "events" : [ {
+        "type" : "PREPARE_RULE_SET_REJECTED",
+        "code" : "CONTENT_HASH_MISMATCH"
+      } ],
+      "stateAfter" : {
+        "nextApplicationSequence" : 2,
+        "nextAcceptanceSequence" : 1,
+        "controlRevision" : 0,
+        "activeRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 0,
+          "lowerInclusive" : 1,
+          "upperInclusive" : 9223372036854775807,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "book" : {
+          "bids" : [ ],
+          "asks" : [ ]
+        }
+      }
+    }, {
+      "caseId" : "prepare-correct-hash",
+      "type" : "PREPARE_RULE_SET",
+      "input" : {
+        "expectedActive" : {
+          "version" : 0,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "artifact" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 90,
+          "upperInclusive" : 110,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        }
+      },
+      "applicationSequence" : 2,
+      "events" : [ {
+        "type" : "RULE_SET_PREPARED",
+        "identity" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "status" : "PREPARED"
+      } ],
+      "stateAfter" : {
+        "nextApplicationSequence" : 3,
+        "nextAcceptanceSequence" : 1,
+        "controlRevision" : 0,
+        "activeRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 0,
+          "lowerInclusive" : 1,
+          "upperInclusive" : 9223372036854775807,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "preparedRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 90,
+          "upperInclusive" : 110,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "book" : {
+          "bids" : [ ],
+          "asks" : [ ]
+        }
+      }
+    }, {
+      "caseId" : "activate-after-retry",
+      "type" : "ACTIVATE_RULE_SET",
+      "input" : {
+        "expectedApplicationSequence" : 3,
+        "expectedActive" : {
+          "version" : 0,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "target" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        }
+      },
+      "applicationSequence" : 3,
+      "events" : [ {
+        "type" : "RULE_SET_ACTIVATED",
+        "previousActive" : {
+          "version" : 0,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "active" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "fence" : {
+          "applicationSequence" : 3,
+          "controlRevision" : 1,
+          "firstAcceptanceSequence" : 1
+        }
+      } ],
+      "stateAfter" : {
+        "nextApplicationSequence" : 4,
+        "nextAcceptanceSequence" : 1,
+        "controlRevision" : 1,
+        "activeRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 90,
+          "upperInclusive" : 110,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "lastActivationFence" : {
+          "applicationSequence" : 3,
+          "controlRevision" : 1,
+          "firstAcceptanceSequence" : 1
+        },
+        "book" : {
+          "bids" : [ ],
+          "asks" : [ ]
+        }
+      }
+    } ]
+  }, {
+    "scenarioId" : "idempotent-prepare-and-version-conflict",
+    "cases" : [ {
+      "caseId" : "prepare-first",
+      "type" : "PREPARE_RULE_SET",
+      "input" : {
+        "expectedActive" : {
+          "version" : 0,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "artifact" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 90,
+          "upperInclusive" : 110,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        }
+      },
+      "applicationSequence" : 1,
+      "events" : [ {
+        "type" : "RULE_SET_PREPARED",
+        "identity" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "status" : "PREPARED"
+      } ],
+      "stateAfter" : {
+        "nextApplicationSequence" : 2,
+        "nextAcceptanceSequence" : 1,
+        "controlRevision" : 0,
+        "activeRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 0,
+          "lowerInclusive" : 1,
+          "upperInclusive" : 9223372036854775807,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "preparedRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 90,
+          "upperInclusive" : 110,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "book" : {
+          "bids" : [ ],
+          "asks" : [ ]
+        }
+      }
+    }, {
+      "caseId" : "prepare-exact-replay",
+      "type" : "PREPARE_RULE_SET",
+      "input" : {
+        "expectedActive" : {
+          "version" : 0,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "artifact" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 90,
+          "upperInclusive" : 110,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        }
+      },
+      "applicationSequence" : 2,
+      "events" : [ {
+        "type" : "RULE_SET_PREPARED",
+        "identity" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "status" : "ALREADY_PREPARED"
+      } ],
+      "stateAfter" : {
+        "nextApplicationSequence" : 3,
+        "nextAcceptanceSequence" : 1,
+        "controlRevision" : 0,
+        "activeRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 0,
+          "lowerInclusive" : 1,
+          "upperInclusive" : 9223372036854775807,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "preparedRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 90,
+          "upperInclusive" : 110,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "book" : {
+          "bids" : [ ],
+          "asks" : [ ]
+        }
+      }
+    }, {
+      "caseId" : "reject-same-version-different-content",
+      "type" : "PREPARE_RULE_SET",
+      "input" : {
+        "expectedActive" : {
+          "version" : 0,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "artifact" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 95,
+          "upperInclusive" : 105,
+          "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+        }
+      },
+      "applicationSequence" : 3,
+      "events" : [ {
+        "type" : "PREPARE_RULE_SET_REJECTED",
+        "code" : "SAME_VERSION_DIFFERENT_CONTENT"
+      } ],
+      "stateAfter" : {
+        "nextApplicationSequence" : 4,
+        "nextAcceptanceSequence" : 1,
+        "controlRevision" : 0,
+        "activeRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 0,
+          "lowerInclusive" : 1,
+          "upperInclusive" : 9223372036854775807,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "preparedRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 90,
+          "upperInclusive" : 110,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "book" : {
+          "bids" : [ ],
+          "asks" : [ ]
+        }
+      }
+    }, {
+      "caseId" : "activate-original",
+      "type" : "ACTIVATE_RULE_SET",
+      "input" : {
+        "expectedApplicationSequence" : 4,
+        "expectedActive" : {
+          "version" : 0,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "target" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        }
+      },
+      "applicationSequence" : 4,
+      "events" : [ {
+        "type" : "RULE_SET_ACTIVATED",
+        "previousActive" : {
+          "version" : 0,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "active" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "fence" : {
+          "applicationSequence" : 4,
+          "controlRevision" : 1,
+          "firstAcceptanceSequence" : 1
+        }
+      } ],
+      "stateAfter" : {
+        "nextApplicationSequence" : 5,
+        "nextAcceptanceSequence" : 1,
+        "controlRevision" : 1,
+        "activeRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 90,
+          "upperInclusive" : 110,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "lastActivationFence" : {
+          "applicationSequence" : 4,
+          "controlRevision" : 1,
+          "firstAcceptanceSequence" : 1
+        },
+        "book" : {
+          "bids" : [ ],
+          "asks" : [ ]
+        }
+      }
+    } ]
+  }, {
+    "scenarioId" : "monotonic-prepared-supersession",
+    "cases" : [ {
+      "caseId" : "prepare-v1-wide",
+      "type" : "PREPARE_RULE_SET",
+      "input" : {
+        "expectedActive" : {
+          "version" : 0,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "artifact" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 90,
+          "upperInclusive" : 110,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        }
+      },
+      "applicationSequence" : 1,
+      "events" : [ {
+        "type" : "RULE_SET_PREPARED",
+        "identity" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "status" : "PREPARED"
+      } ],
+      "stateAfter" : {
+        "nextApplicationSequence" : 2,
+        "nextAcceptanceSequence" : 1,
+        "controlRevision" : 0,
+        "activeRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 0,
+          "lowerInclusive" : 1,
+          "upperInclusive" : 9223372036854775807,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "preparedRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 90,
+          "upperInclusive" : 110,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "book" : {
+          "bids" : [ ],
+          "asks" : [ ]
+        }
+      }
+    }, {
+      "caseId" : "prepare-v2-wider",
+      "type" : "PREPARE_RULE_SET",
+      "input" : {
+        "expectedActive" : {
+          "version" : 0,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "artifact" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 2,
+          "lowerInclusive" : 80,
+          "upperInclusive" : 120,
+          "contentHash" : "sha256:d7d0a8e3a2d1882012f8ba6d7318ecf02e378f4766c26badff272a97e1e21f7d"
+        }
+      },
+      "applicationSequence" : 2,
+      "events" : [ {
+        "type" : "RULE_SET_PREPARED",
+        "identity" : {
+          "version" : 2,
+          "contentHash" : "sha256:d7d0a8e3a2d1882012f8ba6d7318ecf02e378f4766c26badff272a97e1e21f7d"
+        },
+        "status" : "SUPERSEDED",
+        "supersededIdentity" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        }
+      } ],
+      "stateAfter" : {
+        "nextApplicationSequence" : 3,
+        "nextAcceptanceSequence" : 1,
+        "controlRevision" : 0,
+        "activeRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 0,
+          "lowerInclusive" : 1,
+          "upperInclusive" : 9223372036854775807,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "preparedRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 2,
+          "lowerInclusive" : 80,
+          "upperInclusive" : 120,
+          "contentHash" : "sha256:d7d0a8e3a2d1882012f8ba6d7318ecf02e378f4766c26badff272a97e1e21f7d"
+        },
+        "book" : {
+          "bids" : [ ],
+          "asks" : [ ]
+        }
+      }
+    }, {
+      "caseId" : "reject-older-prepared",
+      "type" : "PREPARE_RULE_SET",
+      "input" : {
+        "expectedActive" : {
+          "version" : 0,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "artifact" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 90,
+          "upperInclusive" : 110,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        }
+      },
+      "applicationSequence" : 3,
+      "events" : [ {
+        "type" : "PREPARE_RULE_SET_REJECTED",
+        "code" : "VERSION_NOT_INCREASING"
+      } ],
+      "stateAfter" : {
+        "nextApplicationSequence" : 4,
+        "nextAcceptanceSequence" : 1,
+        "controlRevision" : 0,
+        "activeRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 0,
+          "lowerInclusive" : 1,
+          "upperInclusive" : 9223372036854775807,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "preparedRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 2,
+          "lowerInclusive" : 80,
+          "upperInclusive" : 120,
+          "contentHash" : "sha256:d7d0a8e3a2d1882012f8ba6d7318ecf02e378f4766c26badff272a97e1e21f7d"
+        },
+        "book" : {
+          "bids" : [ ],
+          "asks" : [ ]
+        }
+      }
+    }, {
+      "caseId" : "activate-v2",
+      "type" : "ACTIVATE_RULE_SET",
+      "input" : {
+        "expectedApplicationSequence" : 4,
+        "expectedActive" : {
+          "version" : 0,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "target" : {
+          "version" : 2,
+          "contentHash" : "sha256:d7d0a8e3a2d1882012f8ba6d7318ecf02e378f4766c26badff272a97e1e21f7d"
+        }
+      },
+      "applicationSequence" : 4,
+      "events" : [ {
+        "type" : "RULE_SET_ACTIVATED",
+        "previousActive" : {
+          "version" : 0,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "active" : {
+          "version" : 2,
+          "contentHash" : "sha256:d7d0a8e3a2d1882012f8ba6d7318ecf02e378f4766c26badff272a97e1e21f7d"
+        },
+        "fence" : {
+          "applicationSequence" : 4,
+          "controlRevision" : 1,
+          "firstAcceptanceSequence" : 1
+        }
+      } ],
+      "stateAfter" : {
+        "nextApplicationSequence" : 5,
+        "nextAcceptanceSequence" : 1,
+        "controlRevision" : 1,
+        "activeRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 2,
+          "lowerInclusive" : 80,
+          "upperInclusive" : 120,
+          "contentHash" : "sha256:d7d0a8e3a2d1882012f8ba6d7318ecf02e378f4766c26badff272a97e1e21f7d"
+        },
+        "lastActivationFence" : {
+          "applicationSequence" : 4,
+          "controlRevision" : 1,
+          "firstAcceptanceSequence" : 1
+        },
+        "book" : {
+          "bids" : [ ],
+          "asks" : [ ]
+        }
+      }
+    } ]
+  }, {
+    "scenarioId" : "activation-rejection-matrix",
+    "cases" : [ {
+      "caseId" : "reject-without-prepare",
+      "type" : "ACTIVATE_RULE_SET",
+      "input" : {
+        "expectedApplicationSequence" : 1,
+        "expectedActive" : {
+          "version" : 0,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "target" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        }
+      },
+      "applicationSequence" : 1,
+      "events" : [ {
+        "type" : "ACTIVATE_RULE_SET_REJECTED",
+        "code" : "NO_PREPARED_RULE_SET"
+      } ],
+      "stateAfter" : {
+        "nextApplicationSequence" : 2,
+        "nextAcceptanceSequence" : 1,
+        "controlRevision" : 0,
+        "activeRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 0,
+          "lowerInclusive" : 1,
+          "upperInclusive" : 9223372036854775807,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "book" : {
+          "bids" : [ ],
+          "asks" : [ ]
+        }
+      }
+    }, {
+      "caseId" : "prepare-for-activation",
+      "type" : "PREPARE_RULE_SET",
+      "input" : {
+        "expectedActive" : {
+          "version" : 0,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "artifact" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 90,
+          "upperInclusive" : 110,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        }
+      },
+      "applicationSequence" : 2,
+      "events" : [ {
+        "type" : "RULE_SET_PREPARED",
+        "identity" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "status" : "PREPARED"
+      } ],
+      "stateAfter" : {
+        "nextApplicationSequence" : 3,
+        "nextAcceptanceSequence" : 1,
+        "controlRevision" : 0,
+        "activeRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 0,
+          "lowerInclusive" : 1,
+          "upperInclusive" : 9223372036854775807,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "preparedRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 90,
+          "upperInclusive" : 110,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "book" : {
+          "bids" : [ ],
+          "asks" : [ ]
+        }
+      }
+    }, {
+      "caseId" : "reject-wrong-target",
+      "type" : "ACTIVATE_RULE_SET",
+      "input" : {
+        "expectedApplicationSequence" : 3,
+        "expectedActive" : {
+          "version" : 0,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "target" : {
+          "version" : 1,
+          "contentHash" : "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+        }
+      },
+      "applicationSequence" : 3,
+      "events" : [ {
+        "type" : "ACTIVATE_RULE_SET_REJECTED",
+        "code" : "TARGET_RULE_SET_MISMATCH"
+      } ],
+      "stateAfter" : {
+        "nextApplicationSequence" : 4,
+        "nextAcceptanceSequence" : 1,
+        "controlRevision" : 0,
+        "activeRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 0,
+          "lowerInclusive" : 1,
+          "upperInclusive" : 9223372036854775807,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "preparedRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 90,
+          "upperInclusive" : 110,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "book" : {
+          "bids" : [ ],
+          "asks" : [ ]
+        }
+      }
+    }, {
+      "caseId" : "reject-stale-application-sequence",
+      "type" : "ACTIVATE_RULE_SET",
+      "input" : {
+        "expectedApplicationSequence" : 3,
+        "expectedActive" : {
+          "version" : 0,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "target" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        }
+      },
+      "applicationSequence" : 4,
+      "events" : [ {
+        "type" : "ACTIVATE_RULE_SET_REJECTED",
+        "code" : "APPLICATION_SEQUENCE_MISMATCH"
+      } ],
+      "stateAfter" : {
+        "nextApplicationSequence" : 5,
+        "nextAcceptanceSequence" : 1,
+        "controlRevision" : 0,
+        "activeRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 0,
+          "lowerInclusive" : 1,
+          "upperInclusive" : 9223372036854775807,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "preparedRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 90,
+          "upperInclusive" : 110,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "book" : {
+          "bids" : [ ],
+          "asks" : [ ]
+        }
+      }
+    }, {
+      "caseId" : "activate-at-next-boundary",
+      "type" : "ACTIVATE_RULE_SET",
+      "input" : {
+        "expectedApplicationSequence" : 5,
+        "expectedActive" : {
+          "version" : 0,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "target" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        }
+      },
+      "applicationSequence" : 5,
+      "events" : [ {
+        "type" : "RULE_SET_ACTIVATED",
+        "previousActive" : {
+          "version" : 0,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "active" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "fence" : {
+          "applicationSequence" : 5,
+          "controlRevision" : 1,
+          "firstAcceptanceSequence" : 1
+        }
+      } ],
+      "stateAfter" : {
+        "nextApplicationSequence" : 6,
+        "nextAcceptanceSequence" : 1,
+        "controlRevision" : 1,
+        "activeRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 90,
+          "upperInclusive" : 110,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "lastActivationFence" : {
+          "applicationSequence" : 5,
+          "controlRevision" : 1,
+          "firstAcceptanceSequence" : 1
+        },
+        "book" : {
+          "bids" : [ ],
+          "asks" : [ ]
+        }
+      }
+    } ]
+  }, {
+    "scenarioId" : "stale-place-fence-and-identity",
+    "cases" : [ {
+      "caseId" : "fence-prepare",
+      "type" : "PREPARE_RULE_SET",
+      "input" : {
+        "expectedActive" : {
+          "version" : 0,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "artifact" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 90,
+          "upperInclusive" : 110,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        }
+      },
+      "applicationSequence" : 1,
+      "events" : [ {
+        "type" : "RULE_SET_PREPARED",
+        "identity" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "status" : "PREPARED"
+      } ],
+      "stateAfter" : {
+        "nextApplicationSequence" : 2,
+        "nextAcceptanceSequence" : 1,
+        "controlRevision" : 0,
+        "activeRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 0,
+          "lowerInclusive" : 1,
+          "upperInclusive" : 9223372036854775807,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "preparedRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 90,
+          "upperInclusive" : 110,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "book" : {
+          "bids" : [ ],
+          "asks" : [ ]
+        }
+      }
+    }, {
+      "caseId" : "fence-activate",
+      "type" : "ACTIVATE_RULE_SET",
+      "input" : {
+        "expectedApplicationSequence" : 2,
+        "expectedActive" : {
+          "version" : 0,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "target" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        }
+      },
+      "applicationSequence" : 2,
+      "events" : [ {
+        "type" : "RULE_SET_ACTIVATED",
+        "previousActive" : {
+          "version" : 0,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "active" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "fence" : {
+          "applicationSequence" : 2,
+          "controlRevision" : 1,
+          "firstAcceptanceSequence" : 1
+        }
+      } ],
+      "stateAfter" : {
+        "nextApplicationSequence" : 3,
+        "nextAcceptanceSequence" : 1,
+        "controlRevision" : 1,
+        "activeRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 90,
+          "upperInclusive" : 110,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "lastActivationFence" : {
+          "applicationSequence" : 2,
+          "controlRevision" : 1,
+          "firstAcceptanceSequence" : 1
+        },
+        "book" : {
+          "bids" : [ ],
+          "asks" : [ ]
+        }
+      }
+    }, {
+      "caseId" : "reject-stale-rule",
+      "type" : "PLACE",
+      "entrypoint" : "GOVERNED",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 10,
+        "side" : "BUY",
+        "priceTicks" : 100,
+        "quantityLots" : 1,
+        "executionPolicy" : "GTC"
+      },
+      "expectedRuleSet" : {
+        "version" : 0,
+        "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+      },
+      "applicationSequence" : 3,
+      "events" : [ {
+        "type" : "PLACE_REJECTED",
+        "orderId" : 10,
+        "code" : "RULE_SET_MISMATCH",
+        "executionRuleSet" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        }
+      } ],
+      "stateAfter" : {
+        "nextApplicationSequence" : 4,
+        "nextAcceptanceSequence" : 1,
+        "controlRevision" : 1,
+        "activeRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 90,
+          "upperInclusive" : 110,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "lastActivationFence" : {
+          "applicationSequence" : 2,
+          "controlRevision" : 1,
+          "firstAcceptanceSequence" : 1
+        },
+        "book" : {
+          "bids" : [ ],
+          "asks" : [ ]
+        }
+      }
+    }, {
+      "caseId" : "same-id-current-rule-accepts",
+      "type" : "PLACE",
+      "entrypoint" : "GOVERNED",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 10,
+        "side" : "BUY",
+        "priceTicks" : 100,
+        "quantityLots" : 1,
+        "executionPolicy" : "GTC"
+      },
+      "expectedRuleSet" : {
+        "version" : 1,
+        "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+      },
+      "applicationSequence" : 4,
+      "events" : [ {
+        "type" : "ACCEPTED",
+        "acceptanceSequence" : 1,
+        "orderId" : 10,
+        "side" : "BUY",
+        "priceTicks" : 100,
+        "quantityLots" : 1,
+        "executionPolicy" : "GTC",
+        "admissionRuleSet" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "executionRuleSet" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        }
+      }, {
+        "type" : "RESTED",
+        "acceptanceSequence" : 1,
+        "orderId" : 10,
+        "side" : "BUY",
+        "priceTicks" : 100,
+        "remainingQuantityLots" : 1,
+        "admissionRuleSet" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "executionRuleSet" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        }
+      } ],
+      "stateAfter" : {
+        "nextApplicationSequence" : 5,
+        "nextAcceptanceSequence" : 2,
+        "controlRevision" : 1,
+        "activeRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 90,
+          "upperInclusive" : 110,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "lastActivationFence" : {
+          "applicationSequence" : 2,
+          "controlRevision" : 1,
+          "firstAcceptanceSequence" : 1
+        },
+        "book" : {
+          "bids" : [ {
+            "side" : "BUY",
+            "priceTicks" : 100,
+            "orders" : [ {
+              "acceptanceSequence" : 1,
+              "orderId" : 10,
+              "remainingQuantityLots" : 1,
+              "admissionRuleSet" : {
+                "version" : 1,
+                "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+              }
+            } ]
+          } ],
+          "asks" : [ ]
+        }
+      }
+    }, {
+      "caseId" : "accepted-id-cancels",
+      "type" : "CANCEL",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 10
+      },
+      "applicationSequence" : 5,
+      "events" : [ {
+        "type" : "CANCELED",
+        "acceptanceSequence" : 1,
+        "orderId" : 10,
+        "side" : "BUY",
+        "priceTicks" : 100,
+        "canceledQuantityLots" : 1,
+        "admissionRuleSet" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "executionRuleSet" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        }
+      } ],
+      "stateAfter" : {
+        "nextApplicationSequence" : 6,
+        "nextAcceptanceSequence" : 2,
+        "controlRevision" : 1,
+        "activeRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 90,
+          "upperInclusive" : 110,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "lastActivationFence" : {
+          "applicationSequence" : 2,
+          "controlRevision" : 1,
+          "firstAcceptanceSequence" : 1
+        },
+        "book" : {
+          "bids" : [ ],
+          "asks" : [ ]
+        }
+      }
+    } ]
+  }, {
+    "scenarioId" : "inclusive-and-outside-buy",
+    "cases" : [ {
+      "caseId" : "buy-prepare",
+      "type" : "PREPARE_RULE_SET",
+      "input" : {
+        "expectedActive" : {
+          "version" : 0,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "artifact" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 90,
+          "upperInclusive" : 110,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        }
+      },
+      "applicationSequence" : 1,
+      "events" : [ {
+        "type" : "RULE_SET_PREPARED",
+        "identity" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "status" : "PREPARED"
+      } ],
+      "stateAfter" : {
+        "nextApplicationSequence" : 2,
+        "nextAcceptanceSequence" : 1,
+        "controlRevision" : 0,
+        "activeRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 0,
+          "lowerInclusive" : 1,
+          "upperInclusive" : 9223372036854775807,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "preparedRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 90,
+          "upperInclusive" : 110,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "book" : {
+          "bids" : [ ],
+          "asks" : [ ]
+        }
+      }
+    }, {
+      "caseId" : "buy-activate",
+      "type" : "ACTIVATE_RULE_SET",
+      "input" : {
+        "expectedApplicationSequence" : 2,
+        "expectedActive" : {
+          "version" : 0,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "target" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        }
+      },
+      "applicationSequence" : 2,
+      "events" : [ {
+        "type" : "RULE_SET_ACTIVATED",
+        "previousActive" : {
+          "version" : 0,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "active" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "fence" : {
+          "applicationSequence" : 2,
+          "controlRevision" : 1,
+          "firstAcceptanceSequence" : 1
+        }
+      } ],
+      "stateAfter" : {
+        "nextApplicationSequence" : 3,
+        "nextAcceptanceSequence" : 1,
+        "controlRevision" : 1,
+        "activeRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 90,
+          "upperInclusive" : 110,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "lastActivationFence" : {
+          "applicationSequence" : 2,
+          "controlRevision" : 1,
+          "firstAcceptanceSequence" : 1
+        },
+        "book" : {
+          "bids" : [ ],
+          "asks" : [ ]
+        }
+      }
+    }, {
+      "caseId" : "buy-lower-touch",
+      "type" : "PLACE",
+      "entrypoint" : "GOVERNED",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 20,
+        "side" : "BUY",
+        "priceTicks" : 90,
+        "quantityLots" : 1,
+        "executionPolicy" : "GTC"
+      },
+      "expectedRuleSet" : {
+        "version" : 1,
+        "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+      },
+      "applicationSequence" : 3,
+      "events" : [ {
+        "type" : "ACCEPTED",
+        "acceptanceSequence" : 1,
+        "orderId" : 20,
+        "side" : "BUY",
+        "priceTicks" : 90,
+        "quantityLots" : 1,
+        "executionPolicy" : "GTC",
+        "admissionRuleSet" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "executionRuleSet" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        }
+      }, {
+        "type" : "RESTED",
+        "acceptanceSequence" : 1,
+        "orderId" : 20,
+        "side" : "BUY",
+        "priceTicks" : 90,
+        "remainingQuantityLots" : 1,
+        "admissionRuleSet" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "executionRuleSet" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        }
+      } ],
+      "stateAfter" : {
+        "nextApplicationSequence" : 4,
+        "nextAcceptanceSequence" : 2,
+        "controlRevision" : 1,
+        "activeRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 90,
+          "upperInclusive" : 110,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "lastActivationFence" : {
+          "applicationSequence" : 2,
+          "controlRevision" : 1,
+          "firstAcceptanceSequence" : 1
+        },
+        "book" : {
+          "bids" : [ {
+            "side" : "BUY",
+            "priceTicks" : 90,
+            "orders" : [ {
+              "acceptanceSequence" : 1,
+              "orderId" : 20,
+              "remainingQuantityLots" : 1,
+              "admissionRuleSet" : {
+                "version" : 1,
+                "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+              }
+            } ]
+          } ],
+          "asks" : [ ]
+        }
+      }
+    }, {
+      "caseId" : "buy-upper-touch",
+      "type" : "PLACE",
+      "entrypoint" : "GOVERNED",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 21,
+        "side" : "BUY",
+        "priceTicks" : 110,
+        "quantityLots" : 1,
+        "executionPolicy" : "GTC"
+      },
+      "expectedRuleSet" : {
+        "version" : 1,
+        "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+      },
+      "applicationSequence" : 4,
+      "events" : [ {
+        "type" : "ACCEPTED",
+        "acceptanceSequence" : 2,
+        "orderId" : 21,
+        "side" : "BUY",
+        "priceTicks" : 110,
+        "quantityLots" : 1,
+        "executionPolicy" : "GTC",
+        "admissionRuleSet" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "executionRuleSet" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        }
+      }, {
+        "type" : "RESTED",
+        "acceptanceSequence" : 2,
+        "orderId" : 21,
+        "side" : "BUY",
+        "priceTicks" : 110,
+        "remainingQuantityLots" : 1,
+        "admissionRuleSet" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "executionRuleSet" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        }
+      } ],
+      "stateAfter" : {
+        "nextApplicationSequence" : 5,
+        "nextAcceptanceSequence" : 3,
+        "controlRevision" : 1,
+        "activeRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 90,
+          "upperInclusive" : 110,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "lastActivationFence" : {
+          "applicationSequence" : 2,
+          "controlRevision" : 1,
+          "firstAcceptanceSequence" : 1
+        },
+        "book" : {
+          "bids" : [ {
+            "side" : "BUY",
+            "priceTicks" : 110,
+            "orders" : [ {
+              "acceptanceSequence" : 2,
+              "orderId" : 21,
+              "remainingQuantityLots" : 1,
+              "admissionRuleSet" : {
+                "version" : 1,
+                "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+              }
+            } ]
+          }, {
+            "side" : "BUY",
+            "priceTicks" : 90,
+            "orders" : [ {
+              "acceptanceSequence" : 1,
+              "orderId" : 20,
+              "remainingQuantityLots" : 1,
+              "admissionRuleSet" : {
+                "version" : 1,
+                "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+              }
+            } ]
+          } ],
+          "asks" : [ ]
+        }
+      }
+    }, {
+      "caseId" : "buy-below-one-tick",
+      "type" : "PLACE",
+      "entrypoint" : "GOVERNED",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 22,
+        "side" : "BUY",
+        "priceTicks" : 89,
+        "quantityLots" : 1,
+        "executionPolicy" : "GTC"
+      },
+      "expectedRuleSet" : {
+        "version" : 1,
+        "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+      },
+      "applicationSequence" : 5,
+      "events" : [ {
+        "type" : "PLACE_REJECTED",
+        "orderId" : 22,
+        "code" : "PRICE_OUTSIDE_ACTIVE_BAND",
+        "executionRuleSet" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        }
+      } ],
+      "stateAfter" : {
+        "nextApplicationSequence" : 6,
+        "nextAcceptanceSequence" : 3,
+        "controlRevision" : 1,
+        "activeRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 90,
+          "upperInclusive" : 110,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "lastActivationFence" : {
+          "applicationSequence" : 2,
+          "controlRevision" : 1,
+          "firstAcceptanceSequence" : 1
+        },
+        "book" : {
+          "bids" : [ {
+            "side" : "BUY",
+            "priceTicks" : 110,
+            "orders" : [ {
+              "acceptanceSequence" : 2,
+              "orderId" : 21,
+              "remainingQuantityLots" : 1,
+              "admissionRuleSet" : {
+                "version" : 1,
+                "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+              }
+            } ]
+          }, {
+            "side" : "BUY",
+            "priceTicks" : 90,
+            "orders" : [ {
+              "acceptanceSequence" : 1,
+              "orderId" : 20,
+              "remainingQuantityLots" : 1,
+              "admissionRuleSet" : {
+                "version" : 1,
+                "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+              }
+            } ]
+          } ],
+          "asks" : [ ]
+        }
+      }
+    }, {
+      "caseId" : "buy-above-one-tick",
+      "type" : "PLACE",
+      "entrypoint" : "GOVERNED",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 23,
+        "side" : "BUY",
+        "priceTicks" : 111,
+        "quantityLots" : 1,
+        "executionPolicy" : "GTC"
+      },
+      "expectedRuleSet" : {
+        "version" : 1,
+        "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+      },
+      "applicationSequence" : 6,
+      "events" : [ {
+        "type" : "PLACE_REJECTED",
+        "orderId" : 23,
+        "code" : "PRICE_OUTSIDE_ACTIVE_BAND",
+        "executionRuleSet" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        }
+      } ],
+      "stateAfter" : {
+        "nextApplicationSequence" : 7,
+        "nextAcceptanceSequence" : 3,
+        "controlRevision" : 1,
+        "activeRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 90,
+          "upperInclusive" : 110,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "lastActivationFence" : {
+          "applicationSequence" : 2,
+          "controlRevision" : 1,
+          "firstAcceptanceSequence" : 1
+        },
+        "book" : {
+          "bids" : [ {
+            "side" : "BUY",
+            "priceTicks" : 110,
+            "orders" : [ {
+              "acceptanceSequence" : 2,
+              "orderId" : 21,
+              "remainingQuantityLots" : 1,
+              "admissionRuleSet" : {
+                "version" : 1,
+                "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+              }
+            } ]
+          }, {
+            "side" : "BUY",
+            "priceTicks" : 90,
+            "orders" : [ {
+              "acceptanceSequence" : 1,
+              "orderId" : 20,
+              "remainingQuantityLots" : 1,
+              "admissionRuleSet" : {
+                "version" : 1,
+                "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+              }
+            } ]
+          } ],
+          "asks" : [ ]
+        }
+      }
+    } ]
+  }, {
+    "scenarioId" : "sell-side-band-symmetry",
+    "cases" : [ {
+      "caseId" : "sell-prepare",
+      "type" : "PREPARE_RULE_SET",
+      "input" : {
+        "expectedActive" : {
+          "version" : 0,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "artifact" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 95,
+          "upperInclusive" : 105,
+          "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+        }
+      },
+      "applicationSequence" : 1,
+      "events" : [ {
+        "type" : "RULE_SET_PREPARED",
+        "identity" : {
+          "version" : 1,
+          "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+        },
+        "status" : "PREPARED"
+      } ],
+      "stateAfter" : {
+        "nextApplicationSequence" : 2,
+        "nextAcceptanceSequence" : 1,
+        "controlRevision" : 0,
+        "activeRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 0,
+          "lowerInclusive" : 1,
+          "upperInclusive" : 9223372036854775807,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "preparedRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 95,
+          "upperInclusive" : 105,
+          "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+        },
+        "book" : {
+          "bids" : [ ],
+          "asks" : [ ]
+        }
+      }
+    }, {
+      "caseId" : "sell-activate",
+      "type" : "ACTIVATE_RULE_SET",
+      "input" : {
+        "expectedApplicationSequence" : 2,
+        "expectedActive" : {
+          "version" : 0,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "target" : {
+          "version" : 1,
+          "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+        }
+      },
+      "applicationSequence" : 2,
+      "events" : [ {
+        "type" : "RULE_SET_ACTIVATED",
+        "previousActive" : {
+          "version" : 0,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "active" : {
+          "version" : 1,
+          "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+        },
+        "fence" : {
+          "applicationSequence" : 2,
+          "controlRevision" : 1,
+          "firstAcceptanceSequence" : 1
+        }
+      } ],
+      "stateAfter" : {
+        "nextApplicationSequence" : 3,
+        "nextAcceptanceSequence" : 1,
+        "controlRevision" : 1,
+        "activeRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 95,
+          "upperInclusive" : 105,
+          "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+        },
+        "lastActivationFence" : {
+          "applicationSequence" : 2,
+          "controlRevision" : 1,
+          "firstAcceptanceSequence" : 1
+        },
+        "book" : {
+          "bids" : [ ],
+          "asks" : [ ]
+        }
+      }
+    }, {
+      "caseId" : "sell-lower-touch",
+      "type" : "PLACE",
+      "entrypoint" : "GOVERNED",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 30,
+        "side" : "SELL",
+        "priceTicks" : 95,
+        "quantityLots" : 1,
+        "executionPolicy" : "GTC"
+      },
+      "expectedRuleSet" : {
+        "version" : 1,
+        "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+      },
+      "applicationSequence" : 3,
+      "events" : [ {
+        "type" : "ACCEPTED",
+        "acceptanceSequence" : 1,
+        "orderId" : 30,
+        "side" : "SELL",
+        "priceTicks" : 95,
+        "quantityLots" : 1,
+        "executionPolicy" : "GTC",
+        "admissionRuleSet" : {
+          "version" : 1,
+          "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+        },
+        "executionRuleSet" : {
+          "version" : 1,
+          "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+        }
+      }, {
+        "type" : "RESTED",
+        "acceptanceSequence" : 1,
+        "orderId" : 30,
+        "side" : "SELL",
+        "priceTicks" : 95,
+        "remainingQuantityLots" : 1,
+        "admissionRuleSet" : {
+          "version" : 1,
+          "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+        },
+        "executionRuleSet" : {
+          "version" : 1,
+          "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+        }
+      } ],
+      "stateAfter" : {
+        "nextApplicationSequence" : 4,
+        "nextAcceptanceSequence" : 2,
+        "controlRevision" : 1,
+        "activeRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 95,
+          "upperInclusive" : 105,
+          "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+        },
+        "lastActivationFence" : {
+          "applicationSequence" : 2,
+          "controlRevision" : 1,
+          "firstAcceptanceSequence" : 1
+        },
+        "book" : {
+          "bids" : [ ],
+          "asks" : [ {
+            "side" : "SELL",
+            "priceTicks" : 95,
+            "orders" : [ {
+              "acceptanceSequence" : 1,
+              "orderId" : 30,
+              "remainingQuantityLots" : 1,
+              "admissionRuleSet" : {
+                "version" : 1,
+                "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+              }
+            } ]
+          } ]
+        }
+      }
+    }, {
+      "caseId" : "sell-upper-touch",
+      "type" : "PLACE",
+      "entrypoint" : "GOVERNED",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 31,
+        "side" : "SELL",
+        "priceTicks" : 105,
+        "quantityLots" : 1,
+        "executionPolicy" : "GTC"
+      },
+      "expectedRuleSet" : {
+        "version" : 1,
+        "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+      },
+      "applicationSequence" : 4,
+      "events" : [ {
+        "type" : "ACCEPTED",
+        "acceptanceSequence" : 2,
+        "orderId" : 31,
+        "side" : "SELL",
+        "priceTicks" : 105,
+        "quantityLots" : 1,
+        "executionPolicy" : "GTC",
+        "admissionRuleSet" : {
+          "version" : 1,
+          "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+        },
+        "executionRuleSet" : {
+          "version" : 1,
+          "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+        }
+      }, {
+        "type" : "RESTED",
+        "acceptanceSequence" : 2,
+        "orderId" : 31,
+        "side" : "SELL",
+        "priceTicks" : 105,
+        "remainingQuantityLots" : 1,
+        "admissionRuleSet" : {
+          "version" : 1,
+          "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+        },
+        "executionRuleSet" : {
+          "version" : 1,
+          "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+        }
+      } ],
+      "stateAfter" : {
+        "nextApplicationSequence" : 5,
+        "nextAcceptanceSequence" : 3,
+        "controlRevision" : 1,
+        "activeRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 95,
+          "upperInclusive" : 105,
+          "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+        },
+        "lastActivationFence" : {
+          "applicationSequence" : 2,
+          "controlRevision" : 1,
+          "firstAcceptanceSequence" : 1
+        },
+        "book" : {
+          "bids" : [ ],
+          "asks" : [ {
+            "side" : "SELL",
+            "priceTicks" : 95,
+            "orders" : [ {
+              "acceptanceSequence" : 1,
+              "orderId" : 30,
+              "remainingQuantityLots" : 1,
+              "admissionRuleSet" : {
+                "version" : 1,
+                "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+              }
+            } ]
+          }, {
+            "side" : "SELL",
+            "priceTicks" : 105,
+            "orders" : [ {
+              "acceptanceSequence" : 2,
+              "orderId" : 31,
+              "remainingQuantityLots" : 1,
+              "admissionRuleSet" : {
+                "version" : 1,
+                "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+              }
+            } ]
+          } ]
+        }
+      }
+    }, {
+      "caseId" : "sell-below-one-tick",
+      "type" : "PLACE",
+      "entrypoint" : "GOVERNED",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 32,
+        "side" : "SELL",
+        "priceTicks" : 94,
+        "quantityLots" : 1,
+        "executionPolicy" : "GTC"
+      },
+      "expectedRuleSet" : {
+        "version" : 1,
+        "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+      },
+      "applicationSequence" : 5,
+      "events" : [ {
+        "type" : "PLACE_REJECTED",
+        "orderId" : 32,
+        "code" : "PRICE_OUTSIDE_ACTIVE_BAND",
+        "executionRuleSet" : {
+          "version" : 1,
+          "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+        }
+      } ],
+      "stateAfter" : {
+        "nextApplicationSequence" : 6,
+        "nextAcceptanceSequence" : 3,
+        "controlRevision" : 1,
+        "activeRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 95,
+          "upperInclusive" : 105,
+          "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+        },
+        "lastActivationFence" : {
+          "applicationSequence" : 2,
+          "controlRevision" : 1,
+          "firstAcceptanceSequence" : 1
+        },
+        "book" : {
+          "bids" : [ ],
+          "asks" : [ {
+            "side" : "SELL",
+            "priceTicks" : 95,
+            "orders" : [ {
+              "acceptanceSequence" : 1,
+              "orderId" : 30,
+              "remainingQuantityLots" : 1,
+              "admissionRuleSet" : {
+                "version" : 1,
+                "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+              }
+            } ]
+          }, {
+            "side" : "SELL",
+            "priceTicks" : 105,
+            "orders" : [ {
+              "acceptanceSequence" : 2,
+              "orderId" : 31,
+              "remainingQuantityLots" : 1,
+              "admissionRuleSet" : {
+                "version" : 1,
+                "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+              }
+            } ]
+          } ]
+        }
+      }
+    }, {
+      "caseId" : "sell-above-one-tick",
+      "type" : "PLACE",
+      "entrypoint" : "GOVERNED",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 33,
+        "side" : "SELL",
+        "priceTicks" : 106,
+        "quantityLots" : 1,
+        "executionPolicy" : "GTC"
+      },
+      "expectedRuleSet" : {
+        "version" : 1,
+        "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+      },
+      "applicationSequence" : 6,
+      "events" : [ {
+        "type" : "PLACE_REJECTED",
+        "orderId" : 33,
+        "code" : "PRICE_OUTSIDE_ACTIVE_BAND",
+        "executionRuleSet" : {
+          "version" : 1,
+          "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+        }
+      } ],
+      "stateAfter" : {
+        "nextApplicationSequence" : 7,
+        "nextAcceptanceSequence" : 3,
+        "controlRevision" : 1,
+        "activeRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 95,
+          "upperInclusive" : 105,
+          "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+        },
+        "lastActivationFence" : {
+          "applicationSequence" : 2,
+          "controlRevision" : 1,
+          "firstAcceptanceSequence" : 1
+        },
+        "book" : {
+          "bids" : [ ],
+          "asks" : [ {
+            "side" : "SELL",
+            "priceTicks" : 95,
+            "orders" : [ {
+              "acceptanceSequence" : 1,
+              "orderId" : 30,
+              "remainingQuantityLots" : 1,
+              "admissionRuleSet" : {
+                "version" : 1,
+                "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+              }
+            } ]
+          }, {
+            "side" : "SELL",
+            "priceTicks" : 105,
+            "orders" : [ {
+              "acceptanceSequence" : 2,
+              "orderId" : 31,
+              "remainingQuantityLots" : 1,
+              "admissionRuleSet" : {
+                "version" : 1,
+                "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+              }
+            } ]
+          } ]
+        }
+      }
+    } ]
+  }, {
+    "scenarioId" : "duplicate-precedes-fence-and-band",
+    "cases" : [ {
+      "caseId" : "priority-prepare",
+      "type" : "PREPARE_RULE_SET",
+      "input" : {
+        "expectedActive" : {
+          "version" : 0,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "artifact" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 90,
+          "upperInclusive" : 110,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        }
+      },
+      "applicationSequence" : 1,
+      "events" : [ {
+        "type" : "RULE_SET_PREPARED",
+        "identity" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "status" : "PREPARED"
+      } ],
+      "stateAfter" : {
+        "nextApplicationSequence" : 2,
+        "nextAcceptanceSequence" : 1,
+        "controlRevision" : 0,
+        "activeRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 0,
+          "lowerInclusive" : 1,
+          "upperInclusive" : 9223372036854775807,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "preparedRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 90,
+          "upperInclusive" : 110,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "book" : {
+          "bids" : [ ],
+          "asks" : [ ]
+        }
+      }
+    }, {
+      "caseId" : "priority-activate",
+      "type" : "ACTIVATE_RULE_SET",
+      "input" : {
+        "expectedApplicationSequence" : 2,
+        "expectedActive" : {
+          "version" : 0,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "target" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        }
+      },
+      "applicationSequence" : 2,
+      "events" : [ {
+        "type" : "RULE_SET_ACTIVATED",
+        "previousActive" : {
+          "version" : 0,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "active" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "fence" : {
+          "applicationSequence" : 2,
+          "controlRevision" : 1,
+          "firstAcceptanceSequence" : 1
+        }
+      } ],
+      "stateAfter" : {
+        "nextApplicationSequence" : 3,
+        "nextAcceptanceSequence" : 1,
+        "controlRevision" : 1,
+        "activeRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 90,
+          "upperInclusive" : 110,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "lastActivationFence" : {
+          "applicationSequence" : 2,
+          "controlRevision" : 1,
+          "firstAcceptanceSequence" : 1
+        },
+        "book" : {
+          "bids" : [ ],
+          "asks" : [ ]
+        }
+      }
+    }, {
+      "caseId" : "priority-owner",
+      "type" : "PLACE",
+      "entrypoint" : "GOVERNED",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 40,
+        "side" : "BUY",
+        "priceTicks" : 100,
+        "quantityLots" : 1,
+        "executionPolicy" : "GTC"
+      },
+      "expectedRuleSet" : {
+        "version" : 1,
+        "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+      },
+      "applicationSequence" : 3,
+      "events" : [ {
+        "type" : "ACCEPTED",
+        "acceptanceSequence" : 1,
+        "orderId" : 40,
+        "side" : "BUY",
+        "priceTicks" : 100,
+        "quantityLots" : 1,
+        "executionPolicy" : "GTC",
+        "admissionRuleSet" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "executionRuleSet" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        }
+      }, {
+        "type" : "RESTED",
+        "acceptanceSequence" : 1,
+        "orderId" : 40,
+        "side" : "BUY",
+        "priceTicks" : 100,
+        "remainingQuantityLots" : 1,
+        "admissionRuleSet" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "executionRuleSet" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        }
+      } ],
+      "stateAfter" : {
+        "nextApplicationSequence" : 4,
+        "nextAcceptanceSequence" : 2,
+        "controlRevision" : 1,
+        "activeRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 90,
+          "upperInclusive" : 110,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "lastActivationFence" : {
+          "applicationSequence" : 2,
+          "controlRevision" : 1,
+          "firstAcceptanceSequence" : 1
+        },
+        "book" : {
+          "bids" : [ {
+            "side" : "BUY",
+            "priceTicks" : 100,
+            "orders" : [ {
+              "acceptanceSequence" : 1,
+              "orderId" : 40,
+              "remainingQuantityLots" : 1,
+              "admissionRuleSet" : {
+                "version" : 1,
+                "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+              }
+            } ]
+          } ],
+          "asks" : [ ]
+        }
+      }
+    }, {
+      "caseId" : "duplicate-wins-over-stale-and-band",
+      "type" : "PLACE",
+      "entrypoint" : "GOVERNED",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 40,
+        "side" : "BUY",
+        "priceTicks" : 1,
+        "quantityLots" : 1,
+        "executionPolicy" : "GTC"
+      },
+      "expectedRuleSet" : {
+        "version" : 0,
+        "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+      },
+      "applicationSequence" : 4,
+      "events" : [ {
+        "type" : "PLACE_REJECTED",
+        "orderId" : 40,
+        "code" : "DUPLICATE_ORDER_ID",
+        "executionRuleSet" : {
+          "version" : 1,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        }
+      } ],
+      "stateAfter" : {
+        "nextApplicationSequence" : 5,
+        "nextAcceptanceSequence" : 2,
+        "controlRevision" : 1,
+        "activeRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 90,
+          "upperInclusive" : 110,
+          "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+        },
+        "lastActivationFence" : {
+          "applicationSequence" : 2,
+          "controlRevision" : 1,
+          "firstAcceptanceSequence" : 1
+        },
+        "book" : {
+          "bids" : [ {
+            "side" : "BUY",
+            "priceTicks" : 100,
+            "orders" : [ {
+              "acceptanceSequence" : 1,
+              "orderId" : 40,
+              "remainingQuantityLots" : 1,
+              "admissionRuleSet" : {
+                "version" : 1,
+                "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+              }
+            } ]
+          } ],
+          "asks" : [ ]
+        }
+      }
+    } ]
+  }, {
+    "scenarioId" : "band-precedes-policy-precheck",
+    "cases" : [ {
+      "caseId" : "policy-prepare",
+      "type" : "PREPARE_RULE_SET",
+      "input" : {
+        "expectedActive" : {
+          "version" : 0,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "artifact" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 95,
+          "upperInclusive" : 105,
+          "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+        }
+      },
+      "applicationSequence" : 1,
+      "events" : [ {
+        "type" : "RULE_SET_PREPARED",
+        "identity" : {
+          "version" : 1,
+          "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+        },
+        "status" : "PREPARED"
+      } ],
+      "stateAfter" : {
+        "nextApplicationSequence" : 2,
+        "nextAcceptanceSequence" : 1,
+        "controlRevision" : 0,
+        "activeRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 0,
+          "lowerInclusive" : 1,
+          "upperInclusive" : 9223372036854775807,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "preparedRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 95,
+          "upperInclusive" : 105,
+          "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+        },
+        "book" : {
+          "bids" : [ ],
+          "asks" : [ ]
+        }
+      }
+    }, {
+      "caseId" : "policy-activate",
+      "type" : "ACTIVATE_RULE_SET",
+      "input" : {
+        "expectedApplicationSequence" : 2,
+        "expectedActive" : {
+          "version" : 0,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "target" : {
+          "version" : 1,
+          "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+        }
+      },
+      "applicationSequence" : 2,
+      "events" : [ {
+        "type" : "RULE_SET_ACTIVATED",
+        "previousActive" : {
+          "version" : 0,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "active" : {
+          "version" : 1,
+          "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+        },
+        "fence" : {
+          "applicationSequence" : 2,
+          "controlRevision" : 1,
+          "firstAcceptanceSequence" : 1
+        }
+      } ],
+      "stateAfter" : {
+        "nextApplicationSequence" : 3,
+        "nextAcceptanceSequence" : 1,
+        "controlRevision" : 1,
+        "activeRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 95,
+          "upperInclusive" : 105,
+          "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+        },
+        "lastActivationFence" : {
+          "applicationSequence" : 2,
+          "controlRevision" : 1,
+          "firstAcceptanceSequence" : 1
+        },
+        "book" : {
+          "bids" : [ ],
+          "asks" : [ ]
+        }
+      }
+    }, {
+      "caseId" : "out-of-band-fok",
+      "type" : "PLACE",
+      "entrypoint" : "GOVERNED",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 50,
+        "side" : "BUY",
+        "priceTicks" : 90,
+        "quantityLots" : 1,
+        "executionPolicy" : "FOK"
+      },
+      "expectedRuleSet" : {
+        "version" : 1,
+        "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+      },
+      "applicationSequence" : 3,
+      "events" : [ {
+        "type" : "PLACE_REJECTED",
+        "orderId" : 50,
+        "code" : "PRICE_OUTSIDE_ACTIVE_BAND",
+        "executionRuleSet" : {
+          "version" : 1,
+          "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+        }
+      } ],
+      "stateAfter" : {
+        "nextApplicationSequence" : 4,
+        "nextAcceptanceSequence" : 1,
+        "controlRevision" : 1,
+        "activeRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 95,
+          "upperInclusive" : 105,
+          "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+        },
+        "lastActivationFence" : {
+          "applicationSequence" : 2,
+          "controlRevision" : 1,
+          "firstAcceptanceSequence" : 1
+        },
+        "book" : {
+          "bids" : [ ],
+          "asks" : [ ]
+        }
+      }
+    }, {
+      "caseId" : "out-of-band-post-only",
+      "type" : "PLACE",
+      "entrypoint" : "GOVERNED",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 51,
+        "side" : "SELL",
+        "priceTicks" : 110,
+        "quantityLots" : 1,
+        "executionPolicy" : "POST_ONLY"
+      },
+      "expectedRuleSet" : {
+        "version" : 1,
+        "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+      },
+      "applicationSequence" : 4,
+      "events" : [ {
+        "type" : "PLACE_REJECTED",
+        "orderId" : 51,
+        "code" : "PRICE_OUTSIDE_ACTIVE_BAND",
+        "executionRuleSet" : {
+          "version" : 1,
+          "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+        }
+      } ],
+      "stateAfter" : {
+        "nextApplicationSequence" : 5,
+        "nextAcceptanceSequence" : 1,
+        "controlRevision" : 1,
+        "activeRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 95,
+          "upperInclusive" : 105,
+          "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+        },
+        "lastActivationFence" : {
+          "applicationSequence" : 2,
+          "controlRevision" : 1,
+          "firstAcceptanceSequence" : 1
+        },
+        "book" : {
+          "bids" : [ ],
+          "asks" : [ ]
+        }
+      }
+    }, {
+      "caseId" : "in-band-fok-precheck",
+      "type" : "PLACE",
+      "entrypoint" : "GOVERNED",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 52,
+        "side" : "BUY",
+        "priceTicks" : 100,
+        "quantityLots" : 1,
+        "executionPolicy" : "FOK"
+      },
+      "expectedRuleSet" : {
+        "version" : 1,
+        "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+      },
+      "applicationSequence" : 5,
+      "events" : [ {
+        "type" : "PLACE_REJECTED",
+        "orderId" : 52,
+        "code" : "FOK_NOT_FILLABLE",
+        "executionRuleSet" : {
+          "version" : 1,
+          "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+        }
+      } ],
+      "stateAfter" : {
+        "nextApplicationSequence" : 6,
+        "nextAcceptanceSequence" : 1,
+        "controlRevision" : 1,
+        "activeRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 95,
+          "upperInclusive" : 105,
+          "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+        },
+        "lastActivationFence" : {
+          "applicationSequence" : 2,
+          "controlRevision" : 1,
+          "firstAcceptanceSequence" : 1
+        },
+        "book" : {
+          "bids" : [ ],
+          "asks" : [ ]
+        }
+      }
+    } ]
+  }, {
+    "scenarioId" : "grandfathered-cross-version-maker",
+    "cases" : [ {
+      "caseId" : "old-maker-outside-future-band",
+      "type" : "PLACE",
+      "entrypoint" : "LEGACY",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 60,
+        "side" : "SELL",
+        "priceTicks" : 90,
+        "quantityLots" : 2,
+        "executionPolicy" : "GTC"
+      },
+      "applicationSequence" : 1,
+      "events" : [ {
+        "type" : "ACCEPTED",
+        "acceptanceSequence" : 1,
+        "orderId" : 60,
+        "side" : "SELL",
+        "priceTicks" : 90,
+        "quantityLots" : 2,
+        "executionPolicy" : "GTC",
+        "admissionRuleSet" : {
+          "version" : 0,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "executionRuleSet" : {
+          "version" : 0,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        }
+      }, {
+        "type" : "RESTED",
+        "acceptanceSequence" : 1,
+        "orderId" : 60,
+        "side" : "SELL",
+        "priceTicks" : 90,
+        "remainingQuantityLots" : 2,
+        "admissionRuleSet" : {
+          "version" : 0,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "executionRuleSet" : {
+          "version" : 0,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        }
+      } ],
+      "stateAfter" : {
+        "nextApplicationSequence" : 2,
+        "nextAcceptanceSequence" : 2,
+        "controlRevision" : 0,
+        "activeRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 0,
+          "lowerInclusive" : 1,
+          "upperInclusive" : 9223372036854775807,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "book" : {
+          "bids" : [ ],
+          "asks" : [ {
+            "side" : "SELL",
+            "priceTicks" : 90,
+            "orders" : [ {
+              "acceptanceSequence" : 1,
+              "orderId" : 60,
+              "remainingQuantityLots" : 2,
+              "admissionRuleSet" : {
+                "version" : 0,
+                "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+              }
+            } ]
+          } ]
+        }
+      }
+    }, {
+      "caseId" : "grandfather-prepare",
+      "type" : "PREPARE_RULE_SET",
+      "input" : {
+        "expectedActive" : {
+          "version" : 0,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "artifact" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 95,
+          "upperInclusive" : 105,
+          "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+        }
+      },
+      "applicationSequence" : 2,
+      "events" : [ {
+        "type" : "RULE_SET_PREPARED",
+        "identity" : {
+          "version" : 1,
+          "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+        },
+        "status" : "PREPARED"
+      } ],
+      "stateAfter" : {
+        "nextApplicationSequence" : 3,
+        "nextAcceptanceSequence" : 2,
+        "controlRevision" : 0,
+        "activeRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 0,
+          "lowerInclusive" : 1,
+          "upperInclusive" : 9223372036854775807,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "preparedRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 95,
+          "upperInclusive" : 105,
+          "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+        },
+        "book" : {
+          "bids" : [ ],
+          "asks" : [ {
+            "side" : "SELL",
+            "priceTicks" : 90,
+            "orders" : [ {
+              "acceptanceSequence" : 1,
+              "orderId" : 60,
+              "remainingQuantityLots" : 2,
+              "admissionRuleSet" : {
+                "version" : 0,
+                "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+              }
+            } ]
+          } ]
+        }
+      }
+    }, {
+      "caseId" : "grandfather-activate",
+      "type" : "ACTIVATE_RULE_SET",
+      "input" : {
+        "expectedApplicationSequence" : 3,
+        "expectedActive" : {
+          "version" : 0,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "target" : {
+          "version" : 1,
+          "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+        }
+      },
+      "applicationSequence" : 3,
+      "events" : [ {
+        "type" : "RULE_SET_ACTIVATED",
+        "previousActive" : {
+          "version" : 0,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "active" : {
+          "version" : 1,
+          "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+        },
+        "fence" : {
+          "applicationSequence" : 3,
+          "controlRevision" : 1,
+          "firstAcceptanceSequence" : 2
+        }
+      } ],
+      "stateAfter" : {
+        "nextApplicationSequence" : 4,
+        "nextAcceptanceSequence" : 2,
+        "controlRevision" : 1,
+        "activeRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 95,
+          "upperInclusive" : 105,
+          "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+        },
+        "lastActivationFence" : {
+          "applicationSequence" : 3,
+          "controlRevision" : 1,
+          "firstAcceptanceSequence" : 2
+        },
+        "book" : {
+          "bids" : [ ],
+          "asks" : [ {
+            "side" : "SELL",
+            "priceTicks" : 90,
+            "orders" : [ {
+              "acceptanceSequence" : 1,
+              "orderId" : 60,
+              "remainingQuantityLots" : 2,
+              "admissionRuleSet" : {
+                "version" : 0,
+                "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+              }
+            } ]
+          } ]
+        }
+      }
+    }, {
+      "caseId" : "new-taker-matches-old-maker",
+      "type" : "PLACE",
+      "entrypoint" : "GOVERNED",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 61,
+        "side" : "BUY",
+        "priceTicks" : 100,
+        "quantityLots" : 1,
+        "executionPolicy" : "FOK"
+      },
+      "expectedRuleSet" : {
+        "version" : 1,
+        "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+      },
+      "applicationSequence" : 4,
+      "events" : [ {
+        "type" : "ACCEPTED",
+        "acceptanceSequence" : 2,
+        "orderId" : 61,
+        "side" : "BUY",
+        "priceTicks" : 100,
+        "quantityLots" : 1,
+        "executionPolicy" : "FOK",
+        "admissionRuleSet" : {
+          "version" : 1,
+          "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+        },
+        "executionRuleSet" : {
+          "version" : 1,
+          "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+        }
+      }, {
+        "type" : "TRADE",
+        "makerSequence" : 1,
+        "makerOrderId" : 60,
+        "takerSequence" : 2,
+        "takerOrderId" : 61,
+        "priceTicks" : 90,
+        "quantityLots" : 1,
+        "makerAdmissionRuleSet" : {
+          "version" : 0,
+          "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+        },
+        "takerAdmissionRuleSet" : {
+          "version" : 1,
+          "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+        },
+        "executionRuleSet" : {
+          "version" : 1,
+          "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+        }
+      } ],
+      "stateAfter" : {
+        "nextApplicationSequence" : 5,
+        "nextAcceptanceSequence" : 3,
+        "controlRevision" : 1,
+        "activeRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 95,
+          "upperInclusive" : 105,
+          "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+        },
+        "lastActivationFence" : {
+          "applicationSequence" : 3,
+          "controlRevision" : 1,
+          "firstAcceptanceSequence" : 2
+        },
+        "book" : {
+          "bids" : [ ],
+          "asks" : [ {
+            "side" : "SELL",
+            "priceTicks" : 90,
+            "orders" : [ {
+              "acceptanceSequence" : 1,
+              "orderId" : 60,
+              "remainingQuantityLots" : 1,
+              "admissionRuleSet" : {
+                "version" : 0,
+                "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+              }
+            } ]
+          } ]
+        }
+      }
+    }, {
+      "caseId" : "new-outside-maker-rejected",
+      "type" : "PLACE",
+      "entrypoint" : "GOVERNED",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 62,
+        "side" : "SELL",
+        "priceTicks" : 90,
+        "quantityLots" : 1,
+        "executionPolicy" : "GTC"
+      },
+      "expectedRuleSet" : {
+        "version" : 1,
+        "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+      },
+      "applicationSequence" : 5,
+      "events" : [ {
+        "type" : "PLACE_REJECTED",
+        "orderId" : 62,
+        "code" : "PRICE_OUTSIDE_ACTIVE_BAND",
+        "executionRuleSet" : {
+          "version" : 1,
+          "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+        }
+      } ],
+      "stateAfter" : {
+        "nextApplicationSequence" : 6,
+        "nextAcceptanceSequence" : 3,
+        "controlRevision" : 1,
+        "activeRuleSet" : {
+          "schemaVersion" : "matching.market-rule-set.v1",
+          "instrumentId" : "BTC-USDT",
+          "version" : 1,
+          "lowerInclusive" : 95,
+          "upperInclusive" : 105,
+          "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+        },
+        "lastActivationFence" : {
+          "applicationSequence" : 3,
+          "controlRevision" : 1,
+          "firstAcceptanceSequence" : 2
+        },
+        "book" : {
+          "bids" : [ ],
+          "asks" : [ {
+            "side" : "SELL",
+            "priceTicks" : 90,
+            "orders" : [ {
+              "acceptanceSequence" : 1,
+              "orderId" : 60,
+              "remainingQuantityLots" : 1,
+              "admissionRuleSet" : {
+                "version" : 0,
+                "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+              }
+            } ]
+          } ]
+        }
+      }
+    } ]
+  } ]
+}

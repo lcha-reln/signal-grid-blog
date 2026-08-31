@@ -27,6 +27,10 @@ const modeLabels: Readonly<Record<MatchingLabMode, { title: string; description:
     title: "浏览器预测模型",
     description: "在隔离的有界 BigInt 模型里先预测，再揭示一条命令的事件与盘口。",
   },
+  EVIDENCE_PREDICTION: {
+    title: "证据状态预测题",
+    description: "先判断命令结果和控制状态变化，再揭示同一份固定 evidence 的完整状态。",
+  },
 };
 const presentationLabels: Readonly<
   Record<
@@ -47,6 +51,12 @@ const presentationLabels: Readonly<
   },
 };
 const presentation = presentationLabels[lab.goldenReplay.presentation];
+const presentationHeading = lab.browserModel
+  ? presentation.heading
+  : "沿固定场景逐命令检查控制状态、规则归因与盘口";
+const presentationDescription = lab.browserModel
+  ? presentation.description
+  : "命令、applicationSequence、事件、active/prepared、fence、规则归因与 full-depth book 来自同一份固定 Java evidence。";
 const publicEvidence = {
   manifest: sitePath(lab.goldenReplay.manifestPath),
   scenarios: sitePath(lab.goldenReplay.scenarioPackPath),
@@ -59,6 +69,7 @@ const publicEvidence = {
   })),
 };
 const clientConfig = JSON.stringify({
+  modes: lab.modes,
   goldenReplay: {
     presentation: lab.goldenReplay.presentation,
     scenarioPackUrl: publicEvidence.scenarios,
@@ -68,7 +79,8 @@ const clientConfig = JSON.stringify({
   },
   browserModel: lab.browserModel,
 }).replaceAll("<", "\\u003c");
-const seedSequences = lab.browserModel.seedOrders.map((seed, index) => ({
+const browserModel = lab.browserModel;
+const seedSequences = (browserModel?.seedOrders ?? []).map((seed, index) => ({
   ...seed,
   sequence: String(index + 1),
 }));
@@ -80,15 +92,15 @@ const goldenCommandCount = lab.goldenReplay.scenarios.reduce(
 const scenarioPackLabel = lab.goldenReplay.scenarioPackPath.split("/").at(-1);
 const eventBatchesLabel = lab.goldenReplay.eventBatchesPath.split("/").at(-1);
 const canonicalHistoryLabel = lab.goldenReplay.canonicalHistoryPath.split("/").at(-1);
-const supportedCommandLabel = lab.browserModel.supportedCommands.join(" / ");
+const supportedCommandLabel = browserModel?.supportedCommands.join(" / ") ?? "";
 const supportedExecutionPolicyLabel =
-  lab.browserModel.supportedExecutionPolicies.join(" / ");
+  browserModel?.supportedExecutionPolicies.join(" / ") ?? "";
 const showExecutionPolicySelector =
-  lab.browserModel.supportedExecutionPolicies.length > 1;
-const supportsPolicyAdmission = lab.browserModel.supportedExecutionPolicies.some(
+  (browserModel?.supportedExecutionPolicies.length ?? 0) > 1;
+const supportsPolicyAdmission = browserModel?.supportedExecutionPolicies.some(
   (policy) => policy === "FOK" || policy === "POST_ONLY",
-);
-const supportsIoc = lab.browserModel.supportedExecutionPolicies.includes("IOC");
+) ?? false;
+const supportsIoc = browserModel?.supportedExecutionPolicies.includes("IOC") ?? false;
 ---
 
 <div class="matching-lab" id={instanceId} data-matching-lab>
@@ -101,7 +113,7 @@ const supportsIoc = lab.browserModel.supportedExecutionPolicies.includes("IOC");
     </div>
     <aside class="matching-lab-boundary" aria-label="实验边界">
       <span>EXECUTION BOUNDARY</span>
-      <strong>STATIC EVIDENCE + LOCAL MODEL</strong>
+      <strong>{browserModel ? "STATIC EVIDENCE + LOCAL MODEL" : "STATIC EVIDENCE + PREDICTION"}</strong>
       <ul>
         <li>不上传源码，不编译或执行 Java</li>
         <li>不连接远程裁判、账户或外部服务</li>
@@ -117,13 +129,13 @@ const supportsIoc = lab.browserModel.supportedExecutionPolicies.includes("IOC");
         <h2 id={`${instanceId}-how-heading`}>把“看证据”和“做预测”明确分开</h2>
       </div>
       <p>
-        权威结果来自固定 complete tag 下的 Java evidence；浏览器模型拥有独立状态，刷新或重置即可清除，且不会写回证据回放。
+        权威结果来自固定 complete tag 下的 Java evidence；第二种模式要么使用可重置的隔离浏览器模型，要么只做 evidence 结果预测，两者都不会写回证据。
       </p>
     </section>
 
     <noscript>
       <div class="matching-lab-noscript">
-        JavaScript 关闭时仍可阅读证据摘要、场景目录和边界说明；逐步回放与预测模型需要在浏览器中启用 JavaScript。Java 编译和课程验收始终在本地课程仓库完成。
+        JavaScript 关闭时仍可阅读证据摘要、场景目录和边界说明；逐步回放与预测交互需要在浏览器中启用 JavaScript。Java 编译和课程验收始终在本地课程仓库完成。
       </div>
     </noscript>
 
@@ -156,10 +168,10 @@ const supportsIoc = lab.browserModel.supportedExecutionPolicies.includes("IOC");
       <header class="matching-lab-panel-head">
         <div>
           <span class="eyebrow">JAVA_GOLDEN_REPLAY / READ ONLY</span>
-          <h2 id={`${instanceId}-golden-heading`}>{presentation.heading}</h2>
+          <h2 id={`${instanceId}-golden-heading`}>{presentationHeading}</h2>
         </div>
         <p>
-          {presentation.description} 页面只读取已发布的同源静态文件；摘要对应
+          {presentationDescription} 页面只读取已发布的同源静态文件；摘要对应
           <code>{unit.completeRef}</code>，源码提交 <code>{unit.completeCommit}</code>。
         </p>
       </header>
@@ -211,6 +223,8 @@ const supportsIoc = lab.browserModel.supportedExecutionPolicies.includes("IOC");
             <p>
               {lab.goldenReplay.presentation === "COUNTEREXAMPLE" ? (
                 <><code>PREDICT BEFORE REVEAL</code>：启用 JavaScript 后，每条命令都要先判断是否首次分歧，再“锁定预测并揭示对照”。</>
+              ) : !browserModel ? (
+                <>场景目录已经在 HTML 中提供；启用 JavaScript 后可逐条查看固定命令、applicationSequence、事件、active/prepared、fence、规则归因与 book。</>
               ) : (
                 <>场景目录已经在 HTML 中提供；启用 JavaScript 后可逐条查看固定输入、预期事件和 bookAfter。</>
               )}
@@ -231,7 +245,7 @@ const supportsIoc = lab.browserModel.supportedExecutionPolicies.includes("IOC");
       </footer>
     </section>
 
-    <section
+    {browserModel && <section
       class="matching-lab-panel"
       id={`${instanceId}-browser_model`}
       data-lab-panel="BROWSER_MODEL"
@@ -245,9 +259,9 @@ const supportsIoc = lab.browserModel.supportedExecutionPolicies.includes("IOC");
           <h2 id={`${instanceId}-model-heading`}>先写下预测，再揭示一次状态迁移</h2>
         </div>
         <p>
-          只支持 <code>{lab.browserModel.instrumentId}</code>、<code>{supportedCommandLabel}</code> 与
+          只支持 <code>{browserModel.instrumentId}</code>、<code>{supportedCommandLabel}</code> 与
           <code>{supportedExecutionPolicyLabel}</code>。所有算术使用 BigInt，最多执行
-          {lab.browserModel.maxCommands} 条命令。
+          {browserModel.maxCommands} 条命令。
         </p>
       </header>
 
@@ -255,16 +269,16 @@ const supportsIoc = lab.browserModel.supportedExecutionPolicies.includes("IOC");
         <form class="matching-model-form" data-model-form novalidate>
           <header>
             <span>BOUNDED MATCHING COMMAND</span>
-            <code data-model-order-id>next Place orderId = {lab.browserModel.firstGeneratedOrderId}</code>
+            <code data-model-order-id>next Place orderId = {browserModel.firstGeneratedOrderId}</code>
           </header>
           <p class="matching-model-readiness" data-model-readiness aria-live="polite">
             等待 {goldenScenarioCount} 场景 / {goldenCommandCount} 命令 corpus 自检，模型暂未解锁。
           </p>
           <dl class="matching-model-fixed">
-            <div><dt>instrumentId</dt><dd>{lab.browserModel.instrumentId}</dd></div>
+            <div><dt>instrumentId</dt><dd>{browserModel.instrumentId}</dd></div>
             <div>
               <dt>{showExecutionPolicySelector ? "defaultPolicy" : "timeInForce"}</dt>
-              <dd>{lab.browserModel.defaultExecutionPolicy}</dd>
+              <dd>{browserModel.defaultExecutionPolicy}</dd>
             </div>
           </dl>
           <div
@@ -276,7 +290,7 @@ const supportsIoc = lab.browserModel.supportedExecutionPolicies.includes("IOC");
             <label class="matching-model-command-type">
               <span>command</span>
               <select data-model-command-type>
-                {lab.browserModel.supportedCommands.map((command) => (
+                {browserModel.supportedCommands.map((command) => (
                   <option value={command}>{command}</option>
                 ))}
               </select>
@@ -293,10 +307,10 @@ const supportsIoc = lab.browserModel.supportedExecutionPolicies.includes("IOC");
                 <label>
                   <span>executionPolicy</span>
                   <select data-model-execution-policy>
-                    {lab.browserModel.supportedExecutionPolicies.map((policy) => (
+                    {browserModel.supportedExecutionPolicies.map((policy) => (
                       <option
                         value={policy}
-                        selected={policy === lab.browserModel.defaultExecutionPolicy}
+                        selected={policy === browserModel.defaultExecutionPolicy}
                       >
                         {policy}
                       </option>
@@ -311,10 +325,10 @@ const supportsIoc = lab.browserModel.supportedExecutionPolicies.includes("IOC");
                   inputmode="numeric"
                   autocomplete="off"
                   value="102"
-                  maxlength={lab.browserModel.maxOrderId.length}
+                  maxlength={browserModel.maxOrderId.length}
                   data-model-price
                 />
-                <small>{lab.browserModel.minPriceTicks} – {lab.browserModel.maxPriceTicks}</small>
+                <small>{browserModel.minPriceTicks} – {browserModel.maxPriceTicks}</small>
               </label>
               <label>
                 <span>quantityLots</span>
@@ -323,10 +337,10 @@ const supportsIoc = lab.browserModel.supportedExecutionPolicies.includes("IOC");
                   inputmode="numeric"
                   autocomplete="off"
                   value="4"
-                  maxlength={lab.browserModel.maxQuantityLots.length}
+                  maxlength={browserModel.maxQuantityLots.length}
                   data-model-quantity
                 />
-                <small>{lab.browserModel.minQuantityLots} – {lab.browserModel.maxQuantityLots}</small>
+                <small>{browserModel.minQuantityLots} – {browserModel.maxQuantityLots}</small>
               </label>
             </div>
             <div class="matching-model-command-fields" data-model-cancel-fields hidden>
@@ -336,8 +350,8 @@ const supportsIoc = lab.browserModel.supportedExecutionPolicies.includes("IOC");
                   type="text"
                   inputmode="numeric"
                   autocomplete="off"
-                  value={lab.browserModel.seedOrders[0]?.orderId ?? "1"}
-                  maxlength={lab.browserModel.maxPriceTicks.length}
+                  value={browserModel.seedOrders[0]?.orderId ?? "1"}
+                  maxlength={browserModel.maxPriceTicks.length}
                   data-model-cancel-order-id
                 />
                 <small>可输入活动、终态或未知 orderId</small>
@@ -381,7 +395,7 @@ const supportsIoc = lab.browserModel.supportedExecutionPolicies.includes("IOC");
         <aside class="matching-model-state" aria-label="浏览器模型状态">
           <header>
             <span>ISOLATED MODEL STATE</span>
-            <code><span data-model-command-count>0</span> / {lab.browserModel.maxCommands} COMMANDS</code>
+            <code><span data-model-command-count>0</span> / {browserModel.maxCommands} COMMANDS</code>
           </header>
           <p>
             初始盘口由 {seedSequences.length} 笔固定 seed order 构成；重置会恢复它们。模型状态只存在于当前页面实例。
@@ -411,7 +425,7 @@ const supportsIoc = lab.browserModel.supportedExecutionPolicies.includes("IOC");
         <header>
           <div>
             <span>LOCAL L2 ORDER BOOK</span>
-            <h3 id={`${instanceId}-book-heading`}>{lab.browserModel.instrumentId}</h3>
+            <h3 id={`${instanceId}-book-heading`}>{browserModel.instrumentId}</h3>
           </div>
           <p>Price priority → acceptedSequence FIFO</p>
         </header>
@@ -427,7 +441,7 @@ const supportsIoc = lab.browserModel.supportedExecutionPolicies.includes("IOC");
         </div>
       </section>
 
-      <section class="matching-registry" hidden={!lab.browserModel.showLifecycleRegistry}>
+      <section class="matching-registry" hidden={!browserModel.showLifecycleRegistry}>
         <header>
           <div>
             <span>MODEL LIFECYCLE REGISTRY</span>
@@ -442,7 +456,77 @@ const supportsIoc = lab.browserModel.supportedExecutionPolicies.includes("IOC");
         <strong>这不是 Java 撮合器，也不是课程裁判。</strong>
         <span>它只覆盖本单元声明的命令与内存语义，不处理账户、手续费、持久化、线程、网络、Aeron、性能或高可用。</span>
       </footer>
-    </section>
+    </section>}
+
+    {!browserModel && <section
+      class="matching-lab-panel"
+      id={`${instanceId}-evidence_prediction`}
+      data-lab-panel="EVIDENCE_PREDICTION"
+      role="tabpanel"
+      aria-labelledby={`${instanceId}-evidence_prediction-tab`}
+      hidden
+    >
+      <header class="matching-lab-panel-head">
+        <div>
+          <span class="eyebrow">EVIDENCE_PREDICTION / READ THEN REVEAL</span>
+          <h2 id={`${instanceId}-prediction-heading`}>先判断状态迁移，再揭示固定结果</h2>
+        </div>
+        <p>
+          题目来自与 Golden 回放相同的静态 corpus。页面不会重新执行 Java，也不会把预测正确与否换算成课程裁判结果。
+        </p>
+      </header>
+
+      <div class="matching-evidence-prediction" data-evidence-prediction>
+        <header>
+          <div>
+            <span>FIXED EVIDENCE QUESTION</span>
+            <strong data-evidence-prediction-progress>等待读取同源 evidence</strong>
+          </div>
+          <div>
+            <button type="button" data-evidence-prediction-previous>← 上一题</button>
+            <button type="button" data-evidence-prediction-next>下一题 →</button>
+          </div>
+        </header>
+        <div class="matching-evidence-prediction-body">
+          <label>
+            <span>固定场景</span>
+            <select data-evidence-prediction-scenario>
+              {lab.goldenReplay.scenarios.map((scenario) => (
+                <option value={scenario.id}>{scenario.title}</option>
+              ))}
+            </select>
+          </label>
+          <section class="matching-evidence-prediction-question">
+            <span data-evidence-prediction-type>COMMAND</span>
+            <code data-evidence-prediction-command>加载后显示固定命令</code>
+            <label>
+              <span>预测这条命令的主要结果</span>
+              <select data-evidence-prediction-answer disabled>
+                <option value="">请选择…</option>
+                <option value="ORDER_ACCEPTED">订单被接受</option>
+                <option value="ORDER_REJECTED">订单被拒绝</option>
+                <option value="ORDER_CANCELED">订单撤销成功</option>
+                <option value="RULE_PREPARED">规则集准备成功或幂等命中</option>
+                <option value="RULE_ACTIVATED">规则集激活成功</option>
+                <option value="CONTROL_REJECTED">Prepare / Activate 被拒绝</option>
+              </select>
+            </label>
+            <button type="button" class="button primary" data-evidence-prediction-reveal disabled>
+              锁定预测并揭示状态
+            </button>
+            <p data-evidence-prediction-feedback aria-live="polite">
+              揭示前先检查 expected rule、application boundary 与当前 active / prepared。
+            </p>
+          </section>
+          <div class="matching-evidence-prediction-result" data-evidence-prediction-result hidden></div>
+        </div>
+      </div>
+
+      <footer class="matching-model-boundary-note">
+        <strong>这是固定 evidence 的交互式阅读器，不是浏览器里的 Java 撮合器。</strong>
+        <span>它只比较你的预测与已发布结果；Java 编译、确定性裁判和完成门禁仍在课程仓库本地运行。</span>
+      </footer>
+    </section>}
   </div>
 
   <script is:inline type="application/json" data-matching-lab-config set:html={clientConfig}></script>

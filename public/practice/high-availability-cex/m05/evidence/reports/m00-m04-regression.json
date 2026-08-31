@@ -1,0 +1,15 @@
+{
+  "schemaVersion" : "matching.m05.m04-regression-report.v1",
+  "status" : "PASS",
+  "historicalArchitectureGateExecuted" : false,
+  "fixedScenarios" : 14,
+  "fixedCommands" : 48,
+  "fixedDigest" : "sha256:68de35e41358ea72c9852fdf3fd652db116774964360f0b526f43612576bfa77",
+  "generatedHistories" : 192,
+  "generatedCommands" : 12288,
+  "generatedDigest" : "sha256:6005c674d0c42927989f1c8c4d1ddce224d06ceff0b95bf58615d23c4496ba51",
+  "coverageObligations" : 23,
+  "counterexamples" : 8,
+  "mutantsKilled" : 8,
+  "productRelease" : null
+}

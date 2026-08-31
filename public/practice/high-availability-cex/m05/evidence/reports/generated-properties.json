@@ -1,0 +1,25 @@
+{
+  "schemaVersion" : "matching.m05.generated-properties-report.v1",
+  "status" : "PASS",
+  "algorithm" : "splitmix64-v1",
+  "baseSeed" : "5505",
+  "histories" : 160,
+  "commandsPerHistory" : 64,
+  "commands" : 10240,
+  "differentialComparisons" : 10240,
+  "ledgerChecks" : 10240,
+  "bookChecks" : 10240,
+  "marketControlChecks" : 10240,
+  "canonicalFormat" : "M05H1",
+  "canonicalDigest" : "sha256:e742e53e1846730a0f242447b3065e23e352059807d8593dcc3e489498d453f5",
+  "canonicalBytes" : 2553580,
+  "canonicalLines" : 10401,
+  "freshGenerations" : 2,
+  "lanes" : {
+    "RULE_SET_LIFECYCLE_AND_HASH" : 32,
+    "ACTIVATION_AND_PLACE_FENCE" : 32,
+    "INCLUSIVE_BAND_BUY_SELL" : 32,
+    "GRANDFATHERED_CROSS_VERSION" : 32,
+    "MIXED_M04_POLICY_AND_CONTROL" : 32
+  }
+}

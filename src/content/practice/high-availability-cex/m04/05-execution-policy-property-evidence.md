@@ -47,7 +47,7 @@ POST_ONLY 能挂单
 
 这些观察必须在**每条 command 边界**完成。只在整段历史结束比较 book，无法发现中途短暂 Rested 的 IOC、被回滚的 maker FIFO 或曾经消耗过的 sequence。
 
-这里不冻结超出事实的 ABI/wire 承诺。`Accepted` record 已新增 `executionPolicy` 组件，sealed `MatchingEvent` 已新增 `RemainderCanceled`；依赖反射、Jackson 默认 record 形状、`toString()`、sealed exhaustive switch 或旧 event bytes 的代码需要适配。M10 前没有外部 wire codec 合同，因此 M04 只证明旧调用入口仍可用、legacy GTC 业务语义等价与 M03G1 command canonical 身份稳定。
+这里不冻结超出事实的 ABI/wire 承诺。`Accepted` record 已新增 `executionPolicy` 组件，sealed `MatchingEvent` 已新增 `RemainderCanceled`；依赖反射、Jackson 默认 record 形状、`toString()`、sealed exhaustive switch 或旧 event bytes 的代码需要适配。PLAN v0.7 将外部 wire codec 顺延到 M11，因此 M04 只证明旧调用入口仍可用、legacy GTC 业务语义等价与 M03G1 command canonical 身份稳定。
 
 ## reference 也必须从 raw policy 开始
 
@@ -300,4 +300,4 @@ M04 不是命名产品停止点，所以没有新的 `matching-*` product releas
 
 现在，M04 能准确声称的是：**单交易对内存撮合器在原有 GTC 基线上，增加了有价格保护的 IOC、原子 FOK 与 maker-only Post-only，并用可反证的性质门禁约束其结果。**它仍不拥有 price band、STP、持久化、网络、性能或高可用保证。
 
-这条窄结论正是本单元的价值：先把一个执行策略轴做成可证明的状态机，再进入 M05 的版本化市场控制，而不是让下一个功能替尚未闭合的语义背书。
+这条窄结论正是本单元的价值：先把一个执行策略轴做成可证明的状态机，再进入 M05 的版本化 order-entry price band，而不是让下一个功能替尚未闭合的语义背书。市场模式与 Mass Cancel 已在 PLAN v0.7 拆到 M06。

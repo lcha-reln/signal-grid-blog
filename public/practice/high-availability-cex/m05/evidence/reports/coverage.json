@@ -1,0 +1,127 @@
+{
+  "schemaVersion" : "matching.m05.coverage-report.v1",
+  "status" : "PASS",
+  "requiredObligations" : 20,
+  "satisfiedObligations" : 20,
+  "obligations" : [ {
+    "id" : "M04_LEGACY_BOOTSTRAP",
+    "satisfied" : true,
+    "historyIndex" : 3,
+    "commandIndex" : 0,
+    "count" : 32
+  }, {
+    "id" : "CONTENT_HASH_MISMATCH",
+    "satisfied" : true,
+    "historyIndex" : 0,
+    "commandIndex" : 9,
+    "count" : 144
+  }, {
+    "id" : "PREPARE_IDEMPOTENCY",
+    "satisfied" : true,
+    "historyIndex" : 0,
+    "commandIndex" : 1,
+    "count" : 32
+  }, {
+    "id" : "VERSION_CONTENT_CONFLICT",
+    "satisfied" : true,
+    "historyIndex" : 0,
+    "commandIndex" : 2,
+    "count" : 91
+  }, {
+    "id" : "PREPARED_SUPERSESSION",
+    "satisfied" : true,
+    "historyIndex" : 0,
+    "commandIndex" : 34,
+    "count" : 393
+  }, {
+    "id" : "ACTIVATE_WITHOUT_PREPARE",
+    "satisfied" : true,
+    "historyIndex" : 0,
+    "commandIndex" : 45,
+    "count" : 350
+  }, {
+    "id" : "STALE_ACTIVATION_FENCE",
+    "satisfied" : true,
+    "historyIndex" : 0,
+    "commandIndex" : 25,
+    "count" : 55
+  }, {
+    "id" : "FAILED_ACTIVATION_ATOMICITY",
+    "satisfied" : true,
+    "historyIndex" : 0,
+    "commandIndex" : 25,
+    "count" : 447
+  }, {
+    "id" : "STALE_PLACE_FENCE",
+    "satisfied" : true,
+    "historyIndex" : 0,
+    "commandIndex" : 17,
+    "count" : 331
+  }, {
+    "id" : "LOWER_BOUND_TOUCH",
+    "satisfied" : true,
+    "historyIndex" : 1,
+    "commandIndex" : 20,
+    "count" : 105
+  }, {
+    "id" : "UPPER_BOUND_TOUCH",
+    "satisfied" : true,
+    "historyIndex" : 0,
+    "commandIndex" : 63,
+    "count" : 112
+  }, {
+    "id" : "BELOW_BAND",
+    "satisfied" : true,
+    "historyIndex" : 0,
+    "commandIndex" : 16,
+    "count" : 1648
+  }, {
+    "id" : "ABOVE_BAND",
+    "satisfied" : true,
+    "historyIndex" : 0,
+    "commandIndex" : 7,
+    "count" : 1886
+  }, {
+    "id" : "BUY_SELL_SYMMETRY",
+    "satisfied" : true,
+    "historyIndex" : 0,
+    "commandIndex" : 26,
+    "count" : 530
+  }, {
+    "id" : "DUPLICATE_BEFORE_FENCE_AND_BAND",
+    "satisfied" : true,
+    "historyIndex" : 12,
+    "commandIndex" : 24,
+    "count" : 25
+  }, {
+    "id" : "BAND_BEFORE_FOK",
+    "satisfied" : true,
+    "historyIndex" : 0,
+    "commandIndex" : 7,
+    "count" : 722
+  }, {
+    "id" : "BAND_BEFORE_POST_ONLY",
+    "satisfied" : true,
+    "historyIndex" : 0,
+    "commandIndex" : 19,
+    "count" : 704
+  }, {
+    "id" : "GRANDFATHERED_MAKER",
+    "satisfied" : true,
+    "historyIndex" : 0,
+    "commandIndex" : 14,
+    "count" : 227
+  }, {
+    "id" : "CROSS_VERSION_TRADE",
+    "satisfied" : true,
+    "historyIndex" : 0,
+    "commandIndex" : 18,
+    "count" : 199
+  }, {
+    "id" : "REJECTION_SEQUENCE_CONTINUITY",
+    "satisfied" : true,
+    "historyIndex" : 1,
+    "commandIndex" : 3,
+    "count" : 113
+  } ]
+}

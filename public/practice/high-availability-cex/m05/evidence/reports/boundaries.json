@@ -1,0 +1,14 @@
+{
+  "schemaVersion" : "matching.m05.boundaries-report.v1",
+  "status" : "PASS",
+  "canonicalFormat" : "M05RS1",
+  "hashVectors" : 4,
+  "hashMismatchFailsClosed" : true,
+  "sameVersionDifferentHashFailsClosed" : true,
+  "lowerInclusive" : true,
+  "upperInclusive" : true,
+  "longMaximumInclusive" : true,
+  "staleActivationFenceFailsClosed" : true,
+  "stalePlaceFenceFailsClosed" : true,
+  "grandfatherExistingOrders" : true
+}

@@ -1,0 +1,9 @@
+{
+  "schemaVersion" : "matching.m05.architecture-report.v1",
+  "status" : "PASS",
+  "passed" : true,
+  "coreSources" : 39,
+  "referenceSources" : 15,
+  "forbiddenFindings" : 0,
+  "violations" : [ ]
+}

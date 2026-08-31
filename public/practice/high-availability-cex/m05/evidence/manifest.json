@@ -1,0 +1,337 @@
+{
+  "schemaVersion" : "cex.lab-evidence.v1",
+  "case" : "high-availability-cex",
+  "project" : "matching",
+  "unit" : "M05",
+  "unitTag" : "course/m05-complete",
+  "productRelease" : null,
+  "planVersion" : "0.7",
+  "source" : {
+    "commit" : "e593c13292c0f97665f90239a4c8d4a1ca40f579",
+    "dirty" : false
+  },
+  "environment" : {
+    "java" : "25.0.4.1+1-LTS",
+    "os" : "Mac OS X",
+    "arch" : "aarch64"
+  },
+  "claims" : [ {
+    "id" : "m00-m04-semantic-regression",
+    "category" : "correctness",
+    "statement" : "The frozen M04 fixed and generated semantics, coverage, mutants, and counterexample replay still pass without rebinding historical source-identity gates.",
+    "status" : "pass",
+    "command" : "./gradlew m05Check --no-daemon",
+    "observations" : {
+      "status" : "PASS",
+      "checkSchemaVersion" : "matching.m04.check.v2",
+      "fixedScenarios" : 14,
+      "fixedCommands" : 48,
+      "fixedDigest" : "sha256:68de35e41358ea72c9852fdf3fd652db116774964360f0b526f43612576bfa77",
+      "generatedHistories" : 192,
+      "generatedCommands" : 12288,
+      "generatedDigest" : "sha256:6005c674d0c42927989f1c8c4d1ddce224d06ceff0b95bf58615d23c4496ba51",
+      "coverageObligations" : 23,
+      "counterexamples" : 8,
+      "mutantsKilled" : 8,
+      "productRelease" : null
+    },
+    "artifacts" : [ {
+      "path" : "reports/m00-m04-regression.json",
+      "sha256" : "aee849532867bcb94165e84c138eb63dce2b8aa792ba58615ef58c9b77691234"
+    } ]
+  }, {
+    "id" : "content-addressed-rule-artifact",
+    "category" : "correctness",
+    "statement" : "M05RS1 canonical bytes reproduce four frozen SHA-256 vectors and mismatched content fails closed.",
+    "status" : "pass",
+    "command" : "./gradlew m05Check --no-daemon",
+    "observations" : {
+      "canonicalFormat" : "M05RS1",
+      "hashVectors" : 4,
+      "hashMismatchFailsClosed" : true,
+      "sameVersionDifferentHashFailsClosed" : true,
+      "lowerInclusive" : true,
+      "upperInclusive" : true,
+      "longMaximumInclusive" : true,
+      "staleActivationFenceFailsClosed" : true,
+      "stalePlaceFenceFailsClosed" : true,
+      "grandfatherExistingOrders" : true
+    },
+    "artifacts" : [ {
+      "path" : "inputs/versioned-price-band-v1.json",
+      "sha256" : "cd56fbbb0bc56dc809f741ed15ac53c7e8e41162745db7841cb853fc2768c53e"
+    }, {
+      "path" : "reports/ruleset-hash-vectors.json",
+      "sha256" : "5e5bd4ba7708b82daec5a7127e0df05d292d2fbb9e724370aa6c4608b7c2a1e7"
+    }, {
+      "path" : "reports/boundaries.json",
+      "sha256" : "3d5b80f7eb308c517b43d728c58420c8ad242899095c2403f4ccdf1e15a6a7e8"
+    } ]
+  }, {
+    "id" : "prepare-activate-application-fence",
+    "category" : "correctness",
+    "statement" : "Prepare and Activate form an ordered, monotonic control transition with an exact application-sequence fence and failure atomicity.",
+    "status" : "pass",
+    "command" : "./gradlew m05Check --no-daemon",
+    "observations" : {
+      "scenarios" : 12,
+      "commands" : 54,
+      "commandCounts" : {
+        "PLACE" : 21,
+        "CANCEL" : 3,
+        "PREPARE_RULE_SET" : 16,
+        "ACTIVATE_RULE_SET" : 14
+      },
+      "canonicalFormat" : "M05F1",
+      "canonicalDigest" : "sha256:45be63337da83103a45040f5f73e9b996018d76f6d91f77e27cd5b2d9dbb8f7b",
+      "canonicalBytes" : 109974,
+      "canonicalLines" : 67,
+      "differentialComparisons" : 54,
+      "ledgerChecks" : 54
+    },
+    "artifacts" : [ {
+      "path" : "reports/fixed-scenario-pack.json",
+      "sha256" : "f4d5b3f0e3fc38f763f6457b2107cab287a014964a52a62b183f59afdcec0538"
+    }, {
+      "path" : "reports/fixed-event-batches.json",
+      "sha256" : "d168b02c4b7207cd22b127cefc760deced85b20f1859f9a3bd710abb1bd4d134"
+    }, {
+      "path" : "reports/fixed-history.canonical.utf8",
+      "sha256" : "45be63337da83103a45040f5f73e9b996018d76f6d91f77e27cd5b2d9dbb8f7b"
+    } ]
+  }, {
+    "id" : "inclusive-order-entry-price-band",
+    "category" : "correctness",
+    "statement" : "Both sides accept the inclusive lower and upper ticks and reject new orders outside the active band before policy prechecks.",
+    "status" : "pass",
+    "command" : "./gradlew m05Check --no-daemon",
+    "observations" : {
+      "requiredObligations" : 20,
+      "satisfiedObligations" : 20,
+      "obligations" : [ {
+        "id" : "M04_LEGACY_BOOTSTRAP",
+        "satisfied" : true,
+        "historyIndex" : 3,
+        "commandIndex" : 0
+      }, {
+        "id" : "CONTENT_HASH_MISMATCH",
+        "satisfied" : true,
+        "historyIndex" : 0,
+        "commandIndex" : 9
+      }, {
+        "id" : "PREPARE_IDEMPOTENCY",
+        "satisfied" : true,
+        "historyIndex" : 0,
+        "commandIndex" : 1
+      }, {
+        "id" : "VERSION_CONTENT_CONFLICT",
+        "satisfied" : true,
+        "historyIndex" : 0,
+        "commandIndex" : 2
+      }, {
+        "id" : "PREPARED_SUPERSESSION",
+        "satisfied" : true,
+        "historyIndex" : 0,
+        "commandIndex" : 34
+      }, {
+        "id" : "ACTIVATE_WITHOUT_PREPARE",
+        "satisfied" : true,
+        "historyIndex" : 0,
+        "commandIndex" : 45
+      }, {
+        "id" : "STALE_ACTIVATION_FENCE",
+        "satisfied" : true,
+        "historyIndex" : 0,
+        "commandIndex" : 25
+      }, {
+        "id" : "FAILED_ACTIVATION_ATOMICITY",
+        "satisfied" : true,
+        "historyIndex" : 0,
+        "commandIndex" : 25
+      }, {
+        "id" : "STALE_PLACE_FENCE",
+        "satisfied" : true,
+        "historyIndex" : 0,
+        "commandIndex" : 17
+      }, {
+        "id" : "LOWER_BOUND_TOUCH",
+        "satisfied" : true,
+        "historyIndex" : 1,
+        "commandIndex" : 20
+      }, {
+        "id" : "UPPER_BOUND_TOUCH",
+        "satisfied" : true,
+        "historyIndex" : 0,
+        "commandIndex" : 63
+      }, {
+        "id" : "BELOW_BAND",
+        "satisfied" : true,
+        "historyIndex" : 0,
+        "commandIndex" : 16
+      }, {
+        "id" : "ABOVE_BAND",
+        "satisfied" : true,
+        "historyIndex" : 0,
+        "commandIndex" : 7
+      }, {
+        "id" : "BUY_SELL_SYMMETRY",
+        "satisfied" : true,
+        "historyIndex" : 0,
+        "commandIndex" : 26
+      }, {
+        "id" : "DUPLICATE_BEFORE_FENCE_AND_BAND",
+        "satisfied" : true,
+        "historyIndex" : 12,
+        "commandIndex" : 24
+      }, {
+        "id" : "BAND_BEFORE_FOK",
+        "satisfied" : true,
+        "historyIndex" : 0,
+        "commandIndex" : 7
+      }, {
+        "id" : "BAND_BEFORE_POST_ONLY",
+        "satisfied" : true,
+        "historyIndex" : 0,
+        "commandIndex" : 19
+      }, {
+        "id" : "GRANDFATHERED_MAKER",
+        "satisfied" : true,
+        "historyIndex" : 0,
+        "commandIndex" : 14
+      }, {
+        "id" : "CROSS_VERSION_TRADE",
+        "satisfied" : true,
+        "historyIndex" : 0,
+        "commandIndex" : 18
+      }, {
+        "id" : "REJECTION_SEQUENCE_CONTINUITY",
+        "satisfied" : true,
+        "historyIndex" : 1,
+        "commandIndex" : 3
+      } ]
+    },
+    "artifacts" : [ {
+      "path" : "reports/coverage.json",
+      "sha256" : "d5118f5d30b213a4e2cd9237585bb1aab81f0b4d5aaacb7388fa08a192a8dbee"
+    }, {
+      "path" : "reports/invariants.json",
+      "sha256" : "232a3b51fe0437d43050a977696a23c92436fd3ef458b83ee443b94f6905066b"
+    } ]
+  }, {
+    "id" : "grandfathered-rule-attribution",
+    "category" : "correctness",
+    "statement" : "Activation leaves resting orders untouched while Accepted, Trade, Rested, Cancel, and rejection events retain admission and execution rule identity.",
+    "status" : "pass",
+    "command" : "./gradlew m05Check --no-daemon",
+    "observations" : {
+      "passed" : true,
+      "checks" : 10240,
+      "properties" : [ "APPLICATION_SEQUENCE_CONTIGUITY", "RULE_SET_PREPARE_ATOMICITY", "RULE_SET_ACTIVATION_ATOMICITY", "ACTIVATION_SEQUENCE_FENCE", "GOVERNED_PLACE_FENCE", "INCLUSIVE_ORDER_ENTRY_PRICE_BAND", "GRANDFATHER_RESTING_ORDERS", "RULE_SET_ATTRIBUTION" ]
+    },
+    "artifacts" : [ {
+      "path" : "reports/check.json",
+      "sha256" : "1e73e01717df068f1c411cfe0609e6f6ef0c997db8e4772acccb37ef7f5d4f6a"
+    } ]
+  }, {
+    "id" : "generated-property-suite",
+    "category" : "correctness",
+    "statement" : "Two fresh SplitMix64 generations produce identical M05H1 bytes and production agrees with the independent model and event ledger at all 10,240 command boundaries.",
+    "status" : "pass",
+    "command" : "./gradlew m05Check --no-daemon",
+    "observations" : {
+      "generator" : {
+        "algorithm" : "splitmix64-v1",
+        "baseSeed" : "5505",
+        "histories" : 160,
+        "commandsPerHistory" : 64,
+        "commands" : 10240,
+        "lanes" : 5,
+        "historiesPerLane" : 32,
+        "canonicalFormat" : "M05H1",
+        "canonicalDigest" : "sha256:e742e53e1846730a0f242447b3065e23e352059807d8593dcc3e489498d453f5",
+        "canonicalBytes" : 2553580,
+        "canonicalLines" : 10401,
+        "freshGenerations" : 2
+      },
+      "properties" : {
+        "histories" : 160,
+        "commands" : 10240,
+        "differentialComparisons" : 10240,
+        "ledgerChecks" : 10240,
+        "bookChecks" : 10240,
+        "marketControlChecks" : 10240
+      }
+    },
+    "artifacts" : [ {
+      "path" : "inputs/property-suite-v1.json",
+      "sha256" : "52dba5c70152eac7ae41464ec7e669526845ca7460deda160de3d9d614c69d57"
+    }, {
+      "path" : "reports/generated-history.canonical.utf8",
+      "sha256" : "e742e53e1846730a0f242447b3065e23e352059807d8593dcc3e489498d453f5"
+    }, {
+      "path" : "reports/generated-properties.json",
+      "sha256" : "d7e10836f1f817a0043a3fcd42b4c0f6ea3f44117c052ba9dc790b2c3a7fd40d"
+    } ]
+  }, {
+    "id" : "minimal-counterexamples",
+    "category" : "correctness",
+    "statement" : "All eight required semantic faults are killed as STUDENT_FAILURE by schema-valid, replayed, one-minimal M05X1 counterexamples; the throwing control remains SYSTEM_ERROR.",
+    "status" : "pass",
+    "command" : "./gradlew m05Check --no-daemon",
+    "observations" : {
+      "counterexamples" : {
+        "required" : 8,
+        "found" : 8,
+        "replayed" : 8,
+        "oneMinimal" : 8,
+        "totalCommands" : 57,
+        "canonicalFormat" : "M05X1",
+        "canonicalDigest" : "sha256:ea4aa501053d8bf11d8c31a4ba2f2b590b7b69d2c68d7c06cfaa7bf2c7c85a25",
+        "canonicalBytes" : 366110,
+        "canonicalLines" : 586
+      },
+      "mutants" : {
+        "required" : 8,
+        "killed" : 8,
+        "classification" : "STUDENT_FAILURE",
+        "systemErrorControl" : "SYSTEM_ERROR"
+      }
+    },
+    "artifacts" : [ {
+      "path" : "inputs/counterexamples-v1.json",
+      "sha256" : "c385d4c44b570d118734a864c42197da5d824e91c301ad2297f3154bbbc4f72b"
+    }, {
+      "path" : "reports/counterexamples.json",
+      "sha256" : "203065b5ddf4cc64a17212ec4e1ffcb6178fe7b0f70ccb51df2c30a39fe4cf35"
+    }, {
+      "path" : "reports/counterexamples.canonical.utf8",
+      "sha256" : "ea4aa501053d8bf11d8c31a4ba2f2b590b7b69d2c68d7c06cfaa7bf2c7c85a25"
+    }, {
+      "path" : "reports/replay.json",
+      "sha256" : "6041c3e35b81fee35dc00c6613ef6aabfabddceb6fd50925a9f1827e0210c6e5"
+    }, {
+      "path" : "reports/mutants.json",
+      "sha256" : "f732aa2505a6efbc10c3bcc3fc2cd9199d410845ce5b291a1776eee66f30eec7"
+    } ]
+  }, {
+    "id" : "architecture-boundary",
+    "category" : "architecture",
+    "statement" : "The production core and independent reference remain free of file, network, database, time, concurrency, and Aeron dependencies.",
+    "status" : "pass",
+    "command" : "./gradlew m05Check --no-daemon",
+    "observations" : {
+      "passed" : true,
+      "coreSources" : 39,
+      "referenceSources" : 15,
+      "forbiddenFindings" : 0,
+      "violations" : [ ]
+    },
+    "artifacts" : [ {
+      "path" : "reports/architecture.json",
+      "sha256" : "ed8ea347d535c52b2ce60ab15a38b4afc7cc1a9e342076803635122925b63697"
+    } ]
+  } ],
+  "limitations" : [ "Only one in-memory BTC-USDT limit-order book with Place, Cancel, PrepareRuleSet, and ActivateRuleSet is implemented.", "Only a content-addressed absolute order-entry price band is governed; reference-price formulas, dynamic bands, market modes, and mass cancel are deferred.", "Existing resting orders are grandfathered across activation and may remain outside the newly active order-entry band.", "Only GTC, IOC, FOK, and Post-only are implemented; STP and later order types are deferred.", "The generated suite is frozen at 160 histories by 64 commands and is bounded testing, not exhaustive or formal verification.", "Accepted order IDs remain unique for one engine lifetime; terminal identities are retained without pruning.", "There is no account, asset, position, fee, margin, settlement, reservation, or risk logic.", "There is no persistence, networking, database, thread, Aeron, replication, failover, or high availability in this unit.", "The evidence makes no throughput, latency, durability, recovery, or production-readiness claim." ],
+  "supersedes" : null,
+  "generatedAt" : "2026-08-31T03:36:35.291570Z"
+}

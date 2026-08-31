@@ -1,0 +1,47 @@
+{
+  "schemaVersion" : "matching.m05.replay-report.v1",
+  "status" : "PASS",
+  "requested" : 8,
+  "passed" : true,
+  "scenarios" : [ {
+    "mutantId" : "M05-HASH-MISMATCH-PREPARED",
+    "passed" : true,
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "EXACT_COMMAND_DIFFERENTIAL/EVENT_BATCH"
+  }, {
+    "mutantId" : "M05-SAME-VERSION-DIFFERENT-HASH-ACCEPTED",
+    "passed" : true,
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "RULE_SET_PREPARE_IDEMPOTENCY/IDEMPOTENT_PREPARE_CHANGED_IDENTITY"
+  }, {
+    "mutantId" : "M05-ACTIVATE-WITHOUT-PREPARE",
+    "passed" : true,
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "ACTIVATE_REQUIRES_PREPARED/UNPREPARED_ACTIVATION_ACCEPTED"
+  }, {
+    "mutantId" : "M05-STALE-ACTIVATION-FENCE-ACCEPTED",
+    "passed" : true,
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "ACTIVATION_SEQUENCE_FENCE/STALE_ACTIVATION_ACCEPTED"
+  }, {
+    "mutantId" : "M05-FAILED-ACTIVATION-CHANGES-ACTIVE",
+    "passed" : true,
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "RULE_SET_ACTIVATION_ATOMICITY/ACTIVE_RULE_STATE"
+  }, {
+    "mutantId" : "M05-OUT-OF-BAND-PLACE-ACCEPTED",
+    "passed" : true,
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "INCLUSIVE_ORDER_ENTRY_PRICE_BAND/OUT_OF_BAND_PLACE_ACCEPTED"
+  }, {
+    "mutantId" : "M05-STALE-PLACE-RULE-ACCEPTED",
+    "passed" : true,
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "GOVERNED_PLACE_FENCE/STALE_PLACE_RULE_ACCEPTED"
+  }, {
+    "mutantId" : "M05-ACTIVATION-REVALIDATES-RESTING",
+    "passed" : true,
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "GRANDFATHER_RESTING_ORDERS/ACTIVATION_REVALIDATED_BOOK"
+  } ]
+}

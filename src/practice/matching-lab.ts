@@ -1,6 +1,11 @@
+import { parseJsonPreservingIntegers } from "./lossless-json.ts";
+
 type Side = "BUY" | "SELL";
-type CommandType = "PLACE" | "CANCEL";
+type CommandType =
+  "PLACE" | "CANCEL" | "PREPARE_RULE_SET" | "ACTIVATE_RULE_SET";
+type BrowserCommandType = Extract<CommandType, "PLACE" | "CANCEL">;
 type ExecutionPolicy = "GTC" | "IOC" | "FOK" | "POST_ONLY";
+type LabMode = "JAVA_GOLDEN_REPLAY" | "BROWSER_MODEL" | "EVIDENCE_PREDICTION";
 type GoldenReplayPresentation = "GOLDEN_HISTORY" | "COUNTEREXAMPLE";
 type GoldenReplaySupportRole = "REPLAY" | "MUTANTS";
 type Prediction =
@@ -35,15 +40,45 @@ interface GoldenCancelInput {
   orderId: number | string;
 }
 
-type GoldenInput = GoldenPlaceInput | GoldenCancelInput;
+interface GoldenRuleSetIdentity {
+  version: number | string;
+  contentHash: string;
+}
+
+interface GoldenRuleSetArtifact extends GoldenRuleSetIdentity {
+  schemaVersion: string;
+  instrumentId: string;
+  lowerInclusive: number | string;
+  upperInclusive: number | string;
+}
+
+interface GoldenPrepareRuleSetInput {
+  expectedActive: GoldenRuleSetIdentity;
+  artifact: GoldenRuleSetArtifact;
+}
+
+interface GoldenActivateRuleSetInput {
+  expectedApplicationSequence: number | string;
+  expectedActive: GoldenRuleSetIdentity;
+  target: GoldenRuleSetIdentity;
+}
+
+type GoldenInput =
+  | GoldenPlaceInput
+  | GoldenCancelInput
+  | GoldenPrepareRuleSetInput
+  | GoldenActivateRuleSetInput;
 
 interface GoldenBookOrder {
-  sequence: number | string;
+  sequence?: number | string;
+  acceptanceSequence?: number | string;
   orderId: number | string;
   remainingQuantityLots: number | string;
+  admissionRuleSet?: GoldenRuleSetIdentity;
 }
 
 interface GoldenBookLevel {
+  side?: Side;
   priceTicks: number | string;
   orders: GoldenBookOrder[];
 }
@@ -58,6 +93,7 @@ interface GoldenEvent {
   code?: string;
   field?: string;
   sequence?: number | string;
+  acceptanceSequence?: number | string;
   orderId?: number | string;
   side?: Side;
   priceTicks?: number | string;
@@ -70,16 +106,52 @@ interface GoldenEvent {
   canceledQuantityLots?: number | string;
   executionPolicy?: string;
   reason?: string;
+  status?: string;
+  identity?: GoldenRuleSetIdentity;
+  supersededIdentity?: GoldenRuleSetIdentity;
+  previousActive?: GoldenRuleSetIdentity;
+  active?: GoldenRuleSetIdentity;
+  fence?: GoldenActivationFence;
+  admissionRuleSet?: GoldenRuleSetIdentity;
+  makerAdmissionRuleSet?: GoldenRuleSetIdentity;
+  takerAdmissionRuleSet?: GoldenRuleSetIdentity;
+  executionRuleSet?: GoldenRuleSetIdentity;
 }
 
-interface GoldenOutcome {
+interface GoldenLegacyOutcome {
   events: GoldenEvent[];
   bookAfter: GoldenBook;
 }
 
+interface GoldenActivationFence {
+  applicationSequence: number | string;
+  controlRevision: number | string;
+  firstAcceptanceSequence: number | string;
+}
+
+interface GoldenMarketState {
+  nextApplicationSequence: number | string;
+  nextAcceptanceSequence: number | string;
+  controlRevision: number | string;
+  activeRuleSet: GoldenRuleSetArtifact;
+  preparedRuleSet?: GoldenRuleSetArtifact;
+  lastActivationFence?: GoldenActivationFence;
+  book: GoldenBook;
+}
+
+interface GoldenGovernedOutcome {
+  applicationSequence: number | string;
+  events: GoldenEvent[];
+  stateAfter: GoldenMarketState;
+}
+
+type GoldenOutcome = GoldenLegacyOutcome | GoldenGovernedOutcome;
+
 interface GoldenCommand {
   caseId: string;
   type?: CommandType;
+  entrypoint?: "LEGACY" | "GOVERNED";
+  expectedRuleSet?: GoldenRuleSetIdentity;
   input: GoldenInput;
   expected: GoldenOutcome;
 }
@@ -127,12 +199,13 @@ interface BrowserModelConfig {
   maxOrderId: string;
   maxCommands: number;
   firstGeneratedOrderId: string;
-  supportedCommands: CommandType[];
+  supportedCommands: BrowserCommandType[];
   showLifecycleRegistry: boolean;
   seedOrders: BrowserSeedOrder[];
 }
 
 interface ClientConfig {
+  modes: LabMode[];
   goldenReplay: {
     presentation: GoldenReplayPresentation;
     scenarioPackUrl: string;
@@ -143,7 +216,7 @@ interface ClientConfig {
     }>;
     scenarios: GoldenScenarioSummary[];
   };
-  browserModel: BrowserModelConfig;
+  browserModel?: BrowserModelConfig;
 }
 
 interface RestingOrder {
@@ -228,23 +301,37 @@ function replaceChildren(target: Element, ...children: Node[]): void {
 }
 
 function formatGoldenEvent(event: GoldenEvent): string {
+  const execution = event.executionRuleSet
+    ? `, execution=${formatRuleSetIdentity(event.executionRuleSet)}`
+    : "";
+  const admission = event.admissionRuleSet
+    ? `, admission=${formatRuleSetIdentity(event.admissionRuleSet)}`
+    : "";
   switch (event.type) {
     case "REJECTED":
       return `Rejected(code=${event.code}, field=${event.field})`;
     case "ACCEPTED":
-      return `Accepted(seq=${event.sequence}, orderId=${event.orderId}, side=${event.side}, price=${event.priceTicks}, qty=${event.quantityLots}${event.executionPolicy ? `, policy=${event.executionPolicy}` : ""})`;
+      return `Accepted(seq=${event.acceptanceSequence ?? event.sequence}, orderId=${event.orderId}, side=${event.side}, price=${event.priceTicks}, qty=${event.quantityLots}${event.executionPolicy ? `, policy=${event.executionPolicy}` : ""}${admission}${execution})`;
     case "TRADE":
-      return `Trade(maker=${event.makerOrderId}/seq${event.makerSequence}, taker=${event.takerOrderId}/seq${event.takerSequence}, price=${event.priceTicks}, qty=${event.quantityLots})`;
+      return `Trade(maker=${event.makerOrderId}/seq${event.makerSequence}${event.makerAdmissionRuleSet ? `/${formatRuleSetIdentity(event.makerAdmissionRuleSet)}` : ""}, taker=${event.takerOrderId}/seq${event.takerSequence}${event.takerAdmissionRuleSet ? `/${formatRuleSetIdentity(event.takerAdmissionRuleSet)}` : ""}, price=${event.priceTicks}, qty=${event.quantityLots}${execution})`;
     case "RESTED":
-      return `Rested(seq=${event.sequence}, orderId=${event.orderId}, side=${event.side}, price=${event.priceTicks}, remaining=${event.remainingQuantityLots})`;
+      return `Rested(seq=${event.acceptanceSequence ?? event.sequence}, orderId=${event.orderId}, side=${event.side}, price=${event.priceTicks}, remaining=${event.remainingQuantityLots}${admission}${execution})`;
     case "REMAINDER_CANCELED":
-      return `RemainderCanceled(seq=${event.sequence}, orderId=${event.orderId}, side=${event.side}, price=${event.priceTicks}, canceled=${event.canceledQuantityLots}, reason=${event.reason})`;
+      return `RemainderCanceled(seq=${event.acceptanceSequence ?? event.sequence}, orderId=${event.orderId}, side=${event.side}, price=${event.priceTicks}, canceled=${event.canceledQuantityLots}, reason=${event.reason}${admission}${execution})`;
     case "PLACE_REJECTED":
-      return `PlaceRejected(orderId=${event.orderId}, code=${event.code})`;
+      return `PlaceRejected(orderId=${event.orderId}, code=${event.code}${execution})`;
     case "CANCEL_REJECTED":
-      return `CancelRejected(orderId=${event.orderId}, code=${event.code})`;
+      return `CancelRejected(orderId=${event.orderId}, code=${event.code}${execution})`;
     case "CANCELED":
-      return `Canceled(seq=${event.sequence}, orderId=${event.orderId}, side=${event.side}, price=${event.priceTicks}, canceled=${event.canceledQuantityLots})`;
+      return `Canceled(seq=${event.acceptanceSequence ?? event.sequence}, orderId=${event.orderId}, side=${event.side}, price=${event.priceTicks}, canceled=${event.canceledQuantityLots}${admission}${execution})`;
+    case "RULE_SET_PREPARED":
+      return `RuleSetPrepared(identity=${event.identity ? formatRuleSetIdentity(event.identity) : "?"}, status=${event.status}${event.supersededIdentity ? `, superseded=${formatRuleSetIdentity(event.supersededIdentity)}` : ""})`;
+    case "PREPARE_RULE_SET_REJECTED":
+      return `PrepareRuleSetRejected(code=${event.code})`;
+    case "RULE_SET_ACTIVATED":
+      return `RuleSetActivated(previous=${event.previousActive ? formatRuleSetIdentity(event.previousActive) : "?"}, active=${event.active ? formatRuleSetIdentity(event.active) : "?"}, fence=${event.fence ? `${event.fence.applicationSequence}/${event.fence.controlRevision}/${event.fence.firstAcceptanceSequence}` : "?"})`;
+    case "ACTIVATE_RULE_SET_REJECTED":
+      return `ActivateRuleSetRejected(code=${event.code})`;
     default:
       throw new Error(`unknown golden event type: ${event.type}`);
   }
@@ -258,16 +345,53 @@ function isGoldenPlaceInput(input: GoldenInput): input is GoldenPlaceInput {
   return "side" in input && "priceTicks" in input && "quantityLots" in input;
 }
 
+function isGoldenPrepareInput(
+  input: GoldenInput,
+): input is GoldenPrepareRuleSetInput {
+  return "artifact" in input && "expectedActive" in input;
+}
+
+function isGoldenActivateInput(
+  input: GoldenInput,
+): input is GoldenActivateRuleSetInput {
+  return "target" in input && "expectedApplicationSequence" in input;
+}
+
+function formatRuleSetIdentity(identity: GoldenRuleSetIdentity): string {
+  return `v${identity.version}@${identity.contentHash}`;
+}
+
 function formatGoldenInput(command: GoldenCommand): string {
-  if (commandType(command) === "CANCEL") {
-    return `CancelOrder(${command.input.instrumentId}, #${command.input.orderId})`;
+  const type = commandType(command);
+  if (type === "CANCEL") {
+    const input = command.input as GoldenCancelInput;
+    return `CancelOrder(${input.instrumentId}, #${input.orderId})`;
+  }
+  if (type === "PREPARE_RULE_SET") {
+    if (!isGoldenPrepareInput(command.input)) {
+      throw new Error(
+        `PREPARE_RULE_SET command ${command.caseId} is incomplete`,
+      );
+    }
+    const { artifact, expectedActive } = command.input;
+    return `PrepareRuleSet(expected=${formatRuleSetIdentity(expectedActive)}, artifact=${artifact.schemaVersion}/${artifact.instrumentId}/v${artifact.version}/[${artifact.lowerInclusive},${artifact.upperInclusive}]/${artifact.contentHash})`;
+  }
+  if (type === "ACTIVATE_RULE_SET") {
+    if (!isGoldenActivateInput(command.input)) {
+      throw new Error(
+        `ACTIVATE_RULE_SET command ${command.caseId} is incomplete`,
+      );
+    }
+    const { expectedApplicationSequence, expectedActive, target } =
+      command.input;
+    return `ActivateRuleSet(appSeq=${expectedApplicationSequence}, expected=${formatRuleSetIdentity(expectedActive)}, target=${formatRuleSetIdentity(target)})`;
   }
   if (!isGoldenPlaceInput(command.input)) {
     throw new Error(
       `PLACE command ${command.caseId} has no limit-order fields`,
     );
   }
-  return `PlaceLimitOrder(${command.input.instrumentId}, #${command.input.orderId}, ${command.input.side}, price=${command.input.priceTicks}, qty=${command.input.quantityLots}${command.input.executionPolicy ? `, policy=${command.input.executionPolicy}` : ""})`;
+  return `PlaceLimitOrder(${command.entrypoint ?? "LEGACY"}, ${command.input.instrumentId}, #${command.input.orderId}, ${command.input.side}, price=${command.input.priceTicks}, qty=${command.input.quantityLots}${command.input.executionPolicy ? `, policy=${command.input.executionPolicy}` : ""}${command.expectedRuleSet ? `, expected=${formatRuleSetIdentity(command.expectedRuleSet)}` : ""})`;
 }
 
 function createGoldenBookSide(
@@ -289,13 +413,98 @@ function createGoldenBookSide(
     queue.textContent = level.orders
       .map(
         (order) =>
-          `#${order.orderId} · seq ${order.sequence} · qty ${order.remainingQuantityLots}`,
+          `#${order.orderId} · seq ${order.acceptanceSequence ?? order.sequence} · qty ${order.remainingQuantityLots}${order.admissionRuleSet ? ` · admitted ${formatRuleSetIdentity(order.admissionRuleSet)}` : ""}`,
       )
       .join("  →  ");
     item.append(queue);
     list.append(item);
   }
   section.append(list);
+  return section;
+}
+
+function isGovernedOutcome(
+  outcome: GoldenOutcome,
+): outcome is GoldenGovernedOutcome {
+  return "stateAfter" in outcome && "applicationSequence" in outcome;
+}
+
+function governedArtifactSummary(artifact: GoldenRuleSetArtifact): string {
+  return `v${artifact.version} · [${artifact.lowerInclusive}, ${artifact.upperInclusive}] · ${artifact.contentHash}`;
+}
+
+function createGoldenControlState(outcome: GoldenGovernedOutcome): HTMLElement {
+  const section = makeElement("section", "matching-governed-state");
+  section.append(
+    makeElement("h4", undefined, "APPLICATION / CONTROL STATE AFTER"),
+  );
+  const facts = makeElement("dl");
+  const fact = (label: string, value: string, detail?: string): void => {
+    const item = makeElement("div");
+    item.append(
+      makeElement("dt", undefined, label),
+      makeElement("dd", undefined, value),
+    );
+    if (detail) item.append(makeElement("small", undefined, detail));
+    facts.append(item);
+  };
+  fact(
+    "APPLIED",
+    String(outcome.applicationSequence),
+    "本条命令取得的 ApplicationSequence",
+  );
+  fact(
+    "NEXT APPLICATION",
+    String(outcome.stateAfter.nextApplicationSequence),
+    "下一条确定性 core command 的边界",
+  );
+  fact(
+    "NEXT ACCEPTANCE",
+    String(outcome.stateAfter.nextAcceptanceSequence),
+    "下一笔成功接受订单的 sequence",
+  );
+  fact("CONTROL REVISION", String(outcome.stateAfter.controlRevision));
+  section.append(facts);
+
+  const rules = makeElement("div", "matching-governed-rules");
+  const rule = (
+    label: string,
+    artifact: GoldenRuleSetArtifact | undefined,
+  ): HTMLElement => {
+    const article = makeElement("article");
+    article.append(makeElement("span", undefined, label));
+    if (artifact) {
+      article.append(
+        makeElement("strong", undefined, governedArtifactSummary(artifact)),
+        makeElement(
+          "small",
+          undefined,
+          `${artifact.schemaVersion} · ${artifact.instrumentId}`,
+        ),
+      );
+    } else {
+      article.append(makeElement("strong", undefined, "EMPTY"));
+    }
+    return article;
+  };
+  rules.append(
+    rule("ACTIVE RULE SET", outcome.stateAfter.activeRuleSet),
+    rule("PREPARED RULE SET", outcome.stateAfter.preparedRuleSet),
+  );
+  const fence = makeElement("article");
+  fence.append(makeElement("span", undefined, "LAST ACTIVATION FENCE"));
+  const value = outcome.stateAfter.lastActivationFence;
+  fence.append(
+    makeElement(
+      "strong",
+      undefined,
+      value
+        ? `app ${value.applicationSequence} · control ${value.controlRevision} · first acceptance ${value.firstAcceptanceSequence}`
+        : "NONE",
+    ),
+  );
+  rules.append(fence);
+  section.append(rules);
   return section;
 }
 
@@ -326,12 +535,19 @@ function createGoldenOutcome(
   events.append(eventList);
   article.append(events);
 
+  if (isGovernedOutcome(outcome)) {
+    article.append(createGoldenControlState(outcome));
+  }
+
   const book = makeElement("section");
   book.append(makeElement("h4", undefined, "BOOK AFTER"));
   const sides = makeElement("div");
+  const bookAfter = isGovernedOutcome(outcome)
+    ? outcome.stateAfter.book
+    : outcome.bookAfter;
   sides.append(
-    createGoldenBookSide("BID · HIGH → LOW", outcome.bookAfter.bids),
-    createGoldenBookSide("ASK · LOW → HIGH", outcome.bookAfter.asks),
+    createGoldenBookSide("BID · HIGH → LOW", bookAfter.bids),
+    createGoldenBookSide("ASK · LOW → HIGH", bookAfter.asks),
   );
   book.append(sides);
   article.append(book);
@@ -497,7 +713,7 @@ function sameValue(left: unknown, right: unknown): boolean {
   return JSON.stringify(comparable(left)) === JSON.stringify(comparable(right));
 }
 
-function verifyPublishedEventBatches(
+export function verifyPublishedEventBatches(
   pack: GoldenScenarioPack,
   report: unknown,
 ): void {
@@ -506,13 +722,29 @@ function verifyPublishedEventBatches(
   const publishedScenarios = (report as { scenarios?: unknown }).scenarios;
   const expectedScenarios = pack.scenarios.map((scenario) => ({
     scenarioId: scenario.scenarioId,
-    cases: scenario.commands.map((command) => ({
-      caseId: command.caseId,
-      ...(command.type ? { type: command.type } : {}),
-      input: command.input,
-      events: command.expected.events,
-      bookAfter: command.expected.bookAfter,
-    })),
+    cases: scenario.commands.map((command) => {
+      const common = {
+        caseId: command.caseId,
+        ...(command.type ? { type: command.type } : {}),
+        ...(command.entrypoint ? { entrypoint: command.entrypoint } : {}),
+        input: command.input,
+        ...(command.expectedRuleSet
+          ? { expectedRuleSet: command.expectedRuleSet }
+          : {}),
+      };
+      return isGovernedOutcome(command.expected)
+        ? {
+            ...common,
+            applicationSequence: command.expected.applicationSequence,
+            events: command.expected.events,
+            stateAfter: command.expected.stateAfter,
+          }
+        : {
+            ...common,
+            events: command.expected.events,
+            bookAfter: command.expected.bookAfter,
+          };
+    }),
   }));
   if (!sameValue(publishedScenarios, expectedScenarios)) {
     throw new Error("scenario pack and event-batches differ");
@@ -553,9 +785,250 @@ function requiredRecord(
   return value as Record<string, unknown>;
 }
 
-function requiredRecords(value: unknown, label: string): Record<string, unknown>[] {
+function requiredRecords(
+  value: unknown,
+  label: string,
+): Record<string, unknown>[] {
   if (!Array.isArray(value)) throw new Error(`${label} is not an array`);
-  return value.map((entry, index) => requiredRecord(entry, `${label}[${index}]`));
+  return value.map((entry, index) =>
+    requiredRecord(entry, `${label}[${index}]`),
+  );
+}
+
+function isGoldenUnsignedInteger(value: unknown): value is number | string {
+  return (
+    (typeof value === "number" && Number.isSafeInteger(value) && value >= 0) ||
+    (typeof value === "string" && /^(?:0|[1-9][0-9]*)$/.test(value))
+  );
+}
+
+function assertGoldenIdentity(value: unknown, label: string): void {
+  const identity = requiredRecord(value, label);
+  if (
+    !isGoldenUnsignedInteger(identity.version) ||
+    typeof identity.contentHash !== "string" ||
+    !/^sha256:[0-9a-f]{64}$/.test(identity.contentHash)
+  ) {
+    throw new Error(`${label} is not a content-addressed rule identity`);
+  }
+}
+
+function assertGoldenArtifact(value: unknown, label: string): void {
+  const artifact = requiredRecord(value, label);
+  assertGoldenIdentity(value, label);
+  if (
+    typeof artifact.schemaVersion !== "string" ||
+    typeof artifact.instrumentId !== "string" ||
+    !isGoldenUnsignedInteger(artifact.lowerInclusive) ||
+    !isGoldenUnsignedInteger(artifact.upperInclusive) ||
+    BigInt(artifact.lowerInclusive) <= 0n ||
+    BigInt(artifact.lowerInclusive) > BigInt(artifact.upperInclusive)
+  ) {
+    throw new Error(`${label} is not a complete rule-set artifact`);
+  }
+}
+
+function assertGoldenBook(value: unknown, label: string): void {
+  const book = requiredRecord(value, label);
+  for (const side of ["bids", "asks"] as const) {
+    for (const [levelIndex, level] of requiredRecords(
+      book[side],
+      `${label}.${side}`,
+    ).entries()) {
+      if (
+        !isGoldenUnsignedInteger(level.priceTicks) ||
+        BigInt(level.priceTicks) <= 0n ||
+        !Array.isArray(level.orders)
+      ) {
+        throw new Error(`${label}.${side}[${levelIndex}] is incomplete`);
+      }
+      for (const [orderIndex, rawOrder] of level.orders.entries()) {
+        const order = requiredRecord(
+          rawOrder,
+          `${label}.${side}[${levelIndex}].orders[${orderIndex}]`,
+        );
+        if (
+          !isGoldenUnsignedInteger(order.orderId) ||
+          BigInt(order.orderId) <= 0n ||
+          !isGoldenUnsignedInteger(order.remainingQuantityLots) ||
+          BigInt(order.remainingQuantityLots) <= 0n ||
+          (!isGoldenUnsignedInteger(order.sequence) &&
+            !isGoldenUnsignedInteger(order.acceptanceSequence))
+        ) {
+          throw new Error(`${label} contains an incomplete resting order`);
+        }
+        if (order.admissionRuleSet !== undefined) {
+          assertGoldenIdentity(
+            order.admissionRuleSet,
+            `${label}.${side}[${levelIndex}].orders[${orderIndex}].admissionRuleSet`,
+          );
+        }
+      }
+    }
+  }
+}
+
+function assertGoldenOutcome(
+  value: unknown,
+  label: string,
+): "LEGACY" | "GOVERNED" {
+  const outcome = requiredRecord(value, label);
+  if (!Array.isArray(outcome.events)) {
+    throw new Error(`${label}.events is not an array`);
+  }
+  for (const [eventIndex, event] of outcome.events.entries()) {
+    const eventRecord = requiredRecord(event, `${label}.events[${eventIndex}]`);
+    if (typeof eventRecord.type !== "string" || !eventRecord.type) {
+      throw new Error(`${label}.events[${eventIndex}] has no type`);
+    }
+  }
+  if (
+    outcome.stateAfter !== undefined ||
+    outcome.applicationSequence !== undefined
+  ) {
+    if (
+      !isGoldenUnsignedInteger(outcome.applicationSequence) ||
+      !outcome.stateAfter
+    ) {
+      throw new Error(`${label} has a partial governed result`);
+    }
+    const state = requiredRecord(outcome.stateAfter, `${label}.stateAfter`);
+    for (const field of [
+      "nextApplicationSequence",
+      "nextAcceptanceSequence",
+      "controlRevision",
+    ]) {
+      if (!isGoldenUnsignedInteger(state[field])) {
+        throw new Error(`${label}.stateAfter.${field} is missing`);
+      }
+    }
+    assertGoldenArtifact(
+      state.activeRuleSet,
+      `${label}.stateAfter.activeRuleSet`,
+    );
+    if (state.preparedRuleSet !== undefined) {
+      assertGoldenArtifact(
+        state.preparedRuleSet,
+        `${label}.stateAfter.preparedRuleSet`,
+      );
+    }
+    if (state.lastActivationFence !== undefined) {
+      const fence = requiredRecord(
+        state.lastActivationFence,
+        `${label}.stateAfter.lastActivationFence`,
+      );
+      for (const field of [
+        "applicationSequence",
+        "controlRevision",
+        "firstAcceptanceSequence",
+      ]) {
+        if (!isGoldenUnsignedInteger(fence[field])) {
+          throw new Error(
+            `${label}.stateAfter.lastActivationFence.${field} is missing`,
+          );
+        }
+      }
+    }
+    assertGoldenBook(state.book, `${label}.stateAfter.book`);
+    return "GOVERNED";
+  }
+  assertGoldenBook(outcome.bookAfter, `${label}.bookAfter`);
+  return "LEGACY";
+}
+
+export function parseGoldenScenarioPack(value: unknown): GoldenScenarioPack {
+  const document = requiredRecord(value, "scenario pack");
+  if (typeof document.schemaVersion !== "string") {
+    throw new Error("scenario pack has no schemaVersion");
+  }
+  const scenarios = requiredRecords(
+    document.scenarios,
+    "scenario pack scenarios",
+  );
+  let outcomeKind: "LEGACY" | "GOVERNED" | undefined;
+  for (const [scenarioIndex, scenario] of scenarios.entries()) {
+    if (typeof scenario.scenarioId !== "string" || !scenario.scenarioId) {
+      throw new Error(`scenario ${scenarioIndex} has no scenarioId`);
+    }
+    const commands = requiredRecords(
+      scenario.commands,
+      `${scenario.scenarioId}.commands`,
+    );
+    for (const [commandIndex, command] of commands.entries()) {
+      const label = `${scenario.scenarioId}.commands[${commandIndex}]`;
+      const type = command.type ?? "PLACE";
+      if (
+        type !== "PLACE" &&
+        type !== "CANCEL" &&
+        type !== "PREPARE_RULE_SET" &&
+        type !== "ACTIVATE_RULE_SET"
+      ) {
+        throw new Error(
+          `${label} has unsupported command type ${String(type)}`,
+        );
+      }
+      if (typeof command.caseId !== "string" || !command.caseId) {
+        throw new Error(`${label} has no caseId`);
+      }
+      const input = requiredRecord(command.input, `${label}.input`);
+      if (type === "PLACE") {
+        if (
+          typeof input.instrumentId !== "string" ||
+          (input.side !== "BUY" && input.side !== "SELL") ||
+          input.orderId === undefined ||
+          input.priceTicks === undefined ||
+          input.quantityLots === undefined
+        ) {
+          throw new Error(`${label} has an incomplete PLACE input`);
+        }
+        if (command.entrypoint === "GOVERNED") {
+          assertGoldenIdentity(
+            command.expectedRuleSet,
+            `${label}.expectedRuleSet`,
+          );
+        }
+      } else if (type === "CANCEL") {
+        if (
+          typeof input.instrumentId !== "string" ||
+          input.orderId === undefined
+        ) {
+          throw new Error(`${label} has an incomplete CANCEL input`);
+        }
+      } else if (type === "PREPARE_RULE_SET") {
+        assertGoldenIdentity(
+          input.expectedActive,
+          `${label}.input.expectedActive`,
+        );
+        assertGoldenArtifact(input.artifact, `${label}.input.artifact`);
+      } else {
+        assertGoldenIdentity(
+          input.expectedActive,
+          `${label}.input.expectedActive`,
+        );
+        assertGoldenIdentity(input.target, `${label}.input.target`);
+        if (!isGoldenUnsignedInteger(input.expectedApplicationSequence)) {
+          throw new Error(`${label} has no expectedApplicationSequence`);
+        }
+      }
+      const currentKind = assertGoldenOutcome(
+        command.expected,
+        `${label}.expected`,
+      );
+      if (outcomeKind && outcomeKind !== currentKind) {
+        throw new Error(
+          "scenario pack mixes legacy and governed outcome shapes",
+        );
+      }
+      outcomeKind = currentKind;
+      if (
+        (type === "PREPARE_RULE_SET" || type === "ACTIVATE_RULE_SET") &&
+        currentKind !== "GOVERNED"
+      ) {
+        throw new Error(`${label} control command has no governed stateAfter`);
+      }
+    }
+  }
+  return value as GoldenScenarioPack;
 }
 
 function verifyCounterexampleSupportingReports(
@@ -619,7 +1092,9 @@ function verifyCounterexampleSupportingReports(
       !scenario.actualAtFailure ||
       sameValue(expectedAtFailure, scenario.actualAtFailure)
     ) {
-      throw new Error(`counterexample metadata is incomplete for ${scenario.scenarioId}`);
+      throw new Error(
+        `counterexample metadata is incomplete for ${scenario.scenarioId}`,
+      );
     }
     mutantIds.add(scenario.mutantId);
 
@@ -737,6 +1212,14 @@ async function initializeGoldenReplay(
       fragment.append(
         createCounterexampleReveal(scenario, command, commandIndex),
       );
+    } else if (isGovernedOutcome(command.expected)) {
+      const outcome = createGoldenOutcome(
+        "固定事件、控制状态与盘口",
+        command.expected,
+        "REFERENCE",
+      );
+      outcome.classList.add("matching-counterexample-outcome-single");
+      fragment.append(outcome);
     } else {
       const events = makeElement("section", "matching-golden-events");
       events.append(makeElement("h3", undefined, "EXPECTED EVENT BATCH"));
@@ -753,8 +1236,14 @@ async function initializeGoldenReplay(
       book.append(makeElement("h3", undefined, "BOOK AFTER"));
       const sides = makeElement("div");
       sides.append(
-        createGoldenBookSide("BID · HIGH → LOW", command.expected.bookAfter.bids),
-        createGoldenBookSide("ASK · LOW → HIGH", command.expected.bookAfter.asks),
+        createGoldenBookSide(
+          "BID · HIGH → LOW",
+          command.expected.bookAfter.bids,
+        ),
+        createGoldenBookSide(
+          "ASK · LOW → HIGH",
+          command.expected.bookAfter.asks,
+        ),
       );
       book.append(sides);
       fragment.append(book);
@@ -800,19 +1289,21 @@ async function initializeGoldenReplay(
     return Promise.reject(new Error("supporting report roles differ"));
   }
   if (
-    [scenarioUrl, eventBatchesUrl, ...supporting.map((report) => report.url)].some(
-      (url) => url.origin !== window.location.origin,
-    )
+    [
+      scenarioUrl,
+      eventBatchesUrl,
+      ...supporting.map((report) => report.url),
+    ].some((url) => url.origin !== window.location.origin)
   ) {
     progress.textContent = "只允许读取本站静态 evidence";
     return Promise.reject(new Error("cross-origin evidence is forbidden"));
   }
 
-  const readJson = (url: URL): Promise<unknown> =>
-    fetch(url, { credentials: "same-origin" }).then((response) => {
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      return response.json() as Promise<unknown>;
-    });
+  const readJson = async (url: URL): Promise<unknown> => {
+    const response = await fetch(url, { credentials: "same-origin" });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return parseJsonPreservingIntegers(await response.text());
+  };
 
   return Promise.all([
     readJson(scenarioUrl),
@@ -820,9 +1311,7 @@ async function initializeGoldenReplay(
     ...supporting.map((report) => readJson(report.url)),
   ])
     .then(([scenarioDocument, eventDocument, ...supportingDocuments]) => {
-      const loaded = scenarioDocument as GoldenScenarioPack;
-      if (!Array.isArray(loaded.scenarios))
-        throw new Error("scenarios is not an array");
+      const loaded = parseGoldenScenarioPack(scenarioDocument);
       const actualIds = loaded.scenarios.map((scenario) => scenario.scenarioId);
       const configuredIds = config.scenarios.map((scenario) => scenario.id);
       if (actualIds.join("\n") !== configuredIds.join("\n")) {
@@ -973,8 +1462,7 @@ function isFullyExecutable(
     )
     .sort((left, right) => {
       if (left.priceTicks !== right.priceTicks) {
-        if (side === "BUY")
-          return left.priceTicks < right.priceTicks ? -1 : 1;
+        if (side === "BUY") return left.priceTicks < right.priceTicks ? -1 : 1;
         return left.priceTicks > right.priceTicks ? -1 : 1;
       }
       return left.sequence < right.sequence
@@ -1025,12 +1513,7 @@ function executePlaceCommand(
   const side = input.side;
   if (
     executionPolicy === "FOK" &&
-    !isFullyExecutable(
-      state,
-      side,
-      input.priceTicks,
-      input.quantityLots,
-    )
+    !isFullyExecutable(state, side, input.priceTicks, input.quantityLots)
   ) {
     return [
       {
@@ -1223,7 +1706,10 @@ function formatModelEvent(
   }
 }
 
-function predictionFor(events: ModelEvent[], command: CommandType): Prediction {
+function predictionFor(
+  events: ModelEvent[],
+  command: BrowserCommandType,
+): Prediction {
   if (command === "CANCEL") {
     return events[0]?.type === "CANCELED"
       ? "CANCEL_SUCCEEDS"
@@ -1242,9 +1728,7 @@ function predictionFor(events: ModelEvent[], command: CommandType): Prediction {
     (event) => event.type === "REMAINDER_CANCELED",
   );
   if (remainderCanceled) {
-    return traded
-      ? "TRADES_AND_REMAINDER_CANCELED"
-      : "REMAINDER_CANCELED_ONLY";
+    return traded ? "TRADES_AND_REMAINDER_CANCELED" : "REMAINDER_CANCELED_ONLY";
   }
   if (!traded) return "RESTS_ONLY";
   return rested ? "TRADES_AND_RESTS" : "TRADES_ONLY";
@@ -1351,6 +1835,11 @@ function verifyBrowserModelAgainstCorpus(
     };
     for (const command of scenario.commands) {
       const type = commandType(command);
+      if (type !== "PLACE" && type !== "CANCEL") {
+        throw new Error(
+          `browser model cannot self-check ${type} at ${scenario.scenarioId}/${command.caseId}`,
+        );
+      }
       if (!config.supportedCommands.includes(type)) {
         throw new Error(
           `unsupported command ${type} at ${scenario.scenarioId}/${command.caseId}`,
@@ -1358,11 +1847,12 @@ function verifyBrowserModelAgainstCorpus(
       }
       let actualEvents: ModelEvent[];
       if (type === "CANCEL") {
+        const input = command.input as GoldenCancelInput;
         actualEvents = executeCancelCommand(
           state,
           {
-            instrumentId: command.input.instrumentId,
-            orderId: BigInt(command.input.orderId),
+            instrumentId: input.instrumentId,
+            orderId: BigInt(input.orderId),
           },
           config,
         );
@@ -1394,6 +1884,11 @@ function verifyBrowserModelAgainstCorpus(
       ) {
         throw new Error(
           `event mismatch at ${scenario.scenarioId}/${command.caseId}`,
+        );
+      }
+      if (isGovernedOutcome(command.expected)) {
+        throw new Error(
+          `browser model received governed evidence at ${scenario.scenarioId}/${command.caseId}`,
         );
       }
       if (!sameValue(modelBook(state), command.expected.bookAfter)) {
@@ -1560,7 +2055,9 @@ function initializeBrowserModel(
   const firstOrderId = BigInt(config.firstGeneratedOrderId);
   const showExecutionPolicy = config.supportedExecutionPolicies.length > 1;
   if (
-    !config.supportedExecutionPolicies.includes(config.defaultExecutionPolicy) ||
+    !config.supportedExecutionPolicies.includes(
+      config.defaultExecutionPolicy,
+    ) ||
     (showExecutionPolicy && !executionPolicyInput)
   ) {
     throw new Error("Matching Lab execution-policy configuration is invalid");
@@ -1626,7 +2123,7 @@ function initializeBrowserModel(
   };
 
   const renderCommandFields = (): void => {
-    const type = commandTypeInput.value as CommandType;
+    const type = commandTypeInput.value as BrowserCommandType;
     placeFields.hidden = type !== "PLACE";
     cancelFields.hidden = type !== "CANCEL";
     for (const option of predictionInput.options) {
@@ -1666,7 +2163,7 @@ function initializeBrowserModel(
       }
       if (!predictionInput.value) throw new Error("请先选择 event batch 预测");
       const prediction = predictionInput.value as Prediction;
-      const type = commandTypeInput.value as CommandType;
+      const type = commandTypeInput.value as BrowserCommandType;
       if (!config.supportedCommands.includes(type))
         throw new Error(`本单元不支持 ${type}`);
       let batch: ModelEvent[];
@@ -1774,6 +2271,208 @@ function initializeBrowserModel(
     });
 }
 
+type EvidencePredictionAnswer =
+  | "ORDER_ACCEPTED"
+  | "ORDER_REJECTED"
+  | "ORDER_CANCELED"
+  | "RULE_PREPARED"
+  | "RULE_ACTIVATED"
+  | "CONTROL_REJECTED";
+
+const EVIDENCE_PREDICTION_LABELS: Readonly<
+  Record<EvidencePredictionAnswer, string>
+> = {
+  ORDER_ACCEPTED: "订单被接受",
+  ORDER_REJECTED: "订单被拒绝",
+  ORDER_CANCELED: "订单撤销成功",
+  RULE_PREPARED: "规则集准备成功或幂等命中",
+  RULE_ACTIVATED: "规则集激活成功",
+  CONTROL_REJECTED: "Prepare / Activate 被拒绝",
+};
+
+function evidencePredictionFor(
+  command: GoldenCommand,
+): EvidencePredictionAnswer {
+  const first = command.expected.events[0];
+  if (!first) throw new Error(`${command.caseId} has an empty event batch`);
+  switch (first.type) {
+    case "ACCEPTED":
+      return "ORDER_ACCEPTED";
+    case "CANCELED":
+      return "ORDER_CANCELED";
+    case "RULE_SET_PREPARED":
+      return "RULE_PREPARED";
+    case "RULE_SET_ACTIVATED":
+      return "RULE_ACTIVATED";
+    case "PREPARE_RULE_SET_REJECTED":
+    case "ACTIVATE_RULE_SET_REJECTED":
+      return "CONTROL_REJECTED";
+    case "REJECTED":
+      return commandType(command) === "PREPARE_RULE_SET" ||
+        commandType(command) === "ACTIVATE_RULE_SET"
+        ? "CONTROL_REJECTED"
+        : "ORDER_REJECTED";
+    case "PLACE_REJECTED":
+    case "CANCEL_REJECTED":
+      return "ORDER_REJECTED";
+    default:
+      throw new Error(
+        `${command.caseId} starts with unsupported event ${first.type}`,
+      );
+  }
+}
+
+function initializeEvidencePrediction(
+  root: HTMLElement,
+  corpus: Promise<GoldenScenarioPack>,
+): void {
+  const panel = requiredElement<HTMLElement>(
+    root,
+    "[data-evidence-prediction]",
+  );
+  const scenarioSelect = requiredElement<HTMLSelectElement>(
+    panel,
+    "[data-evidence-prediction-scenario]",
+  );
+  const previous = requiredElement<HTMLButtonElement>(
+    panel,
+    "[data-evidence-prediction-previous]",
+  );
+  const next = requiredElement<HTMLButtonElement>(
+    panel,
+    "[data-evidence-prediction-next]",
+  );
+  const progress = requiredElement<HTMLElement>(
+    panel,
+    "[data-evidence-prediction-progress]",
+  );
+  const type = requiredElement<HTMLElement>(
+    panel,
+    "[data-evidence-prediction-type]",
+  );
+  const commandText = requiredElement<HTMLElement>(
+    panel,
+    "[data-evidence-prediction-command]",
+  );
+  const answer = requiredElement<HTMLSelectElement>(
+    panel,
+    "[data-evidence-prediction-answer]",
+  );
+  const reveal = requiredElement<HTMLButtonElement>(
+    panel,
+    "[data-evidence-prediction-reveal]",
+  );
+  const feedback = requiredElement<HTMLElement>(
+    panel,
+    "[data-evidence-prediction-feedback]",
+  );
+  const result = requiredElement<HTMLElement>(
+    panel,
+    "[data-evidence-prediction-result]",
+  );
+  let pack: GoldenScenarioPack | undefined;
+  let commandIndex = 0;
+
+  const currentScenario = (): GoldenScenario | undefined =>
+    pack?.scenarios.find(
+      (scenario) => scenario.scenarioId === scenarioSelect.value,
+    );
+
+  const render = (): void => {
+    const scenario = currentScenario();
+    if (!scenario || scenario.commands.length === 0) {
+      progress.textContent = "固定场景没有可预测命令";
+      previous.disabled = true;
+      next.disabled = true;
+      answer.disabled = true;
+      reveal.disabled = true;
+      return;
+    }
+    commandIndex = Math.min(commandIndex, scenario.commands.length - 1);
+    const command = scenario.commands[commandIndex];
+    if (!isGovernedOutcome(command.expected)) {
+      throw new Error("evidence prediction requires governed stateAfter");
+    }
+    progress.textContent = `${scenario.scenarioId} · QUESTION ${commandIndex + 1} / ${scenario.commands.length}`;
+    type.textContent = `${commandType(command)} · ${command.caseId} · applicationSequence ?`;
+    commandText.textContent = formatGoldenInput(command);
+    previous.disabled = commandIndex === 0;
+    next.disabled = commandIndex === scenario.commands.length - 1;
+    answer.value = "";
+    answer.disabled = false;
+    reveal.disabled = true;
+    feedback.textContent =
+      "揭示前先检查 expected rule、application boundary 与当前 active / prepared。";
+    result.hidden = true;
+    replaceChildren(result);
+  };
+
+  scenarioSelect.addEventListener("change", () => {
+    commandIndex = 0;
+    render();
+  });
+  previous.addEventListener("click", () => {
+    if (commandIndex > 0) commandIndex -= 1;
+    render();
+  });
+  next.addEventListener("click", () => {
+    const scenario = currentScenario();
+    if (scenario && commandIndex < scenario.commands.length - 1)
+      commandIndex += 1;
+    render();
+  });
+  answer.addEventListener("change", () => {
+    reveal.disabled = !answer.value;
+    result.hidden = true;
+    replaceChildren(result);
+  });
+  reveal.addEventListener("click", () => {
+    const scenario = currentScenario();
+    const command = scenario?.commands[commandIndex];
+    if (!command || !isGovernedOutcome(command.expected)) return;
+    const actual = evidencePredictionFor(command);
+    const predicted = answer.value as EvidencePredictionAnswer;
+    feedback.textContent =
+      predicted === actual
+        ? `你的预测“${EVIDENCE_PREDICTION_LABELS[predicted]}”与固定 evidence 一致。`
+        : `你的预测是“${EVIDENCE_PREDICTION_LABELS[predicted]}”，固定 evidence 显示“${EVIDENCE_PREDICTION_LABELS[actual]}”。`;
+    const outcome = createGoldenOutcome(
+      `applicationSequence ${command.expected.applicationSequence} 的固定结果`,
+      command.expected,
+      "REFERENCE",
+    );
+    outcome.classList.add("matching-counterexample-outcome-single");
+    replaceChildren(result, outcome);
+    result.hidden = false;
+    answer.disabled = true;
+    reveal.disabled = true;
+  });
+
+  corpus
+    .then((loaded) => {
+      if (
+        loaded.scenarios.some((scenario) =>
+          scenario.commands.some(
+            (command) => !isGovernedOutcome(command.expected),
+          ),
+        )
+      ) {
+        throw new Error("prediction corpus contains a legacy outcome");
+      }
+      pack = loaded;
+      render();
+    })
+    .catch((caught: unknown) => {
+      const detail =
+        caught instanceof Error ? caught.message : "unknown evidence error";
+      progress.textContent = `同源 evidence 未通过结构自检（${detail}）`;
+      previous.disabled = true;
+      next.disabled = true;
+      answer.disabled = true;
+      reveal.disabled = true;
+    });
+}
+
 function initializeModeTabs(root: HTMLElement): void {
   const tabs = [...root.querySelectorAll<HTMLButtonElement>("[data-lab-mode]")];
   const panels = [...root.querySelectorAll<HTMLElement>("[data-lab-panel]")];
@@ -1814,20 +2513,42 @@ function initializeMatchingLab(root: HTMLElement): void {
     "[data-matching-lab-config]",
   );
   const config = JSON.parse(configNode.textContent ?? "") as ClientConfig;
+  if (
+    config.modes.length !== 2 ||
+    config.modes[0] !== "JAVA_GOLDEN_REPLAY" ||
+    (config.modes[1] !== "BROWSER_MODEL" &&
+      config.modes[1] !== "EVIDENCE_PREDICTION")
+  ) {
+    throw new Error("Matching Lab mode configuration is invalid");
+  }
   initializeModeTabs(root);
   const corpus = initializeGoldenReplay(root, config.goldenReplay);
-  initializeBrowserModel(root, config.browserModel, corpus);
+  if (config.modes[1] === "BROWSER_MODEL") {
+    if (!config.browserModel) {
+      throw new Error("BROWSER_MODEL has no browserModel configuration");
+    }
+    initializeBrowserModel(root, config.browserModel, corpus);
+  } else {
+    if (config.browserModel) {
+      throw new Error("EVIDENCE_PREDICTION must not carry a browser model");
+    }
+    initializeEvidencePrediction(root, corpus);
+  }
   root.dataset.matchingLabReady = "true";
 }
 
-document
-  .querySelectorAll<HTMLElement>("[data-matching-lab]")
-  .forEach((root) => {
-    try {
-      initializeMatchingLab(root);
-    } catch (error: unknown) {
-      const message =
-        error instanceof Error ? error.message : "unknown initialization error";
-      root.dataset.matchingLabError = message;
-    }
-  });
+if (typeof document !== "undefined") {
+  document
+    .querySelectorAll<HTMLElement>("[data-matching-lab]")
+    .forEach((root) => {
+      try {
+        initializeMatchingLab(root);
+      } catch (error: unknown) {
+        const message =
+          error instanceof Error
+            ? error.message
+            : "unknown initialization error";
+        root.dataset.matchingLabError = message;
+      }
+    });
+}

@@ -1,0 +1,86 @@
+{
+  "schemaVersion" : "matching.m05.counterexamples-report.v1",
+  "status" : "PASS",
+  "required" : 8,
+  "found" : 8,
+  "replayed" : 8,
+  "oneMinimal" : 8,
+  "totalCommands" : 57,
+  "canonicalFormat" : "M05X1",
+  "canonicalDigest" : "sha256:ea4aa501053d8bf11d8c31a4ba2f2b590b7b69d2c68d7c06cfaa7bf2c7c85a25",
+  "canonicalBytes" : 366110,
+  "canonicalLines" : 586,
+  "scenarios" : [ {
+    "mutantId" : "M05-HASH-MISMATCH-PREPARED",
+    "historyIndex" : 0,
+    "lane" : "RULE_SET_LIFECYCLE_AND_HASH",
+    "seed" : "ff5267bfbd62a7eb",
+    "originalCommands" : 64,
+    "minimizedCommands" : 5,
+    "oneMinimal" : true,
+    "fingerprint" : "EXACT_COMMAND_DIFFERENTIAL/EVENT_BATCH"
+  }, {
+    "mutantId" : "M05-SAME-VERSION-DIFFERENT-HASH-ACCEPTED",
+    "historyIndex" : 0,
+    "lane" : "RULE_SET_LIFECYCLE_AND_HASH",
+    "seed" : "ff5267bfbd62a7eb",
+    "originalCommands" : 64,
+    "minimizedCommands" : 2,
+    "oneMinimal" : true,
+    "fingerprint" : "RULE_SET_PREPARE_IDEMPOTENCY/IDEMPOTENT_PREPARE_CHANGED_IDENTITY"
+  }, {
+    "mutantId" : "M05-ACTIVATE-WITHOUT-PREPARE",
+    "historyIndex" : 0,
+    "lane" : "RULE_SET_LIFECYCLE_AND_HASH",
+    "seed" : "ff5267bfbd62a7eb",
+    "originalCommands" : 64,
+    "minimizedCommands" : 25,
+    "oneMinimal" : true,
+    "fingerprint" : "ACTIVATE_REQUIRES_PREPARED/UNPREPARED_ACTIVATION_ACCEPTED"
+  }, {
+    "mutantId" : "M05-STALE-ACTIVATION-FENCE-ACCEPTED",
+    "historyIndex" : 0,
+    "lane" : "RULE_SET_LIFECYCLE_AND_HASH",
+    "seed" : "ff5267bfbd62a7eb",
+    "originalCommands" : 64,
+    "minimizedCommands" : 2,
+    "oneMinimal" : true,
+    "fingerprint" : "ACTIVATION_SEQUENCE_FENCE/STALE_ACTIVATION_ACCEPTED"
+  }, {
+    "mutantId" : "M05-FAILED-ACTIVATION-CHANGES-ACTIVE",
+    "historyIndex" : 0,
+    "lane" : "RULE_SET_LIFECYCLE_AND_HASH",
+    "seed" : "ff5267bfbd62a7eb",
+    "originalCommands" : 64,
+    "minimizedCommands" : 2,
+    "oneMinimal" : true,
+    "fingerprint" : "RULE_SET_ACTIVATION_ATOMICITY/ACTIVE_RULE_STATE"
+  }, {
+    "mutantId" : "M05-OUT-OF-BAND-PLACE-ACCEPTED",
+    "historyIndex" : 1,
+    "lane" : "ACTIVATION_AND_PLACE_FENCE",
+    "seed" : "e331b365b94fc3c0",
+    "originalCommands" : 64,
+    "minimizedCommands" : 3,
+    "oneMinimal" : true,
+    "fingerprint" : "INCLUSIVE_ORDER_ENTRY_PRICE_BAND/OUT_OF_BAND_PLACE_ACCEPTED"
+  }, {
+    "mutantId" : "M05-STALE-PLACE-RULE-ACCEPTED",
+    "historyIndex" : 1,
+    "lane" : "ACTIVATION_AND_PLACE_FENCE",
+    "seed" : "e331b365b94fc3c0",
+    "originalCommands" : 64,
+    "minimizedCommands" : 3,
+    "oneMinimal" : true,
+    "fingerprint" : "GOVERNED_PLACE_FENCE/STALE_PLACE_RULE_ACCEPTED"
+  }, {
+    "mutantId" : "M05-ACTIVATION-REVALIDATES-RESTING",
+    "historyIndex" : 0,
+    "lane" : "RULE_SET_LIFECYCLE_AND_HASH",
+    "seed" : "ff5267bfbd62a7eb",
+    "originalCommands" : 64,
+    "minimizedCommands" : 15,
+    "oneMinimal" : true,
+    "fingerprint" : "GRANDFATHER_RESTING_ORDERS/ACTIVATION_REVALIDATED_BOOK"
+  } ]
+}

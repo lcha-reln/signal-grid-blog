@@ -2,7 +2,17 @@ export const MATCHING_LAB_MODES = [
   "JAVA_GOLDEN_REPLAY",
   "BROWSER_MODEL",
 ] as const;
+export const MATCHING_EVIDENCE_PREDICTION_MODES = [
+  "JAVA_GOLDEN_REPLAY",
+  "EVIDENCE_PREDICTION",
+] as const;
 export const MATCHING_LAB_COMMANDS = ["PLACE", "CANCEL"] as const;
+export const MATCHING_GOLDEN_COMMANDS = [
+  "PLACE",
+  "CANCEL",
+  "PREPARE_RULE_SET",
+  "ACTIVATE_RULE_SET",
+] as const;
 export const MATCHING_EXECUTION_POLICIES = [
   "GTC",
   "IOC",
@@ -15,8 +25,11 @@ export const GOLDEN_REPLAY_PRESENTATIONS = [
 ] as const;
 export const GOLDEN_REPLAY_SUPPORT_ROLES = ["REPLAY", "MUTANTS"] as const;
 
-export type MatchingLabMode = (typeof MATCHING_LAB_MODES)[number];
+export type MatchingLabMode =
+  | (typeof MATCHING_LAB_MODES)[number]
+  | (typeof MATCHING_EVIDENCE_PREDICTION_MODES)[number];
 export type MatchingLabCommand = (typeof MATCHING_LAB_COMMANDS)[number];
+export type MatchingGoldenCommand = (typeof MATCHING_GOLDEN_COMMANDS)[number];
 export type MatchingExecutionPolicy =
   (typeof MATCHING_EXECUTION_POLICIES)[number];
 export type GoldenReplayPresentation =
@@ -85,16 +98,27 @@ export interface BrowserModelDefinition {
   seedOrders: readonly BrowserModelSeedOrder[];
 }
 
-export interface MatchingLabDefinition {
+interface MatchingLabDefinitionBase {
   kind: "MATCHING";
   projectSlug: string;
   unitCode: string;
   title: string;
   summary: string;
-  modes: readonly MatchingLabMode[];
   goldenReplay: GoldenReplayDefinition;
+}
+
+export interface MatchingBrowserModelLabDefinition extends MatchingLabDefinitionBase {
+  modes: typeof MATCHING_LAB_MODES;
   browserModel: BrowserModelDefinition;
 }
+
+export interface MatchingEvidencePredictionLabDefinition extends MatchingLabDefinitionBase {
+  modes: typeof MATCHING_EVIDENCE_PREDICTION_MODES;
+  browserModel?: never;
+}
+
+export type MatchingLabDefinition =
+  MatchingBrowserModelLabDefinition | MatchingEvidencePredictionLabDefinition;
 
 export const PRACTICE_LABS: readonly MatchingLabDefinition[] = [
   {
@@ -364,31 +388,36 @@ export const PRACTICE_LABS: readonly MatchingLabDefinition[] = [
         {
           id: "best-price-last",
           title: "错误选择最差价格",
-          focus: "同一 taker 横跨两档时，缺陷实现先选择更差 maker，首次分歧落在成交顺序。",
+          focus:
+            "同一 taker 横跨两档时，缺陷实现先选择更差 maker，首次分歧落在成交顺序。",
           commands: 3,
         },
         {
           id: "same-price-lifo",
           title: "同价队列退化为 LIFO",
-          focus: "两个同价 maker 的先后次序被翻转，参考模型在第三条命令揭示 FIFO 破坏。",
+          focus:
+            "两个同价 maker 的先后次序被翻转，参考模型在第三条命令揭示 FIFO 破坏。",
           commands: 3,
         },
         {
           id: "taker-price-trade",
           title: "错误使用 taker 价格",
-          focus: "买方跨价成交时错误地采用 taker limit，而不是簿上 maker 的价格。",
+          focus:
+            "买方跨价成交时错误地采用 taker limit，而不是簿上 maker 的价格。",
           commands: 2,
         },
         {
           id: "trade-quantity-overflow",
           title: "成交量越过剩余量",
-          focus: "缺陷实现报告超过 maker/taker 剩余量的成交，直接破坏数量分区。",
+          focus:
+            "缺陷实现报告超过 maker/taker 剩余量的成交，直接破坏数量分区。",
           commands: 2,
         },
         {
           id: "cancel-ghost-book",
           title: "撤单后盘口残留幽灵节点",
-          focus: "撤单事件已经成功，但活动身份与 full-depth book 不再保持双向一致。",
+          focus:
+            "撤单事件已经成功，但活动身份与 full-depth book 不再保持双向一致。",
           commands: 2,
         },
         {
@@ -448,32 +477,40 @@ export const PRACTICE_LABS: readonly MatchingLabDefinition[] = [
       metrics: [
         { label: "SCENARIOS", value: "14", note: "固定执行策略场景" },
         { label: "COMMANDS", value: "48", note: "逐命令事件与盘口" },
-        { label: "GENERATED", value: "12,288", note: "独立 reference 对拍边界" },
+        {
+          label: "GENERATED",
+          value: "12,288",
+          note: "独立 reference 对拍边界",
+        },
         { label: "COVERAGE", value: "23 / 23", note: "语义覆盖义务" },
       ],
       scenarios: [
         {
           id: "legacy-gtc-and-cancel",
           title: "Legacy GTC 与撤单",
-          focus: "旧 place 入口继续产生 GTC 业务语义，并保留可寻址撤单和不可逆终态。",
+          focus:
+            "旧 place 入口继续产生 GTC 业务语义，并保留可寻址撤单和不可逆终态。",
           commands: 2,
         },
         {
           id: "unknown-policy-priority",
           title: "未知策略与首错优先级",
-          focus: "五字段验证、非法 policy 与 duplicate 的顺序稳定，拒绝路径不占身份和 sequence。",
+          focus:
+            "五字段验证、非法 policy 与 duplicate 的顺序稳定，拒绝路径不占身份和 sequence。",
           commands: 3,
         },
         {
           id: "ioc-zero-fill",
           title: "IOC 零成交",
-          focus: "空流动性仍先 Accepted，再以全部正余量的 RemainderCanceled 进入 CANCELED。",
+          focus:
+            "空流动性仍先 Accepted，再以全部正余量的 RemainderCanceled 进入 CANCELED。",
           commands: 3,
         },
         {
           id: "ioc-partial-fill",
           title: "IOC 部分成交",
-          focus: "限价内成交后只取消精确余量，不产生 Rested，也不释放已成交数量。",
+          focus:
+            "限价内成交后只取消精确余量，不产生 Rested，也不释放已成交数量。",
           commands: 3,
         },
         {
@@ -485,25 +522,29 @@ export const PRACTICE_LABS: readonly MatchingLabDefinition[] = [
         {
           id: "ioc-price-protection",
           title: "IOC 价格保护",
-          focus: "既有 priceTicks 仍是最差成交边界，边界外流动性不能被 IOC 穿透。",
+          focus:
+            "既有 priceTicks 仍是最差成交边界，边界外流动性不能被 IOC 穿透。",
           commands: 3,
         },
         {
           id: "fok-insufficient-atomic",
           title: "FOK 不足时原子拒绝",
-          focus: "只读预检不足时在 Accepted 之前拒绝，盘口、maker、身份和 sequence 全部不变。",
+          focus:
+            "只读预检不足时在 Accepted 之前拒绝，盘口、maker、身份和 sequence 全部不变。",
           commands: 4,
         },
         {
           id: "fok-exact-multi-level",
           title: "FOK 跨档恰好全成",
-          focus: "多价位总量恰好满足时一次接受并全量成交，不留下 Rested 或取消余量。",
+          focus:
+            "多价位总量恰好满足时一次接受并全量成交，不留下 Rested 或取消余量。",
           commands: 4,
         },
         {
           id: "fok-requires-all-levels",
           title: "FOK 必须读取全部可成交档",
-          focus: "预检不能只看最佳价位，所有不劣于限价的流动性共同决定 fillability。",
+          focus:
+            "预检不能只看最佳价位，所有不劣于限价的流动性共同决定 fillability。",
           commands: 3,
         },
         {
@@ -515,25 +556,29 @@ export const PRACTICE_LABS: readonly MatchingLabDefinition[] = [
         {
           id: "post-only-empty-and-noncrossing",
           title: "Post-only 空簿与非交叉",
-          focus: "不会立即取单时才允许 Accepted 后完整 Rested，并保持 maker 身份。",
+          focus:
+            "不会立即取单时才允许 Accepted 后完整 Rested，并保持 maker 身份。",
           commands: 2,
         },
         {
           id: "post-only-touch-and-cross",
           title: "Post-only touch 与 cross",
-          focus: "命令开始时只要触碰或穿越最佳对手价，就在 Accepted 之前零副作用拒绝。",
+          focus:
+            "命令开始时只要触碰或穿越最佳对手价，就在 Accepted 之前零副作用拒绝。",
           commands: 4,
         },
         {
           id: "policy-rejection-sequence",
           title: "策略拒绝后的身份与序号",
-          focus: "FOK/Post-only 拒绝不预占 orderId；同 ID 后续合法请求仍获得连续 acceptance sequence。",
+          focus:
+            "FOK/Post-only 拒绝不预占 orderId；同 ID 后续合法请求仍获得连续 acceptance sequence。",
           commands: 5,
         },
         {
           id: "sell-side-symmetry",
           title: "SELL 方向镜像",
-          focus: "IOC、FOK 与 Post-only 在卖方向复用同一 crossing、价格保护和原子准入合同。",
+          focus:
+            "IOC、FOK 与 Post-only 在卖方向复用同一 crossing、价格保护和原子准入合同。",
           commands: 6,
         },
       ],
@@ -556,6 +601,129 @@ export const PRACTICE_LABS: readonly MatchingLabDefinition[] = [
         { orderId: "9001", side: "BUY", priceTicks: "99", quantityLots: "2" },
         { orderId: "9002", side: "SELL", priceTicks: "101", quantityLots: "2" },
         { orderId: "9003", side: "SELL", priceTicks: "102", quantityLots: "1" },
+      ],
+    },
+  },
+  {
+    kind: "MATCHING",
+    projectSlug: "high-availability-cex",
+    unitCode: "M05",
+    title: "版本化价格带与规则归因 Matching Lab",
+    summary:
+      "逐命令回放 12 个固定 Java evidence 场景，并在独立预测页判断 Place、Cancel、Prepare 与 Activate 如何推进 applicationSequence、active/prepared、controlRevision、fence、规则归因和盘口。",
+    modes: MATCHING_EVIDENCE_PREDICTION_MODES,
+    goldenReplay: {
+      presentation: "GOLDEN_HISTORY",
+      manifestPath: "practice/high-availability-cex/m05/evidence/manifest.json",
+      scenarioPackPath:
+        "practice/high-availability-cex/m05/evidence/reports/fixed-scenario-pack.json",
+      eventBatchesPath:
+        "practice/high-availability-cex/m05/evidence/reports/fixed-event-batches.json",
+      canonicalHistoryPath:
+        "practice/high-availability-cex/m05/evidence/reports/fixed-history.canonical.utf8",
+      checkBindings: {
+        digestField: "fixedCorpus.canonicalDigest",
+        scenarioCountField: "fixedCorpus.scenarios",
+        commandCountField: "fixedCorpus.commands",
+      },
+      supportingReports: [],
+      digest:
+        "sha256:45be63337da83103a45040f5f73e9b996018d76f6d91f77e27cd5b2d9dbb8f7b",
+      metrics: [
+        { label: "SCENARIOS", value: "12", note: "版本化价格带固定场景" },
+        { label: "COMMANDS", value: "54", note: "四类命令逐条状态" },
+        {
+          label: "GENERATED",
+          value: "10,240",
+          note: "独立 reference 对拍边界",
+        },
+        { label: "COVERAGE", value: "20 / 20", note: "M05 语义覆盖义务" },
+      ],
+      scenarios: [
+        {
+          id: "legacy-unbounded-regression",
+          title: "Bootstrap 无界规则回归",
+          focus:
+            "默认 v0 规则下的 legacy Place 与 Cancel 保持 M04 业务决定，同时获得可追溯规则身份。",
+          commands: 2,
+        },
+        {
+          id: "prepare-activate-current-fence",
+          title: "Prepare、Activate 与当前 fence",
+          focus:
+            "先准备再在精确 ApplicationSequence 激活，随后上下边界本身允许入场，撤单继续可寻址。",
+          commands: 5,
+        },
+        {
+          id: "hash-mismatch-and-retry",
+          title: "内容哈希不匹配与重试",
+          focus:
+            "篡改 hash 的 Prepare 失败且不污染 slot；正确 artifact 可以重试并在新的 application boundary 激活。",
+          commands: 3,
+        },
+        {
+          id: "idempotent-prepare-and-version-conflict",
+          title: "Prepare 幂等与同版本冲突",
+          focus:
+            "相同 identity 命中 ALREADY_PREPARED，同 version 不同内容失败，原 prepared 仍可激活。",
+          commands: 4,
+        },
+        {
+          id: "monotonic-prepared-supersession",
+          title: "Prepared slot 单调替换",
+          focus:
+            "更高合法版本替换 prepared；旧候选不能倒退 slot，最终只激活最新 identity。",
+          commands: 4,
+        },
+        {
+          id: "activation-rejection-matrix",
+          title: "Activate 拒绝矩阵",
+          focus:
+            "无 prepared、错误 target 与陈旧 application fence 都失败且不改变 active/prepared/controlRevision。",
+          commands: 5,
+        },
+        {
+          id: "stale-place-fence-and-identity",
+          title: "陈旧 Place 规则身份",
+          focus:
+            "激活后携带旧 expected identity 的 governed Place 被拒；同 orderId 使用当前 identity 才能首次接受。",
+          commands: 5,
+        },
+        {
+          id: "inclusive-and-outside-buy",
+          title: "BUY 的 inclusive 边界",
+          focus:
+            "lower/upper touch 都可接受，向外一 tick 都由 active band 拒绝，并保持 applicationSequence 连续。",
+          commands: 6,
+        },
+        {
+          id: "sell-side-band-symmetry",
+          title: "SELL 方向价格带对称",
+          focus:
+            "SELL 与 BUY 共享同一闭区间语义，边界有效、区间外一 tick 失败。",
+          commands: 6,
+        },
+        {
+          id: "duplicate-precedes-fence-and-band",
+          title: "Duplicate 优先于 fence 与 band",
+          focus:
+            "已占用 orderId 即使同时携带陈旧 identity 与越界价格，也稳定先返回 duplicate。",
+          commands: 4,
+        },
+        {
+          id: "band-precedes-policy-precheck",
+          title: "价格带先于策略预检",
+          focus:
+            "越界 FOK/Post-only 先由 venue band 拒绝；只有带内命令才进入 M04 的策略准入。",
+          commands: 5,
+        },
+        {
+          id: "grandfathered-cross-version-maker",
+          title: "存量 maker 跨版本成交",
+          focus:
+            "旧规则接收且落在新 band 外的 maker 激活后继续留簿，并与新规则 taker 成交，三类规则身份各自可见。",
+          commands: 5,
+        },
       ],
     },
   },

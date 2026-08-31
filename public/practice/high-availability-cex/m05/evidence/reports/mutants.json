@@ -1,0 +1,73 @@
+{
+  "schemaVersion" : "matching.m05.mutants-report.v1",
+  "status" : "PASS",
+  "required" : 8,
+  "killed" : 8,
+  "classification" : "STUDENT_FAILURE",
+  "systemErrorControl" : "SYSTEM_ERROR",
+  "mutants" : [ {
+    "id" : "M05-HASH-MISMATCH-PREPARED",
+    "classification" : "STUDENT_FAILURE",
+    "killed" : true,
+    "fingerprint" : "EXACT_COMMAND_DIFFERENTIAL/EVENT_BATCH",
+    "coverageKey" : "CONTENT_HASH_MISMATCH",
+    "oneMinimal" : true,
+    "replayed" : true
+  }, {
+    "id" : "M05-SAME-VERSION-DIFFERENT-HASH-ACCEPTED",
+    "classification" : "STUDENT_FAILURE",
+    "killed" : true,
+    "fingerprint" : "RULE_SET_PREPARE_IDEMPOTENCY/IDEMPOTENT_PREPARE_CHANGED_IDENTITY",
+    "coverageKey" : "VERSION_CONTENT_CONFLICT",
+    "oneMinimal" : true,
+    "replayed" : true
+  }, {
+    "id" : "M05-ACTIVATE-WITHOUT-PREPARE",
+    "classification" : "STUDENT_FAILURE",
+    "killed" : true,
+    "fingerprint" : "ACTIVATE_REQUIRES_PREPARED/UNPREPARED_ACTIVATION_ACCEPTED",
+    "coverageKey" : "ACTIVATE_WITHOUT_PREPARE",
+    "oneMinimal" : true,
+    "replayed" : true
+  }, {
+    "id" : "M05-STALE-ACTIVATION-FENCE-ACCEPTED",
+    "classification" : "STUDENT_FAILURE",
+    "killed" : true,
+    "fingerprint" : "ACTIVATION_SEQUENCE_FENCE/STALE_ACTIVATION_ACCEPTED",
+    "coverageKey" : "STALE_ACTIVATION_FENCE",
+    "oneMinimal" : true,
+    "replayed" : true
+  }, {
+    "id" : "M05-FAILED-ACTIVATION-CHANGES-ACTIVE",
+    "classification" : "STUDENT_FAILURE",
+    "killed" : true,
+    "fingerprint" : "RULE_SET_ACTIVATION_ATOMICITY/ACTIVE_RULE_STATE",
+    "coverageKey" : "FAILED_ACTIVATION_ATOMICITY",
+    "oneMinimal" : true,
+    "replayed" : true
+  }, {
+    "id" : "M05-OUT-OF-BAND-PLACE-ACCEPTED",
+    "classification" : "STUDENT_FAILURE",
+    "killed" : true,
+    "fingerprint" : "INCLUSIVE_ORDER_ENTRY_PRICE_BAND/OUT_OF_BAND_PLACE_ACCEPTED",
+    "coverageKey" : "BELOW_BAND",
+    "oneMinimal" : true,
+    "replayed" : true
+  }, {
+    "id" : "M05-STALE-PLACE-RULE-ACCEPTED",
+    "classification" : "STUDENT_FAILURE",
+    "killed" : true,
+    "fingerprint" : "GOVERNED_PLACE_FENCE/STALE_PLACE_RULE_ACCEPTED",
+    "coverageKey" : "STALE_PLACE_FENCE",
+    "oneMinimal" : true,
+    "replayed" : true
+  }, {
+    "id" : "M05-ACTIVATION-REVALIDATES-RESTING",
+    "classification" : "STUDENT_FAILURE",
+    "killed" : true,
+    "fingerprint" : "GRANDFATHER_RESTING_ORDERS/ACTIVATION_REVALIDATED_BOOK",
+    "coverageKey" : "GRANDFATHERED_MAKER",
+    "oneMinimal" : true,
+    "replayed" : true
+  } ]
+}

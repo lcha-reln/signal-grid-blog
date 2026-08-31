@@ -44,9 +44,10 @@ RED 不等于“输入还没定义”。`course/m04-start` 已经冻结 14 个�
 本单元冻结的唯一输入增量是 `executionPolicy`。以下能力仍明确不进入本篇：
 
 - 不新增 `worstPriceTicks`，也不实现无价格保护的市价单；
-- 不引入 price band、参考价或市场状态，它们属于 M05；
-- 不引入参与者身份或 STP，它们属于 M06；
-- 不引入 command idempotency、WAL、Snapshot 或 Aeron。
+- 不引入 order-entry price band 或参考价；绝对入场价格带属于 M05；
+- 不引入 `OPEN/CANCEL_ONLY/HALTED` 或 Mass Cancel，它们属于 M06；
+- 不引入参与者身份或 STP，它们属于 M07；
+- 不引入 command idempotency、WAL、Snapshot 或 Aeron；WAL 与 Snapshot 分别顺延到 M08、M09。
 
 这条窄边界非常重要：如果请求合同同时携带价格带、STP 和持久化身份，本篇就再也无法判断一次拒绝究竟由哪条规则造成。
 
@@ -177,7 +178,7 @@ new PlaceLimitOrderRequest(input)
 
 `Accepted` 事件也携带归一后的 `ExecutionPolicy`，让事件语法能检查后续尾部是否与策略一致。为了保留旧代码的构造语义，五参数兼容构造明确补入 `GTC`；它不是从线程上下文或配置读取默认值。
 
-这里的“兼容”必须收窄到可验证事实：旧 `place(input)` 与 `Accepted` 五参数构造仍可调用；把新增 policy 视为 GTC 后，legacy GTC 的业务 event 含义、book 与 lifecycle 语义等价；M03G1 的 command canonical lines/bytes/digest 不变。它不等于 Java 事件形状完全不变：`Accepted` record 现在有第六个 `executionPolicy` 组件，sealed `MatchingEvent` 也多了 `RemainderCanceled`，所以依赖 record 反射、Jackson 默认形状、`toString()`、sealed exhaustive switch 或旧 event bytes 的调用方必须适配。M10 前没有冻结外部 wire codec，本篇也不声称已经提供这种 wire 兼容。
+这里的“兼容”必须收窄到可验证事实：旧 `place(input)` 与 `Accepted` 五参数构造仍可调用；把新增 policy 视为 GTC 后，legacy GTC 的业务 event 含义、book 与 lifecycle 语义等价；M03G1 的 command canonical lines/bytes/digest 不变。它不等于 Java 事件形状完全不变：`Accepted` record 现在有第六个 `executionPolicy` 组件，sealed `MatchingEvent` 也多了 `RemainderCanceled`，所以依赖 record 反射、Jackson 默认形状、`toString()`、sealed exhaustive switch 或旧 event bytes 的调用方必须适配。PLAN v0.7 将外部 wire codec 顺延到 M11；本篇也不声称已经提供这种 wire 兼容。
 
 ## 验证优先级决定客户端看到哪个事实
 

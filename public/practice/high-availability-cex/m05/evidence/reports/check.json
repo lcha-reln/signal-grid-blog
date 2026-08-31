@@ -1,0 +1,209 @@
+{
+  "schemaVersion" : "matching.m05.check.v2",
+  "unit" : "M05",
+  "status" : "PASS",
+  "contractPlanVersion" : "0.7",
+  "releaseTarget" : {
+    "unitTag" : "course/m05-complete",
+    "productRelease" : null,
+    "verification" : "M05_EVIDENCE_ONLY"
+  },
+  "inheritedM04" : {
+    "status" : "PASS",
+    "checkSchemaVersion" : "matching.m04.check.v2",
+    "fixedScenarios" : 14,
+    "fixedCommands" : 48,
+    "fixedDigest" : "sha256:68de35e41358ea72c9852fdf3fd652db116774964360f0b526f43612576bfa77",
+    "generatedHistories" : 192,
+    "generatedCommands" : 12288,
+    "generatedDigest" : "sha256:6005c674d0c42927989f1c8c4d1ddce224d06ceff0b95bf58615d23c4496ba51",
+    "coverageObligations" : 23,
+    "counterexamples" : 8,
+    "mutantsKilled" : 8,
+    "productRelease" : null
+  },
+  "fixedCorpus" : {
+    "scenarios" : 12,
+    "commands" : 54,
+    "commandCounts" : {
+      "PLACE" : 21,
+      "CANCEL" : 3,
+      "PREPARE_RULE_SET" : 16,
+      "ACTIVATE_RULE_SET" : 14
+    },
+    "canonicalFormat" : "M05F1",
+    "canonicalDigest" : "sha256:45be63337da83103a45040f5f73e9b996018d76f6d91f77e27cd5b2d9dbb8f7b",
+    "canonicalBytes" : 109974,
+    "canonicalLines" : 67,
+    "differentialComparisons" : 54,
+    "ledgerChecks" : 54
+  },
+  "generator" : {
+    "algorithm" : "splitmix64-v1",
+    "baseSeed" : "5505",
+    "histories" : 160,
+    "commandsPerHistory" : 64,
+    "commands" : 10240,
+    "lanes" : 5,
+    "historiesPerLane" : 32,
+    "canonicalFormat" : "M05H1",
+    "canonicalDigest" : "sha256:e742e53e1846730a0f242447b3065e23e352059807d8593dcc3e489498d453f5",
+    "canonicalBytes" : 2553580,
+    "canonicalLines" : 10401,
+    "freshGenerations" : 2
+  },
+  "properties" : {
+    "histories" : 160,
+    "commands" : 10240,
+    "differentialComparisons" : 10240,
+    "ledgerChecks" : 10240,
+    "bookChecks" : 10240,
+    "marketControlChecks" : 10240
+  },
+  "coverage" : {
+    "requiredObligations" : 20,
+    "satisfiedObligations" : 20,
+    "obligations" : [ {
+      "id" : "M04_LEGACY_BOOTSTRAP",
+      "satisfied" : true,
+      "historyIndex" : 3,
+      "commandIndex" : 0
+    }, {
+      "id" : "CONTENT_HASH_MISMATCH",
+      "satisfied" : true,
+      "historyIndex" : 0,
+      "commandIndex" : 9
+    }, {
+      "id" : "PREPARE_IDEMPOTENCY",
+      "satisfied" : true,
+      "historyIndex" : 0,
+      "commandIndex" : 1
+    }, {
+      "id" : "VERSION_CONTENT_CONFLICT",
+      "satisfied" : true,
+      "historyIndex" : 0,
+      "commandIndex" : 2
+    }, {
+      "id" : "PREPARED_SUPERSESSION",
+      "satisfied" : true,
+      "historyIndex" : 0,
+      "commandIndex" : 34
+    }, {
+      "id" : "ACTIVATE_WITHOUT_PREPARE",
+      "satisfied" : true,
+      "historyIndex" : 0,
+      "commandIndex" : 45
+    }, {
+      "id" : "STALE_ACTIVATION_FENCE",
+      "satisfied" : true,
+      "historyIndex" : 0,
+      "commandIndex" : 25
+    }, {
+      "id" : "FAILED_ACTIVATION_ATOMICITY",
+      "satisfied" : true,
+      "historyIndex" : 0,
+      "commandIndex" : 25
+    }, {
+      "id" : "STALE_PLACE_FENCE",
+      "satisfied" : true,
+      "historyIndex" : 0,
+      "commandIndex" : 17
+    }, {
+      "id" : "LOWER_BOUND_TOUCH",
+      "satisfied" : true,
+      "historyIndex" : 1,
+      "commandIndex" : 20
+    }, {
+      "id" : "UPPER_BOUND_TOUCH",
+      "satisfied" : true,
+      "historyIndex" : 0,
+      "commandIndex" : 63
+    }, {
+      "id" : "BELOW_BAND",
+      "satisfied" : true,
+      "historyIndex" : 0,
+      "commandIndex" : 16
+    }, {
+      "id" : "ABOVE_BAND",
+      "satisfied" : true,
+      "historyIndex" : 0,
+      "commandIndex" : 7
+    }, {
+      "id" : "BUY_SELL_SYMMETRY",
+      "satisfied" : true,
+      "historyIndex" : 0,
+      "commandIndex" : 26
+    }, {
+      "id" : "DUPLICATE_BEFORE_FENCE_AND_BAND",
+      "satisfied" : true,
+      "historyIndex" : 12,
+      "commandIndex" : 24
+    }, {
+      "id" : "BAND_BEFORE_FOK",
+      "satisfied" : true,
+      "historyIndex" : 0,
+      "commandIndex" : 7
+    }, {
+      "id" : "BAND_BEFORE_POST_ONLY",
+      "satisfied" : true,
+      "historyIndex" : 0,
+      "commandIndex" : 19
+    }, {
+      "id" : "GRANDFATHERED_MAKER",
+      "satisfied" : true,
+      "historyIndex" : 0,
+      "commandIndex" : 14
+    }, {
+      "id" : "CROSS_VERSION_TRADE",
+      "satisfied" : true,
+      "historyIndex" : 0,
+      "commandIndex" : 18
+    }, {
+      "id" : "REJECTION_SEQUENCE_CONTINUITY",
+      "satisfied" : true,
+      "historyIndex" : 1,
+      "commandIndex" : 3
+    } ]
+  },
+  "invariants" : {
+    "passed" : true,
+    "checks" : 10240,
+    "properties" : [ "APPLICATION_SEQUENCE_CONTIGUITY", "RULE_SET_PREPARE_ATOMICITY", "RULE_SET_ACTIVATION_ATOMICITY", "ACTIVATION_SEQUENCE_FENCE", "GOVERNED_PLACE_FENCE", "INCLUSIVE_ORDER_ENTRY_PRICE_BAND", "GRANDFATHER_RESTING_ORDERS", "RULE_SET_ATTRIBUTION" ]
+  },
+  "boundaries" : {
+    "canonicalFormat" : "M05RS1",
+    "hashVectors" : 4,
+    "hashMismatchFailsClosed" : true,
+    "sameVersionDifferentHashFailsClosed" : true,
+    "lowerInclusive" : true,
+    "upperInclusive" : true,
+    "longMaximumInclusive" : true,
+    "staleActivationFenceFailsClosed" : true,
+    "stalePlaceFenceFailsClosed" : true,
+    "grandfatherExistingOrders" : true
+  },
+  "counterexamples" : {
+    "required" : 8,
+    "found" : 8,
+    "replayed" : 8,
+    "oneMinimal" : 8,
+    "totalCommands" : 57,
+    "canonicalFormat" : "M05X1",
+    "canonicalDigest" : "sha256:ea4aa501053d8bf11d8c31a4ba2f2b590b7b69d2c68d7c06cfaa7bf2c7c85a25",
+    "canonicalBytes" : 366110,
+    "canonicalLines" : 586
+  },
+  "mutants" : {
+    "required" : 8,
+    "killed" : 8,
+    "classification" : "STUDENT_FAILURE",
+    "systemErrorControl" : "SYSTEM_ERROR"
+  },
+  "architecture" : {
+    "passed" : true,
+    "coreSources" : 39,
+    "referenceSources" : 15,
+    "forbiddenFindings" : 0,
+    "violations" : [ ]
+  }
+}

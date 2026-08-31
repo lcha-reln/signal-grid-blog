@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "matching.m05.generator.v1",
+  "algorithm": "splitmix64-v1",
+  "baseSeed": "5505",
+  "histories": 160,
+  "commandsPerHistory": 64,
+  "lanes": [
+    {"id": "RULE_SET_LIFECYCLE_AND_HASH", "historyModulo": 0, "prefixScenario": "idempotent-prepare-and-version-conflict"},
+    {"id": "ACTIVATION_AND_PLACE_FENCE", "historyModulo": 1, "prefixScenario": "stale-place-fence-and-identity"},
+    {"id": "INCLUSIVE_BAND_BUY_SELL", "historyModulo": 2, "prefixScenario": "sell-side-band-symmetry"},
+    {"id": "GRANDFATHERED_CROSS_VERSION", "historyModulo": 3, "prefixScenario": "grandfathered-cross-version-maker"},
+    {"id": "MIXED_M04_POLICY_AND_CONTROL", "historyModulo": 4, "prefixScenario": "band-precedes-policy-precheck"}
+  ],
+  "randomDomain": {
+    "placeWeight": 65,
+    "cancelWeight": 15,
+    "prepareWeight": 12,
+    "activateWeight": 8,
+    "invalidFieldOneIn": 32,
+    "staleRuleOneIn": 16,
+    "outOfBandOneIn": 8,
+    "minimumPriceTicks": 80,
+    "maximumPriceTicks": 120,
+    "maximumQuantityLots": 5,
+    "executionPolicies": [
+      {"id": "GTC", "weight": 35},
+      {"id": "IOC", "weight": 25},
+      {"id": "FOK", "weight": 20},
+      {"id": "POST_ONLY", "weight": 20}
+    ]
+  },
+  "coverageRequirements": [
+    "M04_LEGACY_BOOTSTRAP",
+    "CONTENT_HASH_MISMATCH",
+    "PREPARE_IDEMPOTENCY",
+    "VERSION_CONTENT_CONFLICT",
+    "PREPARED_SUPERSESSION",
+    "ACTIVATE_WITHOUT_PREPARE",
+    "STALE_ACTIVATION_FENCE",
+    "FAILED_ACTIVATION_ATOMICITY",
+    "STALE_PLACE_FENCE",
+    "LOWER_BOUND_TOUCH",
+    "UPPER_BOUND_TOUCH",
+    "BELOW_BAND",
+    "ABOVE_BAND",
+    "BUY_SELL_SYMMETRY",
+    "DUPLICATE_BEFORE_FENCE_AND_BAND",
+    "BAND_BEFORE_FOK",
+    "BAND_BEFORE_POST_ONLY",
+    "GRANDFATHERED_MAKER",
+    "CROSS_VERSION_TRADE",
+    "REJECTION_SEQUENCE_CONTINUITY"
+  ],
+  "requiredMutants": [
+    "M05-HASH-MISMATCH-PREPARED",
+    "M05-SAME-VERSION-DIFFERENT-HASH-ACCEPTED",
+    "M05-ACTIVATE-WITHOUT-PREPARE",
+    "M05-STALE-ACTIVATION-FENCE-ACCEPTED",
+    "M05-FAILED-ACTIVATION-CHANGES-ACTIVE",
+    "M05-OUT-OF-BAND-PLACE-ACCEPTED",
+    "M05-STALE-PLACE-RULE-ACCEPTED",
+    "M05-ACTIVATION-REVALIDATES-RESTING"
+  ]
+}

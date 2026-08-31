@@ -1,0 +1,30 @@
+{
+  "schemaVersion" : "matching.m05.ruleset-hash-vectors-report.v1",
+  "status" : "PASS",
+  "canonicalFormat" : "M05RS1",
+  "vectors" : [ {
+    "id" : "bootstrap-v0-unbounded",
+    "version" : 0,
+    "lowerInclusive" : 1,
+    "upperInclusive" : 9223372036854775807,
+    "contentHash" : "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"
+  }, {
+    "id" : "v1-wide",
+    "version" : 1,
+    "lowerInclusive" : 90,
+    "upperInclusive" : 110,
+    "contentHash" : "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"
+  }, {
+    "id" : "v1-narrow",
+    "version" : 1,
+    "lowerInclusive" : 95,
+    "upperInclusive" : 105,
+    "contentHash" : "sha256:1e5934c44343fe92741732bc5af56c019fc0e785815ff8848ed810ad52247372"
+  }, {
+    "id" : "v2-wider",
+    "version" : 2,
+    "lowerInclusive" : 80,
+    "upperInclusive" : 120,
+    "contentHash" : "sha256:d7d0a8e3a2d1882012f8ba6d7318ecf02e378f4766c26badff272a97e1e21f7d"
+  } ]
+}
