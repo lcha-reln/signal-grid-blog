@@ -1,7 +1,7 @@
 ---
 title: "M05·02：Prepare、Activate 与精确的应用序列栅栏"
 description: "把规则发布拆成可审计的准备与激活命令，并用 ApplicationSequence、controlRevision、firstAcceptanceSequence 定义唯一生效边界。"
-date: 2026-08-31T13:10:00+08:00
+date: 2026-08-31T11:10:00+08:00
 project: high-availability-cex
 profileVersion: SPOT-CEX-1.0
 unitCode: M05

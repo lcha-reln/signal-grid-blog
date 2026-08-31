@@ -1,7 +1,7 @@
 ---
 title: "M05·03：入场价格带不是用户限价，决策优先级必须唯一"
 description: "把 active order-entry band 插入 Place 决策链，固定 stale rule、越界、FOK 与 Post-only 的先后，并保留 maker-price 限价保护。"
-date: 2026-08-31T13:20:00+08:00
+date: 2026-08-31T11:20:00+08:00
 project: high-availability-cex
 profileVersion: SPOT-CEX-1.0
 unitCode: M05

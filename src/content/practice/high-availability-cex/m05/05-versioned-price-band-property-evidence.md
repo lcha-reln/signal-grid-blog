@@ -1,7 +1,7 @@
 ---
 title: "M05·05：用性质、变异体与发布原子性证明版本化价格带"
 description: "以固定语料、独立 flat-list reference、第三事件账本、生成历史和八个 semantic mutants 收口 M05，并只在 clean complete identity 上发布 evidence。"
-date: 2026-08-31T13:40:00+08:00
+date: 2026-08-31T11:40:00+08:00
 project: high-availability-cex
 profileVersion: SPOT-CEX-1.0
 unitCode: M05

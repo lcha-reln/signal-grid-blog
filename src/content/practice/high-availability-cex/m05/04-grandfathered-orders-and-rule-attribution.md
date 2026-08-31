@@ -1,7 +1,7 @@
 ---
 title: "M05·04：旧订单不重判，跨版本成交必须可归因"
 description: "把价格带定义为 prospective entry rule，保留旧 maker 的价格时间优先级，并在事件、batch 与快照中区分 admission 和 execution rule。"
-date: 2026-08-31T13:30:00+08:00
+date: 2026-08-31T11:30:00+08:00
 project: high-availability-cex
 profileVersion: SPOT-CEX-1.0
 unitCode: M05

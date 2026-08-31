@@ -1,7 +1,7 @@
 ---
 title: "M05·01：先把价格带做成可寻址的不可变规则制品"
 description: "把绝对 tick 上下界编码为 MarketRuleSetArtifact，用 M05RS1 canonical bytes 和重算 SHA-256 建立版本、内容与身份的一一对应。"
-date: 2026-08-31T13:00:00+08:00
+date: 2026-08-31T11:00:00+08:00
 project: high-availability-cex
 profileVersion: SPOT-CEX-1.0
 unitCode: M05
