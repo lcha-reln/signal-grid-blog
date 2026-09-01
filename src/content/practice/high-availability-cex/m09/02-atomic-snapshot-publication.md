@@ -1,6 +1,6 @@
 ---
 title: "M09·02：用 force、rename 与目录屏障原子发布 Snapshot"
-description: "拆开 M09S1 file force、atomic rename、snapshot-directory force 与 WAL rollover，证明 final 目录项持久后 Snapshot 已权威，而 cut+1 header 只约束后续前缀退休。"
+description: "拆开 M09S1 file force、atomic rename、snapshot-directory force 与 WAL rollover，固定 final 目录项持久后的 Snapshot 权威点，以及 cut+1 header 只约束后续前缀退休的边界。"
 date: 2026-09-01T09:20:00+08:00
 project: high-availability-cex
 profileVersion: SPOT-CEX-1.0
@@ -212,4 +212,4 @@ M09 的完成证据已经把三层事实分开。fixed `StorageOperations` trace
 
 M09S1 的权威点现在已经精确：完整 temp file 经 file force、atomic rename 与 snapshot-directory force 后，latest final Snapshot 就发布完成。cut+1 durable WAL header 不是它的发布证书，而是后续删除旧 WAL 前的额外安全前提。
 
-下一篇从这个已发布 Snapshot@S 出发，证明无论 suffix 留在旧 crossing segment，还是从新的 cut+1 segment 开始，恢复都必须与 genesis replay 得到同一个 semantic state。
+下一篇从这个已发布 Snapshot@S 出发，验证一条恢复合同：无论 suffix 留在旧 crossing segment，还是从新的 cut+1 segment 开始，恢复都必须与 genesis replay 得到同一个 semantic state。

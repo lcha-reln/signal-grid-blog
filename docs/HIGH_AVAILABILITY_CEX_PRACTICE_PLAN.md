@@ -1607,7 +1607,7 @@ prefix unlink、segment namespace 变化与清理结果都需要 parent-director
 | 20 | `atomic-snapshot-publication` | M09S1 temp/file force/rename/final-directory force 的发布资格，以及 cut+1 WAL header 只约束前缀退休的边界 |
 | 30 | `snapshot-suffix-recovery-equivalence` | Snapshot@S + WAL(S+1...) 与 genesis replay 的 semantic equivalence、sequence anchor 和 duplicate 结果 |
 | 40 | `wal-prefix-retirement-and-replay-bound` | RecoveryBudget、后继 M09S1 final、cut+1 active WAL header、前缀删除与 latest-final fail-closed |
-| 50 | `snapshot-fault-injection-and-recovery-evidence` | 独立模型、故障窗口、corruption、semantic mutants、证据层级和 limitations |
+| 50 | `snapshot-fault-injection-and-recovery-evidence` | retained-genesis runtime、独立 no-I/O storage ledger、故障窗口、9 个 storage/state mutant、3 个 invalid-latest candidate、证据层级和 limitations |
 
 **门禁、证据与互动边界**
 

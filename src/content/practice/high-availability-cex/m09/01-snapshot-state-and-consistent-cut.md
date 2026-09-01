@@ -166,7 +166,7 @@ M09 没有后台 Snapshot 线程，也没有 copy-on-write。Prepare、Activate�
 
 M09S1 同时使用几种完整性信号：
 
-| 信号 | 比较对象 | 能证明什么 |
+| 信号 | 比较对象 | 能检查什么 |
 | --- | --- | --- |
 | transcript digest | canonical command/result 历史 | 终态墓碑和历史语义没有被静默丢弃 |
 | semantic state digest | core public state + transcript | 恢复后的业务状态与行为承诺一致 |

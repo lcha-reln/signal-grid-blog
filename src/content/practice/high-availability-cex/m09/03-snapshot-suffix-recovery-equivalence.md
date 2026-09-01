@@ -1,5 +1,5 @@
 ---
-title: "M09·03：证明 Snapshot 加连续 WAL suffix 等价于 genesis replay"
+title: "M09·03：验证 Snapshot 加连续 WAL suffix 的恢复等价合同"
 description: "从 Snapshot anchor、旧或 crossing segment 到 cut+1 suffix，建立逐条一次 apply、完整 identity/result 恢复、genesis runtime 对照与独立 storage ledger。"
 date: 2026-09-01T09:30:00+08:00
 project: high-availability-cex
@@ -18,7 +18,7 @@ draft: false
 
 Snapshot 的价值不是“启动时少读几个文件”，而是合法替换 genesis replay 的起点。若 included record 被 apply 两次、suffix 第一条被跳过，或 Snapshot 只恢复 book 而漏掉 original duplicate result，进程可能仍能启动，却已不再是原来的状态机。
 
-M09 要证明的核心等式是：
+M09 要验证的核心合同是：
 
 ```text
 restore(complete M09S1 Snapshot @ S)
@@ -228,6 +228,6 @@ fresh directory 没有 Snapshot 时，M08 genesis recovery 仍可用，但第一
 
 ## 本篇停止点
 
-现在恢复等式已经精确到每条 record：Snapshot 安装 cut S 的完整状态，旧或 crossing WAL 可被完整验证，只有连续 `S+1...` suffix 各 apply 一次；最终结果必须与同一 durable history 的 genesis replay 等价。
+现在恢复等式已经精确成逐 record 的实现合同：Snapshot 安装 cut S 的完整状态，旧或 crossing WAL 可被完整验证，只有连续 `S+1...` suffix 各 apply 一次；最终结果必须与同一 durable history 的 genesis replay 等价。完成 judge 在冻结的 fixed/generated corpus 中未观察到两条 runtime 路径分叉，但这仍不是对任意 history 的形式证明。
 
 下一篇解决恢复工作量和磁盘所有权：怎样用 records+bytes 双重 RecoveryBudget 在 WAL mutation 前阻止越界，以及何时才允许删除被 Snapshot 覆盖的 whole segment。

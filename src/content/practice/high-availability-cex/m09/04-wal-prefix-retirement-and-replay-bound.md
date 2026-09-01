@@ -21,7 +21,7 @@ draft: false
 M09 把这两个风险放在同一个单轴内，但用两条独立规则解决：
 
 1. **RecoveryBudget** 在下一条 WAL mutation 前限制 suffix records 与 bytes；
-2. **whole-segment retirement** 只在 Snapshot 已发布、WAL 恢复起点 durable、且目录删除可持久证明后回收被完整覆盖的 closed segment。
+2. **whole-segment retirement** 只在 Snapshot 已发布、WAL 恢复起点 durable、且目录删除可持久审计后回收被完整覆盖的 closed segment。
 
 ## 双重预算的精确定义
 
@@ -121,7 +121,7 @@ discover Snapshot cut S
 8. reset in-memory suffix records/bytes to zero
 ```
 
-第 2 步完成时 Snapshot 已经发布；第 3 步是进入删除前缀之前的条件。若在两者之间 crash，latest Snapshot + 完整 old/crossing WAL 仍可恢复，前一篇已证明这一点。
+第 2 步完成时 Snapshot 已经发布；第 3 步是进入删除前缀之前的条件。若在两者之间 crash，latest Snapshot + 完整 old/crossing WAL 仍可恢复；前一篇的冻结场景已经验证这条合同。
 
 只有整个 `checkpoint()` 正常返回后，当前实例才把 suffix counters 归零。中途 I/O failure 会让实例 fail closed；fresh open 根据实际 latest Snapshot 和实际 suffix 重新计算 counters，不能信任旧进程内存中的维护进度。
 
@@ -182,7 +182,7 @@ greatestWalSequence <= protectedSnapshotCut
 
 M09 只删除 whole segment，不做 record compaction，也不重写 crossing segment。
 
-完成 evidence 明确限制了检测范围：它覆盖 runtime 自己退休前缀后形成的 non-terminal missing-prefix gap，并证明 active/crossing segment 会被保留；它**不声称**能检测运维人员从外部删除最终 active segment 的 terminal deletion。该情形在本单元是 nonclaim，不能从现有 fixed corpus 反推已经受保护。
+完成 evidence 明确限制了检测范围：它覆盖 runtime 自己退休前缀后形成的 non-terminal missing-prefix gap，并在冻结场景中观察到 active/crossing segment 被保留；它**不声称**能检测运维人员从外部删除最终 active segment 的 terminal deletion。该情形在本单元是 nonclaim，不能从现有 fixed corpus 反推已经受保护。
 
 ## 一次具体的 generation/segment 推演
 
@@ -262,6 +262,6 @@ directory force 失败后，当前实例不能继续接受命令或宣称 retire
 
 ## 本篇停止点
 
-M09 现在既限制了 suffix 的 record/encoded-byte 工作量，也把磁盘所有权转移拆成可证明步骤：Snapshot 先独立发布，cut+1 WAL 起点随后 durable，两个 generation 保守保护，最后只回收完全覆盖的 closed segment 并 force 目录。
+M09 现在既限制了 suffix 的 record/encoded-byte 工作量，也把磁盘所有权转移拆成可审计步骤：Snapshot 先独立发布，cut+1 WAL 起点随后 durable，两个 generation 保守保护，最后只回收完全覆盖的 closed segment 并 force 目录。
 
 最后一篇把这些主张变成裁判合同：什么由 fixed/generated history 反对，什么由 durability ledger 观察，什么只能称 code-level injection 或 process crash，而不能冒充真实断电和商用高可用。

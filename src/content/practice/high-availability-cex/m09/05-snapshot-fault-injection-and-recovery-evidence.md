@@ -1,6 +1,6 @@
 ---
-title: "M09·05：用独立模型与故障窗口验证 Snapshot 恢复"
-description: "把完整 state cut、M09S1 publication、suffix equivalence、双重预算和 whole-segment retirement 拆成 fixed/generated history、独立模型、文件账本与 semantic mutants。"
+title: "M09·05：用存储账本与故障窗口验证 Snapshot 恢复"
+description: "把完整 state cut、M09S1 publication、suffix equivalence、双重预算和 whole-segment retirement 拆成 fixed/generated history、retained-genesis runtime、独立 no-I/O storage ledger 与 executable candidates。"
 date: 2026-09-01T09:50:00+08:00
 project: high-availability-cex
 profileVersion: SPOT-CEX-1.0
@@ -20,7 +20,7 @@ Snapshot happy path 很容易自证：保存、重启、看到相同盘口。很
 
 真正的证据体系必须能回答两个问题：
 
-1. production 若违反一条冻结不变量，裁判能否给出一个最小、可重放的 semantic counterexample？
+1. production 若违反一条冻结不变量，裁判能否给出一个经过单删检验、可重放的 semantic counterexample？
 2. harness、reference、fixture 或环境自己坏掉时，系统能否拒绝把意外异常算成“杀死 mutant”？
 
 M09 的证据结论是：**fixed/generated operation history、retained-genesis runtime、独立 no-I/O storage ledger 与 executable candidate 必须共同闭合；code-level injection、child-process crash 和真实 power loss 必须分层陈述。**
@@ -139,15 +139,18 @@ annotated complete tag 对应 clean commit `147a7e7dd2439764d4a5fe4d1048142645d2
 
 operation domain 包含 submit、duplicate/conflict、Snapshot、restart、rollover、retire 与 `CRASH`，而不是 40 次 Place 的随机循环。这里的 generated `CRASH` 是 `CONTROLLED_BEFORE_LIVE_APPLY_DURABILITY_UNKNOWN_THEN_FRESH_REOPEN`：在 live apply 前制造 durable-unknown，再 fresh reopen；它**不是**操作系统杀进程。每条 history 使用 fresh directory、candidate runtime、retained-genesis runtime 与 ledger，并保存 seed、lane 和 operation grammar。
 
-generated suite 覆盖三类 RecoveryBudget witness：
+generated suite 的预算预测域是 fresh append candidate、checkpoint retry 与 65 个 setup operation。最终报告包含 96×40=3,840 个声明生成操作，另加这 65 个 budget prelude；2,703 次预算预测精确分解为 2,702 accept + 1 reject，并产生一项 record-limit `CHECKPOINT_REQUIRED` witness。generated canonical digest 为 `9551ad7a3026964b57b366e39d6307510789cd83c750bf239098f9ba299354e5`。这组 generated 数字本身不声称产生了独立的 byte-overrun witness。
+
+records/bytes 双维度的越界证据来自 fixed `RECOVERY_BUDGET_REJECTS_PRE_WAL` 场景，而不是从唯一的 generated reject 外推。它分别保存四项 `budgetWitnesses`：
 
 ```text
-below limit
-exactly at record or byte limit
-next record would exceed either dimension
+LIVE_RECORD_OVERRUN_REJECTED_PRE_WAL
+LIVE_BYTE_OVERRUN_REJECTED_PRE_WAL
+FRESH_RECOVERY_RECORD_OVERRUN_REJECTED_PRE_APPLY
+FRESH_RECOVERY_BYTE_OVERRUN_REJECTED_PRE_APPLY
 ```
 
-最终报告包含 96×40=3,840 个声明生成操作，另加 65 个 budget prelude；2,703 次预算预测精确分解为 2,702 accept + 1 reject，且只产生一项 `CHECKPOINT_REQUIRED` witness。generated canonical digest 为 `9551ad7a3026964b57b366e39d6307510789cd83c750bf239098f9ba299354e5`。这既覆盖“records 很少但 bytes 越界”，也覆盖“bytes 很小但 records 越界”。
+因此“records 很少但 bytes 越界”与“bytes 尚未越界但 records 越界”由 fixed 证据闭合；generated suite 只按自己的声明域提供额外历史压力，不能替代这四项归因。
 
 ## 两条 runtime 语义路径加一份独立 storage ledger
 
