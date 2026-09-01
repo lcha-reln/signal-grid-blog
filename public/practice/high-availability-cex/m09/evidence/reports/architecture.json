@@ -1,0 +1,15 @@
+{
+  "schemaVersion" : "matching.m09.architecture-report.v1",
+  "unit" : "M09",
+  "status" : "PASS",
+  "coreSources" : 55,
+  "localRuntimeSources" : 39,
+  "testkitProbePresent" : true,
+  "storageOperationsProductionWiringVerified" : true,
+  "independentLedgerProductionParserFree" : true,
+  "violations" : 0,
+  "violationDetails" : [ ],
+  "coreInfrastructureFree" : true,
+  "localRuntimeJdkAndCoreOnly" : true,
+  "testkitProbeAbsentFromProduction" : true
+}

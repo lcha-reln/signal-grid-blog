@@ -1,0 +1,23 @@
+M09F1
+FULL_CORE_STATE_ROUND_TRIP|complete core image restored and continued equivalently||
+TERMINAL_ORDER_NON_RESURRECTION|filled and canceled identities remained terminal||
+DURABLE_IDENTITY_AND_ORIGINAL_RESULT_ROUND_TRIP|durable identity and original result survived||
+RULE_SET_AND_ACTIVATION_FENCE_ROUND_TRIP|active/prepared rule sets and activation fence restored||
+CANCEL_ONLY_MODE_ROUND_TRIP|CANCEL_ONLY mode and fence restored||
+HALTED_MASS_CANCEL_FENCE_ROUND_TRIP|HALTED mode and Mass Cancel fence restored||
+TRANSCRIPT_AND_DIGEST_ROUND_TRIP|semantic and serialization digests remained separate||
+SNAPSHOT_SUFFIX_EQUALS_GENESIS_REPLAY|snapshot plus contiguous suffix equaled genesis replay||
+EMPTY_SUFFIX_RECOVERY|empty WAL suffix restored exactly||
+MULTI_SEGMENT_SUFFIX_RECOVERY|configured bounded suffix crossed segments and matched genesis||
+RECOVERY_BUDGET_REJECTS_PRE_WAL|LIVE_RECORD_OVERRUN_REJECTED_PRE_WAL;LIVE_BYTE_OVERRUN_REJECTED_PRE_WAL;FRESH_RECOVERY_RECORD_OVERRUN_REJECTED_PRE_APPLY;FRESH_RECOVERY_BYTE_OVERRUN_REJECTED_PRE_APPLY|recoveryByteFirstRejectedWalSequence=29,recoveryRecordFirstRejectedWalSequence=65|recoveryByteFailure=M09 recovery suffix exceeds the configured records-and-bytes budget before WAL 29,recoveryRecordFailure=M09 recovery suffix exceeds the configured records-and-bytes budget before WAL 65
+ORPHAN_TEMP_SNAPSHOT_IS_NOT_AUTHORITY|orphan partial temp was ignored and removed||
+SNAPSHOT_PUBLICATION_ORDER|FORCED_CANONICAL_TEMP_PRESENT_BEFORE_RENAME;CANONICAL_FINAL_PRESENT_AFTER_RENAME_BEFORE_DIRECTORY_FORCE;OLD_WAL_PRESENT_AFTER_DIRECTORY_FORCE_BEFORE_RETENTION||
+NEWEST_PUBLISHED_GENERATION_WINS|production selected snapshot anchor generation=2 cut=2||
+UNKNOWN_SNAPSHOT_VERSION_FAILS_CLOSED|unknown version with valid integrity failed closed||
+SNAPSHOT_CORRUPTION_FAILS_CLOSED|body corruption failed closed||
+SNAPSHOT_IDENTITY_MISMATCH_FAILS_CLOSED|FILENAME_HEADER_GENERATION_MISMATCH_REJECTED;VALID_INTEGRITY_WRONG_SHARD_REJECTED;HEADER_STATE_WAL_CUT_MISMATCH_REJECTED||
+RETIRE_ONLY_FULLY_COVERED_SEGMENTS|only fully covered closed segments retired||
+RETIREMENT_REQUIRES_PUBLISHED_SNAPSHOT|gen1 was published; failed gen2 directory force did not retire eligible gen1/cut1 WAL||
+RETIREMENT_DELETE_DIRECTORY_FORCE_ORDER|delete-directory-force-return order observed||
+RETIREMENT_DELETE_CRASH_WINDOW|first-delete interruption reopened from published authority; after removing the required snapshot, missing-prefix reopen failed closed||
+MISSING_PREFIX_WITHOUT_VALID_SNAPSHOT_FAILS_CLOSED|missing prefix without snapshot failed closed||

@@ -1,0 +1,93 @@
+{
+  "schemaVersion" : "matching.m09.operation-failures-report.v1",
+  "unit" : "M09",
+  "status" : "PASS",
+  "model" : "CODE_LEVEL_DETERMINISTIC_INJECTION",
+  "required" : 8,
+  "observed" : 8,
+  "faultInjectedAtDeclaredPreOperationHook" : true,
+  "underlyingOperationExecutionClaim" : false,
+  "actualFilesystemFailure" : false,
+  "realPowerLossClaim" : false,
+  "failures" : [ {
+    "seam" : "SNAPSHOT_TEMP_WRITE",
+    "faultPoint" : "BEFORE_SNAPSHOT_TEMP_WRITE",
+    "classification" : "INJECTED_OPERATION_FAILURE",
+    "faultInjectedAtDeclaredPreOperationHook" : true,
+    "underlyingOperationExecutionClaim" : false,
+    "actualFilesystemFailure" : false,
+    "ackReturned" : false,
+    "freshReopen" : "OPEN_AT_WAL_2",
+    "powerLossProof" : false
+  }, {
+    "seam" : "SNAPSHOT_FILE_FORCE",
+    "faultPoint" : "BEFORE_SNAPSHOT_FILE_FORCE",
+    "classification" : "INJECTED_OPERATION_FAILURE",
+    "faultInjectedAtDeclaredPreOperationHook" : true,
+    "underlyingOperationExecutionClaim" : false,
+    "actualFilesystemFailure" : false,
+    "ackReturned" : false,
+    "freshReopen" : "OPEN_AT_WAL_2",
+    "powerLossProof" : false
+  }, {
+    "seam" : "SNAPSHOT_ATOMIC_RENAME",
+    "faultPoint" : "BEFORE_SNAPSHOT_ATOMIC_RENAME",
+    "classification" : "INJECTED_OPERATION_FAILURE",
+    "faultInjectedAtDeclaredPreOperationHook" : true,
+    "underlyingOperationExecutionClaim" : false,
+    "actualFilesystemFailure" : false,
+    "ackReturned" : false,
+    "freshReopen" : "OPEN_AT_WAL_2",
+    "powerLossProof" : false
+  }, {
+    "seam" : "SNAPSHOT_DIRECTORY_FORCE",
+    "faultPoint" : "BEFORE_SNAPSHOT_DIRECTORY_FORCE",
+    "classification" : "INJECTED_OPERATION_FAILURE",
+    "faultInjectedAtDeclaredPreOperationHook" : true,
+    "underlyingOperationExecutionClaim" : false,
+    "actualFilesystemFailure" : false,
+    "ackReturned" : false,
+    "freshReopen" : "OPEN_AT_WAL_2",
+    "powerLossProof" : false
+  }, {
+    "seam" : "RETIREMENT_SEGMENT_DELETE",
+    "faultPoint" : "BEFORE_RETENTION_DELETE",
+    "classification" : "INJECTED_OPERATION_FAILURE",
+    "faultInjectedAtDeclaredPreOperationHook" : true,
+    "underlyingOperationExecutionClaim" : false,
+    "actualFilesystemFailure" : false,
+    "ackReturned" : false,
+    "freshReopen" : "OPEN_AT_WAL_3",
+    "powerLossProof" : false
+  }, {
+    "seam" : "RETIREMENT_DIRECTORY_FORCE",
+    "faultPoint" : "BEFORE_RETENTION_DIRECTORY_FORCE",
+    "classification" : "INJECTED_OPERATION_FAILURE",
+    "faultInjectedAtDeclaredPreOperationHook" : true,
+    "underlyingOperationExecutionClaim" : false,
+    "actualFilesystemFailure" : false,
+    "ackReturned" : false,
+    "freshReopen" : "OPEN_AT_WAL_3",
+    "powerLossProof" : false
+  }, {
+    "seam" : "SNAPSHOT_READ",
+    "faultPoint" : "BEFORE_SNAPSHOT_READ",
+    "classification" : "INJECTED_OPERATION_FAILURE",
+    "faultInjectedAtDeclaredPreOperationHook" : true,
+    "underlyingOperationExecutionClaim" : false,
+    "actualFilesystemFailure" : false,
+    "ackReturned" : false,
+    "freshReopen" : "OPEN_AT_WAL_2",
+    "powerLossProof" : false
+  }, {
+    "seam" : "WAL_SUFFIX_READ",
+    "faultPoint" : "BEFORE_SNAPSHOT_SUFFIX_READ",
+    "classification" : "INJECTED_OPERATION_FAILURE",
+    "faultInjectedAtDeclaredPreOperationHook" : true,
+    "underlyingOperationExecutionClaim" : false,
+    "actualFilesystemFailure" : false,
+    "ackReturned" : false,
+    "freshReopen" : "OPEN_AT_WAL_3",
+    "powerLossProof" : false
+  } ]
+}

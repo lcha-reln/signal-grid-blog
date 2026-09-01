@@ -11,10 +11,10 @@ tags:
   - 撮合引擎
   - Snapshot
   - Crash Consistency
-draft: true
+draft: false
 ---
 
-> 教程草稿：结构化 RED 已由 annotated [`course/m09-start`](https://github.com/lcha-reln/cex-matching/tree/course/m09-start) 冻结，正文按实现审查 HEAD `c26a613` 校准；`8f6a357` 是主体实现，后续提交补齐了 recovery-scan hard budget。M09 仍未形成 complete tag、完成 evidence 或公开通过结论。
+> 完成身份：annotated [`course/m09-start`](https://github.com/lcha-reln/cex-matching/tree/course/m09-start) 冻结结构化 RED；annotated [`course/m09-complete`](https://github.com/lcha-reln/cex-matching/tree/course/m09-complete) peeled 到 `147a7e7dd2439764d4a5fe4d1048142645d26f2d`。公开复核从 [`manifest.json`](/signal-grid-blog/practice/high-availability-cex/m09/evidence/manifest.json) 开始，manifest SHA-256 为 `22b0d234e7257a74461e56feccfe6f859cc4f401dbae32fb11a8e966d9bf984a`；没有产品 release 或浏览器 Lab。
 
 把状态编码成一个文件，不等于这个文件已经成为权威 Snapshot。进程可能停在 body 写到一半、file force 之前、rename 之后或目录项 force 之前；每个窗口都会在下一次打开时留下不同的 namespace 观察。
 
@@ -131,7 +131,7 @@ latest Snapshot@S + complete old/crossing WAL
 
 恢复，而不要求 directory force 后立刻存在一份新的 cut+1 header。旧 WAL 此时仍是安全冗余和 suffix continuity 的载体。
 
-当前实现中的注释也明确写着：published Snapshot 在这里停机时仍能和 old WAL 一起恢复；**只有进入 prefix retirement 之前**，才需要把 cut+1 作为 active header durable 化。
+完成实现和 `SNAPSHOT_PUBLICATION_ORDER` fixed witness 都固定了这条边界：published Snapshot 在这里停机时仍能和 old WAL 一起恢复；**只有进入 prefix retirement 之前**，才需要把 cut+1 作为 active header durable 化。
 
 ## rollover 为什么仍然必要
 
@@ -206,7 +206,7 @@ highest final generation
 - 跨目录 atomic move 或网络文件系统可用；
 - ENOSPC、只读挂载和固件回退已经实测。
 
-M09 的完成证据需要把 deterministic seam、child JVM `Runtime.halt(86)` 与真实 power-loss qualification 明确分层。本站不会用浏览器 JavaScript 模拟 `FileChannel` 后宣称通过。
+M09 的完成证据已经把三层事实分开。fixed `StorageOperations` trace 观察实际 JDK 调用的程序顺序；八个 operation failure seam 只证明 fault 在 declared pre-operation hook 注入，不声称底层操作已经或没有执行；七个 child JVM `Runtime.halt(86)` 只证明在命名 hook 终止、观察 namespace 并 fresh reopen，不声称独立观察底层调用顺序，更不等于真实 power loss。可逐项查看 [`fixed-scenarios.json`](/signal-grid-blog/practice/high-availability-cex/m09/evidence/reports/fixed-scenarios.json)、[`operation-failures.json`](/signal-grid-blog/practice/high-availability-cex/m09/evidence/reports/operation-failures.json) 与 [`crash-windows.json`](/signal-grid-blog/practice/high-availability-cex/m09/evidence/reports/crash-windows.json)。本站不会用浏览器 JavaScript 模拟 `FileChannel` 后宣称通过。
 
 ## 本篇停止点
 

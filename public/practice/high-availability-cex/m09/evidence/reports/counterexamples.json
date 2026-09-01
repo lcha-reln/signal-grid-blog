@@ -1,0 +1,22 @@
+{
+  "schemaVersion" : "matching.m09.counterexamples-report.v1",
+  "unit" : "M09",
+  "status" : "PASS",
+  "required" : 12,
+  "persisted" : 12,
+  "rawOperations" : 88,
+  "minimalOperations" : 64,
+  "shrinkTrials" : 152,
+  "actualMutationActions" : 13,
+  "candidateDriver" : "NINE_STORAGE_STATE_MUTANTS_PLUS_THREE_INVALID_LATEST_CANDIDATES",
+  "freshRuntimePerReplay" : true,
+  "operationInterpreter" : "SEQUENTIAL_TOKEN_INTERPRETER",
+  "oneMinimalScope" : "NO_SINGLE_DELETE_REPRODUCES_THE_SAME_FINGERPRINT;TRIALS_MAY_PASS_BE_INVALID_OR_DIFFER",
+  "oneMinimalGlobalMinimumClaim" : false,
+  "invalidHistoryCountedAsKill" : false,
+  "singleDeletePasses" : 0,
+  "singleDeleteInvalidHistories" : 64,
+  "singleDeleteDifferentStudentFailures" : 0,
+  "singleDeleteSameFingerprintStudentFailures" : 0,
+  "digest" : "0dd88e0ced4a35dab53f357a657c299484eabeeb6111cd70221603a971f0a3eb"
+}

@@ -1,6 +1,6 @@
 ---
 title: "M09·03：证明 Snapshot 加连续 WAL suffix 等价于 genesis replay"
-description: "从 Snapshot anchor、旧或 crossing segment 到 cut+1 suffix，建立逐条一次 apply、完整 identity/result 恢复和三方 semantic equivalence。"
+description: "从 Snapshot anchor、旧或 crossing segment 到 cut+1 suffix，建立逐条一次 apply、完整 identity/result 恢复、genesis runtime 对照与独立 storage ledger。"
 date: 2026-09-01T09:30:00+08:00
 project: high-availability-cex
 profileVersion: SPOT-CEX-1.0
@@ -11,10 +11,10 @@ tags:
   - 撮合引擎
   - Snapshot Recovery
   - WAL Replay
-draft: true
+draft: false
 ---
 
-> 教程草稿：annotated [`course/m09-start`](https://github.com/lcha-reln/cex-matching/tree/course/m09-start) 冻结了等价命题和反例输入；正文按实现审查 HEAD `c26a613` 校准，其中 `8f6a357` 加入主体恢复路径，当前 HEAD 又把双重 hard budget 延伸到 recovery scan。当前没有 complete tag、最终 judge 报告、manifest 或通过数字。
+> 完成身份：annotated [`course/m09-start`](https://github.com/lcha-reln/cex-matching/tree/course/m09-start) 冻结等价命题和反例输入；annotated [`course/m09-complete`](https://github.com/lcha-reln/cex-matching/tree/course/m09-complete) peeled 到 `147a7e7dd2439764d4a5fe4d1048142645d26f2d`。公开复核从 [`manifest.json`](/signal-grid-blog/practice/high-availability-cex/m09/evidence/manifest.json) 开始，manifest SHA-256 为 `22b0d234e7257a74461e56feccfe6f859cc4f401dbae32fb11a8e966d9bf984a`。
 
 Snapshot 的价值不是“启动时少读几个文件”，而是合法替换 genesis replay 的起点。若 included record 被 apply 两次、suffix 第一条被跳过，或 Snapshot 只恢复 book 而漏掉 original duplicate result，进程可能仍能启动，却已不再是原来的状态机。
 
@@ -72,7 +72,7 @@ Snapshot install 不产生业务事件，也不推进任何 sequence。它通过
 
 随后 replay 才对 `S+1...T` 调用 production command applier，并在每条边界核对 expected ApplicationSequence、canonical identity 和 result position。
 
-当前审查 HEAD 还在扫描阶段维护一份 `RecoveryUsage`。每看见下一条待 replay record，先用完整 encoded record length 检查 records+bytes 双重预算；整条 suffix 扫描成功后，`LocalMatchingRuntime.recover` 才开始 apply。若第 65 条或 byte 累加会越界，open 直接抛 `RecoveryException`，不会留下“前 64 条已经 apply、最后一条才失败”的半恢复 core。
+完成 runtime 在扫描阶段维护一份 `RecoveryUsage`。每看见下一条待 replay record，先用完整 encoded record length 检查 records+bytes 双重预算；整条 suffix 扫描成功后，`LocalMatchingRuntime.recover` 才开始 apply。若第 65 条或 byte 累加会越界，open 直接抛 `RecoveryException`，不会留下“前 64 条已经 apply、最后一条才失败”的半恢复 core。
 
 没有 Snapshot 时，M09 finite config 会把 genesis WAL 全部视为待 replay history，因此同样受 hard budget。一个由旧 unbounded 配置写出的超长目录不能靠切换 `snapshotDefaults` 自动升级；它需要显式迁移/检查点方案，而通用格式与在线迁移明确排除在 M09 之外。
 
@@ -191,15 +191,15 @@ suffix records       = 7, 8
 
 然后提交 record 8 的 exact retry，应返回它第一次的 position/result，且 append、force、apply 均不再发生。提交一条新 sequence 9，才会产生新的 WAL record 与 application result。
 
-## semantic equivalence 需要三条独立观察路径
+## semantic equivalence 使用两条 runtime 路径和一份独立账本
 
-完成门禁不能只比较 production codec round trip。冻结 RED 要求最终至少有：
+完成门禁没有只比较 production codec round trip。最终 evidence 使用：
 
-1. **genesis path**：保留完整 durable history，从 M08W1 record 1 开始重放；
-2. **independent semantic model**：不解析 production Snapshot bytes，按抽象 operation 维护期望状态；
-3. **Snapshot path**：读取真实 M09S1 文件，安装 state，再重放真实 M08W1 suffix。
+1. **retained-genesis-WAL runtime**：保留完整 durable history，从 M08W1 record 1 开始重放；
+2. **Snapshot candidate runtime**：读取真实 M09S1 文件，安装 state，再重放真实 M08W1 suffix；
+3. **independent no-I/O storage ledger**：不解析 production WAL，独立预测 budget、cut、segment inventory 与 whole-segment retirement。
 
-每个 operation boundary 都应比较：
+前两条 runtime 路径在每个 operation boundary 比较：
 
 - book 与全量 order lifecycle；
 - RuleSet、mode 与 control fence；
@@ -208,7 +208,7 @@ suffix records       = 7, 8
 - transcript/semantic digest；
 - 紧接着的 canonical command result。
 
-production encoder 与 decoder 同意只能说明内部 round trip。独立 model 若复用 production state image、codec 或 recovery selector，也会失去反对共同缺陷的能力。
+这里必须诚实：genesis 与 candidate 都使用 production WAL parser 和 inherited matching core；ledger 独立于 production parser，却不维护第三套完整的 M00～M08 业务语义。因此这套证据能反对 Snapshot、suffix、budget 与 inventory 分叉，但不能声称有第三个完整业务模型消除了所有共同缺陷。
 
 ## 没有 Snapshot 时的边界
 
@@ -222,11 +222,9 @@ fresh directory 没有 Snapshot 时，M08 genesis recovery 仍可用，但第一
 - 自动忽略最新坏 Snapshot 后选择旧 generation；
 - 跳到最早仍存在的 WAL record 继续。
 
-## 当前实现与完成证据之间的距离
+## 完成证据怎样封存等价结论
 
-实现基线已经包含 codec round trip、Snapshot+suffix 与 genesis 的 focused tests，以及 suffix read fault seam；这些是代码审查入口，不是最终课程 evidence。
-
-`course/m09-start` 冻结的 `SNAPSHOT_SUFFIX_EQUALS_GENESIS_REPLAY`、`EMPTY_SUFFIX_RECOVERY`、`MULTI_SEGMENT_SUFFIX_RECOVERY` 和两个 cut mutants 仍需由完成 judge、独立模型、fresh runtime 与结构化报告共同收口。当前草稿不写 PASS 比例、complete commit 或 manifest hash。
+`course/m09-start` 冻结的 `SNAPSHOT_SUFFIX_EQUALS_GENESIS_REPLAY`、`EMPTY_SUFFIX_RECOVERY`、`MULTI_SEGMENT_SUFFIX_RECOVERY` 与 cut mutation 已由完成 judge 收口。生成裁判运行 seed 5909 的 96×40=3,840 个声明操作，另有不计入声明 operation corpus 的 65 个 budget prelude；3,840 次 semantic comparison 与 4,225 次 ledger check 均完成，generated canonical digest 为 `9551ad7a3026964b57b366e39d6307510789cd83c750bf239098f9ba299354e5`。可从 [`generated-properties.json`](/signal-grid-blog/practice/high-availability-cex/m09/evidence/reports/generated-properties.json) 与 [`recovery-ledger.json`](/signal-grid-blog/practice/high-availability-cex/m09/evidence/reports/recovery-ledger.json) 复核。
 
 ## 本篇停止点
 

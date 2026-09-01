@@ -11,10 +11,10 @@ tags:
   - 撮合引擎
   - Snapshot
   - 状态恢复
-draft: true
+draft: false
 ---
 
-> 教程草稿：annotated [`course/m09-start`](https://github.com/lcha-reln/cex-matching/tree/course/m09-start) 已冻结结构化 RED，当前正文按实现审查 HEAD `c26a613` 校准；它在 `8f6a357` 主体 Snapshot 实现上补齐 recovery-scan hard budget。M09 尚无 complete tag、完成 evidence 或发布结论；文中的类和测试说明“实现现在怎样工作”，不等于课程门禁已经通过。
+> 完成身份：annotated [`course/m09-start`](https://github.com/lcha-reln/cex-matching/tree/course/m09-start) 冻结结构化 RED；annotated [`course/m09-complete`](https://github.com/lcha-reln/cex-matching/tree/course/m09-complete) peeled 到 `147a7e7dd2439764d4a5fe4d1048142645d26f2d`。公开复核从 [`manifest.json`](/signal-grid-blog/practice/high-availability-cex/m09/evidence/manifest.json) 开始，manifest SHA-256 为 `22b0d234e7257a74461e56feccfe6f859cc4f401dbae32fb11a8e966d9bf984a`；M09 是普通课程单元，`productRelease=null`。
 
 M08 已经能从 genesis WAL 重建状态，却必须重放全部历史。给它加 Snapshot 时，最诱人的做法是把买卖盘序列化：price level、orderId、remaining quantity 都在，重启后盘口看起来也一样。
 
@@ -40,7 +40,7 @@ M09 的第一条结论因此是：**Snapshot 保存的不是查询投影，而�
 
 ## 实现里的状态树
 
-当前实现把恢复状态分成三层，而不是让 Snapshot codec 直接窥探撮合内部的散列表：
+完成实现把恢复状态分成三层，而不是让 Snapshot codec 直接窥探撮合内部的散列表：
 
 ```text
 LocalRuntimeStateImage
@@ -173,9 +173,9 @@ M09S1 同时使用几种完整性信号：
 | CRC32C | Snapshot framing bytes | 完整 frame 的意外损坏检测 |
 | serialization SHA-256 | 整份 canonical M09S1 bytes | 具体编码身份稳定 |
 
-serialization digest 相同不能替代独立 semantic model：production encoder 与 decoder 可能以同一种方式遗漏字段。semantic digest 相同也不能说明文件 framing、generation 或 shard header 合法。
+serialization digest 相同不能替代跨恢复路径的 semantic comparison：production encoder 与 decoder 可能以同一种方式遗漏字段。semantic digest 相同也不能说明文件 framing、generation 或 shard header 合法。
 
-当前 codec 在 decode 后还会重新 encode，并要求 byte-for-byte 相同，用来拒绝非 canonical 表示。但最终课程证据仍必须让一个不解析 production Snapshot bytes 的参考模型检查业务等价，而不是让 codec 自己给自己颁证书。
+完成实现会在 decode 后重新 encode，并要求 byte-for-byte 相同，用来拒绝非 canonical 表示。完成证据再用 retained-genesis-WAL runtime 与 Snapshot candidate 比较 3,840 个操作边界；两者共享 production WAL parser 与 inherited core。独立的 no-I/O storage ledger 只负责检查 budget、cut 和 whole-segment inventory，不解析 production WAL，也不冒充第三套完整业务模型。
 
 ## 从状态图到可执行反例
 
@@ -203,7 +203,7 @@ serialization digest 相同不能替代独立 semantic model：production encode
 4. `LocalRuntimeStateImage`：core、identity 与 WAL cut 怎样交叉验证；
 5. `M09SnapshotCodec`：最后才看 canonical bytes。
 
-`course/m09-start` 上的 `FULL_CORE_STATE_ROUND_TRIP`、`TERMINAL_ORDER_NON_RESURRECTION`、`DURABLE_IDENTITY_AND_ORIGINAL_RESULT_ROUND_TRIP` 等 fixed scenario 是待完成 judge 的冻结输入，不是已经通过的结果。当前草稿不会写完成数字或引用不存在的 manifest。
+`course/m09-start` 上的 `FULL_CORE_STATE_ROUND_TRIP`、`TERMINAL_ORDER_NON_RESURRECTION`、`DURABLE_IDENTITY_AND_ORIGINAL_RESULT_ROUND_TRIP` 等输入已由完成 judge 执行。最终报告记录 22 个 fixed scenario、88 个 declared operation 与 32/32 obligation 全部通过，fixed canonical digest 为 `1636ed177f59347ec11b8e9ffe1fb6d872fd3de5225298381a161a0b7d755f43`；原始结果可从 [`fixed-scenarios.json`](/signal-grid-blog/practice/high-availability-cex/m09/evidence/reports/fixed-scenarios.json) 与 [`coverage.json`](/signal-grid-blog/practice/high-availability-cex/m09/evidence/reports/coverage.json) 逐项复核。
 
 ## 本篇停止点
 

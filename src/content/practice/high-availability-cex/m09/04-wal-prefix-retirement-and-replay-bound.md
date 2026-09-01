@@ -11,10 +11,10 @@ tags:
   - 撮合引擎
   - WAL Retention
   - Recovery Budget
-draft: true
+draft: false
 ---
 
-> 教程草稿：annotated [`course/m09-start`](https://github.com/lcha-reln/cex-matching/tree/course/m09-start) 已冻结 RecoveryBudget 和 retention RED，正文按实现审查 HEAD `c26a613` 校准；`8f6a357` 加入主体机制，当前 HEAD 又补齐 recovery-scan hard budget。这里的数值是输入合同，不是已测得的性能、RTO 或完成结果。
+> 完成身份：annotated [`course/m09-start`](https://github.com/lcha-reln/cex-matching/tree/course/m09-start) 冻结 RecoveryBudget 和 retention RED；annotated [`course/m09-complete`](https://github.com/lcha-reln/cex-matching/tree/course/m09-complete) peeled 到 `147a7e7dd2439764d4a5fe4d1048142645d26f2d`。公开复核从 [`manifest.json`](/signal-grid-blog/practice/high-availability-cex/m09/evidence/manifest.json) 开始，manifest SHA-256 为 `22b0d234e7257a74461e56feccfe6f859cc4f401dbae32fb11a8e966d9bf984a`；64 records / 1 MiB 是 safety bound，不是 RTO。
 
 有 Snapshot 不等于恢复工作量有界。如果 suffix 可以无限增长，启动仍可能重放任意多 record；如果为了缩短恢复直接删除旧 WAL，又可能在 Snapshot 或 namespace 尚未可靠时删掉唯一权威历史。
 
@@ -31,6 +31,8 @@ M09 把这两个风险放在同一个单轴内，但用两条独立规则解决�
 maxSuffixRecords = 64
 maxSuffixBytes   = 1_048_576
 ```
+
+这是 production default。为了在 M08W1 的 minimum segment size 下构造跨 segment 的 suffix 形状，`MULTI_SEGMENT_SUFFIX_RECOVERY` fixed fixture 单独使用 test-only 4 MiB byte budget；这个机制夹具不改变生产默认值，也不是容量建议。
 
 records 从 latest published Snapshot cut 之后第一条 WAL record 开始计数；bytes 累加完整 M08W1 encoded record length，包含 framing overhead 与 M08C1 envelope，而不是只统计业务 payload。
 
@@ -68,7 +70,7 @@ decode canonical envelope
 - 不推进 WAL/Application/producer sequence；
 - runtime 仍可保持 `OPEN`，等待调用方显式执行 `checkpoint()`。
 
-当前实现不会在 `submit` 内偷偷自动 checkpoint。自动维护策略、后台线程和延迟调度会新增并发与错误语义，不属于 M09。
+完成实现不会在 `submit` 内偷偷自动 checkpoint。自动维护策略、后台线程和延迟调度会新增并发与错误语义，不属于 M09。
 
 ## 哪些请求会消耗预算
 
@@ -88,7 +90,7 @@ exact duplicate 在 budget preflight 前就由 durable identity index 命中，�
 
 只在 live append 检查预算仍有一个漏洞：旧版本或旧配置可能已经留下超长 WAL，fresh runtime 若边扫描边 apply，到第 65 条才发现越界，就会构造一份半恢复状态。
 
-当前审查 HEAD `c26a613` 在 `SegmentedWal` recovery scan 中加入 `RecoveryUsage`：
+完成版 `SegmentedWal` recovery scan 使用 `RecoveryUsage`：
 
 ```text
 discover Snapshot cut S
@@ -136,9 +138,9 @@ firstWalSequence = S + 1
 
 这一步服务的是“删掉旧 closed segment 后还能从哪里继续”。它不参与 M09S1 final 的发布资格，也不创建第二份 Snapshot descriptor。
 
-若当前 active segment 已经是 header-only 且起点正好为 cut+1，重复 rollover 没有新增安全价值，当前实现会保留它。
+若当前 active segment 已经是 header-only 且起点正好为 cut+1，重复 rollover 没有新增安全价值，完成实现会保留它。
 
-## 当前实现为什么保留两个 Snapshot generation
+## 完成实现为什么保留两个 Snapshot generation
 
 `SnapshotStore` 使用 immutable generation，并在每次 checkpoint 后保留 latest 与 previous 两份 final Snapshot。超过两份时，先删除更旧 Snapshot，再 force snapshot directory。
 
@@ -179,6 +181,8 @@ greatestWalSequence <= protectedSnapshotCut
 - 单个 segment 内 cut 前的部分 records。
 
 M09 只删除 whole segment，不做 record compaction，也不重写 crossing segment。
+
+完成 evidence 明确限制了检测范围：它覆盖 runtime 自己退休前缀后形成的 non-terminal missing-prefix gap，并证明 active/crossing segment 会被保留；它**不声称**能检测运维人员从外部删除最终 active segment 的 terminal deletion。该情形在本单元是 nonclaim，不能从现有 fixed corpus 反推已经受保护。
 
 ## 一次具体的 generation/segment 推演
 
@@ -242,11 +246,11 @@ directory force 失败后，当前实例不能继续接受命令或宣称 retire
 - 真实订单/identity 规模下的 Snapshot 文件大小；
 - checkpoint 对 caller 的暂停时间。
 
-尤其当前 Snapshot 是同步、quiescent 的，状态越大，checkpoint 暂停越长。性能资格在 M10；不能从结构上有界推导毫秒级 RTO。
+尤其 M09 Snapshot 是同步、quiescent 的，状态越大，checkpoint 暂停越长。性能资格在 M10；不能从结构上有界推导毫秒级 RTO。
 
-## 本地审查时抓住四个断言
+## 完成证据怎样锁住五个断言
 
-在 completion evidence 形成前，可以先逐项审查实现：
+完成实现与报告逐项锁住：
 
 1. `RecoveryBudget.accepts` 对 records 和 bytes 都用 `<=`，且 overflow fail closed；
 2. `submit` 在 `wal.append` 前返回 `CheckpointRequired`；
@@ -254,7 +258,7 @@ directory force 失败后，当前实例不能继续接受命令或宣称 retire
 4. `checkpoint` 在 Snapshot directory force 后才 rollover，并在 rollover 后才 prune；
 5. `pruneClosedSegmentsThrough` 跳过 active/crossing segment，删除后 force WAL directory。
 
-冻结 RED 中的 `RECOVERY_BUDGET_REJECTS_PRE_WAL`、`RETIRE_ONLY_FULLY_COVERED_SEGMENTS`、`RETIREMENT_DELETE_CRASH_WINDOW` 等 scenario 仍是待执行输入，不是当前草稿可写成 PASS 的 evidence。
+冻结 RED 中的 `RECOVERY_BUDGET_REJECTS_PRE_WAL`、`RETIRE_ONLY_FULLY_COVERED_SEGMENTS`、`RETIREMENT_DELETE_CRASH_WINDOW` 等 scenario 已作为 22 个 fixed scenario 的一部分通过。生成报告又记录 2,703 次预算预测，精确分解为 2,702 accept + 1 reject；65 个 setup budget operation 独立于 3,840 个声明生成操作。原始事实可在 [`recovery-ledger.json`](/signal-grid-blog/practice/high-availability-cex/m09/evidence/reports/recovery-ledger.json) 与 [`fixed-scenarios.json`](/signal-grid-blog/practice/high-availability-cex/m09/evidence/reports/fixed-scenarios.json) 复核。
 
 ## 本篇停止点
 

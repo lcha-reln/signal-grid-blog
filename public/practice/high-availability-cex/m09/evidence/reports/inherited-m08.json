@@ -1,0 +1,9 @@
+{
+  "unit" : "M08",
+  "status" : "PASS",
+  "completeRef" : "course/m08-complete",
+  "fixedScenarios" : 20,
+  "generatedOperations" : 4608,
+  "coverageObligations" : 24,
+  "mutantsKilled" : 10
+}

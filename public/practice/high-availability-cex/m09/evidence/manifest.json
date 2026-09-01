@@ -1,0 +1,190 @@
+{
+  "schemaVersion" : "cex.lab-evidence.v1",
+  "case" : "high-availability-cex",
+  "project" : "matching",
+  "unit" : "M09",
+  "unitTag" : "course/m09-complete",
+  "productRelease" : null,
+  "planVersion" : "0.11",
+  "source" : {
+    "commit" : "147a7e7dd2439764d4a5fe4d1048142645d26f2d",
+    "dirty" : false
+  },
+  "environment" : {
+    "java" : "25.0.4.1+1-LTS",
+    "os" : "Mac OS X",
+    "arch" : "aarch64"
+  },
+  "claims" : [ {
+    "id" : "m00-m08-semantic-regression",
+    "category" : "correctness",
+    "statement" : "The inherited finite M08 completion judge remains PASS; M09 adds storage-state evidence without rebinding the historical source gate.",
+    "status" : "pass",
+    "command" : "./gradlew m09Check --no-daemon",
+    "observations" : {
+      "unit" : "M08",
+      "status" : "PASS",
+      "completeRef" : "course/m08-complete"
+    },
+    "artifacts" : [ {
+      "path" : "reports/inherited-m08.json",
+      "sha256" : "b5b8ba9f199aaca41ec3ded01bcb2c197fef94177038317c98fcac39065b5106"
+    } ]
+  }, {
+    "id" : "snapshot-state-and-suffix-recovery",
+    "category" : "correctness",
+    "statement" : "All 22 fixed scenarios witness the frozen complete-state, published-snapshot, contiguous-suffix, bounded-recovery, and runtime-retirement contract within the stated non-claims.",
+    "status" : "pass",
+    "command" : "./gradlew m09Check --no-daemon",
+    "observations" : {
+      "format" : "M09S1",
+      "genesisWalOracle" : true,
+      "independentStorageLedger" : true,
+      "independentLedgerUsesProductionWalParser" : false,
+      "wholeSegmentExactInventory" : true,
+      "maxSuffixRecords" : 64,
+      "maxSuffixBytes" : 1048576,
+      "realPowerLossClaim" : false,
+      "replication" : false,
+      "aeron" : false,
+      "externalTerminalSegmentDeletionDetection" : false,
+      "retirementEvidenceScope" : "RUNTIME_RETIREMENT_NON_TERMINAL_GAP_AND_ACTIVE_OR_CROSSING_RETENTION"
+    },
+    "artifacts" : [ {
+      "path" : "inputs/snapshot-recovery-v1.json",
+      "sha256" : "b9fd2679d3c82c52875e2a756a26f9c17c19072534477139331426d38f5393cd"
+    }, {
+      "path" : "reports/fixed-scenarios.json",
+      "sha256" : "d320f3df10d40599b397b38b98e1c0e4588d865537d437fd4708fa0c16d45778"
+    }, {
+      "path" : "reports/fixed-history.canonical.utf8",
+      "sha256" : "1636ed177f59347ec11b8e9ffe1fb6d872fd3de5225298381a161a0b7d755f43"
+    } ]
+  }, {
+    "id" : "finite-generated-storage-oracle",
+    "category" : "correctness",
+    "statement" : "Two fresh SplitMix64 generations reproduce exact bytes for 96 by 40 declared operations, separate from a 65-operation budget prelude; a retained-genesis-WAL runtime supplies the semantic comparison while a no-I/O ledger independently checks fresh-append budget predictions, cuts, and exact whole-segment inventory.",
+    "status" : "pass",
+    "command" : "./gradlew m09Check --no-daemon",
+    "observations" : {
+      "algorithm" : "splitmix64-v1",
+      "baseSeed" : "5909",
+      "histories" : 96,
+      "operationsPerHistory" : 40,
+      "operations" : 3840,
+      "declaredGeneratedOperations" : 3840,
+      "setupBudgetOperations" : 65,
+      "lanes" : 4,
+      "historiesPerLane" : 24,
+      "comparisons" : 3840,
+      "ledgerChecks" : 4225,
+      "budgetPredictionScope" : "FRESH_APPEND_CANDIDATES_PLUS_CHECKPOINT_RETRIES_AND_65_SETUP_OPERATIONS",
+      "budgetPredictionChecks" : 2703,
+      "budgetPredictedAccepts" : 2702,
+      "budgetPredictedRejects" : 1,
+      "checkpointRequiredWitnesses" : 1,
+      "digest" : "9551ad7a3026964b57b366e39d6307510789cd83c750bf239098f9ba299354e5",
+      "byteExactRegeneration" : true
+    },
+    "artifacts" : [ {
+      "path" : "inputs/property-suite-v1.json",
+      "sha256" : "794621a446f7896cd43b741809393025e063b0ffb190570d9057b90ce1dabda8"
+    }, {
+      "path" : "reports/generated-properties.json",
+      "sha256" : "4f26cf362fd56552d1ae57ba52ba4c5d452d3ac07e578d45835b9ca7ec09f3d3"
+    }, {
+      "path" : "reports/generated-history.canonical.utf8",
+      "sha256" : "9551ad7a3026964b57b366e39d6307510789cd83c750bf239098f9ba299354e5"
+    }, {
+      "path" : "reports/recovery-ledger.json",
+      "sha256" : "fc8fb5119b61f8f1886a32cc4bb94164d7bb09642a029e4976bafecf7e376a84"
+    }, {
+      "path" : "reports/storage-inventory.json",
+      "sha256" : "3557b809e0d3f6c65e4db631488da8fbb48b65e7a77efbdf7efaf63833dae0ca"
+    } ]
+  }, {
+    "id" : "publication-retirement-fault-boundaries",
+    "category" : "correctness",
+    "statement" : "Thirty-two executable witnesses include a real-JDK StorageOperations trace for publication and retirement order. Eight failures are injected at declared pre-operation hooks, while seven child Runtime.halt(86) windows bind the declared hook to namespace and fresh-reopen observations; neither hook suite claims independent observation of the underlying operation order or real power loss.",
+    "status" : "pass",
+    "command" : "./gradlew m09Check --no-daemon",
+    "observations" : {
+      "childRuntimeHalts" : 7,
+      "operationFailureSeams" : 8,
+      "systemHarnessFailuresAreSystemError" : true,
+      "fixedStorageOperationProgramOrderObserved" : true,
+      "childHaltAtDeclaredHookAndNamespaceObserved" : true,
+      "childUnderlyingOperationOrderClaim" : false,
+      "operationFailureAtDeclaredPreOperationHook" : true,
+      "operationFailureUnderlyingOperationExecutionClaim" : false,
+      "physicalDurabilityClaim" : false,
+      "realPowerLossClaim" : false
+    },
+    "artifacts" : [ {
+      "path" : "reports/coverage.json",
+      "sha256" : "51a6105efa1bee41cdf07f8375f2e8150ac613cab8d05330cf2ba9f246fe27be"
+    }, {
+      "path" : "reports/crash-windows.json",
+      "sha256" : "e614cf5225a7a9d7dfd799cdfce46a09780b91ca9ec035e7f9e7d786ef19cf9f"
+    }, {
+      "path" : "reports/operation-failures.json",
+      "sha256" : "82b73ccecce34169a29bc25fe74533d37880311ebd0b08ddd3b472607d8c7610"
+    } ]
+  }, {
+    "id" : "executable-storage-candidates",
+    "category" : "correctness",
+    "statement" : "Nine storage/state mutants and three invalid-latest acceptance candidates produce STUDENT_FAILURE under fresh strict replay. One-minimal means no single deletion reproduces the same fingerprint; PASS, INVALID_HISTORY, and a different failure are allowed, while INVALID_HISTORY and the throwing SYSTEM_ERROR control are excluded from kills.",
+    "status" : "pass",
+    "command" : "./gradlew m09Check --no-daemon",
+    "observations" : {
+      "required" : 12,
+      "storageAndStateMutants" : 9,
+      "invalidLatestAcceptanceCandidates" : 3,
+      "executableCandidates" : 12,
+      "killedAsStudentFailure" : 12,
+      "throwingControl" : "SYSTEM_ERROR",
+      "systemErrorCountedAsKill" : false,
+      "actualMutationActions" : 13
+    },
+    "artifacts" : [ {
+      "path" : "reports/counterexamples-v1.json",
+      "sha256" : "5f69ff12a3e802069b698a780187a70ec355c4beb4c9dfdd2dd70e65996a2059"
+    }, {
+      "path" : "reports/counterexamples.json",
+      "sha256" : "2e313ddbf8206603d609867f496e8863381cccd2e4ba8ac03cf006eb0aed9749"
+    }, {
+      "path" : "reports/counterexamples.canonical.utf8",
+      "sha256" : "0dd88e0ced4a35dab53f357a657c299484eabeeb6111cd70221603a971f0a3eb"
+    }, {
+      "path" : "reports/replay.json",
+      "sha256" : "10b12a2ea8eeaef926db970016b2370a7233e9b75cefeb402c69300486c4e6c8"
+    }, {
+      "path" : "reports/mutants.json",
+      "sha256" : "2660aef4633ddbb2631b195786c82845c1b9eebdaaf4fca88d1c5713f98d1ecb"
+    } ]
+  }, {
+    "id" : "local-runtime-boundary",
+    "category" : "architecture",
+    "statement" : "The matching core remains infrastructure-free, the local runtime remains JDK-and-core only, and the testkit-only bridge is compiled only in matching-testkit and is absent from matching-local-runtime production sources and dependencies.",
+    "status" : "pass",
+    "command" : "./gradlew m09Check --no-daemon",
+    "observations" : {
+      "violations" : 0,
+      "coreInfrastructureFree" : true,
+      "localRuntimeJdkAndCoreOnly" : true,
+      "testkitProbeAbsentFromProduction" : true,
+      "storageOperationsProductionWiringVerified" : true,
+      "independentLedgerProductionParserFree" : true
+    },
+    "artifacts" : [ {
+      "path" : "reports/architecture.json",
+      "sha256" : "7cade80550e7457a59b771ed92a1c69f15c4a0bb88f8e858cc00f2d5d09b273f"
+    }, {
+      "path" : "reports/check.json",
+      "sha256" : "0145d925158250a72e32f38101d060c508c8b4d3dda5fe4b77c276ac4b64508e"
+    } ]
+  } ],
+  "limitations" : [ "This unit is one caller-serialized process and one shard; it is not replicated and is not a high-availability deployment.", "M09S1 and M08W1 are internal local-storage formats, not a Rest, WebSocket, Aeron, or public exchange protocol; M09 supports one format only and unknown versions fail closed.", "The snapshot candidate and retained-genesis-WAL oracle both use the production WAL parser and inherited matching core; only the no-I/O storage ledger is independent, so there is no third complete M00-M08 business model.", "The production recovery budget is 64 suffix records and 1 MiB; the fixed multi-segment mechanism fixture uses a test-only 4 MiB byte budget to create a crossing suffix shape that the default minimum segment size cannot create.", "Retaining the latest two published snapshots is an implementation policy, not an N-1 format-evolution or rolling-upgrade contract.", "Retirement evidence covers runtime-created non-terminal missing-prefix gaps and retention of active or crossing segments; detection of an externally deleted final active segment is explicitly not claimed.", "Runtime.halt(86) children prove process termination at seven forced markers without normal close; they do not prove power-loss or physical-media durability.", "The eight operation failures are deterministic code-level injections, not real disk-full, read-only-mount, controller, device-cache, or filesystem crash-consistency tests.", "FileChannel.force(true) is evidence only for the documented JDK and operating-system barrier; no physical-media guarantee is claimed.", "The fixed 22 scenarios and 96 histories by 40 operations are finite tests, not exhaustive exploration or formal verification.", "The twelve executable candidates are nine storage/state mutants plus three invalid-latest acceptance candidates; killing them does not establish the absence of unknown snapshot, WAL, retention, or recovery defects, and INVALID_HISTORY never counts as a kill.", "There is no Aeron, Raft, leader election, quorum, replication, failover, multi-shard routing, database restore, or external side-effect idempotency.", "The evidence makes no throughput, latency, capacity, security, online-upgrade, operational, or production-readiness claim." ],
+  "supersedes" : null,
+  "generatedAt" : "2026-09-01T11:50:26.965147Z"
+}

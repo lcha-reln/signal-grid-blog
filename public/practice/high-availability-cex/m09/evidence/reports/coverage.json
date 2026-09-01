@@ -1,0 +1,168 @@
+{
+  "schemaVersion" : "matching.m09.coverage-report.v1",
+  "unit" : "M09",
+  "status" : "PASS",
+  "required" : 32,
+  "observed" : 32,
+  "obligations" : [ {
+    "id" : "QUIESCENT_COMMAND_BOUNDARY_CAPTURE",
+    "hit" : true,
+    "scenario" : "FULL_CORE_STATE_ROUND_TRIP",
+    "assertion" : "complete core image restored and continued equivalently:QUIESCENT_COMMAND_BOUNDARY_CAPTURE"
+  }, {
+    "id" : "FULL_ORDER_REGISTRY_ROUND_TRIP",
+    "hit" : true,
+    "scenario" : "FULL_CORE_STATE_ROUND_TRIP",
+    "assertion" : "complete core image restored and continued equivalently:FULL_ORDER_REGISTRY_ROUND_TRIP"
+  }, {
+    "id" : "PRICE_TIME_FIFO_ROUND_TRIP",
+    "hit" : true,
+    "scenario" : "FULL_CORE_STATE_ROUND_TRIP",
+    "assertion" : "complete core image restored and continued equivalently:PRICE_TIME_FIFO_ROUND_TRIP"
+  }, {
+    "id" : "TERMINAL_ORDER_NON_RESURRECTION",
+    "hit" : true,
+    "scenario" : "TERMINAL_ORDER_NON_RESURRECTION",
+    "assertion" : "filled and canceled identities remained terminal:TERMINAL_ORDER_NON_RESURRECTION"
+  }, {
+    "id" : "STP_STATE_ROUND_TRIP",
+    "hit" : true,
+    "scenario" : "FULL_CORE_STATE_ROUND_TRIP",
+    "assertion" : "complete core image restored and continued equivalently:STP_STATE_ROUND_TRIP"
+  }, {
+    "id" : "ACTIVE_RULE_SET_ROUND_TRIP",
+    "hit" : true,
+    "scenario" : "RULE_SET_AND_ACTIVATION_FENCE_ROUND_TRIP",
+    "assertion" : "active/prepared rule sets and activation fence restored:ACTIVE_RULE_SET_ROUND_TRIP"
+  }, {
+    "id" : "PREPARED_RULE_SET_ROUND_TRIP",
+    "hit" : true,
+    "scenario" : "RULE_SET_AND_ACTIVATION_FENCE_ROUND_TRIP",
+    "assertion" : "active/prepared rule sets and activation fence restored:PREPARED_RULE_SET_ROUND_TRIP"
+  }, {
+    "id" : "CONTROL_FENCES_ROUND_TRIP",
+    "hit" : true,
+    "scenario" : "RULE_SET_AND_ACTIVATION_FENCE_ROUND_TRIP",
+    "assertion" : "active/prepared rule sets and activation fence restored:CONTROL_FENCES_ROUND_TRIP"
+  }, {
+    "id" : "MARKET_MODE_ROUND_TRIP",
+    "hit" : true,
+    "scenario" : "CANCEL_ONLY_MODE_ROUND_TRIP",
+    "assertion" : "CANCEL_ONLY mode and fence restored:MARKET_MODE_ROUND_TRIP"
+  }, {
+    "id" : "MASS_CANCEL_FENCE_ROUND_TRIP",
+    "hit" : true,
+    "scenario" : "HALTED_MASS_CANCEL_FENCE_ROUND_TRIP",
+    "assertion" : "HALTED mode and Mass Cancel fence restored:MASS_CANCEL_FENCE_ROUND_TRIP"
+  }, {
+    "id" : "SEQUENCE_CURSORS_ROUND_TRIP",
+    "hit" : true,
+    "scenario" : "FULL_CORE_STATE_ROUND_TRIP",
+    "assertion" : "complete core image restored and continued equivalently:SEQUENCE_CURSORS_ROUND_TRIP"
+  }, {
+    "id" : "DURABLE_IDENTITY_INDEX_ROUND_TRIP",
+    "hit" : true,
+    "scenario" : "DURABLE_IDENTITY_AND_ORIGINAL_RESULT_ROUND_TRIP",
+    "assertion" : "durable identity and original result survived:DURABLE_IDENTITY_INDEX_ROUND_TRIP"
+  }, {
+    "id" : "ORIGINAL_RESULT_REPLAY_ROUND_TRIP",
+    "hit" : true,
+    "scenario" : "DURABLE_IDENTITY_AND_ORIGINAL_RESULT_ROUND_TRIP",
+    "assertion" : "durable identity and original result survived:ORIGINAL_RESULT_REPLAY_ROUND_TRIP"
+  }, {
+    "id" : "TRANSCRIPT_DIGEST_ROUND_TRIP",
+    "hit" : true,
+    "scenario" : "TRANSCRIPT_AND_DIGEST_ROUND_TRIP",
+    "assertion" : "semantic and serialization digests remained separate:TRANSCRIPT_DIGEST_ROUND_TRIP"
+  }, {
+    "id" : "SEMANTIC_SERIALIZATION_DIGEST_SEPARATION",
+    "hit" : true,
+    "scenario" : "TRANSCRIPT_AND_DIGEST_ROUND_TRIP",
+    "assertion" : "semantic and serialization digests remained separate:SEMANTIC_SERIALIZATION_DIGEST_SEPARATION"
+  }, {
+    "id" : "SNAPSHOT_SUFFIX_GENESIS_EQUIVALENCE",
+    "hit" : true,
+    "scenario" : "SNAPSHOT_SUFFIX_EQUALS_GENESIS_REPLAY",
+    "assertion" : "snapshot plus contiguous suffix equaled genesis replay:SNAPSHOT_SUFFIX_GENESIS_EQUIVALENCE"
+  }, {
+    "id" : "EMPTY_SUFFIX_RECOVERY",
+    "hit" : true,
+    "scenario" : "EMPTY_SUFFIX_RECOVERY",
+    "assertion" : "empty WAL suffix restored exactly:EMPTY_SUFFIX_RECOVERY"
+  }, {
+    "id" : "MULTI_SEGMENT_SUFFIX_RECOVERY",
+    "hit" : true,
+    "scenario" : "MULTI_SEGMENT_SUFFIX_RECOVERY",
+    "assertion" : "configured bounded suffix crossed segments and matched genesis:MULTI_SEGMENT_SUFFIX_RECOVERY"
+  }, {
+    "id" : "CUT_RECORD_EXACTLY_ONCE",
+    "hit" : true,
+    "scenario" : "SNAPSHOT_SUFFIX_EQUALS_GENESIS_REPLAY",
+    "assertion" : "snapshot plus contiguous suffix equaled genesis replay:CUT_RECORD_EXACTLY_ONCE"
+  }, {
+    "id" : "RECOVERY_BUDGET_ENFORCED_PRE_WAL",
+    "hit" : true,
+    "scenario" : "RECOVERY_BUDGET_REJECTS_PRE_WAL",
+    "assertion" : "LIVE_RECORD_OVERRUN_REJECTED_PRE_WAL;LIVE_BYTE_OVERRUN_REJECTED_PRE_WAL;FRESH_RECOVERY_RECORD_OVERRUN_REJECTED_PRE_APPLY;FRESH_RECOVERY_BYTE_OVERRUN_REJECTED_PRE_APPLY:RECOVERY_BUDGET_ENFORCED_PRE_WAL"
+  }, {
+    "id" : "ORPHAN_TEMP_IGNORED",
+    "hit" : true,
+    "scenario" : "ORPHAN_TEMP_SNAPSHOT_IS_NOT_AUTHORITY",
+    "assertion" : "orphan partial temp was ignored and removed:ORPHAN_TEMP_IGNORED"
+  }, {
+    "id" : "SNAPSHOT_FORCE_BEFORE_RENAME",
+    "hit" : true,
+    "scenario" : "SNAPSHOT_PUBLICATION_ORDER",
+    "assertion" : "FORCED_CANONICAL_TEMP_PRESENT_BEFORE_RENAME;CANONICAL_FINAL_PRESENT_AFTER_RENAME_BEFORE_DIRECTORY_FORCE;OLD_WAL_PRESENT_AFTER_DIRECTORY_FORCE_BEFORE_RETENTION:SNAPSHOT_FORCE_BEFORE_RENAME"
+  }, {
+    "id" : "SNAPSHOT_RENAME_BEFORE_DIRECTORY_FORCE",
+    "hit" : true,
+    "scenario" : "SNAPSHOT_PUBLICATION_ORDER",
+    "assertion" : "FORCED_CANONICAL_TEMP_PRESENT_BEFORE_RENAME;CANONICAL_FINAL_PRESENT_AFTER_RENAME_BEFORE_DIRECTORY_FORCE;OLD_WAL_PRESENT_AFTER_DIRECTORY_FORCE_BEFORE_RETENTION:SNAPSHOT_RENAME_BEFORE_DIRECTORY_FORCE"
+  }, {
+    "id" : "SNAPSHOT_DIRECTORY_FORCE_BEFORE_RETIREMENT",
+    "hit" : true,
+    "scenario" : "SNAPSHOT_PUBLICATION_ORDER",
+    "assertion" : "FORCED_CANONICAL_TEMP_PRESENT_BEFORE_RENAME;CANONICAL_FINAL_PRESENT_AFTER_RENAME_BEFORE_DIRECTORY_FORCE;OLD_WAL_PRESENT_AFTER_DIRECTORY_FORCE_BEFORE_RETENTION:SNAPSHOT_DIRECTORY_FORCE_BEFORE_RETIREMENT"
+  }, {
+    "id" : "NEWEST_PUBLISHED_GENERATION_SELECTED",
+    "hit" : true,
+    "scenario" : "NEWEST_PUBLISHED_GENERATION_WINS",
+    "assertion" : "production selected snapshot anchor generation=2 cut=2:NEWEST_PUBLISHED_GENERATION_SELECTED"
+  }, {
+    "id" : "UNKNOWN_SNAPSHOT_VERSION_FAIL_CLOSED",
+    "hit" : true,
+    "scenario" : "UNKNOWN_SNAPSHOT_VERSION_FAILS_CLOSED",
+    "assertion" : "unknown version with valid integrity failed closed:UNKNOWN_SNAPSHOT_VERSION_FAIL_CLOSED"
+  }, {
+    "id" : "SNAPSHOT_CORRUPTION_FAIL_CLOSED",
+    "hit" : true,
+    "scenario" : "SNAPSHOT_CORRUPTION_FAILS_CLOSED",
+    "assertion" : "body corruption failed closed:SNAPSHOT_CORRUPTION_FAIL_CLOSED"
+  }, {
+    "id" : "GENERATION_SHARD_CUT_MISMATCH_FAIL_CLOSED",
+    "hit" : true,
+    "scenario" : "SNAPSHOT_IDENTITY_MISMATCH_FAILS_CLOSED",
+    "assertion" : "FILENAME_HEADER_GENERATION_MISMATCH_REJECTED;VALID_INTEGRITY_WRONG_SHARD_REJECTED;HEADER_STATE_WAL_CUT_MISMATCH_REJECTED:GENERATION_SHARD_CUT_MISMATCH_FAIL_CLOSED"
+  }, {
+    "id" : "RETIRE_ONLY_FULLY_COVERED_CLOSED_SEGMENTS",
+    "hit" : true,
+    "scenario" : "RETIRE_ONLY_FULLY_COVERED_SEGMENTS",
+    "assertion" : "only fully covered closed segments retired:RETIRE_ONLY_FULLY_COVERED_CLOSED_SEGMENTS"
+  }, {
+    "id" : "ACTIVE_OR_CROSSING_SEGMENT_RETAINED",
+    "hit" : true,
+    "scenario" : "RETIRE_ONLY_FULLY_COVERED_SEGMENTS",
+    "assertion" : "only fully covered closed segments retired:ACTIVE_OR_CROSSING_SEGMENT_RETAINED"
+  }, {
+    "id" : "RETIREMENT_DELETE_DIRECTORY_FORCE",
+    "hit" : true,
+    "scenario" : "RETIREMENT_DELETE_DIRECTORY_FORCE_ORDER",
+    "assertion" : "delete-directory-force-return order observed:RETIREMENT_DELETE_DIRECTORY_FORCE"
+  }, {
+    "id" : "MISSING_PREFIX_WITHOUT_VALID_SNAPSHOT_FAIL_CLOSED",
+    "hit" : true,
+    "scenario" : "RETIREMENT_DELETE_CRASH_WINDOW",
+    "assertion" : "first-delete interruption reopened from published authority; after removing the required snapshot, missing-prefix reopen failed closed:MISSING_PREFIX_WITHOUT_VALID_SNAPSHOT_FAIL_CLOSED"
+  } ]
+}

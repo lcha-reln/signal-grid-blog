@@ -1,0 +1,336 @@
+{
+  "schemaVersion" : "matching.m09.crash-windows-report.v1",
+  "unit" : "M09",
+  "status" : "PASS",
+  "model" : "CHILD_JVM_RUNTIME_HALT",
+  "required" : 7,
+  "observed" : 7,
+  "exitCode" : 86,
+  "markerForced" : true,
+  "windowAndOccurrenceChecked" : true,
+  "freshReopenAndSemanticRetryChecked" : true,
+  "harnessMismatchClassification" : "SYSTEM_ERROR",
+  "haltAtDeclaredHookAndNamespaceObserved" : true,
+  "underlyingOperationOrderClaim" : false,
+  "physicalDurabilityClaim" : false,
+  "realPowerLossClaim" : false,
+  "windows" : [ {
+    "window" : "BEFORE_SNAPSHOT_TEMP_WRITE",
+    "exitCode" : 86,
+    "markerForced" : true,
+    "faultPoint" : "BEFORE_SNAPSHOT_TEMP_WRITE",
+    "occurrence" : 1,
+    "freshReopen" : true,
+    "expectedNextWalSequence" : 2,
+    "processCrash" : true,
+    "runtimeHalt" : true,
+    "powerLossProof" : false,
+    "haltAtDeclaredHookAndNamespaceObserved" : true,
+    "underlyingOperationOrderClaim" : false,
+    "physicalDurabilityClaim" : false,
+    "expectedInventoryAtHalt" : {
+      "snapshotTemps" : 1,
+      "snapshots" : 0,
+      "walSegments" : 1,
+      "canonicalSnapshotFiles" : 0,
+      "tempState" : "EMPTY"
+    },
+    "inventoryAtHalt" : [ {
+      "name" : ".m08w1.lock",
+      "kind" : "DIRECTORY_LOCK",
+      "bytes" : 0,
+      "sha256" : "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "regularFile" : true
+    }, {
+      "name" : "segment-00000000000000000001.m08w1",
+      "kind" : "WAL_SEGMENT",
+      "bytes" : 213,
+      "sha256" : "81b551dbdbba84b30e70a715f7b514dc47857a667662d3c6303928479addab78",
+      "regularFile" : true
+    }, {
+      "name" : "snapshot-00000000000000000001-00000000000000000001.m09s1.tmp",
+      "kind" : "SNAPSHOT_TEMP",
+      "bytes" : 0,
+      "sha256" : "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "regularFile" : true
+    } ],
+    "canonicalSnapshotFilesAtHalt" : 0,
+    "stdout" : ""
+  }, {
+    "window" : "AFTER_PARTIAL_SNAPSHOT_TEMP_WRITE",
+    "exitCode" : 86,
+    "markerForced" : true,
+    "faultPoint" : "AFTER_PARTIAL_SNAPSHOT_TEMP_WRITE",
+    "occurrence" : 1,
+    "freshReopen" : true,
+    "expectedNextWalSequence" : 2,
+    "processCrash" : true,
+    "runtimeHalt" : true,
+    "powerLossProof" : false,
+    "haltAtDeclaredHookAndNamespaceObserved" : true,
+    "underlyingOperationOrderClaim" : false,
+    "physicalDurabilityClaim" : false,
+    "expectedInventoryAtHalt" : {
+      "snapshotTemps" : 1,
+      "snapshots" : 0,
+      "walSegments" : 1,
+      "canonicalSnapshotFiles" : 0,
+      "tempState" : "PARTIAL"
+    },
+    "inventoryAtHalt" : [ {
+      "name" : ".m08w1.lock",
+      "kind" : "DIRECTORY_LOCK",
+      "bytes" : 0,
+      "sha256" : "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "regularFile" : true
+    }, {
+      "name" : "segment-00000000000000000001.m08w1",
+      "kind" : "WAL_SEGMENT",
+      "bytes" : 220,
+      "sha256" : "eff404e26d7f022c6446827dc2696ead17cdf537b3ca3ac70be0b81309d73d09",
+      "regularFile" : true
+    }, {
+      "name" : "snapshot-00000000000000000001-00000000000000000001.m09s1.tmp",
+      "kind" : "SNAPSHOT_TEMP",
+      "bytes" : 586,
+      "sha256" : "94b455b69a09560cf6157d17406dedc9190fc8e7be90f8413fd344f791a860a3",
+      "regularFile" : true
+    } ],
+    "canonicalSnapshotFilesAtHalt" : 0,
+    "stdout" : ""
+  }, {
+    "window" : "AFTER_SNAPSHOT_FILE_FORCE_BEFORE_RENAME",
+    "exitCode" : 86,
+    "markerForced" : true,
+    "faultPoint" : "BEFORE_SNAPSHOT_READ",
+    "occurrence" : 1,
+    "freshReopen" : true,
+    "expectedNextWalSequence" : 2,
+    "processCrash" : true,
+    "runtimeHalt" : true,
+    "powerLossProof" : false,
+    "haltAtDeclaredHookAndNamespaceObserved" : true,
+    "underlyingOperationOrderClaim" : false,
+    "physicalDurabilityClaim" : false,
+    "expectedInventoryAtHalt" : {
+      "snapshotTemps" : 1,
+      "snapshots" : 0,
+      "walSegments" : 1,
+      "canonicalSnapshotFiles" : 1,
+      "tempState" : "CANONICAL"
+    },
+    "inventoryAtHalt" : [ {
+      "name" : ".m08w1.lock",
+      "kind" : "DIRECTORY_LOCK",
+      "bytes" : 0,
+      "sha256" : "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "regularFile" : true
+    }, {
+      "name" : "segment-00000000000000000001.m08w1",
+      "kind" : "WAL_SEGMENT",
+      "bytes" : 226,
+      "sha256" : "3374d63b793173ff6c978d8efb6bdcac63b0a43615ff4f2bd4cde0c10919797e",
+      "regularFile" : true
+    }, {
+      "name" : "snapshot-00000000000000000001-00000000000000000001.m09s1.tmp",
+      "kind" : "SNAPSHOT_TEMP",
+      "bytes" : 1178,
+      "sha256" : "ad86af750674e97cac91774cb0e7829ceab941b12b2ea95970e12e571d4f47cc",
+      "regularFile" : true
+    } ],
+    "canonicalSnapshotFilesAtHalt" : 1,
+    "stdout" : ""
+  }, {
+    "window" : "AFTER_SNAPSHOT_RENAME_BEFORE_DIRECTORY_FORCE",
+    "exitCode" : 86,
+    "markerForced" : true,
+    "faultPoint" : "BEFORE_SNAPSHOT_DIRECTORY_FORCE",
+    "occurrence" : 1,
+    "freshReopen" : true,
+    "expectedNextWalSequence" : 2,
+    "processCrash" : true,
+    "runtimeHalt" : true,
+    "powerLossProof" : false,
+    "haltAtDeclaredHookAndNamespaceObserved" : true,
+    "underlyingOperationOrderClaim" : false,
+    "physicalDurabilityClaim" : false,
+    "expectedInventoryAtHalt" : {
+      "snapshotTemps" : 0,
+      "snapshots" : 1,
+      "walSegments" : 1,
+      "canonicalSnapshotFiles" : 1,
+      "tempState" : "ABSENT"
+    },
+    "inventoryAtHalt" : [ {
+      "name" : ".m08w1.lock",
+      "kind" : "DIRECTORY_LOCK",
+      "bytes" : 0,
+      "sha256" : "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "regularFile" : true
+    }, {
+      "name" : "segment-00000000000000000001.m08w1",
+      "kind" : "WAL_SEGMENT",
+      "bytes" : 231,
+      "sha256" : "92ef5096252f4ae75ad143959850edd3c1909a8c873d5372dfd1f1403ee307dc",
+      "regularFile" : true
+    }, {
+      "name" : "snapshot-00000000000000000001-00000000000000000001.m09s1",
+      "kind" : "SNAPSHOT",
+      "bytes" : 1183,
+      "sha256" : "35f36b6f068589f04f196b7bb32ed452c09578586bb46fb5878f7006dbda1710",
+      "regularFile" : true
+    } ],
+    "canonicalSnapshotFilesAtHalt" : 1,
+    "stdout" : ""
+  }, {
+    "window" : "AFTER_SNAPSHOT_DIRECTORY_FORCE_BEFORE_RETIREMENT",
+    "exitCode" : 86,
+    "markerForced" : true,
+    "faultPoint" : "AFTER_SNAPSHOT_DIRECTORY_FORCE_BEFORE_RETENTION",
+    "occurrence" : 1,
+    "freshReopen" : true,
+    "expectedNextWalSequence" : 2,
+    "processCrash" : true,
+    "runtimeHalt" : true,
+    "powerLossProof" : false,
+    "haltAtDeclaredHookAndNamespaceObserved" : true,
+    "underlyingOperationOrderClaim" : false,
+    "physicalDurabilityClaim" : false,
+    "expectedInventoryAtHalt" : {
+      "snapshotTemps" : 0,
+      "snapshots" : 1,
+      "walSegments" : 1,
+      "canonicalSnapshotFiles" : 1,
+      "tempState" : "ABSENT"
+    },
+    "inventoryAtHalt" : [ {
+      "name" : ".m08w1.lock",
+      "kind" : "DIRECTORY_LOCK",
+      "bytes" : 0,
+      "sha256" : "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "regularFile" : true
+    }, {
+      "name" : "segment-00000000000000000001.m08w1",
+      "kind" : "WAL_SEGMENT",
+      "bytes" : 235,
+      "sha256" : "f9757aacec1f32b0c60498211e51285b672dbac2b7b4787a5555b672bff984e3",
+      "regularFile" : true
+    }, {
+      "name" : "snapshot-00000000000000000001-00000000000000000001.m09s1",
+      "kind" : "SNAPSHOT",
+      "bytes" : 1187,
+      "sha256" : "6cf17abfe404d0e89f7cab50e1023ed7c56391ed27b08cd80dc49109f51a76a1",
+      "regularFile" : true
+    } ],
+    "canonicalSnapshotFilesAtHalt" : 1,
+    "stdout" : ""
+  }, {
+    "window" : "AFTER_FIRST_SEGMENT_DELETE_BEFORE_DIRECTORY_FORCE",
+    "exitCode" : 86,
+    "markerForced" : true,
+    "faultPoint" : "AFTER_FIRST_RETENTION_SEGMENT_DELETE",
+    "occurrence" : 1,
+    "freshReopen" : true,
+    "expectedNextWalSequence" : 3,
+    "processCrash" : true,
+    "runtimeHalt" : true,
+    "powerLossProof" : false,
+    "haltAtDeclaredHookAndNamespaceObserved" : true,
+    "underlyingOperationOrderClaim" : false,
+    "physicalDurabilityClaim" : false,
+    "expectedInventoryAtHalt" : {
+      "snapshotTemps" : 0,
+      "snapshots" : 2,
+      "walSegments" : 2,
+      "canonicalSnapshotFiles" : 2,
+      "tempState" : "ABSENT"
+    },
+    "inventoryAtHalt" : [ {
+      "name" : ".m08w1.lock",
+      "kind" : "DIRECTORY_LOCK",
+      "bytes" : 0,
+      "sha256" : "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "regularFile" : true
+    }, {
+      "name" : "segment-00000000000000000002.m08w1",
+      "kind" : "WAL_SEGMENT",
+      "bytes" : 236,
+      "sha256" : "2000e495376dc9c08184413a5f4d7566f7309e8358c8e63caade9cfed4999626",
+      "regularFile" : true
+    }, {
+      "name" : "segment-00000000000000000003.m08w1",
+      "kind" : "WAL_SEGMENT",
+      "bytes" : 36,
+      "sha256" : "062bb86d168a869ddf97810f198faeff88ebb3080772473aeb5ff6555bc5f613",
+      "regularFile" : true
+    }, {
+      "name" : "snapshot-00000000000000000001-00000000000000000001.m09s1",
+      "kind" : "SNAPSHOT",
+      "bytes" : 1188,
+      "sha256" : "f615c9309e97d3beb770d8533bd495b364a58dbd2effb18f7141a19c41aca824",
+      "regularFile" : true
+    }, {
+      "name" : "snapshot-00000000000000000002-00000000000000000002.m09s1",
+      "kind" : "SNAPSHOT",
+      "bytes" : 1950,
+      "sha256" : "b7992e44d19325232c56db0105bceb85411e6d3d6361d5c87627b3047fddbcc2",
+      "regularFile" : true
+    } ],
+    "canonicalSnapshotFilesAtHalt" : 2,
+    "stdout" : ""
+  }, {
+    "window" : "AFTER_RETIREMENT_DIRECTORY_FORCE_BEFORE_RETURN",
+    "exitCode" : 86,
+    "markerForced" : true,
+    "faultPoint" : "AFTER_RETENTION_DIRECTORY_FORCE_BEFORE_RETURN",
+    "occurrence" : 1,
+    "freshReopen" : true,
+    "expectedNextWalSequence" : 3,
+    "processCrash" : true,
+    "runtimeHalt" : true,
+    "powerLossProof" : false,
+    "haltAtDeclaredHookAndNamespaceObserved" : true,
+    "underlyingOperationOrderClaim" : false,
+    "physicalDurabilityClaim" : false,
+    "expectedInventoryAtHalt" : {
+      "snapshotTemps" : 0,
+      "snapshots" : 2,
+      "walSegments" : 2,
+      "canonicalSnapshotFiles" : 2,
+      "tempState" : "ABSENT"
+    },
+    "inventoryAtHalt" : [ {
+      "name" : ".m08w1.lock",
+      "kind" : "DIRECTORY_LOCK",
+      "bytes" : 0,
+      "sha256" : "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "regularFile" : true
+    }, {
+      "name" : "segment-00000000000000000002.m08w1",
+      "kind" : "WAL_SEGMENT",
+      "bytes" : 233,
+      "sha256" : "a1456e5d3e87050e49d7671b3808ea53907ce428dc8068af4bb96e527611a568",
+      "regularFile" : true
+    }, {
+      "name" : "segment-00000000000000000003.m08w1",
+      "kind" : "WAL_SEGMENT",
+      "bytes" : 36,
+      "sha256" : "062bb86d168a869ddf97810f198faeff88ebb3080772473aeb5ff6555bc5f613",
+      "regularFile" : true
+    }, {
+      "name" : "snapshot-00000000000000000001-00000000000000000001.m09s1",
+      "kind" : "SNAPSHOT",
+      "bytes" : 1185,
+      "sha256" : "0d141580d87a89c7779b671adc609d3c4d307a1ffc1f16331fae85ff7608c2b8",
+      "regularFile" : true
+    }, {
+      "name" : "snapshot-00000000000000000002-00000000000000000002.m09s1",
+      "kind" : "SNAPSHOT",
+      "bytes" : 1944,
+      "sha256" : "0d1e3a06a61db37410618c0378bd60b646f89319d034b7e3eeaf8a67f4a1ef1c",
+      "regularFile" : true
+    } ],
+    "canonicalSnapshotFilesAtHalt" : 2,
+    "stdout" : ""
+  } ]
+}

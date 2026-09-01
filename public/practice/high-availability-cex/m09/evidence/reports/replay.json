@@ -1,0 +1,19 @@
+{
+  "schemaVersion" : "matching.m09.replay-report.v1",
+  "unit" : "M09",
+  "status" : "PASS",
+  "strictReplays" : 12,
+  "freshRuntimePerMutant" : true,
+  "fingerprintsExact" : true,
+  "oneMinimal" : true,
+  "oneMinimalDefinition" : "NO_SINGLE_DELETE_REPRODUCES_THE_SAME_FINGERPRINT;PASS_INVALID_HISTORY_OR_DIFFERENT_FAILURE_ALLOWED",
+  "globalMinimumClaim" : false,
+  "invalidHistoryCountedAsKill" : false,
+  "singleDeletePasses" : 0,
+  "singleDeleteInvalidHistories" : 64,
+  "singleDeleteDifferentStudentFailures" : 0,
+  "singleDeleteSameFingerprintStudentFailures" : 0,
+  "actualMutationActions" : 13,
+  "invalidLatestBaselines" : "UNKNOWN_VERSION_AND_SHARD_MISMATCH_REWRITE_VALID_INTEGRITY; CORRUPTION_BREAKS_CRC_OR_HASH",
+  "decoderMutationClaim" : "ONLY_EXECUTABLE_ACCEPTANCE_CANDIDATES; RESTORING_VALID_BYTES_IS_NOT_PRODUCTION_DECODER_PROOF"
+}

@@ -1,0 +1,99 @@
+{
+  "schemaVersion" : "matching.m09.mutants-report.v1",
+  "unit" : "M09",
+  "status" : "PASS",
+  "required" : 12,
+  "storageAndStateMutants" : 9,
+  "invalidLatestAcceptanceCandidates" : 3,
+  "executableCandidates" : 12,
+  "killedAsStudentFailure" : 12,
+  "throwingControl" : "SYSTEM_ERROR",
+  "systemErrorCountedAsKill" : false,
+  "actualMutationActions" : 13,
+  "invalidLatestBaselineIntegrity" : "UNKNOWN_VERSION_VALID; SHARD_MISMATCH_VALID; CORRUPTION_INVALID",
+  "results" : [ {
+    "id" : "M09-SNAPSHOT-DROPS-RESTING-ORDER",
+    "classification" : "STUDENT_FAILURE",
+    "killed" : true,
+    "fingerprint" : "SNAPSHOT_RESTING_ORDER_STATE",
+    "actualMutationActions" : 1,
+    "systemErrorCountedAsKill" : false
+  }, {
+    "id" : "M09-SNAPSHOT-RESETS-MARKET-MODE",
+    "classification" : "STUDENT_FAILURE",
+    "killed" : true,
+    "fingerprint" : "SNAPSHOT_MARKET_MODE_STATE",
+    "actualMutationActions" : 1,
+    "systemErrorCountedAsKill" : false
+  }, {
+    "id" : "M09-SNAPSHOT-DROPS-PREPARED-RULE-SET",
+    "classification" : "STUDENT_FAILURE",
+    "killed" : true,
+    "fingerprint" : "SNAPSHOT_PREPARED_RULE_STATE",
+    "actualMutationActions" : 1,
+    "systemErrorCountedAsKill" : false
+  }, {
+    "id" : "M09-SNAPSHOT-DROPS-DURABLE-IDENTITY-RESULT",
+    "classification" : "STUDENT_FAILURE",
+    "killed" : true,
+    "fingerprint" : "SNAPSHOT_DURABLE_IDENTITY_RESULT",
+    "actualMutationActions" : 1,
+    "systemErrorCountedAsKill" : false
+  }, {
+    "id" : "M09-SUFFIX-REPLAYS-CUT-RECORD",
+    "classification" : "STUDENT_FAILURE",
+    "killed" : true,
+    "fingerprint" : "SNAPSHOT_CUT_EXACTLY_ONCE",
+    "actualMutationActions" : 1,
+    "systemErrorCountedAsKill" : false
+  }, {
+    "id" : "M09-SUFFIX-SKIPS-FIRST-RECORD",
+    "classification" : "STUDENT_FAILURE",
+    "killed" : true,
+    "fingerprint" : "SNAPSHOT_FIRST_SUFFIX_PRESENT",
+    "actualMutationActions" : 1,
+    "systemErrorCountedAsKill" : false
+  }, {
+    "id" : "M09-UNKNOWN-VERSION-ACCEPTED",
+    "classification" : "STUDENT_FAILURE",
+    "killed" : true,
+    "fingerprint" : "UNKNOWN_SNAPSHOT_VERSION_FAIL_CLOSED",
+    "actualMutationActions" : 1,
+    "systemErrorCountedAsKill" : false
+  }, {
+    "id" : "M09-CORRUPT-SNAPSHOT-ACCEPTED",
+    "classification" : "STUDENT_FAILURE",
+    "killed" : true,
+    "fingerprint" : "CORRUPT_SNAPSHOT_FAIL_CLOSED",
+    "actualMutationActions" : 1,
+    "systemErrorCountedAsKill" : false
+  }, {
+    "id" : "M09-SNAPSHOT-IDENTITY-MISMATCH-ACCEPTED",
+    "classification" : "STUDENT_FAILURE",
+    "killed" : true,
+    "fingerprint" : "SNAPSHOT_IDENTITY_FAIL_CLOSED",
+    "actualMutationActions" : 1,
+    "systemErrorCountedAsKill" : false
+  }, {
+    "id" : "M09-RETIREMENT-BEFORE-SNAPSHOT-DIRECTORY-FORCE",
+    "classification" : "STUDENT_FAILURE",
+    "killed" : true,
+    "fingerprint" : "RETIREMENT_AFTER_SNAPSHOT_DIRECTORY_FORCE",
+    "actualMutationActions" : 1,
+    "systemErrorCountedAsKill" : false
+  }, {
+    "id" : "M09-RETIREMENT-DELETES-CROSSING-SEGMENT",
+    "classification" : "STUDENT_FAILURE",
+    "killed" : true,
+    "fingerprint" : "RETIREMENT_RETAINS_CROSSING_SEGMENT",
+    "actualMutationActions" : 1,
+    "systemErrorCountedAsKill" : false
+  }, {
+    "id" : "M09-GENESIS-FALLBACK-WITH-MISSING-PREFIX",
+    "classification" : "STUDENT_FAILURE",
+    "killed" : true,
+    "fingerprint" : "MISSING_PREFIX_NO_GENESIS_FALLBACK",
+    "actualMutationActions" : 2,
+    "systemErrorCountedAsKill" : false
+  } ]
+}

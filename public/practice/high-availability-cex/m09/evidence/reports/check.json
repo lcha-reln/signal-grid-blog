@@ -1,0 +1,93 @@
+{
+  "schemaVersion" : "matching.m09.check.v2",
+  "unit" : "M09",
+  "status" : "PASS",
+  "contractPlanVersion" : "0.11",
+  "inheritedM08" : {
+    "unit" : "M08",
+    "status" : "PASS",
+    "completeRef" : "course/m08-complete"
+  },
+  "inputs" : {
+    "fixedSha256" : "b9fd2679d3c82c52875e2a756a26f9c17c19072534477139331426d38f5393cd",
+    "generatorSha256" : "794621a446f7896cd43b741809393025e063b0ffb190570d9057b90ce1dabda8"
+  },
+  "fixed" : {
+    "scenarios" : 22,
+    "declaredOperations" : 88,
+    "digest" : "1636ed177f59347ec11b8e9ffe1fb6d872fd3de5225298381a161a0b7d755f43"
+  },
+  "generator" : {
+    "algorithm" : "splitmix64-v1",
+    "baseSeed" : "5909",
+    "histories" : 96,
+    "operationsPerHistory" : 40,
+    "operations" : 3840,
+    "declaredGeneratedOperations" : 3840,
+    "setupBudgetOperations" : 65,
+    "lanes" : 4,
+    "historiesPerLane" : 24,
+    "comparisons" : 3840,
+    "ledgerChecks" : 4225,
+    "budgetPredictionScope" : "FRESH_APPEND_CANDIDATES_PLUS_CHECKPOINT_RETRIES_AND_65_SETUP_OPERATIONS",
+    "budgetPredictionChecks" : 2703,
+    "budgetPredictedAccepts" : 2702,
+    "budgetPredictedRejects" : 1,
+    "checkpointRequiredWitnesses" : 1,
+    "digest" : "9551ad7a3026964b57b366e39d6307510789cd83c750bf239098f9ba299354e5",
+    "byteExactRegeneration" : true
+  },
+  "snapshotRecovery" : {
+    "format" : "M09S1",
+    "genesisWalOracle" : true,
+    "independentStorageLedger" : true,
+    "independentLedgerUsesProductionWalParser" : false,
+    "wholeSegmentExactInventory" : true,
+    "maxSuffixRecords" : 64,
+    "maxSuffixBytes" : 1048576,
+    "realPowerLossClaim" : false,
+    "replication" : false,
+    "aeron" : false,
+    "externalTerminalSegmentDeletionDetection" : false,
+    "retirementEvidenceScope" : "RUNTIME_RETIREMENT_NON_TERMINAL_GAP_AND_ACTIVE_OR_CROSSING_RETENTION"
+  },
+  "coverage" : {
+    "required" : 32,
+    "observed" : 32
+  },
+  "faultEvidence" : {
+    "childRuntimeHalts" : 7,
+    "operationFailureSeams" : 8,
+    "systemHarnessFailuresAreSystemError" : true,
+    "fixedStorageOperationProgramOrderObserved" : true,
+    "childHaltAtDeclaredHookAndNamespaceObserved" : true,
+    "childUnderlyingOperationOrderClaim" : false,
+    "operationFailureAtDeclaredPreOperationHook" : true,
+    "operationFailureUnderlyingOperationExecutionClaim" : false,
+    "physicalDurabilityClaim" : false,
+    "realPowerLossClaim" : false
+  },
+  "mutants" : {
+    "required" : 12,
+    "storageAndStateMutants" : 9,
+    "invalidLatestAcceptanceCandidates" : 3,
+    "executableCandidates" : 12,
+    "killedAsStudentFailure" : 12,
+    "throwingControl" : "SYSTEM_ERROR",
+    "systemErrorCountedAsKill" : false,
+    "actualMutationActions" : 13
+  },
+  "architecture" : {
+    "violations" : 0,
+    "coreInfrastructureFree" : true,
+    "localRuntimeJdkAndCoreOnly" : true,
+    "testkitProbeAbsentFromProduction" : true,
+    "storageOperationsProductionWiringVerified" : true,
+    "independentLedgerProductionParserFree" : true
+  },
+  "releaseTarget" : {
+    "unitTag" : "course/m09-complete",
+    "productRelease" : null,
+    "verification" : "M09_EVIDENCE_ONLY"
+  }
+}

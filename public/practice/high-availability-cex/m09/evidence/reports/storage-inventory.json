@@ -1,0 +1,14 @@
+{
+  "schemaVersion" : "matching.m09.storage-inventory.v1",
+  "unit" : "M09",
+  "status" : "PASS",
+  "checks" : 1366,
+  "snapshotFinalAndTempNamesChecked" : true,
+  "snapshotGenerationAndCutNamesChecked" : true,
+  "walSegmentNamesAndSizesChecked" : true,
+  "unknownDirectoryEntriesRejected" : true,
+  "directoryLockExplicitlyWhitelisted" : true,
+  "exactWholeSegmentRetentionChecked" : true,
+  "activeOrCrossingSegmentRetentionChecked" : true,
+  "externalTerminalSegmentDeletionDetection" : false
+}
