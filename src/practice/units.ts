@@ -3185,9 +3185,10 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     objective:
       "让 fresh runtime 从一个完整、已持久发布且与 WAL anchor 一致的 Snapshot 恢复，再只重放连续 suffix，得到与 genesis replay 相同的 semantic state，同时永不因回收、损坏或预算耗尽静默回到默认状态。",
     order: 100,
-    lifecycle: "CONTRACTED",
+    lifecycle: "IN_PROGRESS",
     contractPlanVersion: "0.11",
     prerequisiteUnitCodes: ["M08"],
+    startRef: "course/m09-start",
     expectedLessons: [
       { lessonOrder: 10, permalink: "snapshot-state-and-consistent-cut" },
       { lessonOrder: 20, permalink: "atomic-snapshot-publication" },
@@ -3201,18 +3202,18 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     delivers: [
       "内部 M09 Snapshot state contract：订单簿与 FIFO identity、订单 lifecycle/terminal registry、Acceptance/Application/WAL sequence、prepared/active RuleSet 与 activation fence、market mode/revision/transition fence、Mass Cancel/STP 归因、producer epoch/next sequence、commandId↔Slot/payloadHash/original result durable binding 全部进入同一 cut",
       "Snapshot 只能位于 caller-serialized、前一条 M08 命令已经完整 apply 的边界；Snapshot 动作本身不消费 ApplicationSequence，不存在并发写入或半完成控制动作，prepared RuleSet 是完整已 apply 状态而不是 in-flight 操作",
-      "M09S1 final header 自带 generation、shard、last included WAL/Application sequence 与 semantic/serialization digests；临时文件写完后依次 file force、atomic rename、parent-directory force，再以 forced rollover 形成 firstWalSequence=cut+1 的 durable active WAL header，不创建独立 recovery descriptor",
-      "恢复先装载 Snapshot@S，再严格重放 WAL(S+1...) 连续 suffix；included record 不得二次 apply，suffix gap/duplicate、anchor mismatch、完整 Snapshot corruption 或未知格式全部失败关闭",
-      "RecoveryBudget 同时冻结 maxReplayRecords=64 与 maxReplayBytes=1048576；suffix 任一维度将越界前，必须于同一串行维护边界发布后继 Snapshot/recovery generation，失败时不得继续接受会扩大 suffix 的新命令，两个计数都不伪装成毫秒 SLA",
+      "M09S1 final file 自带 generation、shard、last included WAL/Application sequence、完整 state 与 semantic/serialization integrity；临时文件依次完成 file force、atomic rename、parent-directory force 后 generation 即已发布，不创建独立 recovery descriptor",
+      "恢复先装载 Snapshot@S，再验证仍完整的 old/crossing WAL 或 cut+1 active segment；included record 只验证不二次 apply，严格重放 WAL(S+1...) 连续 suffix，gap/duplicate、anchor mismatch、完整 Snapshot corruption 或未知格式全部失败关闭",
+      "RecoveryBudget 同时冻结 maxReplayRecords=64 与 maxReplayBytes=1048576；下一条 record 将使任一维度越界时必须于 WAL mutation 前返回 CHECKPOINT_REQUIRED，由调用方显式 checkpoint；fresh recovery scan 也必须在 apply 任何 suffix record 前拒绝超出任一维度的既有 suffix，两个计数都不伪装成毫秒 SLA",
       "WAL 前缀只有在最新 M09S1 final header identity、final directory entry 与 cut+1 active WAL header 全部持久后才可回收；删除及目录 namespace 变化需要持久屏障，残留旧 prefix 只作为可忽略冗余，recovery 始终选择最新 final Snapshot，最新 final 无效时失败关闭而不自动回退旧代",
     ],
     freezes: [
       "Snapshot semantic digest 只描述业务与恢复语义；Snapshot 文件的 serialization digest/CRC 描述具体 bytes，两者不能互相替代，也不能拿 production 自算结果与自己比较后宣称等价",
       "HALTED/CANCEL_ONLY、prepared RuleSet、terminal order identity、业务拒绝和 original duplicate result 都是权威状态；恢复不得只载入订单簿，也不得用默认 OPEN、空索引或重新计算当前结果填补缺失字段",
       "Snapshot cut 必须绑定 last included WAL sequence 与 ApplicationSequence；恢复只接受从精确下一位置开始的无洞 suffix，不能猜测、跳过或重复 apply",
-      "M09 没有独立 latest/descriptor 文件：恢复描述只来自最新 M09S1 final header identity、已 force 的 final 目录项与 cut+1 durable active WAL header；最新 final corruption、未知版本或 anchor mismatch 一律 fail closed，不自动选旧 generation",
+      "M09 没有独立 latest/descriptor 文件：最新 M09S1 final 在其目录项 force 后即是 Snapshot 权威；cut+1 durable active WAL header 只是 prefix retirement 前置条件。directory force 后、rollover 前 crash 必须可由 latest Snapshot + 完整 old/crossing WAL 恢复；最新 final corruption、未知版本或 anchor mismatch 一律 fail closed，不自动选旧 generation",
       "RecoveryBudget 是 records+encoded-bytes 双重 safety bound（64 / 1048576）；没有成功发布可恢复后继 generation 时，系统宁可 fail closed，也不能无界增长后继续声称有界恢复",
-      "CONTRACTED 阶段只冻结语义、教程 permalink 与门禁；没有 course/m09-start、course/m09-complete、完成提交、公开 evidence、产品 release 或通过数字",
+      "annotated course/m09-start 已冻结结构化 RED 并 peeled 到 2e688ec725a4d83755fa3811988a7d65f13cd115；8f6a357 加入主体 Snapshot 实现，当前审查 HEAD c26a613 又补齐 recovery-scan hard budget，两者都不是 complete 身份，当前仍没有 course/m09-complete、完成 evidence、产品 release 或通过数字",
     ],
     excludes: [
       "通用 N/N-1 Snapshot/WAL 格式迁移、未知版本升级、在线 rolling upgrade 与迁移工具；M09 只允许冻结的单版本内部格式，兼容演进留给后续 adapter/升级门禁",
@@ -3222,27 +3223,32 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
       "数据库恢复源、WAL/数据库双写、Outbox、Counter/Rest，以及账户、资产、仓位、手续费、保证金、结算和强平",
     ],
     gate: [
-      "先从 M08 已发布 complete 身份建立结构化 RED；start ref 必须冻结 Snapshot state schema、RecoveryBudget、fixed/generated 输入、obligation/mutant ID 和五篇 permalink，并让累计 M00～M08 回归保持 GREEN",
+      "annotated course/m09-start 已从 M08 已发布 complete 身份冻结 Snapshot state schema、RecoveryBudget、fixed/generated 输入、obligation/mutant ID 和五篇 permalink；实现与完成 judge 不得回写这个起点",
       "完成实现必须用独立、不解析 production Snapshot bytes 的 semantic model，对照 genesis replay 与 Snapshot+suffix recovery 的逐边界状态、original result、sequence 和 digest",
-      "必须覆盖 Snapshot write/force/rename/final-directory force、cut+1 WAL header rollover/force、prefix deletion/directory force 的 crash window，以及 latest-final corruption、anchor/generation mismatch、suffix gap 和预算耗尽",
+      "必须覆盖 Snapshot write/force/rename/final-directory force、cut+1 WAL header rollover/force、prefix deletion/directory force 的 crash window，以及 latest-final corruption、anchor/generation mismatch、suffix gap、live pre-WAL 预算耗尽和 fresh recovery-scan 越界前零 apply",
       "必须证明 book、control state、terminal identity 与 durable idempotency 任一遗漏都会被 semantic mutant 杀死；异常、fixture/reference 失败或未计划 I/O 继续归类 SYSTEM_ERROR，不能算 mutant kill",
       "只有 clean annotated complete tag、完整提交、非 dirty manifest、全部 artifact SHA-256、明确 limitations 与独立审查都通过后，才允许进入 CODE_VERIFIED；M09 不是命名产品停止点",
     ],
     interaction: [
       "先判断某个状态字段是否必须进入 Snapshot，再揭示只保存订单簿为何会在 mode、RuleSet、terminal identity 或 duplicate replay 上失真",
-      "在 write、file force、rename、final-directory force、cut+1 WAL header rollover/force 与 prefix deletion 时间线上选择 crash 点，判断最新 final Snapshot+suffix 是否构成合法恢复集合或必须 fail closed",
+      "在 write、file force、rename、final-directory force、cut+1 WAL header rollover/force 与 prefix deletion 时间线上选择 crash 点，区分 Snapshot publication 与 retirement eligibility，并判断 latest final + 实际 retained WAL 是否可恢复或必须 fail closed",
       "给定 Snapshot anchor、suffix sequence 和 RecoveryBudget，先预测 load/replay/fail-closed，再对照未来本地 evidence；网页不实现权威 Snapshot codec 或文件系统",
       "Java 编译、文件 I/O、故障注入、child JVM、generated judge 与 evidence 导出只在独立代码仓库本地运行；本站在发布前只保留草稿教学结构",
     ],
     evidence: [
-      "待 READY 时冻结的结构化 RED、Snapshot schema、RecoveryBudget、fixed scenario、generated profile、coverage obligation、semantic mutant 和五篇教程合同",
+      "course/m09-start 已冻结的结构化 RED、Snapshot schema、RecoveryBudget、fixed scenario、generated profile、coverage obligation、semantic mutant 和五篇教程合同；这些输入规模不是完成 PASS 数字",
       "待实现的三方等价证据：M08 genesis replay、独立 semantic model、M09 Snapshot+suffix recovery；每条观察必须绑定具体 application/WAL cut 与恢复结果",
       "待实现的 M09S1 header identity、final-directory force、cut+1 WAL header rollover、suffix、前缀回收、latest-final corruption 与预算故障窗口证据；代码级注入、child-process crash 与真实断电必须分别标注",
       "待 CODE_VERIFIED 后才冻结的 complete ref、完整 commit、manifest source、claim/limitation、reportFacts、artifact hash 与架构报告；当前不存在这些完成产物",
     ],
     stopPoint:
-      "合同停止点是一个仍然单进程、单 shard、caller-serialized 的本地撮合运行时目标：它从完整已 apply Snapshot cut 加连续受限 WAL suffix 恢复，并只在存在可证明恢复集合时回收前缀；当前仅完成合同签约，尚无 M09 实现、start/complete ref、公开 evidence、性能或高可用保证。",
-    localCommands: [],
+      "当前实现审查停止点仍是单进程、单 shard、caller-serialized 的本地撮合运行时：c26a613 在 8f6a357 主体实现上加入 fresh recovery 的 records+bytes hard scan，仍尚无 complete ref、独立完成 evidence、性能或高可用保证。",
+    localCommands: [
+      "git switch --detach course/m09-start",
+      "./gradlew m09Check --no-daemon",
+      "git switch --detach c26a613",
+      "./gradlew clean build --no-daemon",
+    ],
   },
 ];
 

@@ -1,6 +1,6 @@
 # 高可用 CEX 交易核心实战课程设计
 
-> 状态：M09 当前 `CONTRACTED`（M00～M08 均已发布）
+> 状态：M09 当前 `IN_PROGRESS`（M00～M08 均已发布）
 >
 > 规划日期：2026-08-26
 >
@@ -8,15 +8,15 @@
 >
 > 当前最新签约单元合同 `planVersion`：`0.11`（M09）
 >
-> 当前推荐动作：从 M08 已发布基线为 M09 创建结构化 RED；在 Snapshot state schema、RecoveryBudget、fixed/generated 输入、obligation/mutant ID 和预期失败全部冻结前，不创建 start ref 或实现 Snapshot
+> 当前推荐动作：以 annotated `course/m09-start` 的结构化 RED 审查当前实现 HEAD `c26a613` 与五篇教程草稿；`8f6a357` 加入主体 Snapshot/recovery，`c26a613` 补齐 recovery-scan hard budget，在独立 judge、故障证据、complete 身份和 manifest 收口前不公开教程或宣称通过
 >
 > 案例 slug：`high-availability-cex`
 >
 > 当前 Profile：`SPOT-CEX-1.0`
 >
-> 当前规划基线：`SPOT-CEX-1.0` 的 32 个候选交付单元（Matching 15 + Counter 10 + Rest 7），3 个按门禁顺序创建的代码仓库；M00–M08 已发布，M09 已签约，M10 及以后仍为候选
+> 当前规划基线：`SPOT-CEX-1.0` 的 32 个候选交付单元（Matching 15 + Counter 10 + Rest 7），3 个按门禁顺序创建的代码仓库；M00–M08 已发布，M09 已进入实施窗口，M10 及以后仍为候选
 >
-> 当前发布边界：M00～M08 均为 `PUBLISHED`。M09 只达到 `CONTRACTED`：唯一新增轴是完整已 apply Snapshot cut、连续受 RecoveryBudget 约束的 WAL suffix 与安全前缀回收；当前没有 start/complete ref、实现、公开教程、公开 evidence 或产品 release。M08 仍是最新可运行停止点，只能从 genesis WAL 恢复且不含 Snapshot、复制、Aeron 或高可用；最新命名产品停止点仍为 `matching-0.1.0`
+> 当前发布边界：M00～M08 均为 `PUBLISHED`。M09 为 `IN_PROGRESS`：annotated `course/m09-start` 已冻结 RED，当前实现审查 HEAD 为 `c26a613`（在 `8f6a357` 主体实现上补齐 recovery-scan hard budget），五篇精品教程仍为 draft；尚无 complete ref、完成 evidence、公开教程或产品 release。M08 仍是最新已验证可运行停止点，只能从 genesis WAL 恢复且不含 Snapshot、复制、Aeron 或高可用；最新命名产品停止点仍为 `matching-0.1.0`
 
 ## 1. 这份文档决定什么
 
@@ -233,7 +233,7 @@ Rest 初期是一个仓库和一个部署应用，内部划分 PriAPI、OpenAPI�
 
 | 顺序 | 仓库 | 创建条件 | 主要制品 |
 | ---: | --- | --- | --- |
-| 1 | [`cex-matching`](https://github.com/lcha-reln/cex-matching) | 已创建；M00～M08 均为 `PUBLISHED`，M09 为 `CONTRACTED` 且尚无 start ref，最新产品停止点仍为 `matching-0.1.0` | Matching core、test-only reference、testkit、runtime、协议、故障实验 |
+| 1 | [`cex-matching`](https://github.com/lcha-reln/cex-matching) | 已创建；M00～M08 均为 `PUBLISHED`，M09 以 `course/m09-start` 进入 `IN_PROGRESS`，最新已验证产品停止点仍为 `matching-0.1.0` | Matching core、test-only reference、testkit、runtime、协议、故障实验 |
 | 2 | `counter` | `matching-1.0.0` 发布并从干净环境复验 | Counter core、Cluster runtime、bridge、sync、query |
 | 3 | `rest` | `counter-1.0.0` 发布并从干净环境复验 | PriAPI、OpenAPI、WS、system tests |
 
@@ -311,12 +311,12 @@ rest     = rest-1.0.0
 | M06 | `PUBLISHED` | `CONTRACT` | 随 `cex-matching` 仓库 | market mode、mode fence、权限矩阵与 HALTED-only deterministic Mass Cancel 已由 15/64 fixed、160×64、26/26 coverage、10/10 mutant、五篇教程与 tag-bound evidence 闭环；无产品 release |
 | M07 | `PUBLISHED` | `CONTRACT` | 随 `cex-matching` 仓库 | opaque participant group、taker-side `CANCEL_TAKER/CANCEL_MAKER/CANCEL_BOTH` 与四策略组合已由 16/72 fixed、160×64、24/24 coverage、8/8 mutant、五篇教程与 tag-bound evidence 闭环；无产品 release |
 | M08 | `PUBLISHED` | `CONTRACT` | 随 `cex-matching` 仓库 | 本地单写者 WAL、ACK 边界、durable identity/slot/epoch 与 genesis recovery 已由 20 fixed、96×48、24/24 coverage、10/10 mutant、三个 child JVM crash smoke、五篇教程与 tag-bound evidence 闭环；无产品 release |
-| M09 | `CONTRACTED` | `CONTRACT` | 随 `cex-matching` 仓库 | 只冻结完整已 apply Snapshot cut、连续受 RecoveryBudget 约束的 WAL suffix、安全前缀回收、失败关闭门禁与五篇草稿 permalink；尚无 start/complete ref、实现或 evidence |
+| M09 | `IN_PROGRESS` | `CONTRACT` | 随 `cex-matching` 仓库 | annotated `course/m09-start` 已冻结完整 state cut、连续 suffix、RecoveryBudget、whole-segment retirement、失败关闭门禁与五篇 permalink；当前实现审查 HEAD 为 `c26a613`，尚无 complete ref 或完成 evidence |
 | M10–M14 | `CANDIDATE` | `RISK_MAP` | 随 `cex-matching` 仓库 | 记录能力、关键不变量和危险故障，不冻结类、Schema 字段编号、依赖版本或文章标题 |
 | C00–C09 | `CANDIDATE` | `RISK_MAP` | `LOCKED` | 记录权威边界和关键故障；Matching 1.0 前不创建仓库 |
 | R00–R06 | `CANDIDATE` | `RISK_MAP` | `LOCKED` | 记录外部契约边界和关键故障；Counter 1.0 前不创建仓库 |
 
-任何时刻全专题最多一个 `IN_PROGRESS`，最多一个下一单元处于 `READY`。候选总数 32（Matching 15 + Counter 10 + Rest 7）只是当前 SPOT Profile 的课程容量基线；未进入 `CONTRACTED` 的候选单元可以在评审时拆分、合并或调整 ID，已签约或已发布的单元不能静默改变。LOCKED Profile 不进入这个计数，也不占用实施窗口。M06–M08 是一次已完成的有界批次例外。当前没有 `IN_PROGRESS` 或 `READY` 单元；M09 已进入 `CONTRACTED`，必须先从 M08 已发布身份形成结构化 RED，才可创建不可移动 start ref 并进入下一生命周期。
+任何时刻全专题最多一个 `IN_PROGRESS`，最多一个下一单元处于 `READY`。候选总数 32（Matching 15 + Counter 10 + Rest 7）只是当前 SPOT Profile 的课程容量基线；未进入 `CONTRACTED` 的候选单元可以在评审时拆分、合并或调整 ID，已签约或已发布的单元不能静默改变。LOCKED Profile 不进入这个计数，也不占用实施窗口。M06–M08 是一次已完成的有界批次例外。当前唯一 `IN_PROGRESS` 单元是 M09；annotated `course/m09-start` 已从 M08 已发布身份冻结 RED，完成 judge/evidence/review 封存前不得打开 M10 代码窗口。
 
 ### 6.2 单元状态机
 
@@ -484,7 +484,7 @@ Matching 是唯一优先启动的项目。它先证明业务语义，再证明�
 | M06 市场模式与 Mass Cancel | 市场动作权限和确定性批量终止 | 支持 OPEN/CANCEL_ONLY/HALTED、mode fence 与 HALTED-only operator Mass Cancel | `PUBLISHED / CONTRACT` |
 | M07 自成交保护 | opaque participant group 与 taker-side 冲突 disposition | Matching 在不拥有账户资产的前提下以 CANCEL_TAKER/MAKER/BOTH 阻止 self trade | `PUBLISHED / CONTRACT` |
 | M08 WAL 与确认边界 | 单机持久确认和 durable idempotency | 单写者本地运行时在 append/force/apply 后 ACK，可从 genesis WAL 重建命令结果与幂等索引 | `PUBLISHED / CONTRACT` |
-| M09 Snapshot 检查点与有界恢复 | checkpointed bounded recovery | 完整已 apply Snapshot cut + 连续受限 WAL suffix 等价于全量重放，前缀只在可恢复集合持久后回收 | `CONTRACTED / CONTRACT` |
+| M09 Snapshot 检查点与有界恢复 | checkpointed bounded recovery | 完整已 apply Snapshot cut + 连续受限 WAL suffix 等价于全量重放，前缀只在可恢复集合持久后回收 | `IN_PROGRESS / CONTRACT` |
 | M10 性能与过载资格 | 容量和背压 | 发布 `matching-0.5.0` | `CANDIDATE / RISK_MAP` |
 | M11 Aeron Cluster Adapter | 复制运行时适配 | 单节点 Cluster 与 direct runner 业务等价 | `CANDIDATE / RISK_MAP` |
 | M12 三节点 HA | 切主、fencing 和结果未知 | 发布 `matching-0.8.0` | `CANDIDATE / RISK_MAP` |
@@ -1517,7 +1517,7 @@ M08 不实现 Snapshot、有界恢复、WAL retention、复制、Aeron、leader/
 
 > M09 单元合同 `planVersion`：`0.11`
 >
-> 当前状态：`CONTRACTED`；五篇 permalink 与语义门禁已冻结，但尚无 `course/m09-start`、`course/m09-complete`、实现、完成提交、公开 evidence 或产品 release
+> 当前状态：`IN_PROGRESS`；annotated `course/m09-start` peeled 到 `2e688ec725a4d83755fa3811988a7d65f13cd115` 并冻结 RED；`8f6a357` 加入主体 Snapshot/recovery，当前实现审查 HEAD `c26a613` 又补齐 recovery-scan hard budget。五篇教程保持 draft，尚无 `course/m09-complete`、完成 evidence、公开 lesson route 或产品 release
 
 **唯一新增轴**
 
@@ -1553,10 +1553,11 @@ capture complete applied state cut
 → force snapshot file
 → atomic rename to final generation
 → force parent directory
-→ force rollover to a new active WAL header at cut + 1
 ```
 
-M09 不创建独立 `latest` 或 recovery descriptor 文件。M09S1 final header 自带 generation、shard、last included WAL/Application sequence 与 semantic/serialization digests；这个 header identity、已 force 的 final 目录项和 firstWalSequence=cut+1 的 durable active WAL header 共同描述恢复入口。`.tmp`、未 force 文件、rename 后未 force 的目录项、未知 version、wrong shard、generation/anchor mismatch、完整 bytes 的 CRC/hash/codec 失败都不能伪装成已发布 generation。
+M09 不创建独立 `latest` 或 recovery descriptor 文件。M09S1 final file 自带 generation、shard、last included WAL/Application sequence、完整 state 与 semantic/serialization integrity；final 目录项完成 parent-directory force 后，这一 generation 就已发布并成为恢复权威。`.tmp`、未 force 文件、rename 后未 force 的目录项、未知 version、wrong shard、generation/anchor mismatch、完整 bytes 的 CRC/hash/codec 失败都不能伪装成已发布 generation。
+
+Snapshot 发布后，checkpoint 才在需要时 force rollover，形成 `firstWalSequence=cut+1` 的 durable active WAL header。这个 header 是删除旧 WAL 前缀的前置条件，不是 Snapshot 发布资格。若在 final directory force 后、rollover 前 crash，latest Snapshot 已经权威，recovery 必须能配合仍完整存在的 old/crossing WAL 验证 cut 并只重放 `> cut` 的连续 record；此时没有资格退休前缀，但不需要把已发布 Snapshot 降级成未发布。
 
 Snapshot 的 semantic digest 描述业务与恢复语义；serialization digest/CRC 描述本次具体 bytes。两者必须分开：相同 semantic state 可以在未来拥有不同 serialization，字节校验成功也不能证明漏掉的业务字段不存在。本单元只冻结一个内部单版本格式，未知版本失败关闭，不承诺通用 N/N-1 迁移。
 
@@ -1567,12 +1568,15 @@ Snapshot 的 semantic digest 描述业务与恢复语义；serialization digest/
 ```text
 select the latest M09S1 final Snapshot generation
 → validate snapshot metadata, bytes, semantic state and anchor
-→ require the cut + 1 active WAL header to be durable and exact
+→ validate the retained WAL chain reaches the cut
 → install the complete state into a fresh engine/runtime
-→ require next record = lastIncludedWalSequence + 1
+→ ignore validated records through the cut without apply
+→ require first replayed record = lastIncludedWalSequence + 1
 → replay every continuous suffix record exactly once
 → rebuild current semantic digest and durable result indexes
 ```
+
+retained WAL 可以是从 cut 前开始、完整跨过 cut 的 old/crossing segment，也可以是从 `cut+1` 开始的 durable active header；empty suffix 合法。只有前缀已经退休时，恢复集合才必须依赖已经持久的 cut+1 起点。
 
 Snapshot 已包含的 WAL record 不得再次 apply；suffix 不能出现 gap、duplicate、wrong expected ApplicationSequence 或跨 generation 偷换。恢复出的 `HALTED/CANCEL_ONLY`、prepared RuleSet、terminal identity、business rejection 与 original duplicate result 必须保持原样，不能回到默认 `OPEN`、空索引或按当前状态重算。
 
@@ -1580,7 +1584,7 @@ Snapshot 已包含的 WAL record 不得再次 apply；suffix 不能出现 gap、
 
 **RecoveryBudget 与安全前缀回收**
 
-M09 冻结 `RecoveryBudget(maxReplayRecords=64, maxReplayBytes=1048576)`。records 从 Snapshot cut 后第一条 suffix record 开始计数，bytes 按完整 M08W1 encoded record bytes 累加；任一维度达到上限都视为预算耗尽。它们是 records+bytes 双重 safety bound，不是毫秒恢复 SLA。runtime 在接受一条会让任一 suffix 维度越界的新命令之前，必须在同一串行维护边界成功发布后继 Snapshot，并 force rollover 形成新的 cut+1 durable active WAL header；若无法完成，就不能继续 ACK 会扩大 suffix 的新命令。
+M09 冻结 `RecoveryBudget(maxReplayRecords=64, maxReplayBytes=1048576)`。records 从 Snapshot cut 后第一条 suffix record 开始计数，bytes 按完整 M08W1 encoded record bytes 累加；等于上限仍合法，下一条新 record 会让任一维度越界时，runtime 必须在 WAL mutation 前返回 `CHECKPOINT_REQUIRED`。fresh recovery 还必须先扫描并计算完整 suffix；若既有 records/bytes 已越界，在 apply 任何 suffix record 前就 fail closed，不能因旧配置曾允许写入而绕过 hard bound。它们是 records+bytes 双重 safety bound，不是毫秒恢复 SLA。调用方只能在同一 caller-serialized 维护边界显式 checkpoint；若后继 Snapshot/rollover 无法完成，就不能 ACK 会扩大 suffix 的新命令。
 
 旧 WAL 前缀只有在以下条件全部持久成立后才可删除：
 
@@ -1591,22 +1595,22 @@ and cut + 1 active WAL header durable
 and old WAL prefix remains present until all three facts hold
 ```
 
-prefix unlink、segment namespace 变化与清理结果都需要 parent-directory force。crash 后残留的旧 prefix 只是可忽略冗余，不构成自动回退旧 generation 的第二恢复真相。recovery 始终选择最新 M09S1 final；若其 header/bytes/cut+1 active header 无效，就 fail closed，不能选择旧代、删除后回空或因预算耗尽继续无界重放。
+prefix unlink、segment namespace 变化与清理结果都需要 parent-directory force。crash 后残留的旧 prefix 只是经完整验证后可忽略的冗余，不构成自动回退旧 generation 的第二恢复真相。recovery 始终选择最新 M09S1 final；若其 bytes/identity 无效，或实际 retained WAL 不能验证 cut 并形成连续 suffix，就 fail closed，不能选择旧代、删除后回空或因预算耗尽继续无界重放。
 
 **教程合同**
 
 | 顺序 | permalink | 唯一论证任务 |
 | --- | --- | --- |
 | 10 | `snapshot-state-and-consistent-cut` | 为什么 Snapshot 必须覆盖完整已 apply 状态，以及 caller-serialized cut 如何排除半完成动作 |
-| 20 | `atomic-snapshot-publication` | M09S1 header identity、temp/file force/rename/final-directory force 与 cut+1 WAL header rollover 的原子发布资格 |
+| 20 | `atomic-snapshot-publication` | M09S1 temp/file force/rename/final-directory force 的发布资格，以及 cut+1 WAL header 只约束前缀退休的边界 |
 | 30 | `snapshot-suffix-recovery-equivalence` | Snapshot@S + WAL(S+1...) 与 genesis replay 的 semantic equivalence、sequence anchor 和 duplicate 结果 |
 | 40 | `wal-prefix-retirement-and-replay-bound` | RecoveryBudget、后继 M09S1 final、cut+1 active WAL header、前缀删除与 latest-final fail-closed |
 | 50 | `snapshot-fault-injection-and-recovery-evidence` | 独立模型、故障窗口、corruption、semantic mutants、证据层级和 limitations |
 
 **门禁、证据与互动边界**
 
-- `READY` 前必须从 M08 已发布身份创建结构化 RED，冻结 Snapshot schema、RecoveryBudget、fixed/generated 输入、coverage obligation、semantic mutant ID 与五篇 permalink；累计 M00～M08 继续 GREEN；
-- 完成 gate 必须覆盖完整 state omission、cut 错位、未持久 Snapshot 被选择、included record 重放、suffix record 跳过、过早回收、corruption 回空和 RecoveryBudget 越界等可执行 mutant；`SYSTEM_ERROR` 不能算 kill；
+- annotated `course/m09-start` 已从 M08 已发布身份冻结 Snapshot schema、RecoveryBudget、fixed/generated 输入、coverage obligation、semantic mutant ID 与五篇 permalink；实现和完成 judge 不得回写这个起点；
+- 完成 gate 必须覆盖完整 state omission、cut 错位、未持久 Snapshot 被选择、included record 重放、suffix record 跳过、live pre-WAL 与 fresh recovery-scan 两条 RecoveryBudget 越界路径、过早回收和 corruption 回空等可执行反例；fresh recovery 越界必须发生在任何 suffix apply 前，`SYSTEM_ERROR` 不能算 kill；
 - snapshot write/force/rename/final-directory force、cut+1 WAL header rollover/force、prefix delete/directory force 的命名故障点必须逐一保存 ACK/latest-final/sequence/digest 观察；代码级注入、child JVM crash 与真实断电严格分层；
 - 本单元不登记 L2 浏览器 Lab。页面只提供 L0/L1 的 state-field 预测、crash timeline、generation 选择题和未来同源静态 evidence；浏览器不实现权威 Snapshot codec、不写用户文件、不执行 Java；
 - 只有 clean annotated complete tag、完整提交、non-dirty manifest、全部 artifact SHA-256、limitations、独立审查和五篇教程全部通过后，才能进入 `CODE_VERIFIED → CONTENT_VERIFIED → PUBLISHED`。M09 不是命名产品停止点。
@@ -1615,7 +1619,7 @@ prefix unlink、segment namespace 变化与清理结果都需要 parent-director
 
 M09 不实现通用 N/N-1 Snapshot/WAL 迁移、rolling upgrade、后台线程、copy-on-write、边恢复边接流量、group commit、Aeron/Cluster snapshot、复制、failover、多 shard、网络 exactly-once、数据库恢复源、压缩/加密/远程备份、性能或恢复毫秒 SLA。`FileChannel.force` 与有限故障语料仍不能扩大成真实断电、任意文件系统或 production-readiness 证明。
 
-当前只完成 `CONTRACTED` 合同：五篇教程文件保持 `draft: true`，没有 start/complete ref、代码、公开 evidence 或通过数字。目标停止点仍是单进程、单 shard、caller-serialized 本地 runtime；即使未来完成 M09，也只是拥有 Snapshot 检查点与 records+bytes 双重有界恢复，不是复制或高可用系统。
+当前为 `IN_PROGRESS`：annotated `course/m09-start` 与实现审查 HEAD `c26a613` 已存在，五篇完整教程仍保持 `draft: true`；尚无 complete ref、完成 judge/evidence、manifest、公开 lesson route 或通过数字。目标停止点仍是单进程、单 shard、caller-serialized 本地 runtime；即使未来完成 M09，也只是拥有 Snapshot 检查点与 records+bytes 双重有界恢复，不是复制或高可用系统。
 
 ### 8.12 M10–M14 候选能力地图
 
@@ -1805,7 +1809,7 @@ signal-grid-blog
 ```
 
 - 实战章节使用独立 `practiceLessons` collection，不进入 `posts`、文章归档和主 RSS；
-- `config.ts` 管案例与 Profile，`units.ts` 管已签约及之后的单元，Markdown 只管一篇教程；M00～M08 保留各自已发布 ref、完整提交、evidence、教程，以及适用单元的 Matching Lab。M09 在 `CONTRACTED` 只保存五篇 `draft: true` 论证骨架，不填造 start/complete ref、commit、evidence URL 或线上路由；M10 及以后仍不创建 Markdown；
+- `config.ts` 管案例与 Profile，`units.ts` 管已签约及之后的单元，Markdown 只管一篇教程；M00～M08 保留各自已发布 ref、完整提交、evidence、教程，以及适用单元的 Matching Lab。M09 在 `IN_PROGRESS` 登记真实 start ref 与本地命令，五篇完整教程仍保持 `draft: true`，不填造 complete ref、manifest、PASS 数字、evidence URL 或线上 lesson route；M10 及以后仍不创建 Markdown；
 - 教程用 `project / profileVersion / unitCode` 关联单元，同单元的 `lessonOrder` 和 `permalink` 必须唯一；路由为 `/practice/<project>/<unit>/<lesson>/`；
 - 教程一律从 `draft: true` 开始。单元达到 `PUBLISHED` 前不得公开；草稿不生成生产路由，不进入搜索、sitemap、文章统计或主 RSS；`CONTENT_VERIFIED` 冻结预期教程的排序与 permalink，`PUBLISHED` 必须原子公开完整集合；`CODE_VERIFIED` 冻结 complete tag、完整提交 SHA、仓库内 evidence 路径和发布证据合同。M00～M08 的 evidence 都托管到 Signal Grid 的固定静态路径，由 verifier 复核 CI manifest SHA-256、来源、精确 claim/限制、全部 artifact hash，以及 `reportFacts` 中冻结的业务状态和关键报告字段；
 - `pnpm verify:practice` 拒绝缺失或 `LOCKED` 单元、重复排序/地址、未 `PUBLISHED` 非草稿和 `main`、`unit/*` 等浮动 ref。它不联网读取课程仓；跨仓 tag/evidence 在发布前独立核验；
@@ -1933,6 +1937,7 @@ git switch -c unit/m01 course/m01-start
 
 | 日期 | 单元 | 生命周期 | 记录 |
 | --- | --- | --- | --- |
+| 2026-09-01 | M09 | `IN_PROGRESS` | annotated `course/m09-start` peeled 到 `2e688ec725a4d83755fa3811988a7d65f13cd115` 并冻结结构化 RED；`8f6a357` 加入主体 Snapshot/recovery，当前审查 HEAD `c26a613` 又补齐 recovery-scan hard budget，两者都不是 complete 身份。五篇 permalink 已扩写为完整 draft 教程并校准 publication/retirement 屏障；当前仍无 `course/m09-complete`、完成 judge/evidence、manifest、公开 lesson route、Lab、产品 release 或 PASS 数字 |
 | 2026-09-01 | M09 | `CONTRACTED` | PLAN v0.11 冻结完整已 apply Snapshot cut、连续 WAL suffix、RecoveryBudget(64 records / 1,048,576 encoded bytes)、原子 generation 发布、安全前缀回收、独立等价裁判、失败关闭门禁与五篇 draft permalink；当前无 start/complete ref、实现、完成提交、公开 evidence、Lab、产品 release 或通过数字 |
 | 2026-09-01 | M08 | `PUBLISHED` | annotated `course/m08-start` peeled 到 `a26b5776172d66ecc4865a6fbd6cfa73cb22aaf0`，annotated `course/m08-complete` peeled 到 `5c8d8f6a5356f6ebbdf87d83745d8e8bd0861199`。20/20 fixed scenario、两次 byte-exact 的 96×48=4,608 operation history、24/24 coverage、10/10 STUDENT_FAILURE mutant、10/10 one-minimal strict replay、七个 BEFORE_OPERATION fault 与三个 `Runtime.halt(86)` child crash smoke 通过；typed ENOSPC/read-only 明确 `actualFilesystem=false`，architecture 为 54 core / 28 local-runtime / 0 violation，manifest SHA-256 为 `19a5c93e618ef5d9430719b135ca95aa7db6513c7389e0cfb50eb80c430e2923`。五篇教程与 persistent evidence 已公开；无产品 release、Snapshot、Aeron、复制或高可用声明 |
 | 2026-08-31 | M08 | `CONTRACTED` | PLAN v0.10 冻结本地单写者 WAL/ACK/durable idempotency、M08C1/M08W1、identity/slot/epoch、rollover/recovery、20 fixed、96×48、24 项 coverage、10 项 mutant 与五篇 permalink；须等 M07 `CODE_VERIFIED`、complete/evidence/review 封存后才能创建 start ref，当前无 start/complete tag、commit、evidence、教程路由或产品 release |
