@@ -1,0 +1,13 @@
+{
+  "schemaVersion" : "matching.m06.counterexamples-report.v1",
+  "status" : "PASS",
+  "required" : 10,
+  "found" : 10,
+  "replayed" : 10,
+  "oneMinimal" : 10,
+  "totalCommands" : 22,
+  "canonicalFormat" : "M06X1",
+  "canonicalDigest" : "sha256:f55d1d7feabe527706a9974dbaf1a894c1420ea6b09bc9e1f7b9563032fca93b",
+  "canonicalBytes" : 3210,
+  "canonicalLines" : 23
+}

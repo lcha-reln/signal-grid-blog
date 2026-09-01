@@ -1,0 +1,18 @@
+{
+  "schemaVersion" : "matching.m06.generated-properties-report.v1",
+  "status" : "PASS",
+  "algorithm" : "splitmix64-v1",
+  "baseSeed" : "6606",
+  "histories" : 160,
+  "commandsPerHistory" : 64,
+  "commands" : 10240,
+  "lanes" : 5,
+  "historiesPerLane" : 32,
+  "canonicalFormat" : "M06H1",
+  "canonicalDigest" : "sha256:b74dd3a6bad6048dcaaceaaeb8fe0c81d1e8d2272d352fe15ea921738f73e6c4",
+  "canonicalBytes" : 1670049,
+  "canonicalLines" : 10241,
+  "freshGenerations" : 2,
+  "differentialComparisons" : 10240,
+  "eventLedgerChecks" : 10240
+}

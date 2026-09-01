@@ -1,0 +1,9 @@
+{
+  "schemaVersion" : "matching.m07.architecture-report.v1",
+  "status" : "PASS",
+  "passed" : true,
+  "coreSources" : 54,
+  "referenceSources" : 29,
+  "forbiddenFindings" : 0,
+  "violations" : [ ]
+}

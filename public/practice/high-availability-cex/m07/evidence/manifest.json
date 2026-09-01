@@ -1,0 +1,386 @@
+{
+  "schemaVersion" : "cex.lab-evidence.v1",
+  "case" : "high-availability-cex",
+  "project" : "matching",
+  "unit" : "M07",
+  "unitTag" : "course/m07-complete",
+  "productRelease" : null,
+  "planVersion" : "0.9",
+  "source" : {
+    "commit" : "8e9c147b12bfb6b55e69ff04ecfe3aa4c510ed23",
+    "dirty" : false
+  },
+  "environment" : {
+    "java" : "25.0.4.1+1-LTS",
+    "os" : "Mac OS X",
+    "arch" : "aarch64"
+  },
+  "claims" : [ {
+    "id" : "m00-m06-semantic-regression",
+    "category" : "correctness",
+    "statement" : "The complete M06 finite semantic judge still passes without rebinding historical source-identity evidence.",
+    "status" : "pass",
+    "command" : "./gradlew m07Check --no-daemon",
+    "observations" : {
+      "status" : "PASS",
+      "checkSchemaVersion" : "matching.m06.check.v2",
+      "fixedScenarios" : 15,
+      "fixedCommands" : 64,
+      "fixedDigest" : "sha256:2f9126e7100581020d2a56dd7da4736ab026a7f9533b051bde4490cda210855b",
+      "generatedHistories" : 160,
+      "generatedCommands" : 10240,
+      "generatedDigest" : "sha256:b74dd3a6bad6048dcaaceaaeb8fe0c81d1e8d2272d352fe15ea921738f73e6c4",
+      "coverageObligations" : 26,
+      "mutantsKilled" : 10
+    },
+    "artifacts" : [ {
+      "path" : "reports/m00-m06-regression.json",
+      "sha256" : "1259d08434ee7cdcf193edd0fc51f6fff5a8f0c8394abc13313137cb4991fa03"
+    } ]
+  }, {
+    "id" : "opaque-group-and-legacy-boundary",
+    "category" : "correctness",
+    "statement" : "All three legacy place entrypoints map exactly to group zero and NONE, while raw group, policy, pair, rule-set, and market-mode precedence match the frozen M07 contract.",
+    "status" : "pass",
+    "command" : "./gradlew m07Check --no-daemon",
+    "observations" : {
+      "boundaries" : {
+        "participantGroupOwnership" : "OPAQUE_CALLER_SUPPLIED",
+        "legacyMapping" : "GROUP_0_NONE",
+        "groupZeroParticipatesInSelfEquality" : false,
+        "takerOwnsDisposition" : true,
+        "cancelTakerCancelsFullRemainder" : true,
+        "cancelMakerContinuesAcrossLevels" : true,
+        "cancelBothCancelsBothFullRemainders" : true,
+        "sameGroupTradeForbidden" : true,
+        "fokPreflight" : "READ_ONLY_STP_AWARE",
+        "fokFailureAtomic" : true,
+        "postOnlyPriority" : "RAW_BOOK_BEFORE_STP",
+        "marketModePriority" : "BEFORE_STP_SCAN",
+        "ruleSetAttributionPreserved" : true,
+        "legacyEntrypointsExecuted" : 3,
+        "finiteCorpus" : true,
+        "formalProof" : false,
+        "productionReadinessClaim" : false
+      },
+      "legacyEntrypoints" : {
+        "executed" : 3,
+        "place" : true,
+        "placeRequest" : true,
+        "placeGoverned" : true,
+        "semanticResultsIdentical" : true,
+        "participantGroupId" : 0,
+        "stpPolicy" : "NONE"
+      }
+    },
+    "artifacts" : [ {
+      "path" : "inputs/self-trade-prevention-v1.json",
+      "sha256" : "3534e100419bed0ee51babb612b6ec708b80c1574330dbf7346914056e40a207"
+    }, {
+      "path" : "reports/legacy-entrypoints.json",
+      "sha256" : "286019e4f0493de60d2be070a5fde31851b77847fb391a5cd54aceb61efdcb7b"
+    }, {
+      "path" : "reports/fixed-scenario-pack.json",
+      "sha256" : "2cac41feec178e9b8564c3384129d3e3ab16978cf316025b078b77fc2188c1ea"
+    }, {
+      "path" : "reports/fixed-event-batches.json",
+      "sha256" : "d458f13fff41f439d1ab63fd29ccca3085cf1248704dc1531558d9e3de233695"
+    }, {
+      "path" : "reports/boundaries.json",
+      "sha256" : "06b4ccc4f58192ff839a8efa6928ed67817ebb6b137623bd68a37a4094a5ba31"
+    }, {
+      "path" : "reports/check.json",
+      "sha256" : "5f59c76ce66f8b74171171a8196cf6fa1acfe42eb7e22a2bf7c2da166b78d599"
+    } ]
+  }, {
+    "id" : "deterministic-self-trade-prevention",
+    "category" : "correctness",
+    "statement" : "Same-positive-group encounters never trade: taker-owned CANCEL_TAKER, CANCEL_MAKER, and CANCEL_BOTH produce deterministic terminal state, scan order, and rule attribution.",
+    "status" : "pass",
+    "command" : "./gradlew m07Check --no-daemon",
+    "observations" : {
+      "requiredObligations" : 24,
+      "satisfiedObligations" : 24,
+      "obligations" : [ {
+        "id" : "INVALID_STP_GROUP_ID",
+        "satisfied" : true,
+        "source" : "FIXED",
+        "history" : "RAW_GROUP_VALIDATION",
+        "commandIndex" : 0,
+        "count" : 169
+      }, {
+        "id" : "INVALID_STP_POLICY",
+        "satisfied" : true,
+        "source" : "FIXED",
+        "history" : "RAW_POLICY_VALIDATION",
+        "commandIndex" : 0,
+        "count" : 168
+      }, {
+        "id" : "INVALID_STP_INSTRUCTION",
+        "satisfied" : true,
+        "source" : "FIXED",
+        "history" : "GROUP_POLICY_PAIR_VALIDATION",
+        "commandIndex" : 0,
+        "count" : 365
+      }, {
+        "id" : "VALIDATION_FAILURE_ATOMIC",
+        "satisfied" : true,
+        "source" : "FIXED",
+        "history" : "RAW_GROUP_VALIDATION",
+        "commandIndex" : 0,
+        "count" : 702
+      }, {
+        "id" : "LEGACY_ZERO_NONE_COMPATIBILITY",
+        "satisfied" : true,
+        "source" : "FIXED",
+        "history" : "LEGACY_NONE_REGRESSION",
+        "commandIndex" : 0,
+        "count" : 174
+      }, {
+        "id" : "GROUP_ZERO_NEVER_SELF",
+        "satisfied" : true,
+        "source" : "FIXED",
+        "history" : "LEGACY_NONE_REGRESSION",
+        "commandIndex" : 1,
+        "count" : 46
+      }, {
+        "id" : "DIFFERENT_GROUP_TRADE",
+        "satisfied" : true,
+        "source" : "FIXED",
+        "history" : "DIFFERENT_GROUP_TRADES",
+        "commandIndex" : 1,
+        "count" : 149
+      }, {
+        "id" : "SAME_GROUP_NO_TRADE",
+        "satisfied" : true,
+        "source" : "FIXED",
+        "history" : "CANCEL_TAKER_SAME_GROUP",
+        "commandIndex" : 1,
+        "count" : 187
+      }, {
+        "id" : "CANCEL_TAKER_CANCELS_FULL_REMAINDER",
+        "satisfied" : true,
+        "source" : "FIXED",
+        "history" : "PARTIAL_BEFORE_STP",
+        "commandIndex" : 3,
+        "count" : 14
+      }, {
+        "id" : "CANCEL_TAKER_PRESERVES_MAKER",
+        "satisfied" : true,
+        "source" : "FIXED",
+        "history" : "PARTIAL_BEFORE_STP",
+        "commandIndex" : 3,
+        "count" : 14
+      }, {
+        "id" : "CANCEL_MAKER_CANCELS_MAKER",
+        "satisfied" : true,
+        "source" : "FIXED",
+        "history" : "CANCEL_MAKER_SAME_GROUP",
+        "commandIndex" : 1,
+        "count" : 43
+      }, {
+        "id" : "CANCEL_MAKER_CONTINUES_SAME_LEVEL",
+        "satisfied" : true,
+        "source" : "FIXED",
+        "history" : "SAME_PRICE_FIFO_INTERLEAVE",
+        "commandIndex" : 3,
+        "count" : 1
+      }, {
+        "id" : "CANCEL_MAKER_CONTINUES_CROSS_LEVEL",
+        "satisfied" : true,
+        "source" : "FIXED",
+        "history" : "CANCEL_MAKER_CROSS_LEVEL",
+        "commandIndex" : 4,
+        "count" : 35
+      }, {
+        "id" : "CANCEL_BOTH_CANCELS_BOTH",
+        "satisfied" : true,
+        "source" : "FIXED",
+        "history" : "CANCEL_BOTH_SAME_GROUP",
+        "commandIndex" : 1,
+        "count" : 47
+      }, {
+        "id" : "PRICE_TIME_EVENT_INTERLEAVING",
+        "satisfied" : true,
+        "source" : "FIXED",
+        "history" : "SAME_PRICE_FIFO_INTERLEAVE",
+        "commandIndex" : 3,
+        "count" : 1
+      }, {
+        "id" : "PARTIAL_TRADE_BEFORE_STP",
+        "satisfied" : true,
+        "source" : "FIXED",
+        "history" : "CANCEL_TAKER_SAME_GROUP",
+        "commandIndex" : 1,
+        "count" : 50
+      }, {
+        "id" : "GTC_REMAINDER_RESTS",
+        "satisfied" : true,
+        "source" : "FIXED",
+        "history" : "CANCEL_MAKER_SAME_GROUP",
+        "commandIndex" : 1,
+        "count" : 42
+      }, {
+        "id" : "IOC_STP_AND_REMAINDER_REASONS",
+        "satisfied" : true,
+        "source" : "GENERATED",
+        "history" : "17",
+        "commandIndex" : 17,
+        "count" : 244
+      }, {
+        "id" : "FOK_TAKER_OR_BOTH_PRECHECK",
+        "satisfied" : true,
+        "source" : "FIXED",
+        "history" : "FOK_STP_AWARE_ATOMICITY",
+        "commandIndex" : 6,
+        "count" : 75
+      }, {
+        "id" : "FOK_CANCEL_MAKER_PRECHECK",
+        "satisfied" : true,
+        "source" : "FIXED",
+        "history" : "FOK_STP_AWARE_ATOMICITY",
+        "commandIndex" : 3,
+        "count" : 2
+      }, {
+        "id" : "FOK_FAILURE_ATOMIC",
+        "satisfied" : true,
+        "source" : "FIXED",
+        "history" : "FOK_STP_AWARE_ATOMICITY",
+        "commandIndex" : 2,
+        "count" : 308
+      }, {
+        "id" : "POST_ONLY_RAW_BOOK_FIRST",
+        "satisfied" : true,
+        "source" : "FIXED",
+        "history" : "POST_ONLY_RAW_BOOK_PRIORITY",
+        "commandIndex" : 1,
+        "count" : 78
+      }, {
+        "id" : "RULE_SET_ATTRIBUTION",
+        "satisfied" : true,
+        "source" : "FIXED",
+        "history" : "RULE_MODE_ATTRIBUTION_FAILURE_ATOMICITY",
+        "commandIndex" : 3,
+        "count" : 50
+      }, {
+        "id" : "MARKET_MODE_BEFORE_STP",
+        "satisfied" : true,
+        "source" : "FIXED",
+        "history" : "RULE_MODE_ATTRIBUTION_FAILURE_ATOMICITY",
+        "commandIndex" : 6,
+        "count" : 3430
+      } ]
+    },
+    "artifacts" : [ {
+      "path" : "reports/coverage.json",
+      "sha256" : "57480fbe88945fa135ff5fa60d22232ca0ec8600a75407a0d3dff462a7111ccc"
+    }, {
+      "path" : "reports/invariants.json",
+      "sha256" : "8e5ea2c4803bd6830d29e5d9f08d27fb0bf47f668d04c3486fa294a1355c9761"
+    }, {
+      "path" : "reports/fixed-history.canonical.utf8",
+      "sha256" : "4c0675ee77458fb10b28e3c13d48767a653a41e922f42264f8d0f76aa5644176"
+    } ]
+  }, {
+    "id" : "finite-three-oracle-suite",
+    "category" : "correctness",
+    "statement" : "Two fresh SplitMix64 generations reproduce identical M07H1 bytes, and production, the independent reference, and event-derived ledger agree at 10,240 command boundaries.",
+    "status" : "pass",
+    "command" : "./gradlew m07Check --no-daemon",
+    "observations" : {
+      "generator" : {
+        "algorithm" : "splitmix64-v1",
+        "baseSeed" : "5707",
+        "histories" : 160,
+        "commandsPerHistory" : 64,
+        "commands" : 10240,
+        "lanes" : 5,
+        "historiesPerLane" : 32,
+        "canonicalFormat" : "M07H1",
+        "canonicalDigest" : "sha256:c2576f10a77c320ec4a9ad75e3dc3c03494f636feabdcc7157ee10e74812718f",
+        "canonicalBytes" : 1709692,
+        "canonicalLines" : 10241,
+        "freshGenerations" : 2
+      },
+      "properties" : {
+        "histories" : 160,
+        "commands" : 10240,
+        "differentialComparisons" : 10240,
+        "eventLedgerChecks" : 10240,
+        "referenceLedgerChecks" : 10240
+      }
+    },
+    "artifacts" : [ {
+      "path" : "inputs/property-suite-v1.json",
+      "sha256" : "0687ea8edf85b6a16c11a085f32da3695abb3014afb9261360ecef6388431308"
+    }, {
+      "path" : "reports/generated-history.canonical.utf8",
+      "sha256" : "c2576f10a77c320ec4a9ad75e3dc3c03494f636feabdcc7157ee10e74812718f"
+    }, {
+      "path" : "reports/generated-properties.json",
+      "sha256" : "74b046566e9fc42cf7c39f4fec309866970d878fc1d6d8fa04e0b5d3ccce3b11"
+    } ]
+  }, {
+    "id" : "minimal-semantic-counterexamples",
+    "category" : "correctness",
+    "statement" : "All eight required faults are killed as STUDENT_FAILURE by persisted, strict-replayed, one-minimal M07X1 counterexamples; SYSTEM_ERROR is excluded from kills.",
+    "status" : "pass",
+    "command" : "./gradlew m07Check --no-daemon",
+    "observations" : {
+      "counterexamples" : {
+        "required" : 8,
+        "found" : 8,
+        "replayed" : 8,
+        "oneMinimal" : 8,
+        "totalCommands" : 18,
+        "canonicalFormat" : "M07X1",
+        "canonicalDigest" : "sha256:97504762c7f6349ac6bb02c26457d608dae6e0ad0231a19b10cf5c998a9c69ee",
+        "canonicalBytes" : 2778,
+        "canonicalLines" : 19
+      },
+      "mutants" : {
+        "required" : 8,
+        "killed" : 8,
+        "classification" : "STUDENT_FAILURE",
+        "systemErrorControl" : "SYSTEM_ERROR",
+        "systemErrorCountsAsKill" : false
+      }
+    },
+    "artifacts" : [ {
+      "path" : "inputs/counterexamples-v1.json",
+      "sha256" : "d3927c4b6296a1391e92db3c362491994649b5713749d587bb468436db157329"
+    }, {
+      "path" : "reports/counterexamples.json",
+      "sha256" : "9a20a8fc21bf2c9bc046c8ed28644e1076f02975fcf0f08179030c0ffc6cce61"
+    }, {
+      "path" : "reports/counterexamples.canonical.utf8",
+      "sha256" : "97504762c7f6349ac6bb02c26457d608dae6e0ad0231a19b10cf5c998a9c69ee"
+    }, {
+      "path" : "reports/replay.json",
+      "sha256" : "e5672cc1ffea486cdfce604fc6d01604a19725c1da8d753049440140d3fe953e"
+    }, {
+      "path" : "reports/mutants.json",
+      "sha256" : "0ec99a011e5cf57df2a5ac696b2ce644a5eb4583146668b418f3e11931537838"
+    } ]
+  }, {
+    "id" : "infrastructure-free-boundary",
+    "category" : "architecture",
+    "statement" : "The production core remains free of test/reference and infrastructure dependencies, while the independent reference remains free of production-core dependencies.",
+    "status" : "pass",
+    "command" : "./gradlew m07Check --no-daemon",
+    "observations" : {
+      "passed" : true,
+      "coreSources" : 54,
+      "referenceSources" : 29,
+      "forbiddenFindings" : 0,
+      "violations" : [ ]
+    },
+    "artifacts" : [ {
+      "path" : "reports/architecture.json",
+      "sha256" : "45bd3a8467b797436c1c290eecd314afe668a85ac9860edd2b86da5159387735"
+    } ]
+  } ],
+  "limitations" : [ "Only one in-memory BTC-USDT limit-order book is implemented; this unit adds an opaque participant-group key and taker-owned self-trade prevention.", "Participant groups are supplied by an already-authorized upstream boundary; the matching core does not resolve accounts, ownership, authentication, or authorization.", "Only NONE, CANCEL_TAKER, CANCEL_MAKER, and CANCEL_BOTH are implemented; group zero is the legacy NONE mapping and DECREMENT_AND_CANCEL is not implemented.", "Only GTC, IOC, FOK, and Post-only limit orders are implemented; there are no market, stop, iceberg, or option-specific order types.", "The fixed 16-scenario corpus and 160 histories by 64 commands are bounded tests, not exhaustive exploration or formal verification.", "Accepted terminal identities remain retained without pruning, compaction, snapshot persistence, or recovery.", "There is no account, asset, position, fee, margin, settlement, reservation, liquidation, or risk logic.", "There is no networking, database, thread, Aeron, Raft, replication, failover, or high availability in this unit.", "The evidence makes no throughput, latency, durability, recovery, security, or production-readiness claim." ],
+  "supersedes" : null,
+  "generatedAt" : "2026-08-31T11:20:20.255498Z"
+}

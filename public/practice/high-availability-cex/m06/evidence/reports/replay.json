@@ -1,0 +1,68 @@
+{
+  "schemaVersion" : "matching.m06.replay-report.v1",
+  "status" : "PASS",
+  "requested" : 10,
+  "passed" : 10,
+  "strictClassificationAndFingerprint" : true,
+  "scenarios" : [ {
+    "mutantId" : "M06-CANCEL-ONLY-PLACE-ACCEPTED",
+    "passed" : true,
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "EVENT_DIFFERENTIAL",
+    "commands" : 2
+  }, {
+    "mutantId" : "M06-HALTED-CUSTOMER-CANCEL-ACCEPTED",
+    "passed" : true,
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "EVENT_DIFFERENTIAL",
+    "commands" : 3
+  }, {
+    "mutantId" : "M06-HALTED-DIRECTLY-REOPENED",
+    "passed" : true,
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "EVENT_DIFFERENTIAL",
+    "commands" : 2
+  }, {
+    "mutantId" : "M06-STALE-MODE-FENCE-ACCEPTED",
+    "passed" : true,
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "EVENT_DIFFERENTIAL",
+    "commands" : 1
+  }, {
+    "mutantId" : "M06-MODE-CHANGE-IMPLICITLY-CLEARS-BOOK",
+    "passed" : true,
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "STATE_DIFFERENTIAL",
+    "commands" : 2
+  }, {
+    "mutantId" : "M06-FAILED-MODE-CHANGE-RESETS-OPEN",
+    "passed" : true,
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "STATE_DIFFERENTIAL",
+    "commands" : 2
+  }, {
+    "mutantId" : "M06-MASS-CANCEL-WITHOUT-HALT",
+    "passed" : true,
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "EVENT_DIFFERENTIAL",
+    "commands" : 1
+  }, {
+    "mutantId" : "M06-MASS-CANCEL-NON-ACCEPTANCE-ORDER",
+    "passed" : true,
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "EVENT_DIFFERENTIAL",
+    "commands" : 4
+  }, {
+    "mutantId" : "M06-FAILED-MASS-CANCEL-PARTIALLY-CLEARS",
+    "passed" : true,
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "STATE_DIFFERENTIAL",
+    "commands" : 2
+  }, {
+    "mutantId" : "M06-MASS-CANCEL-DROPS-TERMINAL-ATTRIBUTION",
+    "passed" : true,
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "EVENT_DIFFERENTIAL",
+    "commands" : 3
+  } ]
+}

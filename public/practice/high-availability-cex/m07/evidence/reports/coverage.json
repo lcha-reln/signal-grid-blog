@@ -1,0 +1,175 @@
+{
+  "schemaVersion" : "matching.m07.coverage-report.v1",
+  "status" : "PASS",
+  "requiredObligations" : 24,
+  "satisfiedObligations" : 24,
+  "obligations" : [ {
+    "id" : "INVALID_STP_GROUP_ID",
+    "satisfied" : true,
+    "source" : "FIXED",
+    "history" : "RAW_GROUP_VALIDATION",
+    "commandIndex" : 0,
+    "count" : 169
+  }, {
+    "id" : "INVALID_STP_POLICY",
+    "satisfied" : true,
+    "source" : "FIXED",
+    "history" : "RAW_POLICY_VALIDATION",
+    "commandIndex" : 0,
+    "count" : 168
+  }, {
+    "id" : "INVALID_STP_INSTRUCTION",
+    "satisfied" : true,
+    "source" : "FIXED",
+    "history" : "GROUP_POLICY_PAIR_VALIDATION",
+    "commandIndex" : 0,
+    "count" : 365
+  }, {
+    "id" : "VALIDATION_FAILURE_ATOMIC",
+    "satisfied" : true,
+    "source" : "FIXED",
+    "history" : "RAW_GROUP_VALIDATION",
+    "commandIndex" : 0,
+    "count" : 702
+  }, {
+    "id" : "LEGACY_ZERO_NONE_COMPATIBILITY",
+    "satisfied" : true,
+    "source" : "FIXED",
+    "history" : "LEGACY_NONE_REGRESSION",
+    "commandIndex" : 0,
+    "count" : 174
+  }, {
+    "id" : "GROUP_ZERO_NEVER_SELF",
+    "satisfied" : true,
+    "source" : "FIXED",
+    "history" : "LEGACY_NONE_REGRESSION",
+    "commandIndex" : 1,
+    "count" : 46
+  }, {
+    "id" : "DIFFERENT_GROUP_TRADE",
+    "satisfied" : true,
+    "source" : "FIXED",
+    "history" : "DIFFERENT_GROUP_TRADES",
+    "commandIndex" : 1,
+    "count" : 149
+  }, {
+    "id" : "SAME_GROUP_NO_TRADE",
+    "satisfied" : true,
+    "source" : "FIXED",
+    "history" : "CANCEL_TAKER_SAME_GROUP",
+    "commandIndex" : 1,
+    "count" : 187
+  }, {
+    "id" : "CANCEL_TAKER_CANCELS_FULL_REMAINDER",
+    "satisfied" : true,
+    "source" : "FIXED",
+    "history" : "PARTIAL_BEFORE_STP",
+    "commandIndex" : 3,
+    "count" : 14
+  }, {
+    "id" : "CANCEL_TAKER_PRESERVES_MAKER",
+    "satisfied" : true,
+    "source" : "FIXED",
+    "history" : "PARTIAL_BEFORE_STP",
+    "commandIndex" : 3,
+    "count" : 14
+  }, {
+    "id" : "CANCEL_MAKER_CANCELS_MAKER",
+    "satisfied" : true,
+    "source" : "FIXED",
+    "history" : "CANCEL_MAKER_SAME_GROUP",
+    "commandIndex" : 1,
+    "count" : 43
+  }, {
+    "id" : "CANCEL_MAKER_CONTINUES_SAME_LEVEL",
+    "satisfied" : true,
+    "source" : "FIXED",
+    "history" : "SAME_PRICE_FIFO_INTERLEAVE",
+    "commandIndex" : 3,
+    "count" : 1
+  }, {
+    "id" : "CANCEL_MAKER_CONTINUES_CROSS_LEVEL",
+    "satisfied" : true,
+    "source" : "FIXED",
+    "history" : "CANCEL_MAKER_CROSS_LEVEL",
+    "commandIndex" : 4,
+    "count" : 35
+  }, {
+    "id" : "CANCEL_BOTH_CANCELS_BOTH",
+    "satisfied" : true,
+    "source" : "FIXED",
+    "history" : "CANCEL_BOTH_SAME_GROUP",
+    "commandIndex" : 1,
+    "count" : 47
+  }, {
+    "id" : "PRICE_TIME_EVENT_INTERLEAVING",
+    "satisfied" : true,
+    "source" : "FIXED",
+    "history" : "SAME_PRICE_FIFO_INTERLEAVE",
+    "commandIndex" : 3,
+    "count" : 1
+  }, {
+    "id" : "PARTIAL_TRADE_BEFORE_STP",
+    "satisfied" : true,
+    "source" : "FIXED",
+    "history" : "CANCEL_TAKER_SAME_GROUP",
+    "commandIndex" : 1,
+    "count" : 50
+  }, {
+    "id" : "GTC_REMAINDER_RESTS",
+    "satisfied" : true,
+    "source" : "FIXED",
+    "history" : "CANCEL_MAKER_SAME_GROUP",
+    "commandIndex" : 1,
+    "count" : 42
+  }, {
+    "id" : "IOC_STP_AND_REMAINDER_REASONS",
+    "satisfied" : true,
+    "source" : "GENERATED",
+    "history" : "17",
+    "commandIndex" : 17,
+    "count" : 244
+  }, {
+    "id" : "FOK_TAKER_OR_BOTH_PRECHECK",
+    "satisfied" : true,
+    "source" : "FIXED",
+    "history" : "FOK_STP_AWARE_ATOMICITY",
+    "commandIndex" : 6,
+    "count" : 75
+  }, {
+    "id" : "FOK_CANCEL_MAKER_PRECHECK",
+    "satisfied" : true,
+    "source" : "FIXED",
+    "history" : "FOK_STP_AWARE_ATOMICITY",
+    "commandIndex" : 3,
+    "count" : 2
+  }, {
+    "id" : "FOK_FAILURE_ATOMIC",
+    "satisfied" : true,
+    "source" : "FIXED",
+    "history" : "FOK_STP_AWARE_ATOMICITY",
+    "commandIndex" : 2,
+    "count" : 308
+  }, {
+    "id" : "POST_ONLY_RAW_BOOK_FIRST",
+    "satisfied" : true,
+    "source" : "FIXED",
+    "history" : "POST_ONLY_RAW_BOOK_PRIORITY",
+    "commandIndex" : 1,
+    "count" : 78
+  }, {
+    "id" : "RULE_SET_ATTRIBUTION",
+    "satisfied" : true,
+    "source" : "FIXED",
+    "history" : "RULE_MODE_ATTRIBUTION_FAILURE_ATOMICITY",
+    "commandIndex" : 3,
+    "count" : 50
+  }, {
+    "id" : "MARKET_MODE_BEFORE_STP",
+    "satisfied" : true,
+    "source" : "FIXED",
+    "history" : "RULE_MODE_ATTRIBUTION_FAILURE_ATOMICITY",
+    "commandIndex" : 6,
+    "count" : 3430
+  } ]
+}

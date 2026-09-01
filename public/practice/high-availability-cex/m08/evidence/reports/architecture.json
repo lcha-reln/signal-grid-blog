@@ -1,0 +1,11 @@
+{
+  "schemaVersion" : "matching.m08.architecture-report.v1",
+  "unit" : "M08",
+  "status" : "PASS",
+  "coreSources" : 54,
+  "localRuntimeSources" : 28,
+  "violations" : 0,
+  "violationDetails" : [ ],
+  "coreInfrastructureFree" : true,
+  "localRuntimeJdkAndCoreOnly" : true
+}

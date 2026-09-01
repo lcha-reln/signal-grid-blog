@@ -1,0 +1,22 @@
+{
+  "schemaVersion" : "matching.m08.durability-ledger.v1",
+  "unit" : "M08",
+  "status" : "PASS",
+  "independentIdentityModel" : true,
+  "productionWalParserShared" : false,
+  "thirdLedgerChecks" : 4608,
+  "predictedAppends" : 3149,
+  "predictedRecordForces" : 3149,
+  "predictedApplies" : 3149,
+  "predictedSegmentPublicationDirectoryForces" : 120,
+  "restartLedgerChecks" : 1284,
+  "walPositionChecked" : true,
+  "applicationSequenceChecked" : true,
+  "duplicateOriginalResultChecked" : true,
+  "semanticDigestChecked" : true,
+  "businessRejectionConsumesWalAndApplicationSequence" : true,
+  "unknownStaleSlotReachable" : false,
+  "preprovisionedWalDirectory" : true,
+  "ancestorDirectoryDurabilityExternal" : true,
+  "unknownStaleSlotReason" : "strict continuity and no eviction bind every prior active-epoch slot; exact resolves duplicate and a different identity resolves SLOT_IDENTITY_CONFLICT"
+}

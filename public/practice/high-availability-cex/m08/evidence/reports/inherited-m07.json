@@ -1,0 +1,10 @@
+{
+  "unit" : "M07",
+  "status" : "PASS",
+  "fixedScenarios" : 16,
+  "fixedCommands" : 72,
+  "generatedHistories" : 160,
+  "generatedCommands" : 10240,
+  "coverageObligations" : 24,
+  "mutantsKilled" : 8
+}

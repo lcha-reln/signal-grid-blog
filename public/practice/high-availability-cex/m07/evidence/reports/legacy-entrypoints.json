@@ -1,0 +1,11 @@
+{
+  "schemaVersion" : "matching.m07.legacy-entrypoints-report.v1",
+  "status" : "PASS",
+  "executedEntrypoints" : 3,
+  "place" : true,
+  "placeRequest" : true,
+  "placeGoverned" : true,
+  "semanticResultsIdentical" : true,
+  "participantGroupId" : 0,
+  "stpPolicy" : "NONE"
+}

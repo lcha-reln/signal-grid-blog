@@ -1,0 +1,80 @@
+{
+  "schemaVersion" : "matching.m06.mutants-report.v1",
+  "status" : "PASS",
+  "required" : 10,
+  "killed" : 10,
+  "killClassification" : "STUDENT_FAILURE",
+  "systemErrorControl" : "SYSTEM_ERROR",
+  "systemErrorCountsAsKill" : false,
+  "mutants" : [ {
+    "id" : "M06-CANCEL-ONLY-PLACE-ACCEPTED",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "EVENT_DIFFERENTIAL",
+    "oneMinimal" : true,
+    "replayed" : true,
+    "minimizedCommands" : 2
+  }, {
+    "id" : "M06-HALTED-CUSTOMER-CANCEL-ACCEPTED",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "EVENT_DIFFERENTIAL",
+    "oneMinimal" : true,
+    "replayed" : true,
+    "minimizedCommands" : 3
+  }, {
+    "id" : "M06-HALTED-DIRECTLY-REOPENED",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "EVENT_DIFFERENTIAL",
+    "oneMinimal" : true,
+    "replayed" : true,
+    "minimizedCommands" : 2
+  }, {
+    "id" : "M06-STALE-MODE-FENCE-ACCEPTED",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "EVENT_DIFFERENTIAL",
+    "oneMinimal" : true,
+    "replayed" : true,
+    "minimizedCommands" : 1
+  }, {
+    "id" : "M06-MODE-CHANGE-IMPLICITLY-CLEARS-BOOK",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "STATE_DIFFERENTIAL",
+    "oneMinimal" : true,
+    "replayed" : true,
+    "minimizedCommands" : 2
+  }, {
+    "id" : "M06-FAILED-MODE-CHANGE-RESETS-OPEN",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "STATE_DIFFERENTIAL",
+    "oneMinimal" : true,
+    "replayed" : true,
+    "minimizedCommands" : 2
+  }, {
+    "id" : "M06-MASS-CANCEL-WITHOUT-HALT",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "EVENT_DIFFERENTIAL",
+    "oneMinimal" : true,
+    "replayed" : true,
+    "minimizedCommands" : 1
+  }, {
+    "id" : "M06-MASS-CANCEL-NON-ACCEPTANCE-ORDER",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "EVENT_DIFFERENTIAL",
+    "oneMinimal" : true,
+    "replayed" : true,
+    "minimizedCommands" : 4
+  }, {
+    "id" : "M06-FAILED-MASS-CANCEL-PARTIALLY-CLEARS",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "STATE_DIFFERENTIAL",
+    "oneMinimal" : true,
+    "replayed" : true,
+    "minimizedCommands" : 2
+  }, {
+    "id" : "M06-MASS-CANCEL-DROPS-TERMINAL-ATTRIBUTION",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "EVENT_DIFFERENTIAL",
+    "oneMinimal" : true,
+    "replayed" : true,
+    "minimizedCommands" : 3
+  } ]
+}

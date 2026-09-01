@@ -1,0 +1,21 @@
+M08F1
+0|CANONICAL_VALID_AND_BUSINESS_REJECTION|all six command variants, valid STP state, and raw invalid STP rejection recovered|CANONICAL_ENVELOPE,BUSINESS_REJECTION_JOURNALED,APPLY_BEFORE_ACK
+1|STRUCTURAL_REJECTIONS_BEFORE_WAL|wrong shard and payload hash rejected before WAL|WRONG_SHARD_PRE_WAL,PAYLOAD_HASH_PRE_WAL
+2|LIVE_EXACT_DUPLICATE|exact live identity replayed original result without append|LIVE_EXACT_DUPLICATE
+3|RESTART_EXACT_DUPLICATE|exact restart identity replayed original durable result|RESTART_EXACT_DUPLICATE
+4|COMMAND_ID_PAYLOAD_CONFLICT|commandId to payload binding remained immutable|COMMAND_ID_PAYLOAD_CONFLICT
+5|COMMAND_ID_SLOT_CONFLICT|commandId could not be rebound to a second producer slot|COMMAND_ID_SLOT_CONFLICT
+6|SLOT_IDENTITY_CONFLICT|producer slot could not be rebound to a second commandId|SLOT_IDENTITY_CONFLICT
+7|PRODUCER_SEQUENCE_GAP_AND_BOUND_STALE|gap rejected; continuous no-eviction makes prior slots resolve as duplicate or slot conflict|PRODUCER_SEQUENCE_GAP,STALE_SLOT_RESOLVES_BY_BINDING_PRECEDENCE
+8|PRODUCER_EPOCH_FENCE|known old-epoch exact replayed; unseen old epoch was fenced|HIGHER_EPOCH_ACTIVATION,PRODUCER_EPOCH_FENCED
+9|HIGHER_EPOCH_MUST_START_AT_ONE|higher epoch activated only at sequence one|HIGHER_EPOCH_MUST_START_AT_ONE,HIGHER_EPOCH_ACTIVATION
+10|TORN_LENGTH_PREFIX_UNKNOWN|length-only final tail returned UNKNOWN then truncated on restart|FAIL_CLOSED_UNKNOWN,FINAL_TORN_TAIL_TRUNCATED
+11|COMPLETE_BODY_BEFORE_FORCE_UNKNOWN|complete unforced frame returned UNKNOWN and was resolved by restart|APPEND_BEFORE_FORCE,FAIL_CLOSED_UNKNOWN
+12|FORCED_RECORD_BEFORE_APPLY_UNKNOWN|record force completed before apply hook; no ACK escaped|RECORD_FORCE_BEFORE_ACK,FAIL_CLOSED_UNKNOWN
+13|APPLIED_BEFORE_ACK_UNKNOWN|apply completed before ACK hook; exact retry replayed after restart|APPLY_BEFORE_ACK,FAIL_CLOSED_UNKNOWN
+14|ROLLOVER_DIRECTORY_FORCE_ORDER|new segment directory force preceded its first record and ACK|ROLLOVER_CHAIN,DIRECTORY_FORCE_BEFORE_FIRST_RECORD_ACK
+15|ORPHAN_TEMP_IS_NOT_AUTHORITY|orphan temp removed without entering recovered history|ORPHAN_TEMP_IGNORED
+16|FINAL_TORN_TAIL_REPAIR|only incomplete final frame was truncated and forced|FINAL_TORN_TAIL_TRUNCATED
+17|COMPLETE_FINAL_FRAME_CORRUPTION|complete final frame CRC corruption failed closed|COMPLETE_CORRUPTION_FAIL_CLOSED
+18|NON_FINAL_OR_MIDDLE_CORRUPTION|complete middle-frame corruption was not skipped or repaired|COMPLETE_CORRUPTION_FAIL_CLOSED,ROLLOVER_CHAIN
+19|SINGLE_WRITER_AND_APPLY_FAILURE|directory lock and deterministic apply poison both failed closed|DIRECTORY_SINGLE_WRITER_LOCK,FAIL_CLOSED_UNKNOWN

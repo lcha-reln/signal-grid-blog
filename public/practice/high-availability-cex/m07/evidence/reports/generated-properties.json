@@ -1,0 +1,18 @@
+{
+  "schemaVersion" : "matching.m07.generated-properties-report.v1",
+  "status" : "PASS",
+  "algorithm" : "splitmix64-v1",
+  "baseSeed" : "5707",
+  "histories" : 160,
+  "commandsPerHistory" : 64,
+  "commands" : 10240,
+  "lanes" : 5,
+  "historiesPerLane" : 32,
+  "canonicalFormat" : "M07H1",
+  "canonicalDigest" : "sha256:c2576f10a77c320ec4a9ad75e3dc3c03494f636feabdcc7157ee10e74812718f",
+  "canonicalBytes" : 1709692,
+  "canonicalLines" : 10241,
+  "freshGenerations" : 2,
+  "differentialComparisons" : 10240,
+  "eventLedgerChecks" : 10240
+}

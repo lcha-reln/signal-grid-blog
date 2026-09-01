@@ -1,0 +1,12 @@
+{
+  "schemaVersion" : "matching.m08.replay-report.v1",
+  "unit" : "M08",
+  "status" : "PASS",
+  "strictReplays" : 10,
+  "fingerprintsExact" : true,
+  "oneMinimal" : true,
+  "freshRuntimePerMutant" : true,
+  "fullSubmitCloseRestartRetryGrammar" : true,
+  "executableMutationActions" : 13,
+  "oneMinimalScope" : "HIGH_LEVEL_HISTORY_TOKENS_WITH_REQUIRED_RESTART_GRAMMAR"
+}

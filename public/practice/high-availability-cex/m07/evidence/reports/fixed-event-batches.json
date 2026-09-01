@@ -1,0 +1,907 @@
+[ {
+  "scenarioId" : "RAW_GROUP_VALIDATION",
+  "caseId" : "negative-group-rejected",
+  "commandType" : "PLACE",
+  "applicationSequence" : 1,
+  "events" : [ {
+    "type" : "Rejected",
+    "semantic" : "Rejected[code=INVALID_STP_GROUP_ID, field=participantGroupId]"
+  } ],
+  "stateAfterSha256" : "087de2a71f6a949ba9b1a53f49c99f52e201e762434642e599707ca99c523fe8"
+}, {
+  "scenarioId" : "RAW_GROUP_VALIDATION",
+  "caseId" : "same-id-valid-positive-group",
+  "commandType" : "PLACE",
+  "applicationSequence" : 2,
+  "events" : [ {
+    "type" : "Accepted",
+    "semantic" : "Accepted[acceptanceSequence=1, orderId=1001, side=BUY, priceTicks=90, quantityLots=1, executionPolicy=GTC, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=1, stpPolicy=CANCEL_TAKER]"
+  }, {
+    "type" : "Rested",
+    "semantic" : "Rested[acceptanceSequence=1, orderId=1001, side=BUY, priceTicks=90, remainingQuantityLots=1, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=1, stpPolicy=CANCEL_TAKER]"
+  } ],
+  "stateAfterSha256" : "8d407f4bb2ba7b151dcbb87680c70425c7440a2e28df376918a40f3b411d14e2"
+}, {
+  "scenarioId" : "RAW_GROUP_VALIDATION",
+  "caseId" : "maximum-group-valid",
+  "commandType" : "PLACE",
+  "applicationSequence" : 3,
+  "events" : [ {
+    "type" : "Accepted",
+    "semantic" : "Accepted[acceptanceSequence=2, orderId=1002, side=BUY, priceTicks=91, quantityLots=1, executionPolicy=GTC, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=9223372036854775807, stpPolicy=CANCEL_MAKER]"
+  }, {
+    "type" : "Rested",
+    "semantic" : "Rested[acceptanceSequence=2, orderId=1002, side=BUY, priceTicks=91, remainingQuantityLots=1, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=9223372036854775807, stpPolicy=CANCEL_MAKER]"
+  } ],
+  "stateAfterSha256" : "dc633afbb7d0f3723ad74d5a847a3ec18722206b08b2423024d7f0f9753ebc58"
+}, {
+  "scenarioId" : "RAW_POLICY_VALIDATION",
+  "caseId" : "unknown-policy-rejected",
+  "commandType" : "PLACE",
+  "applicationSequence" : 1,
+  "events" : [ {
+    "type" : "Rejected",
+    "semantic" : "Rejected[code=INVALID_STP_POLICY, field=stpPolicy]"
+  } ],
+  "stateAfterSha256" : "087de2a71f6a949ba9b1a53f49c99f52e201e762434642e599707ca99c523fe8"
+}, {
+  "scenarioId" : "RAW_POLICY_VALIDATION",
+  "caseId" : "lowercase-policy-rejected",
+  "commandType" : "PLACE",
+  "applicationSequence" : 2,
+  "events" : [ {
+    "type" : "Rejected",
+    "semantic" : "Rejected[code=INVALID_STP_POLICY, field=stpPolicy]"
+  } ],
+  "stateAfterSha256" : "c0f82c8caf85f9a2814f8438a48a960d2b8a4bb78e7fcffec26fffa8a294c94e"
+}, {
+  "scenarioId" : "RAW_POLICY_VALIDATION",
+  "caseId" : "padded-policy-rejected",
+  "commandType" : "PLACE",
+  "applicationSequence" : 3,
+  "events" : [ {
+    "type" : "Rejected",
+    "semantic" : "Rejected[code=INVALID_STP_POLICY, field=stpPolicy]"
+  } ],
+  "stateAfterSha256" : "4077a5ca20093428e7b3bcb8b4191cadd8b32ce86210e5fdd59bbee137bc67b3"
+}, {
+  "scenarioId" : "RAW_POLICY_VALIDATION",
+  "caseId" : "same-id-exact-policy-valid",
+  "commandType" : "PLACE",
+  "applicationSequence" : 4,
+  "events" : [ {
+    "type" : "Accepted",
+    "semantic" : "Accepted[acceptanceSequence=1, orderId=1101, side=BUY, priceTicks=90, quantityLots=1, executionPolicy=GTC, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=2, stpPolicy=CANCEL_TAKER]"
+  }, {
+    "type" : "Rested",
+    "semantic" : "Rested[acceptanceSequence=1, orderId=1101, side=BUY, priceTicks=90, remainingQuantityLots=1, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=2, stpPolicy=CANCEL_TAKER]"
+  } ],
+  "stateAfterSha256" : "6a6af6e885e48d3ff9f92294eb269dc89face1f2003c91775deec2e32252906b"
+}, {
+  "scenarioId" : "GROUP_POLICY_PAIR_VALIDATION",
+  "caseId" : "zero-action-pair-rejected",
+  "commandType" : "PLACE",
+  "applicationSequence" : 1,
+  "events" : [ {
+    "type" : "Rejected",
+    "semantic" : "Rejected[code=INVALID_STP_INSTRUCTION, field=stpInstruction]"
+  } ],
+  "stateAfterSha256" : "087de2a71f6a949ba9b1a53f49c99f52e201e762434642e599707ca99c523fe8"
+}, {
+  "scenarioId" : "GROUP_POLICY_PAIR_VALIDATION",
+  "caseId" : "positive-none-pair-rejected",
+  "commandType" : "PLACE",
+  "applicationSequence" : 2,
+  "events" : [ {
+    "type" : "Rejected",
+    "semantic" : "Rejected[code=INVALID_STP_INSTRUCTION, field=stpInstruction]"
+  } ],
+  "stateAfterSha256" : "c0f82c8caf85f9a2814f8438a48a960d2b8a4bb78e7fcffec26fffa8a294c94e"
+}, {
+  "scenarioId" : "GROUP_POLICY_PAIR_VALIDATION",
+  "caseId" : "same-id-zero-none-valid",
+  "commandType" : "PLACE",
+  "applicationSequence" : 3,
+  "events" : [ {
+    "type" : "Accepted",
+    "semantic" : "Accepted[acceptanceSequence=1, orderId=1201, side=BUY, priceTicks=90, quantityLots=1, executionPolicy=GTC, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=0, stpPolicy=NONE]"
+  }, {
+    "type" : "Rested",
+    "semantic" : "Rested[acceptanceSequence=1, orderId=1201, side=BUY, priceTicks=90, remainingQuantityLots=1, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=0, stpPolicy=NONE]"
+  } ],
+  "stateAfterSha256" : "9499d0df350d3f27d291a0ccc0a15077b40e90be09e9eb8f7f7e88fb0635979e"
+}, {
+  "scenarioId" : "GROUP_POLICY_PAIR_VALIDATION",
+  "caseId" : "positive-both-valid",
+  "commandType" : "PLACE",
+  "applicationSequence" : 4,
+  "events" : [ {
+    "type" : "Accepted",
+    "semantic" : "Accepted[acceptanceSequence=2, orderId=1202, side=BUY, priceTicks=91, quantityLots=1, executionPolicy=GTC, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=4, stpPolicy=CANCEL_BOTH]"
+  }, {
+    "type" : "Rested",
+    "semantic" : "Rested[acceptanceSequence=2, orderId=1202, side=BUY, priceTicks=91, remainingQuantityLots=1, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=4, stpPolicy=CANCEL_BOTH]"
+  } ],
+  "stateAfterSha256" : "e824a6b500c70c6cd447c99d9c93faf4772b800a916096a89c400ba06e35873b"
+}, {
+  "scenarioId" : "GROUP_POLICY_PAIR_VALIDATION",
+  "caseId" : "positive-maker-valid",
+  "commandType" : "PLACE",
+  "applicationSequence" : 5,
+  "events" : [ {
+    "type" : "Accepted",
+    "semantic" : "Accepted[acceptanceSequence=3, orderId=1203, side=BUY, priceTicks=92, quantityLots=1, executionPolicy=GTC, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=5, stpPolicy=CANCEL_MAKER]"
+  }, {
+    "type" : "Rested",
+    "semantic" : "Rested[acceptanceSequence=3, orderId=1203, side=BUY, priceTicks=92, remainingQuantityLots=1, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=5, stpPolicy=CANCEL_MAKER]"
+  } ],
+  "stateAfterSha256" : "e2ccfa5c3c50859a24a4a90566711732418a83e37352cd9135023e91116c106a"
+}, {
+  "scenarioId" : "LEGACY_NONE_REGRESSION",
+  "caseId" : "legacy-maker",
+  "commandType" : "PLACE",
+  "applicationSequence" : 1,
+  "events" : [ {
+    "type" : "Accepted",
+    "semantic" : "Accepted[acceptanceSequence=1, orderId=1301, side=SELL, priceTicks=100, quantityLots=2, executionPolicy=GTC, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=0, stpPolicy=NONE]"
+  }, {
+    "type" : "Rested",
+    "semantic" : "Rested[acceptanceSequence=1, orderId=1301, side=SELL, priceTicks=100, remainingQuantityLots=2, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=0, stpPolicy=NONE]"
+  } ],
+  "stateAfterSha256" : "5a5a8018498f71591b9de5fee95b010796f8d1a91a3b6f142a1245ca51f6014c"
+}, {
+  "scenarioId" : "LEGACY_NONE_REGRESSION",
+  "caseId" : "legacy-taker",
+  "commandType" : "PLACE",
+  "applicationSequence" : 2,
+  "events" : [ {
+    "type" : "Accepted",
+    "semantic" : "Accepted[acceptanceSequence=2, orderId=1302, side=BUY, priceTicks=100, quantityLots=2, executionPolicy=GTC, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=0, stpPolicy=NONE]"
+  }, {
+    "type" : "Trade",
+    "semantic" : "Trade[makerSequence=1, makerOrderId=1301, takerSequence=2, takerOrderId=1302, priceTicks=100, quantityLots=2, makerAdmissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], takerAdmissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04]]"
+  } ],
+  "stateAfterSha256" : "5695f97197da04c5428faf5c2aca2780522a6358b3f11521cbb12a6deeebee7f"
+}, {
+  "scenarioId" : "LEGACY_NONE_REGRESSION",
+  "caseId" : "explicit-zero-maker",
+  "commandType" : "PLACE",
+  "applicationSequence" : 3,
+  "events" : [ {
+    "type" : "Accepted",
+    "semantic" : "Accepted[acceptanceSequence=3, orderId=1303, side=SELL, priceTicks=101, quantityLots=2, executionPolicy=GTC, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=0, stpPolicy=NONE]"
+  }, {
+    "type" : "Rested",
+    "semantic" : "Rested[acceptanceSequence=3, orderId=1303, side=SELL, priceTicks=101, remainingQuantityLots=2, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=0, stpPolicy=NONE]"
+  } ],
+  "stateAfterSha256" : "a7024e3c62eb9a58100b6fa20a5a8d28f4a56c771f4ae450ddb4e792f3d0f4c3"
+}, {
+  "scenarioId" : "LEGACY_NONE_REGRESSION",
+  "caseId" : "explicit-zero-taker",
+  "commandType" : "PLACE",
+  "applicationSequence" : 4,
+  "events" : [ {
+    "type" : "Accepted",
+    "semantic" : "Accepted[acceptanceSequence=4, orderId=1304, side=BUY, priceTicks=101, quantityLots=2, executionPolicy=GTC, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=0, stpPolicy=NONE]"
+  }, {
+    "type" : "Trade",
+    "semantic" : "Trade[makerSequence=3, makerOrderId=1303, takerSequence=4, takerOrderId=1304, priceTicks=101, quantityLots=2, makerAdmissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], takerAdmissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04]]"
+  } ],
+  "stateAfterSha256" : "538e7c9b4854dd4eea676dd7466b77ca3f9dcafe35702ff8d075eaf12fdd4b89"
+}, {
+  "scenarioId" : "DIFFERENT_GROUP_TRADES",
+  "caseId" : "different-sell-maker",
+  "commandType" : "PLACE",
+  "applicationSequence" : 1,
+  "events" : [ {
+    "type" : "Accepted",
+    "semantic" : "Accepted[acceptanceSequence=1, orderId=1401, side=SELL, priceTicks=100, quantityLots=2, executionPolicy=GTC, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=11, stpPolicy=CANCEL_TAKER]"
+  }, {
+    "type" : "Rested",
+    "semantic" : "Rested[acceptanceSequence=1, orderId=1401, side=SELL, priceTicks=100, remainingQuantityLots=2, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=11, stpPolicy=CANCEL_TAKER]"
+  } ],
+  "stateAfterSha256" : "8a90820c265e9e0bb4901710061c185b977d3bfcec94379a0a32509e8ceeed00"
+}, {
+  "scenarioId" : "DIFFERENT_GROUP_TRADES",
+  "caseId" : "different-buy-taker",
+  "commandType" : "PLACE",
+  "applicationSequence" : 2,
+  "events" : [ {
+    "type" : "Accepted",
+    "semantic" : "Accepted[acceptanceSequence=2, orderId=1402, side=BUY, priceTicks=100, quantityLots=2, executionPolicy=GTC, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=12, stpPolicy=CANCEL_TAKER]"
+  }, {
+    "type" : "Trade",
+    "semantic" : "Trade[makerSequence=1, makerOrderId=1401, takerSequence=2, takerOrderId=1402, priceTicks=100, quantityLots=2, makerAdmissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], takerAdmissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04]]"
+  } ],
+  "stateAfterSha256" : "5695f97197da04c5428faf5c2aca2780522a6358b3f11521cbb12a6deeebee7f"
+}, {
+  "scenarioId" : "DIFFERENT_GROUP_TRADES",
+  "caseId" : "different-buy-maker",
+  "commandType" : "PLACE",
+  "applicationSequence" : 3,
+  "events" : [ {
+    "type" : "Accepted",
+    "semantic" : "Accepted[acceptanceSequence=3, orderId=1403, side=BUY, priceTicks=99, quantityLots=2, executionPolicy=GTC, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=13, stpPolicy=CANCEL_BOTH]"
+  }, {
+    "type" : "Rested",
+    "semantic" : "Rested[acceptanceSequence=3, orderId=1403, side=BUY, priceTicks=99, remainingQuantityLots=2, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=13, stpPolicy=CANCEL_BOTH]"
+  } ],
+  "stateAfterSha256" : "6da2a24166bf8d95b225d1c45ab2b33c7f027c54c0719897563c98010761a24c"
+}, {
+  "scenarioId" : "DIFFERENT_GROUP_TRADES",
+  "caseId" : "different-sell-taker",
+  "commandType" : "PLACE",
+  "applicationSequence" : 4,
+  "events" : [ {
+    "type" : "Accepted",
+    "semantic" : "Accepted[acceptanceSequence=4, orderId=1404, side=SELL, priceTicks=99, quantityLots=2, executionPolicy=GTC, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=14, stpPolicy=CANCEL_MAKER]"
+  }, {
+    "type" : "Trade",
+    "semantic" : "Trade[makerSequence=3, makerOrderId=1403, takerSequence=4, takerOrderId=1404, priceTicks=99, quantityLots=2, makerAdmissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], takerAdmissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04]]"
+  } ],
+  "stateAfterSha256" : "538e7c9b4854dd4eea676dd7466b77ca3f9dcafe35702ff8d075eaf12fdd4b89"
+}, {
+  "scenarioId" : "CANCEL_TAKER_SAME_GROUP",
+  "caseId" : "cancel-taker-maker",
+  "commandType" : "PLACE",
+  "applicationSequence" : 1,
+  "events" : [ {
+    "type" : "Accepted",
+    "semantic" : "Accepted[acceptanceSequence=1, orderId=1501, side=SELL, priceTicks=100, quantityLots=2, executionPolicy=GTC, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=21, stpPolicy=CANCEL_MAKER]"
+  }, {
+    "type" : "Rested",
+    "semantic" : "Rested[acceptanceSequence=1, orderId=1501, side=SELL, priceTicks=100, remainingQuantityLots=2, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=21, stpPolicy=CANCEL_MAKER]"
+  } ],
+  "stateAfterSha256" : "a44043085000d67902f556ef951c83f4109854ab4ea50fd424347bc7d3cf1401"
+}, {
+  "scenarioId" : "CANCEL_TAKER_SAME_GROUP",
+  "caseId" : "cancel-taker-conflict",
+  "commandType" : "PLACE",
+  "applicationSequence" : 2,
+  "events" : [ {
+    "type" : "Accepted",
+    "semantic" : "Accepted[acceptanceSequence=2, orderId=1502, side=BUY, priceTicks=100, quantityLots=5, executionPolicy=GTC, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=21, stpPolicy=CANCEL_TAKER]"
+  }, {
+    "type" : "SelfTradePrevented",
+    "semantic" : "SelfTradePrevented[makerSequence=1, makerOrderId=1501, takerSequence=2, takerOrderId=1502, makerPriceTicks=100, wouldTradeQuantityLots=2, participantGroupId=21, stpPolicy=CANCEL_TAKER, makerCanceledQuantityLots=0, takerCanceledQuantityLots=5, makerAdmissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], takerAdmissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04]]"
+  } ],
+  "stateAfterSha256" : "5730ea82ed21b8787a6d553daa0cfc07edb3ea4bbf7edb5d0c1c5461efdba9ab"
+}, {
+  "scenarioId" : "CANCEL_TAKER_SAME_GROUP",
+  "caseId" : "cancel-taker-maker-still-resting",
+  "commandType" : "CANCEL",
+  "applicationSequence" : 3,
+  "events" : [ {
+    "type" : "Canceled",
+    "semantic" : "Canceled[acceptanceSequence=1, orderId=1501, side=SELL, priceTicks=100, canceledQuantityLots=2, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04]]"
+  } ],
+  "stateAfterSha256" : "cd2578ef270d98bbdbd6daf547edb0553a00f7f52dca0224b8e460529198f935"
+}, {
+  "scenarioId" : "CANCEL_MAKER_SAME_GROUP",
+  "caseId" : "cancel-maker-buy-maker",
+  "commandType" : "PLACE",
+  "applicationSequence" : 1,
+  "events" : [ {
+    "type" : "Accepted",
+    "semantic" : "Accepted[acceptanceSequence=1, orderId=1511, side=BUY, priceTicks=100, quantityLots=2, executionPolicy=GTC, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=22, stpPolicy=CANCEL_TAKER]"
+  }, {
+    "type" : "Rested",
+    "semantic" : "Rested[acceptanceSequence=1, orderId=1511, side=BUY, priceTicks=100, remainingQuantityLots=2, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=22, stpPolicy=CANCEL_TAKER]"
+  } ],
+  "stateAfterSha256" : "9805106c4ad3a439b1482ffa0d3241045af2513185cd40909536c0f8223b57d7"
+}, {
+  "scenarioId" : "CANCEL_MAKER_SAME_GROUP",
+  "caseId" : "cancel-maker-sell-taker",
+  "commandType" : "PLACE",
+  "applicationSequence" : 2,
+  "events" : [ {
+    "type" : "Accepted",
+    "semantic" : "Accepted[acceptanceSequence=2, orderId=1512, side=SELL, priceTicks=100, quantityLots=5, executionPolicy=GTC, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=22, stpPolicy=CANCEL_MAKER]"
+  }, {
+    "type" : "SelfTradePrevented",
+    "semantic" : "SelfTradePrevented[makerSequence=1, makerOrderId=1511, takerSequence=2, takerOrderId=1512, makerPriceTicks=100, wouldTradeQuantityLots=2, participantGroupId=22, stpPolicy=CANCEL_MAKER, makerCanceledQuantityLots=2, takerCanceledQuantityLots=0, makerAdmissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], takerAdmissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04]]"
+  }, {
+    "type" : "Rested",
+    "semantic" : "Rested[acceptanceSequence=2, orderId=1512, side=SELL, priceTicks=100, remainingQuantityLots=5, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=22, stpPolicy=CANCEL_MAKER]"
+  } ],
+  "stateAfterSha256" : "398a1972589f98197792f6e337a1c4b069f9ec253b7fe080c335e400917fe2c3"
+}, {
+  "scenarioId" : "CANCEL_MAKER_SAME_GROUP",
+  "caseId" : "cancel-maker-taker-rested",
+  "commandType" : "CANCEL",
+  "applicationSequence" : 3,
+  "events" : [ {
+    "type" : "Canceled",
+    "semantic" : "Canceled[acceptanceSequence=2, orderId=1512, side=SELL, priceTicks=100, canceledQuantityLots=5, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04]]"
+  } ],
+  "stateAfterSha256" : "cd2578ef270d98bbdbd6daf547edb0553a00f7f52dca0224b8e460529198f935"
+}, {
+  "scenarioId" : "CANCEL_BOTH_SAME_GROUP",
+  "caseId" : "cancel-both-buy-maker",
+  "commandType" : "PLACE",
+  "applicationSequence" : 1,
+  "events" : [ {
+    "type" : "Accepted",
+    "semantic" : "Accepted[acceptanceSequence=1, orderId=1521, side=BUY, priceTicks=100, quantityLots=2, executionPolicy=GTC, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=23, stpPolicy=CANCEL_TAKER]"
+  }, {
+    "type" : "Rested",
+    "semantic" : "Rested[acceptanceSequence=1, orderId=1521, side=BUY, priceTicks=100, remainingQuantityLots=2, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=23, stpPolicy=CANCEL_TAKER]"
+  } ],
+  "stateAfterSha256" : "7e46d48c6318b57d9b967dac21db9364b00aa8dd9385a3603ae473475124a033"
+}, {
+  "scenarioId" : "CANCEL_BOTH_SAME_GROUP",
+  "caseId" : "cancel-both-sell-taker",
+  "commandType" : "PLACE",
+  "applicationSequence" : 2,
+  "events" : [ {
+    "type" : "Accepted",
+    "semantic" : "Accepted[acceptanceSequence=2, orderId=1522, side=SELL, priceTicks=100, quantityLots=5, executionPolicy=GTC, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=23, stpPolicy=CANCEL_BOTH]"
+  }, {
+    "type" : "SelfTradePrevented",
+    "semantic" : "SelfTradePrevented[makerSequence=1, makerOrderId=1521, takerSequence=2, takerOrderId=1522, makerPriceTicks=100, wouldTradeQuantityLots=2, participantGroupId=23, stpPolicy=CANCEL_BOTH, makerCanceledQuantityLots=2, takerCanceledQuantityLots=5, makerAdmissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], takerAdmissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04]]"
+  } ],
+  "stateAfterSha256" : "5695f97197da04c5428faf5c2aca2780522a6358b3f11521cbb12a6deeebee7f"
+}, {
+  "scenarioId" : "CANCEL_BOTH_SAME_GROUP",
+  "caseId" : "cancel-both-maker-terminal",
+  "commandType" : "CANCEL",
+  "applicationSequence" : 3,
+  "events" : [ {
+    "type" : "CancelRejected",
+    "semantic" : "CancelRejected[orderId=1521, code=ORDER_ALREADY_CANCELED, executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04]]"
+  } ],
+  "stateAfterSha256" : "cd2578ef270d98bbdbd6daf547edb0553a00f7f52dca0224b8e460529198f935"
+}, {
+  "scenarioId" : "SAME_PRICE_FIFO_INTERLEAVE",
+  "caseId" : "fifo-first-external",
+  "commandType" : "PLACE",
+  "applicationSequence" : 1,
+  "events" : [ {
+    "type" : "Accepted",
+    "semantic" : "Accepted[acceptanceSequence=1, orderId=1601, side=SELL, priceTicks=100, quantityLots=1, executionPolicy=GTC, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=32, stpPolicy=CANCEL_TAKER]"
+  }, {
+    "type" : "Rested",
+    "semantic" : "Rested[acceptanceSequence=1, orderId=1601, side=SELL, priceTicks=100, remainingQuantityLots=1, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=32, stpPolicy=CANCEL_TAKER]"
+  } ],
+  "stateAfterSha256" : "a7ab0948fccd956535de3c9329bf85205e19df92299a7ca6d1579715cf749a39"
+}, {
+  "scenarioId" : "SAME_PRICE_FIFO_INTERLEAVE",
+  "caseId" : "fifo-second-self",
+  "commandType" : "PLACE",
+  "applicationSequence" : 2,
+  "events" : [ {
+    "type" : "Accepted",
+    "semantic" : "Accepted[acceptanceSequence=2, orderId=1602, side=SELL, priceTicks=100, quantityLots=2, executionPolicy=GTC, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=31, stpPolicy=CANCEL_TAKER]"
+  }, {
+    "type" : "Rested",
+    "semantic" : "Rested[acceptanceSequence=2, orderId=1602, side=SELL, priceTicks=100, remainingQuantityLots=2, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=31, stpPolicy=CANCEL_TAKER]"
+  } ],
+  "stateAfterSha256" : "dc5886b1a2521373c1a3272d1cfcc35e896913edf5c8d9c978c555c09d4aac0e"
+}, {
+  "scenarioId" : "SAME_PRICE_FIFO_INTERLEAVE",
+  "caseId" : "fifo-third-external",
+  "commandType" : "PLACE",
+  "applicationSequence" : 3,
+  "events" : [ {
+    "type" : "Accepted",
+    "semantic" : "Accepted[acceptanceSequence=3, orderId=1603, side=SELL, priceTicks=100, quantityLots=1, executionPolicy=GTC, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=33, stpPolicy=CANCEL_TAKER]"
+  }, {
+    "type" : "Rested",
+    "semantic" : "Rested[acceptanceSequence=3, orderId=1603, side=SELL, priceTicks=100, remainingQuantityLots=1, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=33, stpPolicy=CANCEL_TAKER]"
+  } ],
+  "stateAfterSha256" : "292000d77683665133f999360f92667c3453f68011f1776b749eb9509a066752"
+}, {
+  "scenarioId" : "SAME_PRICE_FIFO_INTERLEAVE",
+  "caseId" : "fifo-trade-stp-trade",
+  "commandType" : "PLACE",
+  "applicationSequence" : 4,
+  "events" : [ {
+    "type" : "Accepted",
+    "semantic" : "Accepted[acceptanceSequence=4, orderId=1604, side=BUY, priceTicks=100, quantityLots=4, executionPolicy=GTC, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=31, stpPolicy=CANCEL_MAKER]"
+  }, {
+    "type" : "Trade",
+    "semantic" : "Trade[makerSequence=1, makerOrderId=1601, takerSequence=4, takerOrderId=1604, priceTicks=100, quantityLots=1, makerAdmissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], takerAdmissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04]]"
+  }, {
+    "type" : "SelfTradePrevented",
+    "semantic" : "SelfTradePrevented[makerSequence=2, makerOrderId=1602, takerSequence=4, takerOrderId=1604, makerPriceTicks=100, wouldTradeQuantityLots=2, participantGroupId=31, stpPolicy=CANCEL_MAKER, makerCanceledQuantityLots=2, takerCanceledQuantityLots=0, makerAdmissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], takerAdmissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04]]"
+  }, {
+    "type" : "Trade",
+    "semantic" : "Trade[makerSequence=3, makerOrderId=1603, takerSequence=4, takerOrderId=1604, priceTicks=100, quantityLots=1, makerAdmissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], takerAdmissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04]]"
+  }, {
+    "type" : "Rested",
+    "semantic" : "Rested[acceptanceSequence=4, orderId=1604, side=BUY, priceTicks=100, remainingQuantityLots=2, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=31, stpPolicy=CANCEL_MAKER]"
+  } ],
+  "stateAfterSha256" : "661b071faf15bb0eadeb563c3134a230dca4896baf4db828afb712102aa43681"
+}, {
+  "scenarioId" : "SAME_PRICE_FIFO_INTERLEAVE",
+  "caseId" : "fifo-cancel-rested-taker",
+  "commandType" : "CANCEL",
+  "applicationSequence" : 5,
+  "events" : [ {
+    "type" : "Canceled",
+    "semantic" : "Canceled[acceptanceSequence=4, orderId=1604, side=BUY, priceTicks=100, canceledQuantityLots=2, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04]]"
+  } ],
+  "stateAfterSha256" : "e08ded4fc38c2e657923b501dfbf4a6bcb04f4f7ccb29893ede76dc0b292bc39"
+}, {
+  "scenarioId" : "SAME_PRICE_FIFO_INTERLEAVE",
+  "caseId" : "fifo-self-maker-terminal",
+  "commandType" : "CANCEL",
+  "applicationSequence" : 6,
+  "events" : [ {
+    "type" : "CancelRejected",
+    "semantic" : "CancelRejected[orderId=1602, code=ORDER_ALREADY_CANCELED, executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04]]"
+  } ],
+  "stateAfterSha256" : "52124f224f27e9e95f2d88936d6a59fce35521c70241b2d913cfbf5628fadff7"
+}, {
+  "scenarioId" : "CANCEL_MAKER_CROSS_LEVEL",
+  "caseId" : "cross-self-best-bid",
+  "commandType" : "PLACE",
+  "applicationSequence" : 1,
+  "events" : [ {
+    "type" : "Accepted",
+    "semantic" : "Accepted[acceptanceSequence=1, orderId=1701, side=BUY, priceTicks=102, quantityLots=1, executionPolicy=GTC, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=41, stpPolicy=CANCEL_TAKER]"
+  }, {
+    "type" : "Rested",
+    "semantic" : "Rested[acceptanceSequence=1, orderId=1701, side=BUY, priceTicks=102, remainingQuantityLots=1, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=41, stpPolicy=CANCEL_TAKER]"
+  } ],
+  "stateAfterSha256" : "55bd2b3fff54c5d3e12de0571eb5e1983f78f6159b818439614df82ab8f0bc81"
+}, {
+  "scenarioId" : "CANCEL_MAKER_CROSS_LEVEL",
+  "caseId" : "cross-external-second-bid",
+  "commandType" : "PLACE",
+  "applicationSequence" : 2,
+  "events" : [ {
+    "type" : "Accepted",
+    "semantic" : "Accepted[acceptanceSequence=2, orderId=1702, side=BUY, priceTicks=101, quantityLots=2, executionPolicy=GTC, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=42, stpPolicy=CANCEL_TAKER]"
+  }, {
+    "type" : "Rested",
+    "semantic" : "Rested[acceptanceSequence=2, orderId=1702, side=BUY, priceTicks=101, remainingQuantityLots=2, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=42, stpPolicy=CANCEL_TAKER]"
+  } ],
+  "stateAfterSha256" : "f132e9716ee282f2fc75061ecd292fea7b1ebb762cd393c542b3505873a23e89"
+}, {
+  "scenarioId" : "CANCEL_MAKER_CROSS_LEVEL",
+  "caseId" : "cross-self-third-bid",
+  "commandType" : "PLACE",
+  "applicationSequence" : 3,
+  "events" : [ {
+    "type" : "Accepted",
+    "semantic" : "Accepted[acceptanceSequence=3, orderId=1703, side=BUY, priceTicks=100, quantityLots=1, executionPolicy=GTC, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=41, stpPolicy=CANCEL_TAKER]"
+  }, {
+    "type" : "Rested",
+    "semantic" : "Rested[acceptanceSequence=3, orderId=1703, side=BUY, priceTicks=100, remainingQuantityLots=1, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=41, stpPolicy=CANCEL_TAKER]"
+  } ],
+  "stateAfterSha256" : "ed79807361ee43d79f60b4355d7cf1955a3a8408b8dc5d86590af650c81efe91"
+}, {
+  "scenarioId" : "CANCEL_MAKER_CROSS_LEVEL",
+  "caseId" : "cross-external-fourth-bid",
+  "commandType" : "PLACE",
+  "applicationSequence" : 4,
+  "events" : [ {
+    "type" : "Accepted",
+    "semantic" : "Accepted[acceptanceSequence=4, orderId=1704, side=BUY, priceTicks=99, quantityLots=2, executionPolicy=GTC, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=43, stpPolicy=CANCEL_TAKER]"
+  }, {
+    "type" : "Rested",
+    "semantic" : "Rested[acceptanceSequence=4, orderId=1704, side=BUY, priceTicks=99, remainingQuantityLots=2, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=43, stpPolicy=CANCEL_TAKER]"
+  } ],
+  "stateAfterSha256" : "7bcaf37d727f441e759b2118046bb5061a53e0736964b5d24b3036d7f0b42388"
+}, {
+  "scenarioId" : "CANCEL_MAKER_CROSS_LEVEL",
+  "caseId" : "cross-level-sell-taker",
+  "commandType" : "PLACE",
+  "applicationSequence" : 5,
+  "events" : [ {
+    "type" : "Accepted",
+    "semantic" : "Accepted[acceptanceSequence=5, orderId=1705, side=SELL, priceTicks=99, quantityLots=4, executionPolicy=GTC, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=41, stpPolicy=CANCEL_MAKER]"
+  }, {
+    "type" : "SelfTradePrevented",
+    "semantic" : "SelfTradePrevented[makerSequence=1, makerOrderId=1701, takerSequence=5, takerOrderId=1705, makerPriceTicks=102, wouldTradeQuantityLots=1, participantGroupId=41, stpPolicy=CANCEL_MAKER, makerCanceledQuantityLots=1, takerCanceledQuantityLots=0, makerAdmissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], takerAdmissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04]]"
+  }, {
+    "type" : "Trade",
+    "semantic" : "Trade[makerSequence=2, makerOrderId=1702, takerSequence=5, takerOrderId=1705, priceTicks=101, quantityLots=2, makerAdmissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], takerAdmissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04]]"
+  }, {
+    "type" : "SelfTradePrevented",
+    "semantic" : "SelfTradePrevented[makerSequence=3, makerOrderId=1703, takerSequence=5, takerOrderId=1705, makerPriceTicks=100, wouldTradeQuantityLots=1, participantGroupId=41, stpPolicy=CANCEL_MAKER, makerCanceledQuantityLots=1, takerCanceledQuantityLots=0, makerAdmissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], takerAdmissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04]]"
+  }, {
+    "type" : "Trade",
+    "semantic" : "Trade[makerSequence=4, makerOrderId=1704, takerSequence=5, takerOrderId=1705, priceTicks=99, quantityLots=2, makerAdmissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], takerAdmissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04]]"
+  } ],
+  "stateAfterSha256" : "e4b69a48ebd49b063eff3fc4caabcfe9c174f3254918158ab014490630a83e55"
+}, {
+  "scenarioId" : "CANCEL_MAKER_CROSS_LEVEL",
+  "caseId" : "cross-self-maker-terminal",
+  "commandType" : "CANCEL",
+  "applicationSequence" : 6,
+  "events" : [ {
+    "type" : "CancelRejected",
+    "semantic" : "CancelRejected[orderId=1703, code=ORDER_ALREADY_CANCELED, executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04]]"
+  } ],
+  "stateAfterSha256" : "1837d77235eb217f1fcc6f9ad5ddbcc9861cb0527456ee034880d1d055adf70e"
+}, {
+  "scenarioId" : "PARTIAL_BEFORE_STP",
+  "caseId" : "partial-external-best-bid",
+  "commandType" : "PLACE",
+  "applicationSequence" : 1,
+  "events" : [ {
+    "type" : "Accepted",
+    "semantic" : "Accepted[acceptanceSequence=1, orderId=1801, side=BUY, priceTicks=101, quantityLots=2, executionPolicy=GTC, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=52, stpPolicy=CANCEL_TAKER]"
+  }, {
+    "type" : "Rested",
+    "semantic" : "Rested[acceptanceSequence=1, orderId=1801, side=BUY, priceTicks=101, remainingQuantityLots=2, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=52, stpPolicy=CANCEL_TAKER]"
+  } ],
+  "stateAfterSha256" : "b822ca2f1198880f470969b9bfff83092f84e2b283526a30a05ca40aef3a77ba"
+}, {
+  "scenarioId" : "PARTIAL_BEFORE_STP",
+  "caseId" : "partial-self-next-bid",
+  "commandType" : "PLACE",
+  "applicationSequence" : 2,
+  "events" : [ {
+    "type" : "Accepted",
+    "semantic" : "Accepted[acceptanceSequence=2, orderId=1802, side=BUY, priceTicks=100, quantityLots=3, executionPolicy=GTC, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=51, stpPolicy=CANCEL_TAKER]"
+  }, {
+    "type" : "Rested",
+    "semantic" : "Rested[acceptanceSequence=2, orderId=1802, side=BUY, priceTicks=100, remainingQuantityLots=3, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=51, stpPolicy=CANCEL_TAKER]"
+  } ],
+  "stateAfterSha256" : "5b1c274b8eb642ab0bc512892fbab6ad66175f38dcb90be9943c51ba87234b8c"
+}, {
+  "scenarioId" : "PARTIAL_BEFORE_STP",
+  "caseId" : "partial-external-later-bid",
+  "commandType" : "PLACE",
+  "applicationSequence" : 3,
+  "events" : [ {
+    "type" : "Accepted",
+    "semantic" : "Accepted[acceptanceSequence=3, orderId=1803, side=BUY, priceTicks=99, quantityLots=2, executionPolicy=GTC, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=53, stpPolicy=CANCEL_TAKER]"
+  }, {
+    "type" : "Rested",
+    "semantic" : "Rested[acceptanceSequence=3, orderId=1803, side=BUY, priceTicks=99, remainingQuantityLots=2, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=53, stpPolicy=CANCEL_TAKER]"
+  } ],
+  "stateAfterSha256" : "f9bc97ef0577625ae83943bc87c364650b54422f255a73a323480872756c398d"
+}, {
+  "scenarioId" : "PARTIAL_BEFORE_STP",
+  "caseId" : "partial-then-cancel-sell-taker",
+  "commandType" : "PLACE",
+  "applicationSequence" : 4,
+  "events" : [ {
+    "type" : "Accepted",
+    "semantic" : "Accepted[acceptanceSequence=4, orderId=1804, side=SELL, priceTicks=99, quantityLots=7, executionPolicy=GTC, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=51, stpPolicy=CANCEL_TAKER]"
+  }, {
+    "type" : "Trade",
+    "semantic" : "Trade[makerSequence=1, makerOrderId=1801, takerSequence=4, takerOrderId=1804, priceTicks=101, quantityLots=2, makerAdmissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], takerAdmissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04]]"
+  }, {
+    "type" : "SelfTradePrevented",
+    "semantic" : "SelfTradePrevented[makerSequence=2, makerOrderId=1802, takerSequence=4, takerOrderId=1804, makerPriceTicks=100, wouldTradeQuantityLots=3, participantGroupId=51, stpPolicy=CANCEL_TAKER, makerCanceledQuantityLots=0, takerCanceledQuantityLots=5, makerAdmissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], takerAdmissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04]]"
+  } ],
+  "stateAfterSha256" : "de3696bf02c28838f351ced23f1cbd224b9fc6fcb995537d06d97e59aa27020b"
+}, {
+  "scenarioId" : "PARTIAL_BEFORE_STP",
+  "caseId" : "partial-later-maker-still-resting",
+  "commandType" : "CANCEL",
+  "applicationSequence" : 5,
+  "events" : [ {
+    "type" : "Canceled",
+    "semantic" : "Canceled[acceptanceSequence=3, orderId=1803, side=BUY, priceTicks=99, canceledQuantityLots=2, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04]]"
+  } ],
+  "stateAfterSha256" : "f5d58243b840f65c14797403fa1a424fef13bd69654bb7dc43c3d6a1a0a415f9"
+}, {
+  "scenarioId" : "GTC_REMAINDER_AFTER_STP",
+  "caseId" : "gtc-self-maker",
+  "commandType" : "PLACE",
+  "applicationSequence" : 1,
+  "events" : [ {
+    "type" : "Accepted",
+    "semantic" : "Accepted[acceptanceSequence=1, orderId=1901, side=SELL, priceTicks=100, quantityLots=2, executionPolicy=GTC, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=61, stpPolicy=CANCEL_TAKER]"
+  }, {
+    "type" : "Rested",
+    "semantic" : "Rested[acceptanceSequence=1, orderId=1901, side=SELL, priceTicks=100, remainingQuantityLots=2, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=61, stpPolicy=CANCEL_TAKER]"
+  } ],
+  "stateAfterSha256" : "7d97f8ba8089ee38bc87438b8533d75132c56cf447de82ead12d0f3b0b1cdbb0"
+}, {
+  "scenarioId" : "GTC_REMAINDER_AFTER_STP",
+  "caseId" : "gtc-cancel-maker-and-rest",
+  "commandType" : "PLACE",
+  "applicationSequence" : 2,
+  "events" : [ {
+    "type" : "Accepted",
+    "semantic" : "Accepted[acceptanceSequence=2, orderId=1902, side=BUY, priceTicks=100, quantityLots=5, executionPolicy=GTC, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=61, stpPolicy=CANCEL_MAKER]"
+  }, {
+    "type" : "SelfTradePrevented",
+    "semantic" : "SelfTradePrevented[makerSequence=1, makerOrderId=1901, takerSequence=2, takerOrderId=1902, makerPriceTicks=100, wouldTradeQuantityLots=2, participantGroupId=61, stpPolicy=CANCEL_MAKER, makerCanceledQuantityLots=2, takerCanceledQuantityLots=0, makerAdmissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], takerAdmissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04]]"
+  }, {
+    "type" : "Rested",
+    "semantic" : "Rested[acceptanceSequence=2, orderId=1902, side=BUY, priceTicks=100, remainingQuantityLots=5, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=61, stpPolicy=CANCEL_MAKER]"
+  } ],
+  "stateAfterSha256" : "8b4e6c3107d53684875a49f3f1fd35cbe6221a4e597671484d7ca6b2deede068"
+}, {
+  "scenarioId" : "GTC_REMAINDER_AFTER_STP",
+  "caseId" : "gtc-external-taker",
+  "commandType" : "PLACE",
+  "applicationSequence" : 3,
+  "events" : [ {
+    "type" : "Accepted",
+    "semantic" : "Accepted[acceptanceSequence=3, orderId=1903, side=SELL, priceTicks=100, quantityLots=2, executionPolicy=GTC, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=62, stpPolicy=CANCEL_TAKER]"
+  }, {
+    "type" : "Trade",
+    "semantic" : "Trade[makerSequence=2, makerOrderId=1902, takerSequence=3, takerOrderId=1903, priceTicks=100, quantityLots=2, makerAdmissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], takerAdmissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04]]"
+  } ],
+  "stateAfterSha256" : "402afea38ead59124b7991e013776a4c2e8ce65da48db45ccc5b04a0be6bb99a"
+}, {
+  "scenarioId" : "GTC_REMAINDER_AFTER_STP",
+  "caseId" : "gtc-cancel-remaining-rest",
+  "commandType" : "CANCEL",
+  "applicationSequence" : 4,
+  "events" : [ {
+    "type" : "Canceled",
+    "semantic" : "Canceled[acceptanceSequence=2, orderId=1902, side=BUY, priceTicks=100, canceledQuantityLots=3, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04]]"
+  } ],
+  "stateAfterSha256" : "0fe4546b0f394a5a8c685f8545348c3f06e7fe6154fd939985bc5fb2685ec41e"
+}, {
+  "scenarioId" : "IOC_STP_REMAINDER",
+  "caseId" : "ioc-self-maker",
+  "commandType" : "PLACE",
+  "applicationSequence" : 1,
+  "events" : [ {
+    "type" : "Accepted",
+    "semantic" : "Accepted[acceptanceSequence=1, orderId=2001, side=SELL, priceTicks=100, quantityLots=2, executionPolicy=GTC, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=71, stpPolicy=CANCEL_MAKER]"
+  }, {
+    "type" : "Rested",
+    "semantic" : "Rested[acceptanceSequence=1, orderId=2001, side=SELL, priceTicks=100, remainingQuantityLots=2, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=71, stpPolicy=CANCEL_MAKER]"
+  } ],
+  "stateAfterSha256" : "161fadf3769348d8e925057c6e34452bb0b6e4f48cde86b1b7abc5fbf5c5cef0"
+}, {
+  "scenarioId" : "IOC_STP_REMAINDER",
+  "caseId" : "ioc-cancel-taker-remainder",
+  "commandType" : "PLACE",
+  "applicationSequence" : 2,
+  "events" : [ {
+    "type" : "Accepted",
+    "semantic" : "Accepted[acceptanceSequence=2, orderId=2002, side=BUY, priceTicks=100, quantityLots=5, executionPolicy=IOC, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=71, stpPolicy=CANCEL_TAKER]"
+  }, {
+    "type" : "SelfTradePrevented",
+    "semantic" : "SelfTradePrevented[makerSequence=1, makerOrderId=2001, takerSequence=2, takerOrderId=2002, makerPriceTicks=100, wouldTradeQuantityLots=2, participantGroupId=71, stpPolicy=CANCEL_TAKER, makerCanceledQuantityLots=0, takerCanceledQuantityLots=5, makerAdmissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], takerAdmissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04]]"
+  } ],
+  "stateAfterSha256" : "0d549d56f5fe6baef3bf07b50634678a7270509040f7f0d9948e119c0b3de027"
+}, {
+  "scenarioId" : "IOC_STP_REMAINDER",
+  "caseId" : "ioc-external-maker",
+  "commandType" : "PLACE",
+  "applicationSequence" : 3,
+  "events" : [ {
+    "type" : "Accepted",
+    "semantic" : "Accepted[acceptanceSequence=3, orderId=2003, side=SELL, priceTicks=101, quantityLots=1, executionPolicy=GTC, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=0, stpPolicy=NONE]"
+  }, {
+    "type" : "Rested",
+    "semantic" : "Rested[acceptanceSequence=3, orderId=2003, side=SELL, priceTicks=101, remainingQuantityLots=1, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=0, stpPolicy=NONE]"
+  } ],
+  "stateAfterSha256" : "0891ec8b1babc17136896b83cc094eb5bd059290f5748cc3cfc2b44375823173"
+}, {
+  "scenarioId" : "IOC_STP_REMAINDER",
+  "caseId" : "ioc-normal-remainder",
+  "commandType" : "PLACE",
+  "applicationSequence" : 4,
+  "events" : [ {
+    "type" : "Accepted",
+    "semantic" : "Accepted[acceptanceSequence=4, orderId=2004, side=BUY, priceTicks=101, quantityLots=3, executionPolicy=IOC, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=72, stpPolicy=CANCEL_MAKER]"
+  }, {
+    "type" : "Trade",
+    "semantic" : "Trade[makerSequence=1, makerOrderId=2001, takerSequence=4, takerOrderId=2004, priceTicks=100, quantityLots=2, makerAdmissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], takerAdmissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04]]"
+  }, {
+    "type" : "Trade",
+    "semantic" : "Trade[makerSequence=3, makerOrderId=2003, takerSequence=4, takerOrderId=2004, priceTicks=101, quantityLots=1, makerAdmissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], takerAdmissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04]]"
+  } ],
+  "stateAfterSha256" : "538e7c9b4854dd4eea676dd7466b77ca3f9dcafe35702ff8d075eaf12fdd4b89"
+}, {
+  "scenarioId" : "FOK_STP_AWARE_ATOMICITY",
+  "caseId" : "fok-self-ask",
+  "commandType" : "PLACE",
+  "applicationSequence" : 1,
+  "events" : [ {
+    "type" : "Accepted",
+    "semantic" : "Accepted[acceptanceSequence=1, orderId=2101, side=SELL, priceTicks=100, quantityLots=2, executionPolicy=GTC, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=81, stpPolicy=CANCEL_TAKER]"
+  }, {
+    "type" : "Rested",
+    "semantic" : "Rested[acceptanceSequence=1, orderId=2101, side=SELL, priceTicks=100, remainingQuantityLots=2, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=81, stpPolicy=CANCEL_TAKER]"
+  } ],
+  "stateAfterSha256" : "45b504adb1fabcf3ed63c59b0e68e88dd0e3a0a6225896afbc0434ee3282d462"
+}, {
+  "scenarioId" : "FOK_STP_AWARE_ATOMICITY",
+  "caseId" : "fok-external-ask",
+  "commandType" : "PLACE",
+  "applicationSequence" : 2,
+  "events" : [ {
+    "type" : "Accepted",
+    "semantic" : "Accepted[acceptanceSequence=2, orderId=2102, side=SELL, priceTicks=101, quantityLots=3, executionPolicy=GTC, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=82, stpPolicy=CANCEL_TAKER]"
+  }, {
+    "type" : "Rested",
+    "semantic" : "Rested[acceptanceSequence=2, orderId=2102, side=SELL, priceTicks=101, remainingQuantityLots=3, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=82, stpPolicy=CANCEL_TAKER]"
+  } ],
+  "stateAfterSha256" : "0021ba64aa4d6b533608b7994626f6c21a255a9594852d6ec4805d9ac31db9c8"
+}, {
+  "scenarioId" : "FOK_STP_AWARE_ATOMICITY",
+  "caseId" : "fok-cancel-taker-rejected",
+  "commandType" : "PLACE",
+  "applicationSequence" : 3,
+  "events" : [ {
+    "type" : "PlaceRejected",
+    "semantic" : "PlaceRejected[orderId=2103, code=FOK_NOT_FILLABLE, executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04]]"
+  } ],
+  "stateAfterSha256" : "46f47ee94127096a51fd2bc0f9a0b80249c109e062a5756a4f84013cf3d60e88"
+}, {
+  "scenarioId" : "FOK_STP_AWARE_ATOMICITY",
+  "caseId" : "fok-cancel-maker-accepted",
+  "commandType" : "PLACE",
+  "applicationSequence" : 4,
+  "events" : [ {
+    "type" : "Accepted",
+    "semantic" : "Accepted[acceptanceSequence=3, orderId=2104, side=BUY, priceTicks=101, quantityLots=3, executionPolicy=FOK, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=81, stpPolicy=CANCEL_MAKER]"
+  }, {
+    "type" : "SelfTradePrevented",
+    "semantic" : "SelfTradePrevented[makerSequence=1, makerOrderId=2101, takerSequence=3, takerOrderId=2104, makerPriceTicks=100, wouldTradeQuantityLots=2, participantGroupId=81, stpPolicy=CANCEL_MAKER, makerCanceledQuantityLots=2, takerCanceledQuantityLots=0, makerAdmissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], takerAdmissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04]]"
+  }, {
+    "type" : "Trade",
+    "semantic" : "Trade[makerSequence=2, makerOrderId=2102, takerSequence=3, takerOrderId=2104, priceTicks=101, quantityLots=3, makerAdmissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], takerAdmissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04]]"
+  } ],
+  "stateAfterSha256" : "0fe4546b0f394a5a8c685f8545348c3f06e7fe6154fd939985bc5fb2685ec41e"
+}, {
+  "scenarioId" : "FOK_STP_AWARE_ATOMICITY",
+  "caseId" : "fok-both-self-bid",
+  "commandType" : "PLACE",
+  "applicationSequence" : 5,
+  "events" : [ {
+    "type" : "Accepted",
+    "semantic" : "Accepted[acceptanceSequence=4, orderId=2105, side=BUY, priceTicks=101, quantityLots=2, executionPolicy=GTC, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=83, stpPolicy=CANCEL_TAKER]"
+  }, {
+    "type" : "Rested",
+    "semantic" : "Rested[acceptanceSequence=4, orderId=2105, side=BUY, priceTicks=101, remainingQuantityLots=2, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=83, stpPolicy=CANCEL_TAKER]"
+  } ],
+  "stateAfterSha256" : "7ce3c670a4689e569e99e273665f534ca565aae6e8a8bf2416ebbb6ad212a3a1"
+}, {
+  "scenarioId" : "FOK_STP_AWARE_ATOMICITY",
+  "caseId" : "fok-both-external-bid",
+  "commandType" : "PLACE",
+  "applicationSequence" : 6,
+  "events" : [ {
+    "type" : "Accepted",
+    "semantic" : "Accepted[acceptanceSequence=5, orderId=2106, side=BUY, priceTicks=100, quantityLots=4, executionPolicy=GTC, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=84, stpPolicy=CANCEL_TAKER]"
+  }, {
+    "type" : "Rested",
+    "semantic" : "Rested[acceptanceSequence=5, orderId=2106, side=BUY, priceTicks=100, remainingQuantityLots=4, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=84, stpPolicy=CANCEL_TAKER]"
+  } ],
+  "stateAfterSha256" : "2d41766928ca2eba545d8614a83d3c5463e239a811b2b19590fa0df24769b698"
+}, {
+  "scenarioId" : "FOK_STP_AWARE_ATOMICITY",
+  "caseId" : "fok-cancel-both-rejected",
+  "commandType" : "PLACE",
+  "applicationSequence" : 7,
+  "events" : [ {
+    "type" : "PlaceRejected",
+    "semantic" : "PlaceRejected[orderId=2107, code=FOK_NOT_FILLABLE, executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04]]"
+  } ],
+  "stateAfterSha256" : "40e9dc6d0207d4af60cd755c1d0dca2603b8b231f254646f1506bac0255c07ad"
+}, {
+  "scenarioId" : "POST_ONLY_RAW_BOOK_PRIORITY",
+  "caseId" : "post-self-ask",
+  "commandType" : "PLACE",
+  "applicationSequence" : 1,
+  "events" : [ {
+    "type" : "Accepted",
+    "semantic" : "Accepted[acceptanceSequence=1, orderId=2201, side=SELL, priceTicks=100, quantityLots=2, executionPolicy=GTC, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=91, stpPolicy=CANCEL_TAKER]"
+  }, {
+    "type" : "Rested",
+    "semantic" : "Rested[acceptanceSequence=1, orderId=2201, side=SELL, priceTicks=100, remainingQuantityLots=2, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=91, stpPolicy=CANCEL_TAKER]"
+  } ],
+  "stateAfterSha256" : "3dd476d6368106e4656c031970cb0359dffb8dd2c5896bc82a505966a5b23ff5"
+}, {
+  "scenarioId" : "POST_ONLY_RAW_BOOK_PRIORITY",
+  "caseId" : "post-self-cancel-maker-still-rejected",
+  "commandType" : "PLACE",
+  "applicationSequence" : 2,
+  "events" : [ {
+    "type" : "PlaceRejected",
+    "semantic" : "PlaceRejected[orderId=2202, code=POST_ONLY_WOULD_TAKE, executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04]]"
+  } ],
+  "stateAfterSha256" : "2de7461ad7e6710e3246a376380a42301bdc7cc638eb488707db899d0632a0a6"
+}, {
+  "scenarioId" : "POST_ONLY_RAW_BOOK_PRIORITY",
+  "caseId" : "post-external-bid",
+  "commandType" : "PLACE",
+  "applicationSequence" : 3,
+  "events" : [ {
+    "type" : "Accepted",
+    "semantic" : "Accepted[acceptanceSequence=2, orderId=2203, side=BUY, priceTicks=99, quantityLots=2, executionPolicy=GTC, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=92, stpPolicy=CANCEL_TAKER]"
+  }, {
+    "type" : "Rested",
+    "semantic" : "Rested[acceptanceSequence=2, orderId=2203, side=BUY, priceTicks=99, remainingQuantityLots=2, admissionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], participantGroupId=92, stpPolicy=CANCEL_TAKER]"
+  } ],
+  "stateAfterSha256" : "7ec8b0c7f6d63a3eca172d9d54c3aa84cc635c0cd23afa40f31206dd1a08fe27"
+}, {
+  "scenarioId" : "POST_ONLY_RAW_BOOK_PRIORITY",
+  "caseId" : "post-sell-cross-rejected",
+  "commandType" : "PLACE",
+  "applicationSequence" : 4,
+  "events" : [ {
+    "type" : "PlaceRejected",
+    "semantic" : "PlaceRejected[orderId=2204, code=POST_ONLY_WOULD_TAKE, executionRuleSet=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04]]"
+  } ],
+  "stateAfterSha256" : "b99bd9b18625a99d63e969a0aa24eda56ab227d388c9d701b9ba267d7f61afaa"
+}, {
+  "scenarioId" : "RULE_MODE_ATTRIBUTION_FAILURE_ATOMICITY",
+  "caseId" : "attribution-prepare",
+  "commandType" : "PREPARE_RULE_SET",
+  "applicationSequence" : 1,
+  "events" : [ {
+    "type" : "RuleSetPrepared",
+    "semantic" : "RuleSetPrepared[identity=M06RuleSetIdentity[version=1, contentHash=sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91], status=PREPARED, supersededIdentity=Optional.empty]"
+  } ],
+  "stateAfterSha256" : "c62d596bee4cebdea66de81c5b191598796c14b9f421378f712d213be26ff071"
+}, {
+  "scenarioId" : "RULE_MODE_ATTRIBUTION_FAILURE_ATOMICITY",
+  "caseId" : "attribution-activate",
+  "commandType" : "ACTIVATE_RULE_SET",
+  "applicationSequence" : 2,
+  "events" : [ {
+    "type" : "RuleSetActivated",
+    "semantic" : "RuleSetActivated[previousActive=M06RuleSetIdentity[version=0, contentHash=sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04], active=M06RuleSetIdentity[version=1, contentHash=sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91], fence=ActivationFence[applicationSequence=2, controlRevision=1, firstAcceptanceSequence=1]]"
+  } ],
+  "stateAfterSha256" : "ab155fbe3ec60729e397c40f61681e7859567019ca71c000a22d36bd086ce0f9"
+}, {
+  "scenarioId" : "RULE_MODE_ATTRIBUTION_FAILURE_ATOMICITY",
+  "caseId" : "attribution-self-maker",
+  "commandType" : "PLACE",
+  "applicationSequence" : 3,
+  "events" : [ {
+    "type" : "Accepted",
+    "semantic" : "Accepted[acceptanceSequence=1, orderId=2301, side=SELL, priceTicks=105, quantityLots=2, executionPolicy=GTC, admissionRuleSet=M06RuleSetIdentity[version=1, contentHash=sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91], executionRuleSet=M06RuleSetIdentity[version=1, contentHash=sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91], participantGroupId=101, stpPolicy=CANCEL_TAKER]"
+  }, {
+    "type" : "Rested",
+    "semantic" : "Rested[acceptanceSequence=1, orderId=2301, side=SELL, priceTicks=105, remainingQuantityLots=2, admissionRuleSet=M06RuleSetIdentity[version=1, contentHash=sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91], executionRuleSet=M06RuleSetIdentity[version=1, contentHash=sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91], participantGroupId=101, stpPolicy=CANCEL_TAKER]"
+  } ],
+  "stateAfterSha256" : "94ca01da606e3388ca4510f6731990d24dc6bb778144eb1221d11c71b2ebb211"
+}, {
+  "scenarioId" : "RULE_MODE_ATTRIBUTION_FAILURE_ATOMICITY",
+  "caseId" : "attribution-cancel-maker",
+  "commandType" : "PLACE",
+  "applicationSequence" : 4,
+  "events" : [ {
+    "type" : "Accepted",
+    "semantic" : "Accepted[acceptanceSequence=2, orderId=2302, side=BUY, priceTicks=105, quantityLots=3, executionPolicy=GTC, admissionRuleSet=M06RuleSetIdentity[version=1, contentHash=sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91], executionRuleSet=M06RuleSetIdentity[version=1, contentHash=sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91], participantGroupId=101, stpPolicy=CANCEL_MAKER]"
+  }, {
+    "type" : "SelfTradePrevented",
+    "semantic" : "SelfTradePrevented[makerSequence=1, makerOrderId=2301, takerSequence=2, takerOrderId=2302, makerPriceTicks=105, wouldTradeQuantityLots=2, participantGroupId=101, stpPolicy=CANCEL_MAKER, makerCanceledQuantityLots=2, takerCanceledQuantityLots=0, makerAdmissionRuleSet=M06RuleSetIdentity[version=1, contentHash=sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91], takerAdmissionRuleSet=M06RuleSetIdentity[version=1, contentHash=sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91], executionRuleSet=M06RuleSetIdentity[version=1, contentHash=sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91]]"
+  }, {
+    "type" : "Rested",
+    "semantic" : "Rested[acceptanceSequence=2, orderId=2302, side=BUY, priceTicks=105, remainingQuantityLots=3, admissionRuleSet=M06RuleSetIdentity[version=1, contentHash=sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91], executionRuleSet=M06RuleSetIdentity[version=1, contentHash=sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91], participantGroupId=101, stpPolicy=CANCEL_MAKER]"
+  } ],
+  "stateAfterSha256" : "759a0092604dee346c6fd2b09976064923153b334eb3e2bc73fb4dd6337a620c"
+}, {
+  "scenarioId" : "RULE_MODE_ATTRIBUTION_FAILURE_ATOMICITY",
+  "caseId" : "mode-priority-self-maker",
+  "commandType" : "PLACE",
+  "applicationSequence" : 5,
+  "events" : [ {
+    "type" : "Accepted",
+    "semantic" : "Accepted[acceptanceSequence=3, orderId=2303, side=SELL, priceTicks=106, quantityLots=2, executionPolicy=GTC, admissionRuleSet=M06RuleSetIdentity[version=1, contentHash=sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91], executionRuleSet=M06RuleSetIdentity[version=1, contentHash=sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91], participantGroupId=102, stpPolicy=CANCEL_TAKER]"
+  }, {
+    "type" : "Rested",
+    "semantic" : "Rested[acceptanceSequence=3, orderId=2303, side=SELL, priceTicks=106, remainingQuantityLots=2, admissionRuleSet=M06RuleSetIdentity[version=1, contentHash=sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91], executionRuleSet=M06RuleSetIdentity[version=1, contentHash=sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91], participantGroupId=102, stpPolicy=CANCEL_TAKER]"
+  } ],
+  "stateAfterSha256" : "859024f0587a86994253b4b0aa4a11dd852e25e32f1671968f76808951f8d399"
+}, {
+  "scenarioId" : "RULE_MODE_ATTRIBUTION_FAILURE_ATOMICITY",
+  "caseId" : "enter-cancel-only",
+  "commandType" : "CHANGE_MARKET_MODE",
+  "applicationSequence" : 6,
+  "events" : [ {
+    "type" : "ModeChanged",
+    "semantic" : "ModeChanged[operatorId=ops-stp-1, previousMode=OPEN, activeMode=CANCEL_ONLY, fence=ModeTransitionFence[applicationSequence=6, modeRevision=1, previousMode=OPEN, activeMode=CANCEL_ONLY, nextAcceptanceSequence=4]]"
+  } ],
+  "stateAfterSha256" : "c3bfe8de669d14a9761236609323640806b54e0709ae45a5d087739c43dd854c"
+}, {
+  "scenarioId" : "RULE_MODE_ATTRIBUTION_FAILURE_ATOMICITY",
+  "caseId" : "mode-rejects-before-stp",
+  "commandType" : "PLACE",
+  "applicationSequence" : 7,
+  "events" : [ {
+    "type" : "PlaceRejected",
+    "semantic" : "PlaceRejected[orderId=2304, code=MARKET_NOT_OPEN, executionRuleSet=M06RuleSetIdentity[version=1, contentHash=sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91]]"
+  } ],
+  "stateAfterSha256" : "df5129e87b419f81022c5cfec6ebfbc3527935a34991c59e8946655164c7b724"
+} ]

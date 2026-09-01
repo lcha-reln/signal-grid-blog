@@ -1,0 +1,100 @@
+{
+  "schemaVersion" : "matching.m08.check.v2",
+  "unit" : "M08",
+  "status" : "PASS",
+  "contractPlanVersion" : "0.10",
+  "inheritedM07" : {
+    "unit" : "M07",
+    "status" : "PASS",
+    "fixedScenarios" : 16,
+    "fixedCommands" : 72,
+    "generatedHistories" : 160,
+    "generatedCommands" : 10240,
+    "coverageObligations" : 24,
+    "mutantsKilled" : 8
+  },
+  "inputs" : {
+    "fixedSha256" : "5160121600c151c91db5431a4e1a8ef8fcd4a73ba67683d96a09daba389100a3",
+    "generatorSha256" : "477a2b16be5d2d6f6f378b203660bf1106db89409ad06e77bdb7837edbfc74ea"
+  },
+  "fixed" : {
+    "scenarios" : 20,
+    "digest" : "444e999094bc58aabed7869df60a07a019de9969f8bd39318edc3c0590527472",
+    "injectedFaults" : 7
+  },
+  "generator" : {
+    "algorithm" : "splitmix64-v1",
+    "baseSeed" : "5808",
+    "histories" : 96,
+    "operationsPerHistory" : 48,
+    "operations" : 4608,
+    "profileDrivenOperations" : 1152,
+    "invalidEnvelopes" : 192,
+    "businessRejections" : 576,
+    "selectedOperations" : {
+      "SUBMIT" : 732,
+      "DUPLICATE" : 111,
+      "CONFLICT" : 104,
+      "RESTART" : 92,
+      "ROLLOVER" : 57,
+      "FAULT" : 56
+    },
+    "digest" : "56a2d7f63df96737c286bab5c96a16aa50e0dd33df58f9cefc9d7abee5aaff41"
+  },
+  "durability" : {
+    "envelope" : "M08C1",
+    "wal" : "M08W1",
+    "submissionOrder" : "VALIDATE_PREFLIGHT_APPEND_FORCE_APPLY_ACK",
+    "genesisRecovery" : true,
+    "durableBidirectionalIdentity" : true,
+    "allApplicationCommandsJournaled" : true,
+    "m07StpPlaceJournaled" : true,
+    "m07GovernedStpPlaceJournaled" : true,
+    "preprovisionedRealNonSymlinkWalDirectory" : true,
+    "ancestorDirectoryDurabilityExternal" : true,
+    "runtimeCreatesWalDirectory" : false
+  },
+  "coverage" : {
+    "required" : 24,
+    "observed" : 24
+  },
+  "mutants" : {
+    "required" : 10,
+    "killed" : 10,
+    "throwingControl" : "SYSTEM_ERROR",
+    "systemErrorCountedAsKill" : false,
+    "candidateDriver" : "EXECUTABLE_MUTATED_RUNTIME",
+    "actualMutationActions" : 13,
+    "fullRestartGrammar" : true
+  },
+  "architecture" : {
+    "coreSources" : 54,
+    "localRuntimeSources" : 28,
+    "violations" : 0
+  },
+  "faultEvidence" : {
+    "model" : "CODE_LEVEL_DETERMINISTIC_INJECTION",
+    "childProcessCrashSmokes" : 3,
+    "beforeOperationFailures" : 7,
+    "injectedEnospcWitness" : true,
+    "injectedReadOnlyWitness" : true,
+    "actualFilesystemForTypedInjections" : false,
+    "preprovisionedWalDirectory" : true,
+    "ancestorDirectoryDurabilityExternal" : true,
+    "realPowerLoss" : false,
+    "realDiskFull" : false,
+    "physicalMediaDurability" : false
+  },
+  "staleClassification" : {
+    "reservedCode" : "PRODUCER_SEQUENCE_STALE",
+    "directWitness" : false,
+    "coverage" : "STALE_SLOT_RESOLVES_BY_BINDING_PRECEDENCE",
+    "exactPriorSlot" : "DUPLICATE_REPLAYED",
+    "differentIdentityPriorSlot" : "SLOT_IDENTITY_CONFLICT"
+  },
+  "releaseTarget" : {
+    "unitTag" : "course/m08-complete",
+    "productRelease" : null,
+    "verification" : "M08_EVIDENCE_ONLY"
+  }
+}

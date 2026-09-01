@@ -1,0 +1,388 @@
+{
+  "schemaVersion" : "cex.lab-evidence.v1",
+  "case" : "high-availability-cex",
+  "project" : "matching",
+  "unit" : "M06",
+  "unitTag" : "course/m06-complete",
+  "productRelease" : null,
+  "planVersion" : "0.8",
+  "source" : {
+    "commit" : "854dcf470a9ea8a2765982861b21026be1416258",
+    "dirty" : false
+  },
+  "environment" : {
+    "java" : "25.0.4.1+1-LTS",
+    "os" : "Mac OS X",
+    "arch" : "aarch64"
+  },
+  "claims" : [ {
+    "id" : "m00-m05-semantic-regression",
+    "category" : "correctness",
+    "statement" : "The complete M05 finite semantic judge still passes without rebinding historical source-identity evidence.",
+    "status" : "pass",
+    "command" : "./gradlew m06Check --no-daemon",
+    "observations" : {
+      "status" : "PASS",
+      "checkSchemaVersion" : "matching.m05.check.v2",
+      "fixedScenarios" : 12,
+      "fixedCommands" : 54,
+      "fixedDigest" : "sha256:45be63337da83103a45040f5f73e9b996018d76f6d91f77e27cd5b2d9dbb8f7b",
+      "generatedHistories" : 160,
+      "generatedCommands" : 10240,
+      "generatedDigest" : "sha256:e742e53e1846730a0f242447b3065e23e352059807d8593dcc3e489498d453f5",
+      "coverageObligations" : 20,
+      "mutantsKilled" : 8
+    },
+    "artifacts" : [ {
+      "path" : "reports/m00-m05-regression.json",
+      "sha256" : "8e87a93c26f458b8edb86722dbb4bbdfcb1e81deb1becf330e562eb91e083b0f"
+    } ]
+  }, {
+    "id" : "operating-mode-contract",
+    "category" : "correctness",
+    "statement" : "OPEN, CANCEL_ONLY, and HALTED transitions, application fences, revisions, and permission precedence match the frozen M06 contract.",
+    "status" : "pass",
+    "command" : "./gradlew m06Check --no-daemon",
+    "observations" : {
+      "initialMode" : "OPEN",
+      "operatorIdIsAuditAttribution" : true,
+      "operatorIdIsAuthorizationProof" : false,
+      "placeAllowedOnlyOpen" : true,
+      "cancelAllowedOpenAndCancelOnly" : true,
+      "haltedCancelRejectsBeforeLookup" : true,
+      "ruleControlAllowedAllModes" : true,
+      "directHaltedToOpenRejected" : true,
+      "sameModeRejected" : true,
+      "modeTransitionDoesNotClearBook" : true,
+      "massCancelRequiredMode" : "HALTED",
+      "massCancelOrder" : "GLOBAL_ASCENDING_ACCEPTANCE_SEQUENCE",
+      "massCancelAtomic" : true,
+      "emptyMassCancelSucceeds" : true,
+      "terminalIdentityPreserved" : true,
+      "ruleAttributionPreserved" : true,
+      "finiteCorpus" : true,
+      "formalProof" : false,
+      "productionReadinessClaim" : false
+    },
+    "artifacts" : [ {
+      "path" : "inputs/market-mode-mass-cancel-v1.json",
+      "sha256" : "358ecc4dc12c0f2f708cee58b069eff8a9604a349f91495a5c3212bfe38edb25"
+    }, {
+      "path" : "reports/fixed-scenario-pack.json",
+      "sha256" : "ccb9d187e3712d7d03460c1015d978a60112dc768135f4fa3637368878c3929e"
+    }, {
+      "path" : "reports/fixed-event-batches.json",
+      "sha256" : "c509ac023f35a260ddf2929fb9463120ff459abd7c113ea210b77b9715ea35a9"
+    }, {
+      "path" : "reports/boundaries.json",
+      "sha256" : "523b2855996e910669d8588755348e0834a948cebe653273c36aae98026cccaa"
+    }, {
+      "path" : "reports/check.json",
+      "sha256" : "da1cebf02f3fc751d30c4ff79b791f306ca5238d195a525c9f99c3557d428425"
+    } ]
+  }, {
+    "id" : "deterministic-mass-cancel",
+    "category" : "correctness",
+    "statement" : "HALTED-only Mass Cancel terminates the frozen resting set atomically in global ascending acceptance-sequence order while retaining terminal and rule attribution.",
+    "status" : "pass",
+    "command" : "./gradlew m06Check --no-daemon",
+    "observations" : {
+      "requiredObligations" : 26,
+      "satisfiedObligations" : 26,
+      "obligations" : [ {
+        "id" : "BOOTSTRAP_OPEN",
+        "satisfied" : true,
+        "source" : "FIXED",
+        "history" : "BOOTSTRAP_OPEN_REGRESSION",
+        "commandIndex" : 0,
+        "count" : 175
+      }, {
+        "id" : "VALID_MODE_TRANSITION",
+        "satisfied" : true,
+        "source" : "FIXED",
+        "history" : "CANCEL_ONLY_PERMISSION",
+        "commandIndex" : 1,
+        "count" : 1102
+      }, {
+        "id" : "DIRECT_REOPEN_REJECTED",
+        "satisfied" : true,
+        "source" : "FIXED",
+        "history" : "SAFE_REOPEN_GRAPH",
+        "commandIndex" : 1,
+        "count" : 339
+      }, {
+        "id" : "SAME_MODE_REJECTED",
+        "satisfied" : true,
+        "source" : "FIXED",
+        "history" : "MODE_FAILURE_ATOMICITY",
+        "commandIndex" : 1,
+        "count" : 551
+      }, {
+        "id" : "STALE_APPLICATION_FENCE",
+        "satisfied" : true,
+        "source" : "FIXED",
+        "history" : "STALE_APPLICATION_FENCE",
+        "commandIndex" : 0,
+        "count" : 134
+      }, {
+        "id" : "STALE_EXPECTED_MODE",
+        "satisfied" : true,
+        "source" : "FIXED",
+        "history" : "STALE_EXPECTED_MODE",
+        "commandIndex" : 0,
+        "count" : 114
+      }, {
+        "id" : "MODE_FAILURE_ATOMIC",
+        "satisfied" : true,
+        "source" : "FIXED",
+        "history" : "SAFE_REOPEN_GRAPH",
+        "commandIndex" : 1,
+        "count" : 1138
+      }, {
+        "id" : "PLACE_OPEN_ALLOWED",
+        "satisfied" : true,
+        "source" : "FIXED",
+        "history" : "BOOTSTRAP_OPEN_REGRESSION",
+        "commandIndex" : 0,
+        "count" : 697
+      }, {
+        "id" : "PLACE_CANCEL_ONLY_REJECTED",
+        "satisfied" : true,
+        "source" : "FIXED",
+        "history" : "CANCEL_ONLY_PERMISSION",
+        "commandIndex" : 2,
+        "count" : 859
+      }, {
+        "id" : "PLACE_HALTED_REJECTED",
+        "satisfied" : true,
+        "source" : "FIXED",
+        "history" : "HALTED_CUSTOMER_PERMISSION",
+        "commandIndex" : 2,
+        "count" : 1365
+      }, {
+        "id" : "CANCEL_OPEN_ALLOWED",
+        "satisfied" : true,
+        "source" : "FIXED",
+        "history" : "BOOTSTRAP_OPEN_REGRESSION",
+        "commandIndex" : 1,
+        "count" : 77
+      }, {
+        "id" : "CANCEL_CANCEL_ONLY_ALLOWED",
+        "satisfied" : true,
+        "source" : "FIXED",
+        "history" : "CANCEL_ONLY_PERMISSION",
+        "commandIndex" : 3,
+        "count" : 65
+      }, {
+        "id" : "CANCEL_HALTED_REJECTED",
+        "satisfied" : true,
+        "source" : "FIXED",
+        "history" : "HALTED_CUSTOMER_PERMISSION",
+        "commandIndex" : 3,
+        "count" : 693
+      }, {
+        "id" : "RULE_CONTROL_ALL_MODES",
+        "satisfied" : true,
+        "source" : "FIXED",
+        "history" : "RULE_SET_ATTRIBUTION_PRESERVED",
+        "commandIndex" : 0,
+        "count" : 811
+      }, {
+        "id" : "TRANSITION_BOOK_UNCHANGED",
+        "satisfied" : true,
+        "source" : "FIXED",
+        "history" : "CANCEL_ONLY_PERMISSION",
+        "commandIndex" : 1,
+        "count" : 318
+      }, {
+        "id" : "MASS_CANCEL_REQUIRES_HALTED",
+        "satisfied" : true,
+        "source" : "FIXED",
+        "history" : "MASS_CANCEL_REQUIRES_HALT",
+        "commandIndex" : 2,
+        "count" : 650
+      }, {
+        "id" : "MASS_CANCEL_EMPTY_SUCCESS",
+        "satisfied" : true,
+        "source" : "FIXED",
+        "history" : "EMPTY_BOOK_MASS_CANCEL",
+        "commandIndex" : 1,
+        "count" : 474
+      }, {
+        "id" : "MASS_CANCEL_GLOBAL_ACCEPTANCE_ORDER",
+        "satisfied" : true,
+        "source" : "FIXED",
+        "history" : "MASS_CANCEL_REQUIRES_HALT",
+        "commandIndex" : 6,
+        "count" : 80
+      }, {
+        "id" : "MASS_CANCEL_BID_SIDE",
+        "satisfied" : true,
+        "source" : "FIXED",
+        "history" : "MASS_CANCEL_REQUIRES_HALT",
+        "commandIndex" : 6,
+        "count" : 92
+      }, {
+        "id" : "MASS_CANCEL_ASK_SIDE",
+        "satisfied" : true,
+        "source" : "FIXED",
+        "history" : "MASS_CANCEL_REQUIRES_HALT",
+        "commandIndex" : 6,
+        "count" : 117
+      }, {
+        "id" : "MASS_CANCEL_CROSS_PRICE",
+        "satisfied" : true,
+        "source" : "FIXED",
+        "history" : "MASS_CANCEL_REQUIRES_HALT",
+        "commandIndex" : 6,
+        "count" : 80
+      }, {
+        "id" : "MASS_CANCEL_TERMINAL_IDENTITY",
+        "satisfied" : true,
+        "source" : "FIXED",
+        "history" : "TERMINAL_IDENTITY_LATE_CANCEL",
+        "commandIndex" : 4,
+        "count" : 34
+      }, {
+        "id" : "MASS_CANCEL_RULE_ATTRIBUTION",
+        "satisfied" : true,
+        "source" : "FIXED",
+        "history" : "RULE_SET_ATTRIBUTION_PRESERVED",
+        "commandIndex" : 4,
+        "count" : 44
+      }, {
+        "id" : "MASS_CANCEL_ACTIVE_RULE_UNCHANGED",
+        "satisfied" : true,
+        "source" : "FIXED",
+        "history" : "MASS_CANCEL_REQUIRES_HALT",
+        "commandIndex" : 6,
+        "count" : 613
+      }, {
+        "id" : "APPLICATION_SEQUENCE_CONTINUITY",
+        "satisfied" : true,
+        "source" : "FIXED",
+        "history" : "BOOTSTRAP_OPEN_REGRESSION",
+        "commandIndex" : 0,
+        "count" : 10304
+      }, {
+        "id" : "LEGACY_M00_M05_COMPATIBILITY",
+        "satisfied" : true,
+        "source" : "FIXED",
+        "history" : "BOOTSTRAP_OPEN_REGRESSION",
+        "commandIndex" : 0,
+        "count" : 559
+      } ]
+    },
+    "artifacts" : [ {
+      "path" : "reports/coverage.json",
+      "sha256" : "308ecf2d2148943ef570cafe51d94d714715c68198238631e98abaad8729e1de"
+    }, {
+      "path" : "reports/invariants.json",
+      "sha256" : "76cf781bcc7faa27b8093eb311b7037912501202be100d91fb8be752aa9aca35"
+    }, {
+      "path" : "reports/fixed-history.canonical.utf8",
+      "sha256" : "2f9126e7100581020d2a56dd7da4736ab026a7f9533b051bde4490cda210855b"
+    } ]
+  }, {
+    "id" : "finite-three-oracle-suite",
+    "category" : "correctness",
+    "statement" : "Two fresh SplitMix64 generations reproduce identical M06H1 bytes, and production, the independent reference, and event-derived ledger agree at 10,240 command boundaries.",
+    "status" : "pass",
+    "command" : "./gradlew m06Check --no-daemon",
+    "observations" : {
+      "generator" : {
+        "algorithm" : "splitmix64-v1",
+        "baseSeed" : "6606",
+        "histories" : 160,
+        "commandsPerHistory" : 64,
+        "commands" : 10240,
+        "lanes" : 5,
+        "historiesPerLane" : 32,
+        "canonicalFormat" : "M06H1",
+        "canonicalDigest" : "sha256:b74dd3a6bad6048dcaaceaaeb8fe0c81d1e8d2272d352fe15ea921738f73e6c4",
+        "canonicalBytes" : 1670049,
+        "canonicalLines" : 10241,
+        "freshGenerations" : 2
+      },
+      "properties" : {
+        "histories" : 160,
+        "commands" : 10240,
+        "differentialComparisons" : 10240,
+        "eventLedgerChecks" : 10240,
+        "referenceLedgerChecks" : 10240
+      }
+    },
+    "artifacts" : [ {
+      "path" : "inputs/property-suite-v1.json",
+      "sha256" : "6276aa10601f8e55b1692635fc58c8f62b8cb369900c404c8e7c947d56cb8e08"
+    }, {
+      "path" : "reports/generated-history.canonical.utf8",
+      "sha256" : "b74dd3a6bad6048dcaaceaaeb8fe0c81d1e8d2272d352fe15ea921738f73e6c4"
+    }, {
+      "path" : "reports/generated-properties.json",
+      "sha256" : "031ecfd0e26b769e61e80204203e948a9cd6e55a527f31d1fed2d9161c9b6b22"
+    } ]
+  }, {
+    "id" : "minimal-semantic-counterexamples",
+    "category" : "correctness",
+    "statement" : "All ten required faults are killed as STUDENT_FAILURE by persisted, strict-replayed, one-minimal M06X1 counterexamples; SYSTEM_ERROR is excluded from kills.",
+    "status" : "pass",
+    "command" : "./gradlew m06Check --no-daemon",
+    "observations" : {
+      "counterexamples" : {
+        "required" : 10,
+        "found" : 10,
+        "replayed" : 10,
+        "oneMinimal" : 10,
+        "totalCommands" : 22,
+        "canonicalFormat" : "M06X1",
+        "canonicalDigest" : "sha256:f55d1d7feabe527706a9974dbaf1a894c1420ea6b09bc9e1f7b9563032fca93b",
+        "canonicalBytes" : 3210,
+        "canonicalLines" : 23
+      },
+      "mutants" : {
+        "required" : 10,
+        "killed" : 10,
+        "classification" : "STUDENT_FAILURE",
+        "systemErrorControl" : "SYSTEM_ERROR",
+        "systemErrorCountsAsKill" : false
+      }
+    },
+    "artifacts" : [ {
+      "path" : "inputs/counterexamples-v1.json",
+      "sha256" : "c2d18c5ae4cf6cbad14fa52af790f4fb7fc3d34f3f32bbbd0b51c73894477881"
+    }, {
+      "path" : "reports/counterexamples.json",
+      "sha256" : "e6d9f846147657510d30edf623fc7357c3cfc5b9ae474294598f60decc12cbc6"
+    }, {
+      "path" : "reports/counterexamples.canonical.utf8",
+      "sha256" : "f55d1d7feabe527706a9974dbaf1a894c1420ea6b09bc9e1f7b9563032fca93b"
+    }, {
+      "path" : "reports/replay.json",
+      "sha256" : "a382f76d89f30a4ee8a831d6046bfb07ac04ed429f816dc5b797425cb7a1f5ba"
+    }, {
+      "path" : "reports/mutants.json",
+      "sha256" : "b410f599de527dceec97b91a75973a391a79952121af5f1230d3e379c555c153"
+    } ]
+  }, {
+    "id" : "infrastructure-free-boundary",
+    "category" : "architecture",
+    "statement" : "The production core remains free of test/reference and infrastructure dependencies, while the independent reference remains free of production-core dependencies.",
+    "status" : "pass",
+    "command" : "./gradlew m06Check --no-daemon",
+    "observations" : {
+      "passed" : true,
+      "coreSources" : 49,
+      "referenceSources" : 23,
+      "forbiddenFindings" : 0,
+      "violations" : [ ]
+    },
+    "artifacts" : [ {
+      "path" : "reports/architecture.json",
+      "sha256" : "e0cd9240b5d098aad8418f82f7c88529b0df47d82824bccab46ded72d2fc6a78"
+    } ]
+  } ],
+  "limitations" : [ "Only one in-memory BTC-USDT limit-order book is implemented; this unit adds OPEN, CANCEL_ONLY, HALTED, and operator Mass Cancel.", "OperatorId is retained audit attribution for an already authorized caller; the matching core does not authenticate or authorize operators.", "Mass Cancel is whole-book and HALTED-only; there are no account, user, symbol-set, or risk-filtered cancel scopes.", "Only GTC, IOC, FOK, and Post-only limit orders are implemented; STP and later order types remain deferred.", "The fixed 15-scenario corpus and 160 histories by 64 commands are bounded tests, not exhaustive exploration or formal verification.", "Accepted terminal identities remain retained without pruning, compaction, snapshot persistence, or recovery.", "There is no account, asset, position, fee, margin, settlement, reservation, liquidation, or risk logic.", "There is no networking, database, thread, Aeron, Raft, replication, failover, or high availability in this unit.", "The evidence makes no throughput, latency, durability, recovery, security, or production-readiness claim." ],
+  "supersedes" : null,
+  "generatedAt" : "2026-08-31T09:28:07.842653Z"
+}

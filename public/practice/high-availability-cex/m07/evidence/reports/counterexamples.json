@@ -1,0 +1,13 @@
+{
+  "schemaVersion" : "matching.m07.counterexamples-report.v1",
+  "status" : "PASS",
+  "required" : 8,
+  "found" : 8,
+  "replayed" : 8,
+  "oneMinimal" : 8,
+  "totalCommands" : 18,
+  "canonicalFormat" : "M07X1",
+  "canonicalDigest" : "sha256:97504762c7f6349ac6bb02c26457d608dae6e0ad0231a19b10cf5c998a9c69ee",
+  "canonicalBytes" : 2778,
+  "canonicalLines" : 19
+}

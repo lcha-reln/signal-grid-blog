@@ -1,0 +1,173 @@
+{
+  "schemaVersion": "matching.m07.scenario.v1",
+  "scenarios": [
+    {
+      "scenarioId": "RAW_GROUP_VALIDATION",
+      "proofObligations": ["INVALID_STP_GROUP_ID", "VALIDATION_FAILURE_ATOMIC"],
+      "commands": [
+        {"caseId": "negative-group-rejected", "type": "PLACE", "entrypoint": "STP", "participantGroupId": -1, "stpPolicy": "CANCEL_TAKER", "input": {"instrumentId": "BTC-USDT", "orderId": 1001, "side": "BUY", "priceTicks": 90, "quantityLots": 1, "executionPolicy": "GTC"}},
+        {"caseId": "same-id-valid-positive-group", "type": "PLACE", "entrypoint": "STP", "participantGroupId": 1, "stpPolicy": "CANCEL_TAKER", "input": {"instrumentId": "BTC-USDT", "orderId": 1001, "side": "BUY", "priceTicks": 90, "quantityLots": 1, "executionPolicy": "GTC"}},
+        {"caseId": "maximum-group-valid", "type": "PLACE", "entrypoint": "STP", "participantGroupId": 9223372036854775807, "stpPolicy": "CANCEL_MAKER", "input": {"instrumentId": "BTC-USDT", "orderId": 1002, "side": "BUY", "priceTicks": 91, "quantityLots": 1, "executionPolicy": "GTC"}}
+      ]
+    },
+    {
+      "scenarioId": "RAW_POLICY_VALIDATION",
+      "proofObligations": ["INVALID_STP_POLICY", "VALIDATION_FAILURE_ATOMIC"],
+      "commands": [
+        {"caseId": "unknown-policy-rejected", "type": "PLACE", "entrypoint": "STP", "participantGroupId": 2, "stpPolicy": "UNKNOWN", "input": {"instrumentId": "BTC-USDT", "orderId": 1101, "side": "BUY", "priceTicks": 90, "quantityLots": 1, "executionPolicy": "GTC"}},
+        {"caseId": "lowercase-policy-rejected", "type": "PLACE", "entrypoint": "STP", "participantGroupId": 2, "stpPolicy": "cancel_taker", "input": {"instrumentId": "BTC-USDT", "orderId": 1101, "side": "BUY", "priceTicks": 90, "quantityLots": 1, "executionPolicy": "GTC"}},
+        {"caseId": "padded-policy-rejected", "type": "PLACE", "entrypoint": "STP", "participantGroupId": 2, "stpPolicy": " CANCEL_TAKER", "input": {"instrumentId": "BTC-USDT", "orderId": 1101, "side": "BUY", "priceTicks": 90, "quantityLots": 1, "executionPolicy": "GTC"}},
+        {"caseId": "same-id-exact-policy-valid", "type": "PLACE", "entrypoint": "STP", "participantGroupId": 2, "stpPolicy": "CANCEL_TAKER", "input": {"instrumentId": "BTC-USDT", "orderId": 1101, "side": "BUY", "priceTicks": 90, "quantityLots": 1, "executionPolicy": "GTC"}}
+      ]
+    },
+    {
+      "scenarioId": "GROUP_POLICY_PAIR_VALIDATION",
+      "proofObligations": ["INVALID_STP_INSTRUCTION", "VALIDATION_FAILURE_ATOMIC"],
+      "commands": [
+        {"caseId": "zero-action-pair-rejected", "type": "PLACE", "entrypoint": "STP", "participantGroupId": 0, "stpPolicy": "CANCEL_TAKER", "input": {"instrumentId": "BTC-USDT", "orderId": 1201, "side": "BUY", "priceTicks": 90, "quantityLots": 1, "executionPolicy": "GTC"}},
+        {"caseId": "positive-none-pair-rejected", "type": "PLACE", "entrypoint": "STP", "participantGroupId": 3, "stpPolicy": "NONE", "input": {"instrumentId": "BTC-USDT", "orderId": 1201, "side": "BUY", "priceTicks": 90, "quantityLots": 1, "executionPolicy": "GTC"}},
+        {"caseId": "same-id-zero-none-valid", "type": "PLACE", "entrypoint": "STP", "participantGroupId": 0, "stpPolicy": "NONE", "input": {"instrumentId": "BTC-USDT", "orderId": 1201, "side": "BUY", "priceTicks": 90, "quantityLots": 1, "executionPolicy": "GTC"}},
+        {"caseId": "positive-both-valid", "type": "PLACE", "entrypoint": "STP", "participantGroupId": 4, "stpPolicy": "CANCEL_BOTH", "input": {"instrumentId": "BTC-USDT", "orderId": 1202, "side": "BUY", "priceTicks": 91, "quantityLots": 1, "executionPolicy": "GTC"}},
+        {"caseId": "positive-maker-valid", "type": "PLACE", "entrypoint": "STP", "participantGroupId": 5, "stpPolicy": "CANCEL_MAKER", "input": {"instrumentId": "BTC-USDT", "orderId": 1203, "side": "BUY", "priceTicks": 92, "quantityLots": 1, "executionPolicy": "GTC"}}
+      ]
+    },
+    {
+      "scenarioId": "LEGACY_NONE_REGRESSION",
+      "proofObligations": ["LEGACY_ZERO_NONE_COMPATIBILITY", "GROUP_ZERO_NEVER_SELF"],
+      "commands": [
+        {"caseId": "legacy-maker", "type": "PLACE", "entrypoint": "LEGACY", "input": {"instrumentId": "BTC-USDT", "orderId": 1301, "side": "SELL", "priceTicks": 100, "quantityLots": 2, "executionPolicy": "GTC"}},
+        {"caseId": "legacy-taker", "type": "PLACE", "entrypoint": "LEGACY", "input": {"instrumentId": "BTC-USDT", "orderId": 1302, "side": "BUY", "priceTicks": 100, "quantityLots": 2, "executionPolicy": "GTC"}},
+        {"caseId": "explicit-zero-maker", "type": "PLACE", "entrypoint": "STP", "participantGroupId": 0, "stpPolicy": "NONE", "input": {"instrumentId": "BTC-USDT", "orderId": 1303, "side": "SELL", "priceTicks": 101, "quantityLots": 2, "executionPolicy": "GTC"}},
+        {"caseId": "explicit-zero-taker", "type": "PLACE", "entrypoint": "STP", "participantGroupId": 0, "stpPolicy": "NONE", "input": {"instrumentId": "BTC-USDT", "orderId": 1304, "side": "BUY", "priceTicks": 101, "quantityLots": 2, "executionPolicy": "GTC"}}
+      ]
+    },
+    {
+      "scenarioId": "DIFFERENT_GROUP_TRADES",
+      "proofObligations": ["DIFFERENT_GROUP_TRADE"],
+      "commands": [
+        {"caseId": "different-sell-maker", "type": "PLACE", "entrypoint": "STP", "participantGroupId": 11, "stpPolicy": "CANCEL_TAKER", "input": {"instrumentId": "BTC-USDT", "orderId": 1401, "side": "SELL", "priceTicks": 100, "quantityLots": 2, "executionPolicy": "GTC"}},
+        {"caseId": "different-buy-taker", "type": "PLACE", "entrypoint": "STP", "participantGroupId": 12, "stpPolicy": "CANCEL_TAKER", "input": {"instrumentId": "BTC-USDT", "orderId": 1402, "side": "BUY", "priceTicks": 100, "quantityLots": 2, "executionPolicy": "GTC"}},
+        {"caseId": "different-buy-maker", "type": "PLACE", "entrypoint": "STP", "participantGroupId": 13, "stpPolicy": "CANCEL_BOTH", "input": {"instrumentId": "BTC-USDT", "orderId": 1403, "side": "BUY", "priceTicks": 99, "quantityLots": 2, "executionPolicy": "GTC"}},
+        {"caseId": "different-sell-taker", "type": "PLACE", "entrypoint": "STP", "participantGroupId": 14, "stpPolicy": "CANCEL_MAKER", "input": {"instrumentId": "BTC-USDT", "orderId": 1404, "side": "SELL", "priceTicks": 99, "quantityLots": 2, "executionPolicy": "GTC"}}
+      ]
+    },
+    {
+      "scenarioId": "CANCEL_TAKER_SAME_GROUP",
+      "proofObligations": ["SAME_GROUP_NO_TRADE", "CANCEL_TAKER_CANCELS_FULL_REMAINDER", "CANCEL_TAKER_PRESERVES_MAKER"],
+      "commands": [
+        {"caseId": "cancel-taker-maker", "type": "PLACE", "entrypoint": "STP", "participantGroupId": 21, "stpPolicy": "CANCEL_MAKER", "input": {"instrumentId": "BTC-USDT", "orderId": 1501, "side": "SELL", "priceTicks": 100, "quantityLots": 2, "executionPolicy": "GTC"}},
+        {"caseId": "cancel-taker-conflict", "type": "PLACE", "entrypoint": "STP", "participantGroupId": 21, "stpPolicy": "CANCEL_TAKER", "input": {"instrumentId": "BTC-USDT", "orderId": 1502, "side": "BUY", "priceTicks": 100, "quantityLots": 5, "executionPolicy": "GTC"}},
+        {"caseId": "cancel-taker-maker-still-resting", "type": "CANCEL", "input": {"instrumentId": "BTC-USDT", "orderId": 1501}}
+      ]
+    },
+    {
+      "scenarioId": "CANCEL_MAKER_SAME_GROUP",
+      "proofObligations": ["SAME_GROUP_NO_TRADE", "CANCEL_MAKER_CANCELS_MAKER", "GTC_REMAINDER_RESTS"],
+      "commands": [
+        {"caseId": "cancel-maker-buy-maker", "type": "PLACE", "entrypoint": "STP", "participantGroupId": 22, "stpPolicy": "CANCEL_TAKER", "input": {"instrumentId": "BTC-USDT", "orderId": 1511, "side": "BUY", "priceTicks": 100, "quantityLots": 2, "executionPolicy": "GTC"}},
+        {"caseId": "cancel-maker-sell-taker", "type": "PLACE", "entrypoint": "STP", "participantGroupId": 22, "stpPolicy": "CANCEL_MAKER", "input": {"instrumentId": "BTC-USDT", "orderId": 1512, "side": "SELL", "priceTicks": 100, "quantityLots": 5, "executionPolicy": "GTC"}},
+        {"caseId": "cancel-maker-taker-rested", "type": "CANCEL", "input": {"instrumentId": "BTC-USDT", "orderId": 1512}}
+      ]
+    },
+    {
+      "scenarioId": "CANCEL_BOTH_SAME_GROUP",
+      "proofObligations": ["SAME_GROUP_NO_TRADE", "CANCEL_BOTH_CANCELS_BOTH"],
+      "commands": [
+        {"caseId": "cancel-both-buy-maker", "type": "PLACE", "entrypoint": "STP", "participantGroupId": 23, "stpPolicy": "CANCEL_TAKER", "input": {"instrumentId": "BTC-USDT", "orderId": 1521, "side": "BUY", "priceTicks": 100, "quantityLots": 2, "executionPolicy": "GTC"}},
+        {"caseId": "cancel-both-sell-taker", "type": "PLACE", "entrypoint": "STP", "participantGroupId": 23, "stpPolicy": "CANCEL_BOTH", "input": {"instrumentId": "BTC-USDT", "orderId": 1522, "side": "SELL", "priceTicks": 100, "quantityLots": 5, "executionPolicy": "GTC"}},
+        {"caseId": "cancel-both-maker-terminal", "type": "CANCEL", "input": {"instrumentId": "BTC-USDT", "orderId": 1521}}
+      ]
+    },
+    {
+      "scenarioId": "SAME_PRICE_FIFO_INTERLEAVE",
+      "proofObligations": ["PRICE_TIME_EVENT_INTERLEAVING", "CANCEL_MAKER_CONTINUES_SAME_LEVEL", "SAME_GROUP_NO_TRADE"],
+      "commands": [
+        {"caseId": "fifo-first-external", "type": "PLACE", "entrypoint": "STP", "participantGroupId": 32, "stpPolicy": "CANCEL_TAKER", "input": {"instrumentId": "BTC-USDT", "orderId": 1601, "side": "SELL", "priceTicks": 100, "quantityLots": 1, "executionPolicy": "GTC"}},
+        {"caseId": "fifo-second-self", "type": "PLACE", "entrypoint": "STP", "participantGroupId": 31, "stpPolicy": "CANCEL_TAKER", "input": {"instrumentId": "BTC-USDT", "orderId": 1602, "side": "SELL", "priceTicks": 100, "quantityLots": 2, "executionPolicy": "GTC"}},
+        {"caseId": "fifo-third-external", "type": "PLACE", "entrypoint": "STP", "participantGroupId": 33, "stpPolicy": "CANCEL_TAKER", "input": {"instrumentId": "BTC-USDT", "orderId": 1603, "side": "SELL", "priceTicks": 100, "quantityLots": 1, "executionPolicy": "GTC"}},
+        {"caseId": "fifo-trade-stp-trade", "type": "PLACE", "entrypoint": "STP", "participantGroupId": 31, "stpPolicy": "CANCEL_MAKER", "input": {"instrumentId": "BTC-USDT", "orderId": 1604, "side": "BUY", "priceTicks": 100, "quantityLots": 4, "executionPolicy": "GTC"}},
+        {"caseId": "fifo-cancel-rested-taker", "type": "CANCEL", "input": {"instrumentId": "BTC-USDT", "orderId": 1604}},
+        {"caseId": "fifo-self-maker-terminal", "type": "CANCEL", "input": {"instrumentId": "BTC-USDT", "orderId": 1602}}
+      ]
+    },
+    {
+      "scenarioId": "CANCEL_MAKER_CROSS_LEVEL",
+      "proofObligations": ["CANCEL_MAKER_CONTINUES_CROSS_LEVEL", "CANCEL_MAKER_CANCELS_MAKER"],
+      "commands": [
+        {"caseId": "cross-self-best-bid", "type": "PLACE", "entrypoint": "STP", "participantGroupId": 41, "stpPolicy": "CANCEL_TAKER", "input": {"instrumentId": "BTC-USDT", "orderId": 1701, "side": "BUY", "priceTicks": 102, "quantityLots": 1, "executionPolicy": "GTC"}},
+        {"caseId": "cross-external-second-bid", "type": "PLACE", "entrypoint": "STP", "participantGroupId": 42, "stpPolicy": "CANCEL_TAKER", "input": {"instrumentId": "BTC-USDT", "orderId": 1702, "side": "BUY", "priceTicks": 101, "quantityLots": 2, "executionPolicy": "GTC"}},
+        {"caseId": "cross-self-third-bid", "type": "PLACE", "entrypoint": "STP", "participantGroupId": 41, "stpPolicy": "CANCEL_TAKER", "input": {"instrumentId": "BTC-USDT", "orderId": 1703, "side": "BUY", "priceTicks": 100, "quantityLots": 1, "executionPolicy": "GTC"}},
+        {"caseId": "cross-external-fourth-bid", "type": "PLACE", "entrypoint": "STP", "participantGroupId": 43, "stpPolicy": "CANCEL_TAKER", "input": {"instrumentId": "BTC-USDT", "orderId": 1704, "side": "BUY", "priceTicks": 99, "quantityLots": 2, "executionPolicy": "GTC"}},
+        {"caseId": "cross-level-sell-taker", "type": "PLACE", "entrypoint": "STP", "participantGroupId": 41, "stpPolicy": "CANCEL_MAKER", "input": {"instrumentId": "BTC-USDT", "orderId": 1705, "side": "SELL", "priceTicks": 99, "quantityLots": 4, "executionPolicy": "GTC"}},
+        {"caseId": "cross-self-maker-terminal", "type": "CANCEL", "input": {"instrumentId": "BTC-USDT", "orderId": 1703}}
+      ]
+    },
+    {
+      "scenarioId": "PARTIAL_BEFORE_STP",
+      "proofObligations": ["PARTIAL_TRADE_BEFORE_STP", "CANCEL_TAKER_CANCELS_FULL_REMAINDER", "CANCEL_TAKER_PRESERVES_MAKER"],
+      "commands": [
+        {"caseId": "partial-external-best-bid", "type": "PLACE", "entrypoint": "STP", "participantGroupId": 52, "stpPolicy": "CANCEL_TAKER", "input": {"instrumentId": "BTC-USDT", "orderId": 1801, "side": "BUY", "priceTicks": 101, "quantityLots": 2, "executionPolicy": "GTC"}},
+        {"caseId": "partial-self-next-bid", "type": "PLACE", "entrypoint": "STP", "participantGroupId": 51, "stpPolicy": "CANCEL_TAKER", "input": {"instrumentId": "BTC-USDT", "orderId": 1802, "side": "BUY", "priceTicks": 100, "quantityLots": 3, "executionPolicy": "GTC"}},
+        {"caseId": "partial-external-later-bid", "type": "PLACE", "entrypoint": "STP", "participantGroupId": 53, "stpPolicy": "CANCEL_TAKER", "input": {"instrumentId": "BTC-USDT", "orderId": 1803, "side": "BUY", "priceTicks": 99, "quantityLots": 2, "executionPolicy": "GTC"}},
+        {"caseId": "partial-then-cancel-sell-taker", "type": "PLACE", "entrypoint": "STP", "participantGroupId": 51, "stpPolicy": "CANCEL_TAKER", "input": {"instrumentId": "BTC-USDT", "orderId": 1804, "side": "SELL", "priceTicks": 99, "quantityLots": 7, "executionPolicy": "GTC"}},
+        {"caseId": "partial-later-maker-still-resting", "type": "CANCEL", "input": {"instrumentId": "BTC-USDT", "orderId": 1803}}
+      ]
+    },
+    {
+      "scenarioId": "GTC_REMAINDER_AFTER_STP",
+      "proofObligations": ["GTC_REMAINDER_RESTS", "CANCEL_MAKER_CANCELS_MAKER"],
+      "commands": [
+        {"caseId": "gtc-self-maker", "type": "PLACE", "entrypoint": "STP", "participantGroupId": 61, "stpPolicy": "CANCEL_TAKER", "input": {"instrumentId": "BTC-USDT", "orderId": 1901, "side": "SELL", "priceTicks": 100, "quantityLots": 2, "executionPolicy": "GTC"}},
+        {"caseId": "gtc-cancel-maker-and-rest", "type": "PLACE", "entrypoint": "STP", "participantGroupId": 61, "stpPolicy": "CANCEL_MAKER", "input": {"instrumentId": "BTC-USDT", "orderId": 1902, "side": "BUY", "priceTicks": 100, "quantityLots": 5, "executionPolicy": "GTC"}},
+        {"caseId": "gtc-external-taker", "type": "PLACE", "entrypoint": "STP", "participantGroupId": 62, "stpPolicy": "CANCEL_TAKER", "input": {"instrumentId": "BTC-USDT", "orderId": 1903, "side": "SELL", "priceTicks": 100, "quantityLots": 2, "executionPolicy": "GTC"}},
+        {"caseId": "gtc-cancel-remaining-rest", "type": "CANCEL", "input": {"instrumentId": "BTC-USDT", "orderId": 1902}}
+      ]
+    },
+    {
+      "scenarioId": "IOC_STP_REMAINDER",
+      "proofObligations": ["IOC_STP_AND_REMAINDER_REASONS"],
+      "commands": [
+        {"caseId": "ioc-self-maker", "type": "PLACE", "entrypoint": "STP", "participantGroupId": 71, "stpPolicy": "CANCEL_MAKER", "input": {"instrumentId": "BTC-USDT", "orderId": 2001, "side": "SELL", "priceTicks": 100, "quantityLots": 2, "executionPolicy": "GTC"}},
+        {"caseId": "ioc-cancel-taker-remainder", "type": "PLACE", "entrypoint": "STP", "participantGroupId": 71, "stpPolicy": "CANCEL_TAKER", "input": {"instrumentId": "BTC-USDT", "orderId": 2002, "side": "BUY", "priceTicks": 100, "quantityLots": 5, "executionPolicy": "IOC"}},
+        {"caseId": "ioc-external-maker", "type": "PLACE", "entrypoint": "LEGACY", "input": {"instrumentId": "BTC-USDT", "orderId": 2003, "side": "SELL", "priceTicks": 101, "quantityLots": 1, "executionPolicy": "GTC"}},
+        {"caseId": "ioc-normal-remainder", "type": "PLACE", "entrypoint": "STP", "participantGroupId": 72, "stpPolicy": "CANCEL_MAKER", "input": {"instrumentId": "BTC-USDT", "orderId": 2004, "side": "BUY", "priceTicks": 101, "quantityLots": 3, "executionPolicy": "IOC"}}
+      ]
+    },
+    {
+      "scenarioId": "FOK_STP_AWARE_ATOMICITY",
+      "proofObligations": ["FOK_TAKER_OR_BOTH_PRECHECK", "FOK_CANCEL_MAKER_PRECHECK", "FOK_FAILURE_ATOMIC"],
+      "commands": [
+        {"caseId": "fok-self-ask", "type": "PLACE", "entrypoint": "STP", "participantGroupId": 81, "stpPolicy": "CANCEL_TAKER", "input": {"instrumentId": "BTC-USDT", "orderId": 2101, "side": "SELL", "priceTicks": 100, "quantityLots": 2, "executionPolicy": "GTC"}},
+        {"caseId": "fok-external-ask", "type": "PLACE", "entrypoint": "STP", "participantGroupId": 82, "stpPolicy": "CANCEL_TAKER", "input": {"instrumentId": "BTC-USDT", "orderId": 2102, "side": "SELL", "priceTicks": 101, "quantityLots": 3, "executionPolicy": "GTC"}},
+        {"caseId": "fok-cancel-taker-rejected", "type": "PLACE", "entrypoint": "STP", "participantGroupId": 81, "stpPolicy": "CANCEL_TAKER", "input": {"instrumentId": "BTC-USDT", "orderId": 2103, "side": "BUY", "priceTicks": 101, "quantityLots": 4, "executionPolicy": "FOK"}},
+        {"caseId": "fok-cancel-maker-accepted", "type": "PLACE", "entrypoint": "STP", "participantGroupId": 81, "stpPolicy": "CANCEL_MAKER", "input": {"instrumentId": "BTC-USDT", "orderId": 2104, "side": "BUY", "priceTicks": 101, "quantityLots": 3, "executionPolicy": "FOK"}},
+        {"caseId": "fok-both-self-bid", "type": "PLACE", "entrypoint": "STP", "participantGroupId": 83, "stpPolicy": "CANCEL_TAKER", "input": {"instrumentId": "BTC-USDT", "orderId": 2105, "side": "BUY", "priceTicks": 101, "quantityLots": 2, "executionPolicy": "GTC"}},
+        {"caseId": "fok-both-external-bid", "type": "PLACE", "entrypoint": "STP", "participantGroupId": 84, "stpPolicy": "CANCEL_TAKER", "input": {"instrumentId": "BTC-USDT", "orderId": 2106, "side": "BUY", "priceTicks": 100, "quantityLots": 4, "executionPolicy": "GTC"}},
+        {"caseId": "fok-cancel-both-rejected", "type": "PLACE", "entrypoint": "STP", "participantGroupId": 83, "stpPolicy": "CANCEL_BOTH", "input": {"instrumentId": "BTC-USDT", "orderId": 2107, "side": "SELL", "priceTicks": 100, "quantityLots": 4, "executionPolicy": "FOK"}}
+      ]
+    },
+    {
+      "scenarioId": "POST_ONLY_RAW_BOOK_PRIORITY",
+      "proofObligations": ["POST_ONLY_RAW_BOOK_FIRST"],
+      "commands": [
+        {"caseId": "post-self-ask", "type": "PLACE", "entrypoint": "STP", "participantGroupId": 91, "stpPolicy": "CANCEL_TAKER", "input": {"instrumentId": "BTC-USDT", "orderId": 2201, "side": "SELL", "priceTicks": 100, "quantityLots": 2, "executionPolicy": "GTC"}},
+        {"caseId": "post-self-cancel-maker-still-rejected", "type": "PLACE", "entrypoint": "STP", "participantGroupId": 91, "stpPolicy": "CANCEL_MAKER", "input": {"instrumentId": "BTC-USDT", "orderId": 2202, "side": "BUY", "priceTicks": 100, "quantityLots": 2, "executionPolicy": "POST_ONLY"}},
+        {"caseId": "post-external-bid", "type": "PLACE", "entrypoint": "STP", "participantGroupId": 92, "stpPolicy": "CANCEL_TAKER", "input": {"instrumentId": "BTC-USDT", "orderId": 2203, "side": "BUY", "priceTicks": 99, "quantityLots": 2, "executionPolicy": "GTC"}},
+        {"caseId": "post-sell-cross-rejected", "type": "PLACE", "entrypoint": "STP", "participantGroupId": 93, "stpPolicy": "CANCEL_TAKER", "input": {"instrumentId": "BTC-USDT", "orderId": 2204, "side": "SELL", "priceTicks": 99, "quantityLots": 2, "executionPolicy": "POST_ONLY"}}
+      ]
+    },
+    {
+      "scenarioId": "RULE_MODE_ATTRIBUTION_FAILURE_ATOMICITY",
+      "proofObligations": ["RULE_SET_ATTRIBUTION", "MARKET_MODE_BEFORE_STP"],
+      "commands": [
+        {"caseId": "attribution-prepare", "type": "PREPARE_RULE_SET", "input": {"expectedActive": {"version": 0, "contentHash": "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"}, "artifact": {"schemaVersion": "matching.market-rule-set.v1", "instrumentId": "BTC-USDT", "version": 1, "lowerInclusive": 90, "upperInclusive": 110, "contentHash": "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"}}},
+        {"caseId": "attribution-activate", "type": "ACTIVATE_RULE_SET", "input": {"expectedApplicationSequence": 2, "expectedActive": {"version": 0, "contentHash": "sha256:d9928c52e99b8611cb95fb0d2792b6901cf9336825e19a7f593393b0d2b99c04"}, "target": {"version": 1, "contentHash": "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"}}},
+        {"caseId": "attribution-self-maker", "type": "PLACE", "entrypoint": "GOVERNED_STP", "participantGroupId": 101, "stpPolicy": "CANCEL_TAKER", "expectedRuleSet": {"version": 1, "contentHash": "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"}, "input": {"instrumentId": "BTC-USDT", "orderId": 2301, "side": "SELL", "priceTicks": 105, "quantityLots": 2, "executionPolicy": "GTC"}},
+        {"caseId": "attribution-cancel-maker", "type": "PLACE", "entrypoint": "GOVERNED_STP", "participantGroupId": 101, "stpPolicy": "CANCEL_MAKER", "expectedRuleSet": {"version": 1, "contentHash": "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"}, "input": {"instrumentId": "BTC-USDT", "orderId": 2302, "side": "BUY", "priceTicks": 105, "quantityLots": 3, "executionPolicy": "GTC"}},
+        {"caseId": "mode-priority-self-maker", "type": "PLACE", "entrypoint": "GOVERNED_STP", "participantGroupId": 102, "stpPolicy": "CANCEL_TAKER", "expectedRuleSet": {"version": 1, "contentHash": "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"}, "input": {"instrumentId": "BTC-USDT", "orderId": 2303, "side": "SELL", "priceTicks": 106, "quantityLots": 2, "executionPolicy": "GTC"}},
+        {"caseId": "enter-cancel-only", "type": "CHANGE_MARKET_MODE", "input": {"expectedApplicationSequence": 6, "expectedMode": "OPEN", "targetMode": "CANCEL_ONLY", "operatorId": "ops-stp-1"}},
+        {"caseId": "mode-rejects-before-stp", "type": "PLACE", "entrypoint": "GOVERNED_STP", "participantGroupId": 102, "stpPolicy": "CANCEL_MAKER", "expectedRuleSet": {"version": 1, "contentHash": "sha256:dbb75b3983480a8ece058736766411f80eb5c62e10eb24de72b74853d5377f91"}, "input": {"instrumentId": "BTC-USDT", "orderId": 2304, "side": "BUY", "priceTicks": 106, "quantityLots": 2, "executionPolicy": "GTC"}}
+      ]
+    }
+  ]
+}

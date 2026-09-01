@@ -1,0 +1,15 @@
+{
+  "schemaVersion" : "matching.m08.counterexamples-report.v1",
+  "unit" : "M08",
+  "status" : "PASS",
+  "required" : 10,
+  "persisted" : 10,
+  "rawOperations" : 76,
+  "minimalOperations" : 56,
+  "shrinkTrials" : 132,
+  "actualMutationActions" : 13,
+  "candidateDriver" : "EXECUTABLE_MUTATED_RUNTIME",
+  "fullRestartGrammar" : true,
+  "oneMinimalScope" : "HIGH_LEVEL_HISTORY_TOKENS_WITH_REQUIRED_RESTART_GRAMMAR",
+  "digest" : "9608baeba56ba525e6eeba5c33d9f6368b72c8f68e22b5e7f0c6fdf768d9566a"
+}

@@ -1,0 +1,129 @@
+{
+  "schemaVersion" : "matching.m08.fixed-report.v1",
+  "unit" : "M08",
+  "status" : "PASS",
+  "scenarios" : 20,
+  "digest" : "444e999094bc58aabed7869df60a07a019de9969f8bd39318edc3c0590527472",
+  "injectedFaults" : 7,
+  "results" : [ {
+    "scenarioId" : "CANONICAL_VALID_AND_BUSINESS_REJECTION",
+    "status" : "PASS",
+    "summary" : "all six command variants, valid STP state, and raw invalid STP rejection recovered",
+    "injectedFaults" : 0,
+    "proofObligations" : [ "CANONICAL_ENVELOPE", "BUSINESS_REJECTION_JOURNALED", "APPLY_BEFORE_ACK" ]
+  }, {
+    "scenarioId" : "STRUCTURAL_REJECTIONS_BEFORE_WAL",
+    "status" : "PASS",
+    "summary" : "wrong shard and payload hash rejected before WAL",
+    "injectedFaults" : 0,
+    "proofObligations" : [ "WRONG_SHARD_PRE_WAL", "PAYLOAD_HASH_PRE_WAL" ]
+  }, {
+    "scenarioId" : "LIVE_EXACT_DUPLICATE",
+    "status" : "PASS",
+    "summary" : "exact live identity replayed original result without append",
+    "injectedFaults" : 0,
+    "proofObligations" : [ "LIVE_EXACT_DUPLICATE" ]
+  }, {
+    "scenarioId" : "RESTART_EXACT_DUPLICATE",
+    "status" : "PASS",
+    "summary" : "exact restart identity replayed original durable result",
+    "injectedFaults" : 0,
+    "proofObligations" : [ "RESTART_EXACT_DUPLICATE" ]
+  }, {
+    "scenarioId" : "COMMAND_ID_PAYLOAD_CONFLICT",
+    "status" : "PASS",
+    "summary" : "commandId to payload binding remained immutable",
+    "injectedFaults" : 0,
+    "proofObligations" : [ "COMMAND_ID_PAYLOAD_CONFLICT" ]
+  }, {
+    "scenarioId" : "COMMAND_ID_SLOT_CONFLICT",
+    "status" : "PASS",
+    "summary" : "commandId could not be rebound to a second producer slot",
+    "injectedFaults" : 0,
+    "proofObligations" : [ "COMMAND_ID_SLOT_CONFLICT" ]
+  }, {
+    "scenarioId" : "SLOT_IDENTITY_CONFLICT",
+    "status" : "PASS",
+    "summary" : "producer slot could not be rebound to a second commandId",
+    "injectedFaults" : 0,
+    "proofObligations" : [ "SLOT_IDENTITY_CONFLICT" ]
+  }, {
+    "scenarioId" : "PRODUCER_SEQUENCE_GAP_AND_BOUND_STALE",
+    "status" : "PASS",
+    "summary" : "gap rejected; continuous no-eviction makes prior slots resolve as duplicate or slot conflict",
+    "injectedFaults" : 0,
+    "proofObligations" : [ "PRODUCER_SEQUENCE_GAP", "STALE_SLOT_RESOLVES_BY_BINDING_PRECEDENCE" ]
+  }, {
+    "scenarioId" : "PRODUCER_EPOCH_FENCE",
+    "status" : "PASS",
+    "summary" : "known old-epoch exact replayed; unseen old epoch was fenced",
+    "injectedFaults" : 0,
+    "proofObligations" : [ "HIGHER_EPOCH_ACTIVATION", "PRODUCER_EPOCH_FENCED" ]
+  }, {
+    "scenarioId" : "HIGHER_EPOCH_MUST_START_AT_ONE",
+    "status" : "PASS",
+    "summary" : "higher epoch activated only at sequence one",
+    "injectedFaults" : 0,
+    "proofObligations" : [ "HIGHER_EPOCH_MUST_START_AT_ONE", "HIGHER_EPOCH_ACTIVATION" ]
+  }, {
+    "scenarioId" : "TORN_LENGTH_PREFIX_UNKNOWN",
+    "status" : "PASS",
+    "summary" : "length-only final tail returned UNKNOWN then truncated on restart",
+    "injectedFaults" : 1,
+    "proofObligations" : [ "FAIL_CLOSED_UNKNOWN", "FINAL_TORN_TAIL_TRUNCATED" ]
+  }, {
+    "scenarioId" : "COMPLETE_BODY_BEFORE_FORCE_UNKNOWN",
+    "status" : "PASS",
+    "summary" : "complete unforced frame returned UNKNOWN and was resolved by restart",
+    "injectedFaults" : 1,
+    "proofObligations" : [ "APPEND_BEFORE_FORCE", "FAIL_CLOSED_UNKNOWN" ]
+  }, {
+    "scenarioId" : "FORCED_RECORD_BEFORE_APPLY_UNKNOWN",
+    "status" : "PASS",
+    "summary" : "record force completed before apply hook; no ACK escaped",
+    "injectedFaults" : 1,
+    "proofObligations" : [ "RECORD_FORCE_BEFORE_ACK", "FAIL_CLOSED_UNKNOWN" ]
+  }, {
+    "scenarioId" : "APPLIED_BEFORE_ACK_UNKNOWN",
+    "status" : "PASS",
+    "summary" : "apply completed before ACK hook; exact retry replayed after restart",
+    "injectedFaults" : 1,
+    "proofObligations" : [ "APPLY_BEFORE_ACK", "FAIL_CLOSED_UNKNOWN" ]
+  }, {
+    "scenarioId" : "ROLLOVER_DIRECTORY_FORCE_ORDER",
+    "status" : "PASS",
+    "summary" : "new segment directory force preceded its first record and ACK",
+    "injectedFaults" : 1,
+    "proofObligations" : [ "ROLLOVER_CHAIN", "DIRECTORY_FORCE_BEFORE_FIRST_RECORD_ACK" ]
+  }, {
+    "scenarioId" : "ORPHAN_TEMP_IS_NOT_AUTHORITY",
+    "status" : "PASS",
+    "summary" : "orphan temp removed without entering recovered history",
+    "injectedFaults" : 0,
+    "proofObligations" : [ "ORPHAN_TEMP_IGNORED" ]
+  }, {
+    "scenarioId" : "FINAL_TORN_TAIL_REPAIR",
+    "status" : "PASS",
+    "summary" : "only incomplete final frame was truncated and forced",
+    "injectedFaults" : 1,
+    "proofObligations" : [ "FINAL_TORN_TAIL_TRUNCATED" ]
+  }, {
+    "scenarioId" : "COMPLETE_FINAL_FRAME_CORRUPTION",
+    "status" : "PASS",
+    "summary" : "complete final frame CRC corruption failed closed",
+    "injectedFaults" : 0,
+    "proofObligations" : [ "COMPLETE_CORRUPTION_FAIL_CLOSED" ]
+  }, {
+    "scenarioId" : "NON_FINAL_OR_MIDDLE_CORRUPTION",
+    "status" : "PASS",
+    "summary" : "complete middle-frame corruption was not skipped or repaired",
+    "injectedFaults" : 0,
+    "proofObligations" : [ "COMPLETE_CORRUPTION_FAIL_CLOSED", "ROLLOVER_CHAIN" ]
+  }, {
+    "scenarioId" : "SINGLE_WRITER_AND_APPLY_FAILURE",
+    "status" : "PASS",
+    "summary" : "directory lock and deterministic apply poison both failed closed",
+    "injectedFaults" : 1,
+    "proofObligations" : [ "DIRECTORY_SINGLE_WRITER_LOCK", "FAIL_CLOSED_UNKNOWN" ]
+  } ]
+}

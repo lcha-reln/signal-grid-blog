@@ -1,0 +1,23 @@
+{
+  "schemaVersion" : "matching.m06.boundaries-report.v1",
+  "status" : "PASS",
+  "initialMode" : "OPEN",
+  "operatorIdIsAuditAttribution" : true,
+  "operatorIdIsAuthorizationProof" : false,
+  "placeAllowedOnlyOpen" : true,
+  "cancelAllowedOpenAndCancelOnly" : true,
+  "haltedCancelRejectsBeforeLookup" : true,
+  "ruleControlAllowedAllModes" : true,
+  "directHaltedToOpenRejected" : true,
+  "sameModeRejected" : true,
+  "modeTransitionDoesNotClearBook" : true,
+  "massCancelRequiredMode" : "HALTED",
+  "massCancelOrder" : "GLOBAL_ASCENDING_ACCEPTANCE_SEQUENCE",
+  "massCancelAtomic" : true,
+  "emptyMassCancelSucceeds" : true,
+  "terminalIdentityPreserved" : true,
+  "ruleAttributionPreserved" : true,
+  "finiteCorpus" : true,
+  "formalProof" : false,
+  "productionReadinessClaim" : false
+}

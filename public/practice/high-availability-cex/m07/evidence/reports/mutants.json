@@ -1,0 +1,66 @@
+{
+  "schemaVersion" : "matching.m07.mutants-report.v1",
+  "status" : "PASS",
+  "required" : 8,
+  "killed" : 8,
+  "killClassification" : "STUDENT_FAILURE",
+  "systemErrorControl" : "SYSTEM_ERROR",
+  "systemErrorCountsAsKill" : false,
+  "mutants" : [ {
+    "id" : "M07-SAME-GROUP-TRADE-ALLOWED",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "EVENT_DIFFERENTIAL",
+    "oneMinimal" : true,
+    "replayed" : true,
+    "minimizedCommands" : 2
+  }, {
+    "id" : "M07-DIFFERENT-GROUP-CANCELED",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "EVENT_DIFFERENTIAL",
+    "oneMinimal" : true,
+    "replayed" : true,
+    "minimizedCommands" : 2
+  }, {
+    "id" : "M07-CANCEL-TAKER-SKIPS-SELF",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "EVENT_DIFFERENTIAL",
+    "oneMinimal" : true,
+    "replayed" : true,
+    "minimizedCommands" : 2
+  }, {
+    "id" : "M07-CANCEL-MAKER-CANCELS-TAKER",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "EVENT_DIFFERENTIAL",
+    "oneMinimal" : true,
+    "replayed" : true,
+    "minimizedCommands" : 2
+  }, {
+    "id" : "M07-CANCEL-BOTH-LEAVES-MAKER",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "EVENT_DIFFERENTIAL",
+    "oneMinimal" : true,
+    "replayed" : true,
+    "minimizedCommands" : 2
+  }, {
+    "id" : "M07-FOK-COUNTS-RAW-SELF-LIQUIDITY",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "EVENT_DIFFERENTIAL",
+    "oneMinimal" : true,
+    "replayed" : true,
+    "minimizedCommands" : 3
+  }, {
+    "id" : "M07-POST-ONLY-RUNS-STP-FIRST",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "EVENT_DIFFERENTIAL",
+    "oneMinimal" : true,
+    "replayed" : true,
+    "minimizedCommands" : 2
+  }, {
+    "id" : "M07-CANCEL-MAKER-BEST-LEVEL-ONLY",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "EVENT_DIFFERENTIAL",
+    "oneMinimal" : true,
+    "replayed" : true,
+    "minimizedCommands" : 3
+  } ]
+}

@@ -1,0 +1,80 @@
+{
+  "schemaVersion" : "matching.m08.coverage-report.v1",
+  "unit" : "M08",
+  "status" : "PASS",
+  "required" : 24,
+  "observed" : 24,
+  "obligations" : [ {
+    "id" : "CANONICAL_ENVELOPE",
+    "hit" : true
+  }, {
+    "id" : "BUSINESS_REJECTION_JOURNALED",
+    "hit" : true
+  }, {
+    "id" : "APPLY_BEFORE_ACK",
+    "hit" : true
+  }, {
+    "id" : "WRONG_SHARD_PRE_WAL",
+    "hit" : true
+  }, {
+    "id" : "PAYLOAD_HASH_PRE_WAL",
+    "hit" : true
+  }, {
+    "id" : "LIVE_EXACT_DUPLICATE",
+    "hit" : true
+  }, {
+    "id" : "RESTART_EXACT_DUPLICATE",
+    "hit" : true
+  }, {
+    "id" : "COMMAND_ID_PAYLOAD_CONFLICT",
+    "hit" : true
+  }, {
+    "id" : "COMMAND_ID_SLOT_CONFLICT",
+    "hit" : true
+  }, {
+    "id" : "SLOT_IDENTITY_CONFLICT",
+    "hit" : true
+  }, {
+    "id" : "PRODUCER_SEQUENCE_GAP",
+    "hit" : true
+  }, {
+    "id" : "STALE_SLOT_RESOLVES_BY_BINDING_PRECEDENCE",
+    "hit" : true
+  }, {
+    "id" : "HIGHER_EPOCH_ACTIVATION",
+    "hit" : true
+  }, {
+    "id" : "PRODUCER_EPOCH_FENCED",
+    "hit" : true
+  }, {
+    "id" : "HIGHER_EPOCH_MUST_START_AT_ONE",
+    "hit" : true
+  }, {
+    "id" : "FAIL_CLOSED_UNKNOWN",
+    "hit" : true
+  }, {
+    "id" : "FINAL_TORN_TAIL_TRUNCATED",
+    "hit" : true
+  }, {
+    "id" : "APPEND_BEFORE_FORCE",
+    "hit" : true
+  }, {
+    "id" : "RECORD_FORCE_BEFORE_ACK",
+    "hit" : true
+  }, {
+    "id" : "ROLLOVER_CHAIN",
+    "hit" : true
+  }, {
+    "id" : "DIRECTORY_FORCE_BEFORE_FIRST_RECORD_ACK",
+    "hit" : true
+  }, {
+    "id" : "ORPHAN_TEMP_IGNORED",
+    "hit" : true
+  }, {
+    "id" : "COMPLETE_CORRUPTION_FAIL_CLOSED",
+    "hit" : true
+  }, {
+    "id" : "DIRECTORY_SINGLE_WRITER_LOCK",
+    "hit" : true
+  } ]
+}

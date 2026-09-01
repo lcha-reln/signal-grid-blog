@@ -1,0 +1,187 @@
+{
+  "schemaVersion" : "cex.lab-evidence.v1",
+  "case" : "high-availability-cex",
+  "project" : "matching",
+  "unit" : "M08",
+  "unitTag" : "course/m08-complete",
+  "productRelease" : null,
+  "planVersion" : "0.10",
+  "source" : {
+    "commit" : "5c8d8f6a5356f6ebbdf87d83745d8e8bd0861199",
+    "dirty" : false
+  },
+  "environment" : {
+    "java" : "25.0.4.1+1-LTS",
+    "os" : "Mac OS X",
+    "arch" : "aarch64"
+  },
+  "claims" : [ {
+    "id" : "m00-m07-semantic-regression",
+    "category" : "correctness",
+    "statement" : "The inherited finite M07 semantic judge remains green without rebinding historical source evidence.",
+    "status" : "pass",
+    "command" : "./gradlew m08Check --no-daemon",
+    "observations" : {
+      "unit" : "M07",
+      "status" : "PASS",
+      "fixedScenarios" : 16,
+      "fixedCommands" : 72,
+      "generatedHistories" : 160,
+      "generatedCommands" : 10240,
+      "coverageObligations" : 24,
+      "mutantsKilled" : 8
+    },
+    "artifacts" : [ {
+      "path" : "reports/inherited-m07.json",
+      "sha256" : "312cc24c26d9c80a8f37eceaa6b1dc5ff8d47f07872664d5f11d612015b5d935"
+    } ]
+  }, {
+    "id" : "canonical-journal-and-recovery",
+    "category" : "correctness",
+    "statement" : "The frozen M08C1/M08W1 scenarios journal all deterministic application commands, durable business rejections, identity bindings, and genesis recovery outcomes.",
+    "status" : "pass",
+    "command" : "./gradlew m08Check --no-daemon",
+    "observations" : {
+      "envelope" : "M08C1",
+      "wal" : "M08W1",
+      "submissionOrder" : "VALIDATE_PREFLIGHT_APPEND_FORCE_APPLY_ACK",
+      "genesisRecovery" : true,
+      "durableBidirectionalIdentity" : true,
+      "allApplicationCommandsJournaled" : true,
+      "m07StpPlaceJournaled" : true,
+      "m07GovernedStpPlaceJournaled" : true,
+      "preprovisionedRealNonSymlinkWalDirectory" : true,
+      "ancestorDirectoryDurabilityExternal" : true,
+      "runtimeCreatesWalDirectory" : false
+    },
+    "artifacts" : [ {
+      "path" : "inputs/local-wal-durability-v1.json",
+      "sha256" : "5160121600c151c91db5431a4e1a8ef8fcd4a73ba67683d96a09daba389100a3"
+    }, {
+      "path" : "reports/fixed-scenarios.json",
+      "sha256" : "8e7ab19f73abb5da780db5f24ca679dc56aaeaac5364b10b45dc0b45a9433ca8"
+    }, {
+      "path" : "reports/fixed-history.canonical.utf8",
+      "sha256" : "444e999094bc58aabed7869df60a07a019de9969f8bd39318edc3c0590527472"
+    } ]
+  }, {
+    "id" : "finite-independent-durability-model",
+    "category" : "correctness",
+    "statement" : "Two fresh SplitMix64 generations reproduce exact bytes across 96 histories by 48 operations while the no-I/O identity model and third ledger check every boundary.",
+    "status" : "pass",
+    "command" : "./gradlew m08Check --no-daemon",
+    "observations" : {
+      "algorithm" : "splitmix64-v1",
+      "baseSeed" : "5808",
+      "histories" : 96,
+      "operationsPerHistory" : 48,
+      "operations" : 4608,
+      "profileDrivenOperations" : 1152,
+      "invalidEnvelopes" : 192,
+      "businessRejections" : 576,
+      "selectedOperations" : {
+        "SUBMIT" : 732,
+        "DUPLICATE" : 111,
+        "CONFLICT" : 104,
+        "RESTART" : 92,
+        "ROLLOVER" : 57,
+        "FAULT" : 56
+      },
+      "digest" : "56a2d7f63df96737c286bab5c96a16aa50e0dd33df58f9cefc9d7abee5aaff41"
+    },
+    "artifacts" : [ {
+      "path" : "inputs/property-suite-v1.json",
+      "sha256" : "477a2b16be5d2d6f6f378b203660bf1106db89409ad06e77bdb7837edbfc74ea"
+    }, {
+      "path" : "reports/generated-properties.json",
+      "sha256" : "a7730d826cf66358284cfd835fb3011ad6b812837af3bcf4a0e06eb283beca6e"
+    }, {
+      "path" : "reports/generated-history.canonical.utf8",
+      "sha256" : "56a2d7f63df96737c286bab5c96a16aa50e0dd33df58f9cefc9d7abee5aaff41"
+    }, {
+      "path" : "reports/durability-ledger.json",
+      "sha256" : "4d4afbd768a85619b997ae7627751160a1706851ec94af10e3d62e960f483b8e"
+    } ]
+  }, {
+    "id" : "code-level-fault-boundaries",
+    "category" : "correctness",
+    "statement" : "Twenty-four obligations plus seven BEFORE_OPERATION histories cover append/force/apply/ACK, rollover, lock, torn-tail, corruption, and fail-closed behavior using explicitly labeled code-level injection; typed ENOSPC/read-only witnesses are not real filesystem tests.",
+    "status" : "pass",
+    "command" : "./gradlew m08Check --no-daemon",
+    "observations" : {
+      "model" : "CODE_LEVEL_DETERMINISTIC_INJECTION",
+      "childProcessCrashSmokes" : 3,
+      "beforeOperationFailures" : 7,
+      "injectedEnospcWitness" : true,
+      "injectedReadOnlyWitness" : true,
+      "actualFilesystemForTypedInjections" : false,
+      "preprovisionedWalDirectory" : true,
+      "ancestorDirectoryDurabilityExternal" : true,
+      "realPowerLoss" : false,
+      "realDiskFull" : false,
+      "physicalMediaDurability" : false
+    },
+    "artifacts" : [ {
+      "path" : "reports/coverage.json",
+      "sha256" : "28ef49604a2f296b27cfec52cc076dca03f432562e39a1e65994957beea9c4fd"
+    }, {
+      "path" : "reports/fault-windows.json",
+      "sha256" : "1d66501747988f15fa2c6e34fd67408d14f0de62bcfb0ae623a9d5bcf3484a35"
+    }, {
+      "path" : "reports/operation-failures.json",
+      "sha256" : "8d19d9fd7fd69533438c673a57422fb589ecb0ea2164f97dee51de2786736204"
+    } ]
+  }, {
+    "id" : "minimal-semantic-mutants",
+    "category" : "correctness",
+    "statement" : "All ten required executable runtime/file faults are STUDENT_FAILURE with fresh, strict-replayed, one-minimal M08X2 histories that preserve submit/close/restart/retry grammar; SYSTEM_ERROR is excluded from kills.",
+    "status" : "pass",
+    "command" : "./gradlew m08Check --no-daemon",
+    "observations" : {
+      "required" : 10,
+      "killed" : 10,
+      "throwingControl" : "SYSTEM_ERROR",
+      "systemErrorCountedAsKill" : false,
+      "candidateDriver" : "EXECUTABLE_MUTATED_RUNTIME",
+      "actualMutationActions" : 13,
+      "fullRestartGrammar" : true
+    },
+    "artifacts" : [ {
+      "path" : "reports/counterexamples-v1.json",
+      "sha256" : "f08ed5e0d5148ef80c47d38c80b1aa322610e2c0214e7c6b1f34219edddecc6e"
+    }, {
+      "path" : "reports/counterexamples.json",
+      "sha256" : "322ae1bacf657e3b848f6eedd238bd5dff8fd06eaa0be27f8ae7fe34f20fb7b3"
+    }, {
+      "path" : "reports/counterexamples.canonical.utf8",
+      "sha256" : "9608baeba56ba525e6eeba5c33d9f6368b72c8f68e22b5e7f0c6fdf768d9566a"
+    }, {
+      "path" : "reports/replay.json",
+      "sha256" : "226e09ad1be4496b980b1bf1cf8c52b3bb3f765c02c560b25a51e114fc48a915"
+    }, {
+      "path" : "reports/mutants.json",
+      "sha256" : "3cb7d38f9344f6788df40dc56998cea3ad869af08aaeb82492173818c5454fa3"
+    } ]
+  }, {
+    "id" : "local-runtime-boundary",
+    "category" : "architecture",
+    "statement" : "The matching core remains infrastructure-free and matching-local-runtime depends only on matching-core and the JDK; no Aeron or HA claim is made.",
+    "status" : "pass",
+    "command" : "./gradlew m08Check --no-daemon",
+    "observations" : {
+      "coreSources" : 54,
+      "localRuntimeSources" : 28,
+      "violations" : 0
+    },
+    "artifacts" : [ {
+      "path" : "reports/architecture.json",
+      "sha256" : "5c8c42310eb50cd6e0d96a63d7cff6450b37489d3505d0bf8926b37d60ec4186"
+    }, {
+      "path" : "reports/check.json",
+      "sha256" : "00acdcd6f39ba2d5636f52dda361ffaf0018b6357a7cebae568a5547284ae2dd"
+    } ]
+  } ],
+  "limitations" : [ "This unit is one caller-serialized process and one shard; it is not replicated and is not a high-availability deployment.", "The M08C1 envelope and M08W1 WAL are internal local-journal formats, not a frozen Rest, WebSocket, Aeron, or public exchange protocol.", "FileChannel.force(true) is evidence only for the documented JDK and operating-system barrier; no physical-media or real power-loss guarantee is claimed.", "The deployment must pre-provision an existing real non-symlink WAL directory and durably publish its ancestor directory entry before runtime open; the runtime refuses missing or symlink paths and does not prove that external provisioning step.", "ENOSPC and read-only observations are named deterministic FileSystemException injections with actualFilesystem=false; write, force, rename, directory-force, lock, and apply failures are likewise code-level injections unless an artifact explicitly says otherwise.", "No real disk exhaustion, read-only mount, device-cache failure, power cut, or filesystem crash-consistency matrix was exercised by this finite judge.", "The fixed 20 scenarios and 96 histories by 48 operations are bounded tests, not exhaustive exploration or formal verification.", "PRODUCER_SEQUENCE_STALE is a reserved code without a direct witness: strict continuity and no eviction mean a prior active-epoch slot resolves as exact duplicate or slot conflict first.", "Recovery replays from genesis; there is no snapshot, retention, compaction, bounded recovery time, online repair, or WAL truncation policy.", "There is no Aeron, Raft, leader election, quorum, replication, failover, multi-shard routing, group commit, database double-write, or external side-effect idempotency.", "The evidence makes no throughput, latency, capacity, operational security, upgrade, or production-readiness claim." ],
+  "supersedes" : null,
+  "generatedAt" : "2026-09-01T06:28:36.864890Z"
+}

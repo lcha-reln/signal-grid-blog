@@ -1,0 +1,112 @@
+{
+  "schemaVersion" : "matching.m08.mutants-report.v1",
+  "unit" : "M08",
+  "status" : "PASS",
+  "required" : 10,
+  "killedAsStudentFailure" : 10,
+  "throwingControl" : "SYSTEM_ERROR",
+  "systemErrorCountedAsKill" : false,
+  "candidateDriver" : "EXECUTABLE_MUTATED_RUNTIME",
+  "actualMutationActions" : 13,
+  "results" : [ {
+    "id" : "M08-ACK-BEFORE-RECORD-FORCE",
+    "classification" : "STUDENT_FAILURE",
+    "killed" : true,
+    "fingerprint" : "ACK_ORDER_RECORD_FORCE",
+    "candidateDriver" : "EXECUTABLE_MUTATED_RUNTIME",
+    "actualMutationActions" : 1,
+    "freshRuntimeFileReplay" : true,
+    "fullRestartGrammar" : true,
+    "systemErrorCountedAsKill" : false
+  }, {
+    "id" : "M08-ACK-BEFORE-DIRECTORY-FORCE",
+    "classification" : "STUDENT_FAILURE",
+    "killed" : true,
+    "fingerprint" : "ACK_ORDER_DIRECTORY_FORCE",
+    "candidateDriver" : "EXECUTABLE_MUTATED_RUNTIME",
+    "actualMutationActions" : 1,
+    "freshRuntimeFileReplay" : true,
+    "fullRestartGrammar" : true,
+    "systemErrorCountedAsKill" : false
+  }, {
+    "id" : "M08-DUPLICATE-REAPPLIES",
+    "classification" : "STUDENT_FAILURE",
+    "killed" : true,
+    "fingerprint" : "DUPLICATE_APPLY_COUNT",
+    "candidateDriver" : "EXECUTABLE_MUTATED_RUNTIME",
+    "actualMutationActions" : 1,
+    "freshRuntimeFileReplay" : true,
+    "fullRestartGrammar" : true,
+    "systemErrorCountedAsKill" : false
+  }, {
+    "id" : "M08-COMMAND-ID-PAYLOAD-CONFLICT-ACCEPTED",
+    "classification" : "STUDENT_FAILURE",
+    "killed" : true,
+    "fingerprint" : "COMMAND_ID_PAYLOAD_BINDING",
+    "candidateDriver" : "EXECUTABLE_MUTATED_RUNTIME",
+    "actualMutationActions" : 2,
+    "freshRuntimeFileReplay" : true,
+    "fullRestartGrammar" : true,
+    "systemErrorCountedAsKill" : false
+  }, {
+    "id" : "M08-SLOT-IDENTITY-CONFLICT-ACCEPTED",
+    "classification" : "STUDENT_FAILURE",
+    "killed" : true,
+    "fingerprint" : "SLOT_IDENTITY_BINDING",
+    "candidateDriver" : "EXECUTABLE_MUTATED_RUNTIME",
+    "actualMutationActions" : 2,
+    "freshRuntimeFileReplay" : true,
+    "fullRestartGrammar" : true,
+    "systemErrorCountedAsKill" : false
+  }, {
+    "id" : "M08-GAP-ADVANCES-PRODUCER",
+    "classification" : "STUDENT_FAILURE",
+    "killed" : true,
+    "fingerprint" : "PRODUCER_GAP_CONTINUITY",
+    "candidateDriver" : "EXECUTABLE_MUTATED_RUNTIME",
+    "actualMutationActions" : 1,
+    "freshRuntimeFileReplay" : true,
+    "fullRestartGrammar" : true,
+    "systemErrorCountedAsKill" : false
+  }, {
+    "id" : "M08-FENCED-EPOCH-ACCEPTED",
+    "classification" : "STUDENT_FAILURE",
+    "killed" : true,
+    "fingerprint" : "PRODUCER_EPOCH_FENCE",
+    "candidateDriver" : "EXECUTABLE_MUTATED_RUNTIME",
+    "actualMutationActions" : 1,
+    "freshRuntimeFileReplay" : true,
+    "fullRestartGrammar" : true,
+    "systemErrorCountedAsKill" : false
+  }, {
+    "id" : "M08-BUSINESS-REJECTION-NOT-JOURNALED",
+    "classification" : "STUDENT_FAILURE",
+    "killed" : true,
+    "fingerprint" : "BUSINESS_REJECTION_DURABILITY",
+    "candidateDriver" : "EXECUTABLE_MUTATED_RUNTIME",
+    "actualMutationActions" : 2,
+    "freshRuntimeFileReplay" : true,
+    "fullRestartGrammar" : true,
+    "systemErrorCountedAsKill" : false
+  }, {
+    "id" : "M08-TORN-TAIL-REPLAYED",
+    "classification" : "STUDENT_FAILURE",
+    "killed" : true,
+    "fingerprint" : "FINAL_TORN_TAIL_RECOVERY",
+    "candidateDriver" : "EXECUTABLE_MUTATED_RUNTIME",
+    "actualMutationActions" : 1,
+    "freshRuntimeFileReplay" : true,
+    "fullRestartGrammar" : true,
+    "systemErrorCountedAsKill" : false
+  }, {
+    "id" : "M08-CORRUPTION-SKIPPED",
+    "classification" : "STUDENT_FAILURE",
+    "killed" : true,
+    "fingerprint" : "COMPLETE_CORRUPTION_FAIL_CLOSED",
+    "candidateDriver" : "EXECUTABLE_MUTATED_RUNTIME",
+    "actualMutationActions" : 1,
+    "freshRuntimeFileReplay" : true,
+    "fullRestartGrammar" : true,
+    "systemErrorCountedAsKill" : false
+  } ]
+}

@@ -1,0 +1,189 @@
+{
+  "schemaVersion" : "matching.m06.coverage-report.v1",
+  "status" : "PASS",
+  "requiredObligations" : 26,
+  "satisfiedObligations" : 26,
+  "obligations" : [ {
+    "id" : "BOOTSTRAP_OPEN",
+    "satisfied" : true,
+    "source" : "FIXED",
+    "history" : "BOOTSTRAP_OPEN_REGRESSION",
+    "commandIndex" : 0,
+    "count" : 175
+  }, {
+    "id" : "VALID_MODE_TRANSITION",
+    "satisfied" : true,
+    "source" : "FIXED",
+    "history" : "CANCEL_ONLY_PERMISSION",
+    "commandIndex" : 1,
+    "count" : 1102
+  }, {
+    "id" : "DIRECT_REOPEN_REJECTED",
+    "satisfied" : true,
+    "source" : "FIXED",
+    "history" : "SAFE_REOPEN_GRAPH",
+    "commandIndex" : 1,
+    "count" : 339
+  }, {
+    "id" : "SAME_MODE_REJECTED",
+    "satisfied" : true,
+    "source" : "FIXED",
+    "history" : "MODE_FAILURE_ATOMICITY",
+    "commandIndex" : 1,
+    "count" : 551
+  }, {
+    "id" : "STALE_APPLICATION_FENCE",
+    "satisfied" : true,
+    "source" : "FIXED",
+    "history" : "STALE_APPLICATION_FENCE",
+    "commandIndex" : 0,
+    "count" : 134
+  }, {
+    "id" : "STALE_EXPECTED_MODE",
+    "satisfied" : true,
+    "source" : "FIXED",
+    "history" : "STALE_EXPECTED_MODE",
+    "commandIndex" : 0,
+    "count" : 114
+  }, {
+    "id" : "MODE_FAILURE_ATOMIC",
+    "satisfied" : true,
+    "source" : "FIXED",
+    "history" : "SAFE_REOPEN_GRAPH",
+    "commandIndex" : 1,
+    "count" : 1138
+  }, {
+    "id" : "PLACE_OPEN_ALLOWED",
+    "satisfied" : true,
+    "source" : "FIXED",
+    "history" : "BOOTSTRAP_OPEN_REGRESSION",
+    "commandIndex" : 0,
+    "count" : 697
+  }, {
+    "id" : "PLACE_CANCEL_ONLY_REJECTED",
+    "satisfied" : true,
+    "source" : "FIXED",
+    "history" : "CANCEL_ONLY_PERMISSION",
+    "commandIndex" : 2,
+    "count" : 859
+  }, {
+    "id" : "PLACE_HALTED_REJECTED",
+    "satisfied" : true,
+    "source" : "FIXED",
+    "history" : "HALTED_CUSTOMER_PERMISSION",
+    "commandIndex" : 2,
+    "count" : 1365
+  }, {
+    "id" : "CANCEL_OPEN_ALLOWED",
+    "satisfied" : true,
+    "source" : "FIXED",
+    "history" : "BOOTSTRAP_OPEN_REGRESSION",
+    "commandIndex" : 1,
+    "count" : 77
+  }, {
+    "id" : "CANCEL_CANCEL_ONLY_ALLOWED",
+    "satisfied" : true,
+    "source" : "FIXED",
+    "history" : "CANCEL_ONLY_PERMISSION",
+    "commandIndex" : 3,
+    "count" : 65
+  }, {
+    "id" : "CANCEL_HALTED_REJECTED",
+    "satisfied" : true,
+    "source" : "FIXED",
+    "history" : "HALTED_CUSTOMER_PERMISSION",
+    "commandIndex" : 3,
+    "count" : 693
+  }, {
+    "id" : "RULE_CONTROL_ALL_MODES",
+    "satisfied" : true,
+    "source" : "FIXED",
+    "history" : "RULE_SET_ATTRIBUTION_PRESERVED",
+    "commandIndex" : 0,
+    "count" : 811
+  }, {
+    "id" : "TRANSITION_BOOK_UNCHANGED",
+    "satisfied" : true,
+    "source" : "FIXED",
+    "history" : "CANCEL_ONLY_PERMISSION",
+    "commandIndex" : 1,
+    "count" : 318
+  }, {
+    "id" : "MASS_CANCEL_REQUIRES_HALTED",
+    "satisfied" : true,
+    "source" : "FIXED",
+    "history" : "MASS_CANCEL_REQUIRES_HALT",
+    "commandIndex" : 2,
+    "count" : 650
+  }, {
+    "id" : "MASS_CANCEL_EMPTY_SUCCESS",
+    "satisfied" : true,
+    "source" : "FIXED",
+    "history" : "EMPTY_BOOK_MASS_CANCEL",
+    "commandIndex" : 1,
+    "count" : 474
+  }, {
+    "id" : "MASS_CANCEL_GLOBAL_ACCEPTANCE_ORDER",
+    "satisfied" : true,
+    "source" : "FIXED",
+    "history" : "MASS_CANCEL_REQUIRES_HALT",
+    "commandIndex" : 6,
+    "count" : 80
+  }, {
+    "id" : "MASS_CANCEL_BID_SIDE",
+    "satisfied" : true,
+    "source" : "FIXED",
+    "history" : "MASS_CANCEL_REQUIRES_HALT",
+    "commandIndex" : 6,
+    "count" : 92
+  }, {
+    "id" : "MASS_CANCEL_ASK_SIDE",
+    "satisfied" : true,
+    "source" : "FIXED",
+    "history" : "MASS_CANCEL_REQUIRES_HALT",
+    "commandIndex" : 6,
+    "count" : 117
+  }, {
+    "id" : "MASS_CANCEL_CROSS_PRICE",
+    "satisfied" : true,
+    "source" : "FIXED",
+    "history" : "MASS_CANCEL_REQUIRES_HALT",
+    "commandIndex" : 6,
+    "count" : 80
+  }, {
+    "id" : "MASS_CANCEL_TERMINAL_IDENTITY",
+    "satisfied" : true,
+    "source" : "FIXED",
+    "history" : "TERMINAL_IDENTITY_LATE_CANCEL",
+    "commandIndex" : 4,
+    "count" : 34
+  }, {
+    "id" : "MASS_CANCEL_RULE_ATTRIBUTION",
+    "satisfied" : true,
+    "source" : "FIXED",
+    "history" : "RULE_SET_ATTRIBUTION_PRESERVED",
+    "commandIndex" : 4,
+    "count" : 44
+  }, {
+    "id" : "MASS_CANCEL_ACTIVE_RULE_UNCHANGED",
+    "satisfied" : true,
+    "source" : "FIXED",
+    "history" : "MASS_CANCEL_REQUIRES_HALT",
+    "commandIndex" : 6,
+    "count" : 613
+  }, {
+    "id" : "APPLICATION_SEQUENCE_CONTINUITY",
+    "satisfied" : true,
+    "source" : "FIXED",
+    "history" : "BOOTSTRAP_OPEN_REGRESSION",
+    "commandIndex" : 0,
+    "count" : 10304
+  }, {
+    "id" : "LEGACY_M00_M05_COMPATIBILITY",
+    "satisfied" : true,
+    "source" : "FIXED",
+    "history" : "BOOTSTRAP_OPEN_REGRESSION",
+    "commandIndex" : 0,
+    "count" : 559
+  } ]
+}

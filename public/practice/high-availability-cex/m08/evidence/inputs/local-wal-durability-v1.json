@@ -1,0 +1,106 @@
+{
+  "schemaVersion": "matching.m08.scenario.v1",
+  "faultModel": "CODE_LEVEL_DETERMINISTIC_INJECTION",
+  "scenarios": [
+    {
+      "scenarioId": "CANONICAL_VALID_AND_BUSINESS_REJECTION",
+      "operations": ["SUBMIT_VALID_CANCEL", "SUBMIT_BUSINESS_INVALID_CANCEL", "RESTART", "REPLAY_BOTH"],
+      "proofObligations": ["CANONICAL_ENVELOPE", "BUSINESS_REJECTION_JOURNALED", "APPLY_BEFORE_ACK"]
+    },
+    {
+      "scenarioId": "STRUCTURAL_REJECTIONS_BEFORE_WAL",
+      "operations": ["SUBMIT_WRONG_SHARD", "SUBMIT_HASH_MISMATCH", "ASSERT_WAL_UNCHANGED"],
+      "proofObligations": ["WRONG_SHARD_PRE_WAL", "PAYLOAD_HASH_PRE_WAL"]
+    },
+    {
+      "scenarioId": "LIVE_EXACT_DUPLICATE",
+      "operations": ["SUBMIT_NEW", "SUBMIT_EXACT_DUPLICATE", "ASSERT_ORIGINAL_RESULT"],
+      "proofObligations": ["LIVE_EXACT_DUPLICATE"]
+    },
+    {
+      "scenarioId": "RESTART_EXACT_DUPLICATE",
+      "operations": ["SUBMIT_NEW", "RESTART", "SUBMIT_EXACT_DUPLICATE", "ASSERT_ORIGINAL_POSITION"],
+      "proofObligations": ["RESTART_EXACT_DUPLICATE"]
+    },
+    {
+      "scenarioId": "COMMAND_ID_PAYLOAD_CONFLICT",
+      "operations": ["SUBMIT_NEW", "REUSE_COMMAND_ID_AND_SLOT_WITH_NEW_PAYLOAD", "ASSERT_NOT_APPENDED"],
+      "proofObligations": ["COMMAND_ID_PAYLOAD_CONFLICT"]
+    },
+    {
+      "scenarioId": "COMMAND_ID_SLOT_CONFLICT",
+      "operations": ["SUBMIT_NEW", "REUSE_COMMAND_ID_WITH_NEW_SLOT", "ASSERT_NOT_APPENDED"],
+      "proofObligations": ["COMMAND_ID_SLOT_CONFLICT"]
+    },
+    {
+      "scenarioId": "SLOT_IDENTITY_CONFLICT",
+      "operations": ["SUBMIT_NEW", "REUSE_SLOT_WITH_NEW_COMMAND_ID", "ASSERT_NOT_APPENDED"],
+      "proofObligations": ["SLOT_IDENTITY_CONFLICT"]
+    },
+    {
+      "scenarioId": "PRODUCER_SEQUENCE_GAP_AND_BOUND_STALE",
+      "operations": ["SUBMIT_SEQUENCE_1", "SUBMIT_SEQUENCE_3", "SUBMIT_SEQUENCE_2", "RETRY_BOUND_SEQUENCE_1_WITH_EXACT_OR_CONFLICTING_IDENTITY"],
+      "proofObligations": ["PRODUCER_SEQUENCE_GAP", "STALE_SLOT_RESOLVES_BY_BINDING_PRECEDENCE"]
+    },
+    {
+      "scenarioId": "PRODUCER_EPOCH_FENCE",
+      "operations": ["SUBMIT_EPOCH_1_SEQUENCE_1", "SUBMIT_EPOCH_2_SEQUENCE_1", "SUBMIT_UNSEEN_EPOCH_1_SEQUENCE_2"],
+      "proofObligations": ["HIGHER_EPOCH_ACTIVATION", "PRODUCER_EPOCH_FENCED"]
+    },
+    {
+      "scenarioId": "HIGHER_EPOCH_MUST_START_AT_ONE",
+      "operations": ["SUBMIT_EPOCH_1_SEQUENCE_1", "SUBMIT_EPOCH_2_SEQUENCE_2", "SUBMIT_EPOCH_2_SEQUENCE_1"],
+      "proofObligations": ["HIGHER_EPOCH_MUST_START_AT_ONE", "HIGHER_EPOCH_ACTIVATION"]
+    },
+    {
+      "scenarioId": "TORN_LENGTH_PREFIX_UNKNOWN",
+      "operations": ["INJECT_AFTER_RECORD_LENGTH_WRITE", "ASSERT_DURABILITY_UNKNOWN", "ASSERT_FAILED_CLOSED", "RESTART_AND_TRUNCATE"],
+      "proofObligations": ["FAIL_CLOSED_UNKNOWN", "FINAL_TORN_TAIL_TRUNCATED"]
+    },
+    {
+      "scenarioId": "COMPLETE_BODY_BEFORE_FORCE_UNKNOWN",
+      "operations": ["INJECT_AFTER_RECORD_BODY_WRITE", "ASSERT_NO_ACK", "RESTART", "RETRY_EXACT_IDENTITY"],
+      "proofObligations": ["APPEND_BEFORE_FORCE", "FAIL_CLOSED_UNKNOWN"]
+    },
+    {
+      "scenarioId": "FORCED_RECORD_BEFORE_APPLY_UNKNOWN",
+      "operations": ["INJECT_AFTER_RECORD_FORCE", "ASSERT_NO_ACK", "RESTART", "RETRY_EXACT_IDENTITY"],
+      "proofObligations": ["RECORD_FORCE_BEFORE_ACK", "FAIL_CLOSED_UNKNOWN"]
+    },
+    {
+      "scenarioId": "APPLIED_BEFORE_ACK_UNKNOWN",
+      "operations": ["INJECT_AFTER_LIVE_APPLY_BEFORE_ACK", "ASSERT_NO_ACK", "RESTART", "RETRY_EXACT_IDENTITY"],
+      "proofObligations": ["APPLY_BEFORE_ACK", "FAIL_CLOSED_UNKNOWN"]
+    },
+    {
+      "scenarioId": "ROLLOVER_DIRECTORY_FORCE_ORDER",
+      "operations": ["FILL_SEGMENT", "INJECT_AFTER_DIRECTORY_FORCE", "REOPEN", "APPEND_FIRST_RECORD_IN_NEW_SEGMENT"],
+      "proofObligations": ["ROLLOVER_CHAIN", "DIRECTORY_FORCE_BEFORE_FIRST_RECORD_ACK"]
+    },
+    {
+      "scenarioId": "ORPHAN_TEMP_IS_NOT_AUTHORITY",
+      "operations": ["CREATE_ORPHAN_TEMP", "RESTART", "ASSERT_TEMP_REMOVED", "ASSERT_LOG_STATE_UNCHANGED"],
+      "proofObligations": ["ORPHAN_TEMP_IGNORED"]
+    },
+    {
+      "scenarioId": "FINAL_TORN_TAIL_REPAIR",
+      "operations": ["WRITE_PARTIAL_FINAL_RECORD", "RESTART", "ASSERT_TRUNCATED_AND_FORCED", "SUBMIT_REPLACEMENT"],
+      "proofObligations": ["FINAL_TORN_TAIL_TRUNCATED"]
+    },
+    {
+      "scenarioId": "COMPLETE_FINAL_FRAME_CORRUPTION",
+      "operations": ["SUBMIT_NEW", "CLOSE", "FLIP_COMPLETE_FRAME_BYTE", "ASSERT_RECOVERY_FAILS_CLOSED"],
+      "proofObligations": ["COMPLETE_CORRUPTION_FAIL_CLOSED"]
+    },
+    {
+      "scenarioId": "NON_FINAL_OR_MIDDLE_CORRUPTION",
+      "operations": ["CREATE_MULTIPLE_RECORDS", "CLOSE", "CORRUPT_NON_TAIL_FRAME", "ASSERT_NO_SKIP_OR_REPAIR"],
+      "proofObligations": ["COMPLETE_CORRUPTION_FAIL_CLOSED", "ROLLOVER_CHAIN"]
+    },
+    {
+      "scenarioId": "SINGLE_WRITER_AND_APPLY_FAILURE",
+      "operations": ["OPEN_FIRST_WRITER", "ASSERT_SECOND_WRITER_REJECTED", "INJECT_APPLY_FAILURE", "ASSERT_NO_ACK_AND_FAILED_CLOSED"],
+      "proofObligations": ["DIRECTORY_SINGLE_WRITER_LOCK", "FAIL_CLOSED_UNKNOWN"]
+    }
+  ]
+}

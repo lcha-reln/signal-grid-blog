@@ -1,0 +1,299 @@
+{
+  "schemaVersion" : "matching.m07.check.v2",
+  "unit" : "M07",
+  "status" : "PASS",
+  "contractPlanVersion" : "0.9",
+  "releaseTarget" : {
+    "unitTag" : "course/m07-complete",
+    "productRelease" : null,
+    "verification" : "M07_EVIDENCE_ONLY"
+  },
+  "inheritedM06" : {
+    "status" : "PASS",
+    "checkSchemaVersion" : "matching.m06.check.v2",
+    "fixedScenarios" : 15,
+    "fixedCommands" : 64,
+    "fixedDigest" : "sha256:2f9126e7100581020d2a56dd7da4736ab026a7f9533b051bde4490cda210855b",
+    "generatedHistories" : 160,
+    "generatedCommands" : 10240,
+    "generatedDigest" : "sha256:b74dd3a6bad6048dcaaceaaeb8fe0c81d1e8d2272d352fe15ea921738f73e6c4",
+    "coverageObligations" : 26,
+    "mutantsKilled" : 10
+  },
+  "legacyEntrypoints" : {
+    "executed" : 3,
+    "place" : true,
+    "placeRequest" : true,
+    "placeGoverned" : true,
+    "semanticResultsIdentical" : true,
+    "participantGroupId" : 0,
+    "stpPolicy" : "NONE"
+  },
+  "fixedCorpus" : {
+    "scenarios" : 16,
+    "commands" : 72,
+    "commandCounts" : {
+      "PLACE" : 61,
+      "CANCEL" : 8,
+      "PREPARE_RULE_SET" : 1,
+      "ACTIVATE_RULE_SET" : 1,
+      "CHANGE_MARKET_MODE" : 1
+    },
+    "canonicalFormat" : "M07F1",
+    "canonicalDigest" : "sha256:4c0675ee77458fb10b28e3c13d48767a653a41e922f42264f8d0f76aa5644176",
+    "canonicalBytes" : 10128,
+    "canonicalLines" : 73,
+    "differentialComparisons" : 72,
+    "eventLedgerChecks" : 72
+  },
+  "generator" : {
+    "algorithm" : "splitmix64-v1",
+    "baseSeed" : "5707",
+    "histories" : 160,
+    "commandsPerHistory" : 64,
+    "commands" : 10240,
+    "lanes" : 5,
+    "historiesPerLane" : 32,
+    "canonicalFormat" : "M07H1",
+    "canonicalDigest" : "sha256:c2576f10a77c320ec4a9ad75e3dc3c03494f636feabdcc7157ee10e74812718f",
+    "canonicalBytes" : 1709692,
+    "canonicalLines" : 10241,
+    "freshGenerations" : 2
+  },
+  "properties" : {
+    "histories" : 160,
+    "commands" : 10240,
+    "differentialComparisons" : 10240,
+    "eventLedgerChecks" : 10240,
+    "referenceLedgerChecks" : 10240
+  },
+  "coverage" : {
+    "requiredObligations" : 24,
+    "satisfiedObligations" : 24,
+    "obligations" : [ {
+      "id" : "INVALID_STP_GROUP_ID",
+      "satisfied" : true,
+      "source" : "FIXED",
+      "history" : "RAW_GROUP_VALIDATION",
+      "commandIndex" : 0,
+      "count" : 169
+    }, {
+      "id" : "INVALID_STP_POLICY",
+      "satisfied" : true,
+      "source" : "FIXED",
+      "history" : "RAW_POLICY_VALIDATION",
+      "commandIndex" : 0,
+      "count" : 168
+    }, {
+      "id" : "INVALID_STP_INSTRUCTION",
+      "satisfied" : true,
+      "source" : "FIXED",
+      "history" : "GROUP_POLICY_PAIR_VALIDATION",
+      "commandIndex" : 0,
+      "count" : 365
+    }, {
+      "id" : "VALIDATION_FAILURE_ATOMIC",
+      "satisfied" : true,
+      "source" : "FIXED",
+      "history" : "RAW_GROUP_VALIDATION",
+      "commandIndex" : 0,
+      "count" : 702
+    }, {
+      "id" : "LEGACY_ZERO_NONE_COMPATIBILITY",
+      "satisfied" : true,
+      "source" : "FIXED",
+      "history" : "LEGACY_NONE_REGRESSION",
+      "commandIndex" : 0,
+      "count" : 174
+    }, {
+      "id" : "GROUP_ZERO_NEVER_SELF",
+      "satisfied" : true,
+      "source" : "FIXED",
+      "history" : "LEGACY_NONE_REGRESSION",
+      "commandIndex" : 1,
+      "count" : 46
+    }, {
+      "id" : "DIFFERENT_GROUP_TRADE",
+      "satisfied" : true,
+      "source" : "FIXED",
+      "history" : "DIFFERENT_GROUP_TRADES",
+      "commandIndex" : 1,
+      "count" : 149
+    }, {
+      "id" : "SAME_GROUP_NO_TRADE",
+      "satisfied" : true,
+      "source" : "FIXED",
+      "history" : "CANCEL_TAKER_SAME_GROUP",
+      "commandIndex" : 1,
+      "count" : 187
+    }, {
+      "id" : "CANCEL_TAKER_CANCELS_FULL_REMAINDER",
+      "satisfied" : true,
+      "source" : "FIXED",
+      "history" : "PARTIAL_BEFORE_STP",
+      "commandIndex" : 3,
+      "count" : 14
+    }, {
+      "id" : "CANCEL_TAKER_PRESERVES_MAKER",
+      "satisfied" : true,
+      "source" : "FIXED",
+      "history" : "PARTIAL_BEFORE_STP",
+      "commandIndex" : 3,
+      "count" : 14
+    }, {
+      "id" : "CANCEL_MAKER_CANCELS_MAKER",
+      "satisfied" : true,
+      "source" : "FIXED",
+      "history" : "CANCEL_MAKER_SAME_GROUP",
+      "commandIndex" : 1,
+      "count" : 43
+    }, {
+      "id" : "CANCEL_MAKER_CONTINUES_SAME_LEVEL",
+      "satisfied" : true,
+      "source" : "FIXED",
+      "history" : "SAME_PRICE_FIFO_INTERLEAVE",
+      "commandIndex" : 3,
+      "count" : 1
+    }, {
+      "id" : "CANCEL_MAKER_CONTINUES_CROSS_LEVEL",
+      "satisfied" : true,
+      "source" : "FIXED",
+      "history" : "CANCEL_MAKER_CROSS_LEVEL",
+      "commandIndex" : 4,
+      "count" : 35
+    }, {
+      "id" : "CANCEL_BOTH_CANCELS_BOTH",
+      "satisfied" : true,
+      "source" : "FIXED",
+      "history" : "CANCEL_BOTH_SAME_GROUP",
+      "commandIndex" : 1,
+      "count" : 47
+    }, {
+      "id" : "PRICE_TIME_EVENT_INTERLEAVING",
+      "satisfied" : true,
+      "source" : "FIXED",
+      "history" : "SAME_PRICE_FIFO_INTERLEAVE",
+      "commandIndex" : 3,
+      "count" : 1
+    }, {
+      "id" : "PARTIAL_TRADE_BEFORE_STP",
+      "satisfied" : true,
+      "source" : "FIXED",
+      "history" : "CANCEL_TAKER_SAME_GROUP",
+      "commandIndex" : 1,
+      "count" : 50
+    }, {
+      "id" : "GTC_REMAINDER_RESTS",
+      "satisfied" : true,
+      "source" : "FIXED",
+      "history" : "CANCEL_MAKER_SAME_GROUP",
+      "commandIndex" : 1,
+      "count" : 42
+    }, {
+      "id" : "IOC_STP_AND_REMAINDER_REASONS",
+      "satisfied" : true,
+      "source" : "GENERATED",
+      "history" : "17",
+      "commandIndex" : 17,
+      "count" : 244
+    }, {
+      "id" : "FOK_TAKER_OR_BOTH_PRECHECK",
+      "satisfied" : true,
+      "source" : "FIXED",
+      "history" : "FOK_STP_AWARE_ATOMICITY",
+      "commandIndex" : 6,
+      "count" : 75
+    }, {
+      "id" : "FOK_CANCEL_MAKER_PRECHECK",
+      "satisfied" : true,
+      "source" : "FIXED",
+      "history" : "FOK_STP_AWARE_ATOMICITY",
+      "commandIndex" : 3,
+      "count" : 2
+    }, {
+      "id" : "FOK_FAILURE_ATOMIC",
+      "satisfied" : true,
+      "source" : "FIXED",
+      "history" : "FOK_STP_AWARE_ATOMICITY",
+      "commandIndex" : 2,
+      "count" : 308
+    }, {
+      "id" : "POST_ONLY_RAW_BOOK_FIRST",
+      "satisfied" : true,
+      "source" : "FIXED",
+      "history" : "POST_ONLY_RAW_BOOK_PRIORITY",
+      "commandIndex" : 1,
+      "count" : 78
+    }, {
+      "id" : "RULE_SET_ATTRIBUTION",
+      "satisfied" : true,
+      "source" : "FIXED",
+      "history" : "RULE_MODE_ATTRIBUTION_FAILURE_ATOMICITY",
+      "commandIndex" : 3,
+      "count" : 50
+    }, {
+      "id" : "MARKET_MODE_BEFORE_STP",
+      "satisfied" : true,
+      "source" : "FIXED",
+      "history" : "RULE_MODE_ATTRIBUTION_FAILURE_ATOMICITY",
+      "commandIndex" : 6,
+      "count" : 3430
+    } ]
+  },
+  "invariants" : {
+    "passed" : true,
+    "checks" : 10240,
+    "properties" : [ "APPLICATION_SEQUENCE_CONTIGUITY", "ACCEPTANCE_SEQUENCE_CONTIGUITY", "RAW_STP_VALIDATION_PRIORITY", "LEGACY_GROUP_ZERO_NONE", "GROUP_ZERO_NEVER_SELF", "SAME_GROUP_NEVER_TRADES", "TAKER_OWNED_DISPOSITION", "CANCEL_TAKER_FULL_REMAINDER", "CANCEL_MAKER_CONTINUES_SCAN", "CANCEL_BOTH_FULL_REMAINDERS", "FOK_STP_AWARE_PRECHECK", "POST_ONLY_RAW_BOOK_PRECEDENCE", "RULE_AND_MODE_ATTRIBUTION", "PRICE_TIME_PRIORITY", "QUANTITY_PARTITION" ]
+  },
+  "boundaries" : {
+    "participantGroupOwnership" : "OPAQUE_CALLER_SUPPLIED",
+    "legacyMapping" : "GROUP_0_NONE",
+    "groupZeroParticipatesInSelfEquality" : false,
+    "takerOwnsDisposition" : true,
+    "cancelTakerCancelsFullRemainder" : true,
+    "cancelMakerContinuesAcrossLevels" : true,
+    "cancelBothCancelsBothFullRemainders" : true,
+    "sameGroupTradeForbidden" : true,
+    "fokPreflight" : "READ_ONLY_STP_AWARE",
+    "fokFailureAtomic" : true,
+    "postOnlyPriority" : "RAW_BOOK_BEFORE_STP",
+    "marketModePriority" : "BEFORE_STP_SCAN",
+    "ruleSetAttributionPreserved" : true,
+    "legacyEntrypointsExecuted" : 3,
+    "finiteCorpus" : true,
+    "formalProof" : false,
+    "productionReadinessClaim" : false
+  },
+  "counterexamples" : {
+    "required" : 8,
+    "found" : 8,
+    "replayed" : 8,
+    "oneMinimal" : 8,
+    "totalCommands" : 18,
+    "canonicalFormat" : "M07X1",
+    "canonicalDigest" : "sha256:97504762c7f6349ac6bb02c26457d608dae6e0ad0231a19b10cf5c998a9c69ee",
+    "canonicalBytes" : 2778,
+    "canonicalLines" : 19
+  },
+  "mutants" : {
+    "required" : 8,
+    "killed" : 8,
+    "classification" : "STUDENT_FAILURE",
+    "systemErrorControl" : "SYSTEM_ERROR",
+    "systemErrorCountsAsKill" : false
+  },
+  "architecture" : {
+    "passed" : true,
+    "coreSources" : 54,
+    "referenceSources" : 29,
+    "forbiddenFindings" : 0,
+    "violations" : [ ]
+  },
+  "evidenceScope" : {
+    "finiteCorpus" : true,
+    "formalProof" : false,
+    "productionReadinessClaim" : false,
+    "replicationOrFailoverCovered" : false
+  },
+  "tutorialPermalinks" : [ "stp-command-and-opaque-participant-group", "cancel-taker-maker-both-state-machine", "stp-price-time-scan-and-cross-level-cases", "stp-with-ioc-fok-post-only-and-rule-sets", "stp-property-evidence-and-mutants" ]
+}

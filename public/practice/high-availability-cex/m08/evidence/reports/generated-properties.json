@@ -1,0 +1,28 @@
+{
+  "schemaVersion" : "matching.m08.generated-report.v1",
+  "unit" : "M08",
+  "status" : "PASS",
+  "algorithm" : "splitmix64-v1",
+  "baseSeed" : "5808",
+  "histories" : 96,
+  "operationsPerHistory" : 48,
+  "operations" : 4608,
+  "comparisons" : 4608,
+  "ledgerChecks" : 4608,
+  "restarts" : 1236,
+  "faultWindows" : 344,
+  "rollovers" : 24,
+  "invalidEnvelopes" : 192,
+  "businessRejections" : 576,
+  "selectedOperations" : {
+    "SUBMIT" : 732,
+    "DUPLICATE" : 111,
+    "CONFLICT" : 104,
+    "RESTART" : 92,
+    "ROLLOVER" : 57,
+    "FAULT" : 56
+  },
+  "digest" : "56a2d7f63df96737c286bab5c96a16aa50e0dd33df58f9cefc9d7abee5aaff41",
+  "freshRegenerationDigest" : "56a2d7f63df96737c286bab5c96a16aa50e0dd33df58f9cefc9d7abee5aaff41",
+  "byteExactRegeneration" : true
+}

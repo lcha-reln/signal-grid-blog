@@ -1,0 +1,13 @@
+{
+  "schemaVersion" : "matching.m06.m05-regression-report.v1",
+  "status" : "PASS",
+  "checkSchemaVersion" : "matching.m05.check.v2",
+  "fixedScenarios" : 12,
+  "fixedCommands" : 54,
+  "fixedDigest" : "sha256:45be63337da83103a45040f5f73e9b996018d76f6d91f77e27cd5b2d9dbb8f7b",
+  "generatedHistories" : 160,
+  "generatedCommands" : 10240,
+  "generatedDigest" : "sha256:e742e53e1846730a0f242447b3065e23e352059807d8593dcc3e489498d453f5",
+  "coverageObligations" : 20,
+  "mutantsKilled" : 8
+}

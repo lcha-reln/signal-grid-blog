@@ -1,0 +1,21 @@
+{
+  "schemaVersion" : "matching.m07.boundaries-report.v1",
+  "status" : "PASS",
+  "participantGroupOwnership" : "OPAQUE_CALLER_SUPPLIED",
+  "legacyMapping" : "GROUP_0_NONE",
+  "groupZeroParticipatesInSelfEquality" : false,
+  "takerOwnsDisposition" : true,
+  "cancelTakerCancelsFullRemainder" : true,
+  "cancelMakerContinuesAcrossLevels" : true,
+  "cancelBothCancelsBothFullRemainders" : true,
+  "sameGroupTradeForbidden" : true,
+  "fokPreflight" : "READ_ONLY_STP_AWARE",
+  "fokFailureAtomic" : true,
+  "postOnlyPriority" : "RAW_BOOK_BEFORE_STP",
+  "marketModePriority" : "BEFORE_STP_SCAN",
+  "ruleSetAttributionPreserved" : true,
+  "legacyEntrypointsExecuted" : 3,
+  "finiteCorpus" : true,
+  "formalProof" : false,
+  "productionReadinessClaim" : false
+}

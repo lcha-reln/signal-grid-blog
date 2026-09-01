@@ -1,0 +1,275 @@
+{
+  "schemaVersion" : "matching.m06.counterexamples.v1",
+  "counterexamples" : [ {
+    "mutantId" : "M06-CANCEL-ONLY-PLACE-ACCEPTED",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "EVENT_DIFFERENTIAL",
+    "originalCommands" : 2,
+    "minimizedCommands" : 2,
+    "oneMinimal" : true,
+    "commands" : [ {
+      "type" : "CHANGE_MARKET_MODE",
+      "input" : {
+        "expectedApplicationSequence" : 1,
+        "expectedMode" : "OPEN",
+        "targetMode" : "CANCEL_ONLY",
+        "operatorId" : "mutant-operator"
+      }
+    }, {
+      "type" : "PLACE",
+      "entrypoint" : "LEGACY",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 1,
+        "side" : "BUY",
+        "priceTicks" : 99,
+        "quantityLots" : 2,
+        "executionPolicy" : "GTC"
+      }
+    } ]
+  }, {
+    "mutantId" : "M06-HALTED-CUSTOMER-CANCEL-ACCEPTED",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "EVENT_DIFFERENTIAL",
+    "originalCommands" : 3,
+    "minimizedCommands" : 3,
+    "oneMinimal" : true,
+    "commands" : [ {
+      "type" : "PLACE",
+      "entrypoint" : "LEGACY",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 91,
+        "side" : "BUY",
+        "priceTicks" : 99,
+        "quantityLots" : 2,
+        "executionPolicy" : "GTC"
+      }
+    }, {
+      "type" : "CHANGE_MARKET_MODE",
+      "input" : {
+        "expectedApplicationSequence" : 2,
+        "expectedMode" : "OPEN",
+        "targetMode" : "HALTED",
+        "operatorId" : "mutant-operator"
+      }
+    }, {
+      "type" : "CANCEL",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 91
+      }
+    } ]
+  }, {
+    "mutantId" : "M06-HALTED-DIRECTLY-REOPENED",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "EVENT_DIFFERENTIAL",
+    "originalCommands" : 2,
+    "minimizedCommands" : 2,
+    "oneMinimal" : true,
+    "commands" : [ {
+      "type" : "CHANGE_MARKET_MODE",
+      "input" : {
+        "expectedApplicationSequence" : 1,
+        "expectedMode" : "OPEN",
+        "targetMode" : "HALTED",
+        "operatorId" : "mutant-operator"
+      }
+    }, {
+      "type" : "CHANGE_MARKET_MODE",
+      "input" : {
+        "expectedApplicationSequence" : 2,
+        "expectedMode" : "HALTED",
+        "targetMode" : "OPEN",
+        "operatorId" : "mutant-operator"
+      }
+    } ]
+  }, {
+    "mutantId" : "M06-STALE-MODE-FENCE-ACCEPTED",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "EVENT_DIFFERENTIAL",
+    "originalCommands" : 1,
+    "minimizedCommands" : 1,
+    "oneMinimal" : true,
+    "commands" : [ {
+      "type" : "CHANGE_MARKET_MODE",
+      "input" : {
+        "expectedApplicationSequence" : 1,
+        "expectedMode" : "CANCEL_ONLY",
+        "targetMode" : "HALTED",
+        "operatorId" : "mutant-operator"
+      }
+    } ]
+  }, {
+    "mutantId" : "M06-MODE-CHANGE-IMPLICITLY-CLEARS-BOOK",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "STATE_DIFFERENTIAL",
+    "originalCommands" : 2,
+    "minimizedCommands" : 2,
+    "oneMinimal" : true,
+    "commands" : [ {
+      "type" : "PLACE",
+      "entrypoint" : "LEGACY",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 2,
+        "side" : "BUY",
+        "priceTicks" : 99,
+        "quantityLots" : 2,
+        "executionPolicy" : "GTC"
+      }
+    }, {
+      "type" : "CHANGE_MARKET_MODE",
+      "input" : {
+        "expectedApplicationSequence" : 2,
+        "expectedMode" : "OPEN",
+        "targetMode" : "CANCEL_ONLY",
+        "operatorId" : "mutant-operator"
+      }
+    } ]
+  }, {
+    "mutantId" : "M06-FAILED-MODE-CHANGE-RESETS-OPEN",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "STATE_DIFFERENTIAL",
+    "originalCommands" : 2,
+    "minimizedCommands" : 2,
+    "oneMinimal" : true,
+    "commands" : [ {
+      "type" : "CHANGE_MARKET_MODE",
+      "input" : {
+        "expectedApplicationSequence" : 1,
+        "expectedMode" : "OPEN",
+        "targetMode" : "HALTED",
+        "operatorId" : "mutant-operator"
+      }
+    }, {
+      "type" : "CHANGE_MARKET_MODE",
+      "input" : {
+        "expectedApplicationSequence" : 2,
+        "expectedMode" : "HALTED",
+        "targetMode" : "OPEN",
+        "operatorId" : "mutant-operator"
+      }
+    } ]
+  }, {
+    "mutantId" : "M06-MASS-CANCEL-WITHOUT-HALT",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "EVENT_DIFFERENTIAL",
+    "originalCommands" : 1,
+    "minimizedCommands" : 1,
+    "oneMinimal" : true,
+    "commands" : [ {
+      "type" : "MASS_CANCEL",
+      "input" : {
+        "expectedApplicationSequence" : 1,
+        "expectedMode" : "OPEN",
+        "operatorId" : "mutant-operator"
+      }
+    } ]
+  }, {
+    "mutantId" : "M06-MASS-CANCEL-NON-ACCEPTANCE-ORDER",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "EVENT_DIFFERENTIAL",
+    "originalCommands" : 4,
+    "minimizedCommands" : 4,
+    "oneMinimal" : true,
+    "commands" : [ {
+      "type" : "PLACE",
+      "entrypoint" : "LEGACY",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 3,
+        "side" : "BUY",
+        "priceTicks" : 99,
+        "quantityLots" : 2,
+        "executionPolicy" : "GTC"
+      }
+    }, {
+      "type" : "PLACE",
+      "entrypoint" : "LEGACY",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 4,
+        "side" : "SELL",
+        "priceTicks" : 102,
+        "quantityLots" : 2,
+        "executionPolicy" : "GTC"
+      }
+    }, {
+      "type" : "CHANGE_MARKET_MODE",
+      "input" : {
+        "expectedApplicationSequence" : 3,
+        "expectedMode" : "OPEN",
+        "targetMode" : "HALTED",
+        "operatorId" : "mutant-operator"
+      }
+    }, {
+      "type" : "MASS_CANCEL",
+      "input" : {
+        "expectedApplicationSequence" : 4,
+        "expectedMode" : "HALTED",
+        "operatorId" : "mutant-operator"
+      }
+    } ]
+  }, {
+    "mutantId" : "M06-FAILED-MASS-CANCEL-PARTIALLY-CLEARS",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "STATE_DIFFERENTIAL",
+    "originalCommands" : 2,
+    "minimizedCommands" : 2,
+    "oneMinimal" : true,
+    "commands" : [ {
+      "type" : "PLACE",
+      "entrypoint" : "LEGACY",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 5,
+        "side" : "BUY",
+        "priceTicks" : 99,
+        "quantityLots" : 2,
+        "executionPolicy" : "GTC"
+      }
+    }, {
+      "type" : "MASS_CANCEL",
+      "input" : {
+        "expectedApplicationSequence" : 2,
+        "expectedMode" : "OPEN",
+        "operatorId" : "mutant-operator"
+      }
+    } ]
+  }, {
+    "mutantId" : "M06-MASS-CANCEL-DROPS-TERMINAL-ATTRIBUTION",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "EVENT_DIFFERENTIAL",
+    "originalCommands" : 3,
+    "minimizedCommands" : 3,
+    "oneMinimal" : true,
+    "commands" : [ {
+      "type" : "PLACE",
+      "entrypoint" : "LEGACY",
+      "input" : {
+        "instrumentId" : "BTC-USDT",
+        "orderId" : 6,
+        "side" : "BUY",
+        "priceTicks" : 99,
+        "quantityLots" : 2,
+        "executionPolicy" : "GTC"
+      }
+    }, {
+      "type" : "CHANGE_MARKET_MODE",
+      "input" : {
+        "expectedApplicationSequence" : 2,
+        "expectedMode" : "OPEN",
+        "targetMode" : "HALTED",
+        "operatorId" : "mutant-operator"
+      }
+    }, {
+      "type" : "MASS_CANCEL",
+      "input" : {
+        "expectedApplicationSequence" : 3,
+        "expectedMode" : "HALTED",
+        "operatorId" : "mutant-operator"
+      }
+    } ]
+  } ]
+}

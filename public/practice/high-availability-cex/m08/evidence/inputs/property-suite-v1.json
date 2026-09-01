@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "matching.m08.generator.v1",
+  "algorithm": "splitmix64-v1",
+  "baseSeed": "5808",
+  "histories": 96,
+  "operationsPerHistory": 48,
+  "lanes": [
+    {"id": "CANONICAL_AND_BUSINESS", "historyModulo": 0, "prefixScenario": "CANONICAL_VALID_AND_BUSINESS_REJECTION"},
+    {"id": "IDENTITY_SLOT_AND_EPOCH", "historyModulo": 1, "prefixScenario": "PRODUCER_SEQUENCE_GAP_AND_BOUND_STALE"},
+    {"id": "ACK_AND_FAIL_CLOSED", "historyModulo": 2, "prefixScenario": "FORCED_RECORD_BEFORE_APPLY_UNKNOWN"},
+    {"id": "ROLLOVER_AND_RECOVERY", "historyModulo": 3, "prefixScenario": "ROLLOVER_DIRECTORY_FORCE_ORDER"}
+  ],
+  "operationDomain": {
+    "submitWeight": 56,
+    "duplicateWeight": 12,
+    "conflictWeight": 10,
+    "restartWeight": 10,
+    "rolloverWeight": 6,
+    "faultWeight": 6,
+    "invalidEnvelopeOneIn": 24,
+    "businessRejectionOneIn": 8
+  },
+  "coverageRequirements": [
+    "CANONICAL_ENVELOPE",
+    "WRONG_SHARD_PRE_WAL",
+    "PAYLOAD_HASH_PRE_WAL",
+    "BUSINESS_REJECTION_JOURNALED",
+    "LIVE_EXACT_DUPLICATE",
+    "RESTART_EXACT_DUPLICATE",
+    "COMMAND_ID_PAYLOAD_CONFLICT",
+    "COMMAND_ID_SLOT_CONFLICT",
+    "SLOT_IDENTITY_CONFLICT",
+    "PRODUCER_SEQUENCE_GAP",
+    "STALE_SLOT_RESOLVES_BY_BINDING_PRECEDENCE",
+    "PRODUCER_EPOCH_FENCED",
+    "HIGHER_EPOCH_MUST_START_AT_ONE",
+    "HIGHER_EPOCH_ACTIVATION",
+    "APPEND_BEFORE_FORCE",
+    "RECORD_FORCE_BEFORE_ACK",
+    "DIRECTORY_FORCE_BEFORE_FIRST_RECORD_ACK",
+    "APPLY_BEFORE_ACK",
+    "FAIL_CLOSED_UNKNOWN",
+    "ROLLOVER_CHAIN",
+    "ORPHAN_TEMP_IGNORED",
+    "FINAL_TORN_TAIL_TRUNCATED",
+    "COMPLETE_CORRUPTION_FAIL_CLOSED",
+    "DIRECTORY_SINGLE_WRITER_LOCK"
+  ],
+  "requiredMutants": [
+    "M08-ACK-BEFORE-RECORD-FORCE",
+    "M08-ACK-BEFORE-DIRECTORY-FORCE",
+    "M08-DUPLICATE-REAPPLIES",
+    "M08-COMMAND-ID-PAYLOAD-CONFLICT-ACCEPTED",
+    "M08-SLOT-IDENTITY-CONFLICT-ACCEPTED",
+    "M08-GAP-ADVANCES-PRODUCER",
+    "M08-FENCED-EPOCH-ACCEPTED",
+    "M08-BUSINESS-REJECTION-NOT-JOURNALED",
+    "M08-TORN-TAIL-REPLAYED",
+    "M08-CORRUPTION-SKIPPED"
+  ]
+}
