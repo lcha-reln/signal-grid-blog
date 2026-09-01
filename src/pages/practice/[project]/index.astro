@@ -36,7 +36,7 @@ const units = getPracticeUnits(practiceCase.slug);
 const unitCards = units.map((unit) => ({
   unit,
   lessons: getPracticeLessonsForUnit(lessons, practiceCase.slug, unit.code),
-  routeAvailable: isPracticeUnitAtLeast(unit.lifecycle, "IN_PROGRESS"),
+  routeAvailable: isPracticeUnitAtLeast(unit.lifecycle, "CONTRACTED"),
 }));
 const progressLabel = `${getPracticePublishedUnitCount(practiceCase.slug)} / ${practiceCase.totalUnits}`;
 const currentProfile = practiceCase.profileRoadmap.find((profile) => profile.status === "CURRENT");

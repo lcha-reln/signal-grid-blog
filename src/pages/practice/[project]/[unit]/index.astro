@@ -23,7 +23,7 @@ import "../../../../styles/practice.css";
 export async function getStaticPaths() {
   const lessons = getPublishedPracticeLessons(await getCollection("practiceLessons"));
   return PRACTICE_UNITS.filter((unit) =>
-    isPracticeUnitAtLeast(unit.lifecycle, "IN_PROGRESS")
+    isPracticeUnitAtLeast(unit.lifecycle, "CONTRACTED")
   ).map((unit) => {
     const practiceCase = getPracticeCase(unit.projectSlug);
     if (!practiceCase) throw new Error(`Missing practice case for ${unit.projectSlug}/${unit.code}`);
@@ -159,7 +159,9 @@ const lab = unit.lifecycle === "PUBLISHED"
       </article>
       <article>
         <span>COMMANDS</span>
-        {unit.localCommands.map((command) => <pre><code>{command}</code></pre>)}
+        {unit.localCommands.length > 0
+          ? unit.localCommands.map((command) => <pre><code>{command}</code></pre>)
+          : <p>等待 READY 门禁冻结真实可运行入口。</p>}
       </article>
     </div>
   </section>
@@ -189,7 +191,7 @@ const lab = unit.lifecycle === "PUBLISHED"
     ) : (
       <div class="unit-empty-state">
         <strong>{unit.lifecycle}</strong>
-        <p>教程尚未发布。当前可以审阅冻结合同和不可移动起点，但这不等于单元已经完成。</p>
+        <p>教程尚未发布。当前只能审阅冻结合同和页面实际列出的固定身份；缺失的起点、完成点与 evidence 仍不存在，这不等于单元已经开始或完成。</p>
       </div>
     )}
   </section>

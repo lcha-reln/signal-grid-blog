@@ -1818,7 +1818,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.1",
     planCompatibility:
-      "当前 PLAN v0.10 在 M05 之后依次为 M06 mode/Mass Cancel、M07 STP 和 M08 本地 WAL/durable idempotency 签约，但 M00 输入、验证、canonical history、digest 与 evidence 合同不变。因此 M00 的 `course.properties` 与不可移动起点继续记录合同 `planVersion=0.1`，网站另行公开当前计划版本和这条兼容说明，不改 tag、不回写冻结证据，也不把后续 WAL 格式声称为 M00 canonical format。",
+      "当前 PLAN v0.11 在 M08 之后只为 M09 冻结 Snapshot 检查点与有界恢复；M00 输入、验证、canonical history、digest 与 evidence 合同不变。因此 M00 的 `course.properties` 与不可移动起点继续记录合同 `planVersion=0.1`，网站另行公开当前计划版本和这条兼容说明，不改 tag、不回写冻结证据，也不把后续 WAL 或 Snapshot 格式声称为 M00 canonical format。",
     prerequisiteUnitCodes: [],
     startRef: "course/m00.2-start",
     supersededStartRefs: [
@@ -2070,7 +2070,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.3",
     planCompatibility:
-      "当前 PLAN v0.10 在 M05 之后依次为 M06 mode/Mass Cancel、M07 STP 和 M08 本地 WAL/durable idempotency 签约；M01 价格时间优先业务语义、冻结 event batch、Golden corpus 与 evidence 不回写，但不表示后续 Java event hierarchy、record shape、STP event 或 WAL bytes 与 M01 完成提交相同。因此 M01 的 `course.properties`、起点、完成 tag、教程与持久 evidence 继续保留合同 `planVersion=0.3`。",
+      "当前 PLAN v0.11 在 M08 之后只为 M09 冻结 Snapshot 检查点与有界恢复；M01 价格时间优先业务语义、冻结 event batch、Golden corpus 与 evidence 不回写，也不表示后续 Java event hierarchy、WAL/Snapshot bytes 或恢复运行时与 M01 完成提交相同。因此 M01 的 `course.properties`、起点、完成 tag、教程与持久 evidence 继续保留合同 `planVersion=0.3`。",
     prerequisiteUnitCodes: ["M00"],
     startRef: "course/m01-start",
     completeRef: "course/m01-complete",
@@ -2593,7 +2593,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.4",
     planCompatibility:
-      "当前 PLAN v0.10 在 M05 之后依次冻结 M06 mode/Mass Cancel、M07 STP 与 M08 本地 WAL/durable idempotency；M02 可寻址生命周期、10/34 corpus、M02H1、complete tag 与 evidence 不回写，也不表示后续 Java event hierarchy、record shape 或 runtime 与 M02 完成提交相同。",
+      "当前 PLAN v0.11 在 M08 之后只为 M09 冻结 Snapshot 检查点与有界恢复；M02 可寻址生命周期、10/34 corpus、M02H1、complete tag 与 evidence 不回写，也不表示后续 Java event hierarchy、WAL/Snapshot record shape 或 runtime 与 M02 完成提交相同。",
     prerequisiteUnitCodes: ["M01"],
     startRef: "course/m02-start",
     completeRef: "course/m02-complete",
@@ -2673,7 +2673,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.5",
     planCompatibility:
-      "当前 PLAN v0.10 在 M05 之后依次冻结 M06 mode/Mass Cancel、M07 STP 与 M08 本地 WAL/durable idempotency；M03 冻结 tag、M03G1 command canonical 身份、`matching-0.1.0` 与 evidence 不回写。后续新增 event shape、source 和 runtime 只由对应单元的架构门禁验收，不重绑 M03 证据。",
+      "当前 PLAN v0.11 在 M08 之后只为 M09 冻结 Snapshot 检查点与有界恢复；M03 冻结 tag、M03G1 command canonical 身份、`matching-0.1.0` 与 evidence 不回写。后续新增 event shape、WAL/Snapshot source 和 runtime 只由对应单元的架构门禁验收，不重绑 M03 证据。",
     prerequisiteUnitCodes: ["M02"],
     startRef: "course/m03-start",
     completeRef: "course/m03-complete",
@@ -2759,7 +2759,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.6",
     planCompatibility:
-      "当前 PLAN v0.10 在 M05 之后依次冻结 M06 mode/Mass Cancel、M07 STP 与 M08 本地 WAL/durable idempotency；M04 的五字段 ExecutionPolicy、14/48 固定语料、M04F1/M04H1/M04X1、complete tag、产品停止点与 evidence 不回写，后续归因、STP 事件或 WAL frame 也不表示 M04 Java event shape/event bytes 曾被冻结。",
+      "当前 PLAN v0.11 在 M08 之后只为 M09 冻结 Snapshot 检查点与有界恢复；M04 的五字段 ExecutionPolicy、14/48 固定语料、M04F1/M04H1/M04X1、complete tag、产品停止点与 evidence 不回写，后续归因、STP 事件、WAL frame 或 Snapshot state 也不表示 M04 Java event shape/event bytes 曾被冻结。",
     prerequisiteUnitCodes: ["M03"],
     startRef: "course/m04-start",
     completeRef: "course/m04-complete",
@@ -2853,7 +2853,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.7",
     planCompatibility:
-      "当前 PLAN v0.10 只在 M05 之后为 M06–M08 签订新轴；M05 的 RuleSet/activation fence、12/54 fixed、160×64、20 项 coverage、8 项 mutant、五篇 permalink、complete tag 与公开 evidence 保持不变，不因后续合同回写",
+      "当前 PLAN v0.11 在 M08 之后只为 M09 冻结 Snapshot 检查点与有界恢复；M05 的 RuleSet/activation fence、12/54 fixed、160×64、20 项 coverage、8 项 mutant、五篇 permalink、complete tag 与公开 evidence 保持不变，不因 Snapshot 合同回写。",
     prerequisiteUnitCodes: ["M04"],
     startRef: "course/m05-start",
     completeRef: "course/m05-complete",
@@ -2946,7 +2946,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.8",
     planCompatibility:
-      "PLAN v0.10 在 M06 之后继续冻结 M07 STP 与 M08 本地 WAL/durable idempotency；M06 的 mode/Mass Cancel 语义、15/64 fixed、160×64、26 项 coverage、10 项 mutant、complete tag 与公开 evidence 不回写。",
+      "PLAN v0.11 在 M08 之后只为 M09 冻结 Snapshot 检查点与有界恢复；M06 的 mode/Mass Cancel 语义、15/64 fixed、160×64、26 项 coverage、10 项 mutant、complete tag 与公开 evidence 不回写，Snapshot 也不能把恢复状态默认为 OPEN。",
     prerequisiteUnitCodes: ["M05"],
     startRef: "course/m06-start",
     completeRef: "course/m06-complete",
@@ -3023,7 +3023,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.9",
     planCompatibility:
-      "PLAN v0.10 在 M07 之后只新增 M08 本地 WAL/durable idempotency；M07 的 opaque participant group、taker-owned STP disposition、16/72 fixed、160×64、24 项 coverage、8 项 mutant、complete tag 与公开 evidence 不回写。",
+      "PLAN v0.11 在 M08 之后只为 M09 冻结 Snapshot 检查点与有界恢复；M07 的 opaque participant group、taker-owned STP disposition、16/72 fixed、160×64、24 项 coverage、8 项 mutant、complete tag 与公开 evidence 不回写，Snapshot 必须完整保存其可恢复结果。",
     prerequisiteUnitCodes: ["M06"],
     startRef: "course/m07-start",
     completeRef: "course/m07-complete",
@@ -3101,6 +3101,8 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     order: 90,
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.10",
+    planCompatibility:
+      "PLAN v0.11 在 M08 之后只为 M09 冻结 Snapshot 检查点与有界恢复；M08 的 M08C1/M08W1、append→force→apply→ACK、durable identity、genesis recovery、complete tag 与公开 evidence 均不回写，M09 也不把 Snapshot bytes 声称为 M08 WAL 格式的一部分。",
     prerequisiteUnitCodes: ["M07"],
     startRef: "course/m08-start",
     completeRef: "course/m08-complete",
@@ -3171,6 +3173,76 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
       "./gradlew m08Check --no-daemon",
       "./gradlew m08Evidence -Pm08.unitTag=course/m08-complete --no-daemon",
     ],
+  },
+  {
+    projectSlug: "high-availability-cex",
+    profileVersion: "SPOT-CEX-1.0",
+    code: "M09",
+    trackCode: "M",
+    title: "Snapshot 检查点与有界恢复",
+    summary:
+      "在 M08 caller-serialized 本地运行时中，把完整已 apply 状态冻结为原子 Snapshot cut，以连续 WAL suffix 恢复，并在 RecoveryBudget 内安全回收旧前缀。",
+    objective:
+      "让 fresh runtime 从一个完整、已持久发布且与 WAL anchor 一致的 Snapshot 恢复，再只重放连续 suffix，得到与 genesis replay 相同的 semantic state，同时永不因回收、损坏或预算耗尽静默回到默认状态。",
+    order: 100,
+    lifecycle: "CONTRACTED",
+    contractPlanVersion: "0.11",
+    prerequisiteUnitCodes: ["M08"],
+    expectedLessons: [
+      { lessonOrder: 10, permalink: "snapshot-state-and-consistent-cut" },
+      { lessonOrder: 20, permalink: "atomic-snapshot-publication" },
+      { lessonOrder: 30, permalink: "snapshot-suffix-recovery-equivalence" },
+      { lessonOrder: 40, permalink: "wal-prefix-retirement-and-replay-bound" },
+      { lessonOrder: 50, permalink: "snapshot-fault-injection-and-recovery-evidence" },
+    ],
+    adds: [
+      "唯一新增复杂度是 checkpointed bounded recovery：完整已 apply state cut、从该 cut 之后开始的连续 WAL suffix，以及受 RecoveryBudget 约束的安全前缀回收共同替代 M08 的 genesis replay。",
+    ],
+    delivers: [
+      "内部 M09 Snapshot state contract：订单簿与 FIFO identity、订单 lifecycle/terminal registry、Acceptance/Application/WAL sequence、prepared/active RuleSet 与 activation fence、market mode/revision/transition fence、Mass Cancel/STP 归因、producer epoch/next sequence、commandId↔Slot/payloadHash/original result durable binding 全部进入同一 cut",
+      "Snapshot 只能位于 caller-serialized、前一条 M08 命令已经完整 apply 的边界；Snapshot 动作本身不消费 ApplicationSequence，不存在并发写入或半完成控制动作，prepared RuleSet 是完整已 apply 状态而不是 in-flight 操作",
+      "M09S1 final header 自带 generation、shard、last included WAL/Application sequence 与 semantic/serialization digests；临时文件写完后依次 file force、atomic rename、parent-directory force，再以 forced rollover 形成 firstWalSequence=cut+1 的 durable active WAL header，不创建独立 recovery descriptor",
+      "恢复先装载 Snapshot@S，再严格重放 WAL(S+1...) 连续 suffix；included record 不得二次 apply，suffix gap/duplicate、anchor mismatch、完整 Snapshot corruption 或未知格式全部失败关闭",
+      "RecoveryBudget 同时冻结 maxReplayRecords=64 与 maxReplayBytes=1048576；suffix 任一维度将越界前，必须于同一串行维护边界发布后继 Snapshot/recovery generation，失败时不得继续接受会扩大 suffix 的新命令，两个计数都不伪装成毫秒 SLA",
+      "WAL 前缀只有在最新 M09S1 final header identity、final directory entry 与 cut+1 active WAL header 全部持久后才可回收；删除及目录 namespace 变化需要持久屏障，残留旧 prefix 只作为可忽略冗余，recovery 始终选择最新 final Snapshot，最新 final 无效时失败关闭而不自动回退旧代",
+    ],
+    freezes: [
+      "Snapshot semantic digest 只描述业务与恢复语义；Snapshot 文件的 serialization digest/CRC 描述具体 bytes，两者不能互相替代，也不能拿 production 自算结果与自己比较后宣称等价",
+      "HALTED/CANCEL_ONLY、prepared RuleSet、terminal order identity、业务拒绝和 original duplicate result 都是权威状态；恢复不得只载入订单簿，也不得用默认 OPEN、空索引或重新计算当前结果填补缺失字段",
+      "Snapshot cut 必须绑定 last included WAL sequence 与 ApplicationSequence；恢复只接受从精确下一位置开始的无洞 suffix，不能猜测、跳过或重复 apply",
+      "M09 没有独立 latest/descriptor 文件：恢复描述只来自最新 M09S1 final header identity、已 force 的 final 目录项与 cut+1 durable active WAL header；最新 final corruption、未知版本或 anchor mismatch 一律 fail closed，不自动选旧 generation",
+      "RecoveryBudget 是 records+encoded-bytes 双重 safety bound（64 / 1048576）；没有成功发布可恢复后继 generation 时，系统宁可 fail closed，也不能无界增长后继续声称有界恢复",
+      "CONTRACTED 阶段只冻结语义、教程 permalink 与门禁；没有 course/m09-start、course/m09-complete、完成提交、公开 evidence、产品 release 或通过数字",
+    ],
+    excludes: [
+      "通用 N/N-1 Snapshot/WAL 格式迁移、未知版本升级、在线 rolling upgrade 与迁移工具；M09 只允许冻结的单版本内部格式，兼容演进留给后续 adapter/升级门禁",
+      "后台 Snapshot 线程、copy-on-write、边恢复边接流量、并发 apply、异步控制动作和 group commit；本单元仍是 caller-serialized 单写者",
+      "Aeron、Raft、leader、quorum、复制、failover、Cluster snapshot、Backup/restore、多 shard 与网络 exactly-once",
+      "吞吐、延迟、容量、恢复毫秒 SLA、真实断电、跨文件系统 crash-consistency、加密、压缩、远程备份与 production-readiness 资格",
+      "数据库恢复源、WAL/数据库双写、Outbox、Counter/Rest，以及账户、资产、仓位、手续费、保证金、结算和强平",
+    ],
+    gate: [
+      "先从 M08 已发布 complete 身份建立结构化 RED；start ref 必须冻结 Snapshot state schema、RecoveryBudget、fixed/generated 输入、obligation/mutant ID 和五篇 permalink，并让累计 M00～M08 回归保持 GREEN",
+      "完成实现必须用独立、不解析 production Snapshot bytes 的 semantic model，对照 genesis replay 与 Snapshot+suffix recovery 的逐边界状态、original result、sequence 和 digest",
+      "必须覆盖 Snapshot write/force/rename/final-directory force、cut+1 WAL header rollover/force、prefix deletion/directory force 的 crash window，以及 latest-final corruption、anchor/generation mismatch、suffix gap 和预算耗尽",
+      "必须证明 book、control state、terminal identity 与 durable idempotency 任一遗漏都会被 semantic mutant 杀死；异常、fixture/reference 失败或未计划 I/O 继续归类 SYSTEM_ERROR，不能算 mutant kill",
+      "只有 clean annotated complete tag、完整提交、非 dirty manifest、全部 artifact SHA-256、明确 limitations 与独立审查都通过后，才允许进入 CODE_VERIFIED；M09 不是命名产品停止点",
+    ],
+    interaction: [
+      "先判断某个状态字段是否必须进入 Snapshot，再揭示只保存订单簿为何会在 mode、RuleSet、terminal identity 或 duplicate replay 上失真",
+      "在 write、file force、rename、final-directory force、cut+1 WAL header rollover/force 与 prefix deletion 时间线上选择 crash 点，判断最新 final Snapshot+suffix 是否构成合法恢复集合或必须 fail closed",
+      "给定 Snapshot anchor、suffix sequence 和 RecoveryBudget，先预测 load/replay/fail-closed，再对照未来本地 evidence；网页不实现权威 Snapshot codec 或文件系统",
+      "Java 编译、文件 I/O、故障注入、child JVM、generated judge 与 evidence 导出只在独立代码仓库本地运行；本站在发布前只保留草稿教学结构",
+    ],
+    evidence: [
+      "待 READY 时冻结的结构化 RED、Snapshot schema、RecoveryBudget、fixed scenario、generated profile、coverage obligation、semantic mutant 和五篇教程合同",
+      "待实现的三方等价证据：M08 genesis replay、独立 semantic model、M09 Snapshot+suffix recovery；每条观察必须绑定具体 application/WAL cut 与恢复结果",
+      "待实现的 M09S1 header identity、final-directory force、cut+1 WAL header rollover、suffix、前缀回收、latest-final corruption 与预算故障窗口证据；代码级注入、child-process crash 与真实断电必须分别标注",
+      "待 CODE_VERIFIED 后才冻结的 complete ref、完整 commit、manifest source、claim/limitation、reportFacts、artifact hash 与架构报告；当前不存在这些完成产物",
+    ],
+    stopPoint:
+      "合同停止点是一个仍然单进程、单 shard、caller-serialized 的本地撮合运行时目标：它从完整已 apply Snapshot cut 加连续受限 WAL suffix 恢复，并只在存在可证明恢复集合时回收前缀；当前仅完成合同签约，尚无 M09 实现、start/complete ref、公开 evidence、性能或高可用保证。",
+    localCommands: [],
   },
 ];
 

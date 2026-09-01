@@ -76,11 +76,19 @@ function validatePracticeUnits(): void {
       "gate",
       "interaction",
       "evidence",
-      "localCommands",
     ] as const) {
       if (unit[field].length === 0 || unit[field].some((item) => !item.trim())) {
         throw new Error(`Practice unit ${key} has an empty ${field} contract`);
       }
+    }
+    if (unit.localCommands.some((item) => !item.trim())) {
+      throw new Error(`Practice unit ${key} has an invalid localCommands contract`);
+    }
+    if (isPracticeUnitAtLeast(unit.lifecycle, "READY") && unit.localCommands.length === 0) {
+      throw new Error(`Practice unit ${key} must freeze localCommands at READY`);
+    }
+    if (!isPracticeUnitAtLeast(unit.lifecycle, "READY") && unit.localCommands.length > 0) {
+      throw new Error(`Practice unit ${key} must not publish localCommands before READY`);
     }
     if (unitKeys.has(key)) throw new Error(`Duplicate practice unit ${key}`);
     unitKeys.add(key);

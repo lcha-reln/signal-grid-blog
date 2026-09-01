@@ -932,7 +932,6 @@ for (const unit of PRACTICE_UNITS) {
     "gate",
     "interaction",
     "evidence",
-    "localCommands",
   ]) {
     assert(
       Array.isArray(unit[field]) &&
@@ -941,6 +940,23 @@ for (const unit of PRACTICE_UNITS) {
       `${key}: empty ${field}`,
     );
   }
+  assert(
+    Array.isArray(unit.localCommands) &&
+      unit.localCommands.every(
+        (value) => typeof value === "string" && value.trim(),
+      ),
+    `${key}: invalid localCommands`,
+  );
+  if (lifecycleRank >= lifecycleRanks.get("READY"))
+    assert(
+      unit.localCommands.length > 0,
+      `${key}: ${unit.lifecycle} requires localCommands`,
+    );
+  else
+    assert(
+      unit.localCommands.length === 0,
+      `${key}: ${unit.lifecycle} must not publish localCommands before READY`,
+    );
   for (const command of unit.localCommands) {
     const courseRefs = command.match(/course\/[a-z0-9.-]+/g) ?? [];
     for (const ref of courseRefs) {
@@ -1949,8 +1965,8 @@ for (const practiceCase of PRACTICE_CASES) {
       `${practiceCase.slug}: ACTIVE current track has no repository`,
     );
     assert(
-      currentUnit && isAtLeast(currentUnit.lifecycle, "IN_PROGRESS"),
-      `${practiceCase.slug}: BUILDING unit is not in progress`,
+      currentUnit && isAtLeast(currentUnit.lifecycle, "CONTRACTED"),
+      `${practiceCase.slug}: BUILDING unit is not contracted`,
     );
     assert(
       practiceCase.statusLabel.includes(currentUnit?.code ?? ""),
@@ -2274,7 +2290,7 @@ for (const practiceCase of PRACTICE_CASES) {
         unit.code.toLowerCase(),
         "index.html",
       );
-      const shouldExposeUnit = isAtLeast(unit.lifecycle, "IN_PROGRESS");
+      const shouldExposeUnit = isAtLeast(unit.lifecycle, "CONTRACTED");
       assert(
         (await exists(unitPath)) === shouldExposeUnit,
         `${practiceCase.slug}/${unit.code}: unit route exposure disagrees with lifecycle`,
@@ -2291,11 +2307,12 @@ for (const practiceCase of PRACTICE_CASES) {
           unit.lifecycle,
           `${practiceCase.slug}/${unit.code} dist`,
         );
-        assertIncludes(
-          unitHtml,
-          unit.startRef,
-          `${practiceCase.slug}/${unit.code} dist`,
-        );
+        if (unit.startRef)
+          assertIncludes(
+            unitHtml,
+            unit.startRef,
+            `${practiceCase.slug}/${unit.code} start ref dist`,
+          );
         if (unit.completeRef)
           assertIncludes(
             unitHtml,
