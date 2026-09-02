@@ -3386,7 +3386,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     delivers: [
       "LocalMatchingService 独占既有 LocalMatchingRuntime，以固定 capacity 的 FIFO 和单 worker 保持 apply 顺序；trySubmit 防御性复制 caller bytes，并以非阻塞 Enqueued 或 OVERLOADED/NOT_ACCEPTING/FAILED_CLOSED 完成准入决策",
       "Enqueued 只提供 completion handle，不是 durable ACK；只有既有 SubmissionResult 表达 append/force/apply 后的 durable outcome。queue-full 拒绝发生在 decode、WAL、identity 和 core 之前，同 identity 可原样重试",
-      "worker 在 CheckpointRequired 后同步 checkpoint 并用同一 envelope 重试；checkpoint 暂停保留在 scheduled-arrival 到 completion 的端到端延迟内，不引入后台 Snapshot 或 group commit",
+      "worker 将 CheckpointRequired 与其他既有 SubmissionResult 一样原样完成；workload coordinator 随后同步 checkpoint，并以同一 command identity/envelope 发起可核对的 retry attempt，逻辑延迟仍从最初 scheduled arrival 起算，不引入后台 Snapshot 或 group commit",
       "matching-benchmarks 将纯 core JMH SampleTime 与真实 WAL/Snapshot open-loop 完全分离，保留 p50/p95/p99/p99.9、generator lag、queue/resource 原始数据和环境指纹",
       "三个 release sweep 按冻结 saturation 算法选择最保守 knee，并令 QOP=floor(70%×knee)；QOP 下 30 分钟有限 soak 后执行 quiesce、fresh reopen、duplicate replay 和 accepted-trace 串行重放",
       "matching-0.5.0 与 course/m10-complete 在同一 clean commit 上形成可恢复单机撮合、有界准入和环境绑定容量证据的命名停止点",

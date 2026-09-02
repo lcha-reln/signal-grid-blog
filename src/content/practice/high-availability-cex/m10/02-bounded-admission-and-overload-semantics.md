@@ -1,6 +1,6 @@
 ---
 title: "M10·02：让过载在 WAL 之前终止，而不是把入队冒充 ACK"
-description: "实现单 worker、有界 FIFO、非阻塞 trySubmit、caller bytes 所有权、CheckpointRequired 同 envelope 重试，以及 failure close、quiesce 和 drain 的明确结果语义。"
+description: "实现单 worker、有界 FIFO、非阻塞 trySubmit、caller bytes 所有权、SubmissionResult 原样完成，以及 failure close、quiesce 和 drain 的明确结果语义。"
 date: 2026-09-02T09:20:00+08:00
 project: high-availability-cex
 profileVersion: SPOT-CEX-1.0
@@ -36,7 +36,9 @@ fixed-capacity FIFO
 LocalMatchingRuntime.submit(envelope)
       │ append → force → apply
       ▼
-completion<SubmissionResult>
+completion<ServiceCompletion>
+      ├─ SubmissionCompleted(exact SubmissionResult)
+      └─ ExplicitFailure(service failure)
 ```
 
 单 worker 有两个目的。它复用 M08/M09 已证明的 caller-serialized 顺序，而不是发明第二种并发撮合语义；它还让 FIFO admission order 与 runtime apply order之间有一条可检查的映射。
@@ -52,7 +54,7 @@ Enqueued(completion)
 Rejected(OVERLOADED | NOT_ACCEPTING | FAILED_CLOSED)
 ```
 
-`Enqueued` 表示服务已经取得 envelope bytes 的所有权，并把一个任务放进有界内存队列。此刻可能尚未 decode，更没有 append、force 或 apply。调用者只有等待 `completion`，才能得到既有 `SubmissionResult` 所表达的 durable、duplicate、业务 rejected、checkpoint 后结果或 failed-closed outcome。
+`Enqueued` 表示服务已经取得 envelope bytes 的所有权，并把一个任务放进有界内存队列。此刻可能尚未 decode，更没有 append、force 或 apply。调用者只有等待 `completion`，才能得到 `SubmissionCompleted(exact SubmissionResult)` 或 `ExplicitFailure`。前者可表达 durable、duplicate、业务 rejected、`CheckpointRequired`、durability unknown 或 runtime failed-closed；服务不把任何既有 variant 改写成另一种业务结果。后者只用于 owner worker 无法调用或完成既有 runtime 边界的情形，不能伪装成业务结果。
 
 把入队当 ACK 会制造明确的数据丢失窗口：
 
@@ -97,25 +99,26 @@ worker: decode command B
 
 queue-full 的实现仍要保持 pre-WAL。防御性复制本身不是业务 side effect，但不应成为可以无限分配绕过容量的隐藏第二队列。资格证据要同时观察固定 queue capacity、pending task 数和资源维度，而不是只看 `BlockingQueue.size()` 的一个瞬时值。
 
-## CheckpointRequired 不能变成新命令
+## CheckpointRequired 不能被服务吞掉，也不能变成新命令
 
-M09 在 suffix records/bytes 将越界前返回 `CheckpointRequired`，且不会 append 当前 envelope。M10 worker 接到它时执行：
+M09 在 suffix records/bytes 将越界前返回 `CheckpointRequired`，且不会 append 当前 envelope。M10 worker 必须先原样完成本次 admitted attempt；workload coordinator 再显式维护同一个逻辑 operation：
 
 ```text
 submit exact envelope E
 → CheckpointRequired, E 尚未进入 WAL
-→ 同步 checkpoint()
-→ submit exact envelope E again
-→ completion with existing SubmissionResult
+→ completion attempt-1 with unchanged CheckpointRequired
+→ coordinator 同步 checkpoint()
+→ coordinator retry exact envelope E with the same identity
+→ completion attempt-2 with existing SubmissionResult
 ```
 
 这里有三条不可省略的不变量：
 
-- retry 使用同一 bytes、同一 command identity、同一 queue task，而不是生成新的 producer sequence；
-- checkpoint 在 owner worker 上同步完成，后续任务不能越过 E；
-- scheduled arrival 到 completion 的端到端延迟包含整个 checkpoint 暂停。
+- retry 使用同一 bytes 与同一 command identity，而不是生成新的 producer sequence；它是一个单独可核对的 admission attempt，但仍属于同一个逻辑 operation；
+- service 不拥有 checkpoint 策略，也不把两个 runtime 返回折叠成一个 synthetic result；coordinator 必须保存 attempt-1 的 `CheckpointRequired`；
+- 逻辑 operation 的 scheduled arrival 到最终 completion 延迟包含 attempt-1、同步 checkpoint 与 retry 的全部暂停。
 
-如果 benchmark 把 checkpoint 样本从 percentile 中剔除，或把重试登记成第二个 planned offer，容量报告会同时低估尾延迟并破坏总账。若 checkpoint 本身失败，runtime 按既有合同 failed closed；worker 不应跳过 E 继续 apply 后面的任务。
+如果 benchmark 把 checkpoint 样本从 percentile 中剔除，或把 retry 错算成第二个 planned logical offer，容量报告会同时低估尾延迟并破坏总账。attempt ledger 仍要分别登记两次 admission 与两个原样 result，logical-offer ledger 则只登记一次 operation。若 checkpoint 失败，coordinator 必须将该逻辑 operation 终结为显式系统/服务失败，不能伪造 durable ACK。
 
 ## failure close 与 graceful close 是两条不同路径
 
@@ -137,7 +140,7 @@ offered = enqueued + rejected
 enqueued = completed
 ```
 
-这里的 `completed` 表示 completion 已终结，不等于业务成功。它必须原样携带既有 `SubmissionResult`：可能是 structural/preflight reject、durably applied、duplicate original result、checkpoint 后结果或明确 failed-closed。把所有 exception 都算作业务失败同样不对：工具缺失、线程异常、账本断裂或 judge 缺陷属于 `SYSTEM_ERROR`，不能替实现生成一个看似合规的 completion。
+这里的 `completed` 表示 completion 已终结，不等于业务成功。它必须原样携带既有 `SubmissionResult`：可能是 structural/preflight reject、durably applied、duplicate original result、`CheckpointRequired`、durability unknown 或明确 failed-closed。把所有 exception 都算作业务失败同样不对：工具缺失、线程异常、账本断裂或 judge 缺陷属于 `SYSTEM_ERROR`，不能替实现生成一个看似合规的 completion。
 
 ## Worked example：一条命令跨过 queue、checkpoint 与 durable ACK
 
@@ -148,9 +151,10 @@ enqueued = completed
 10.080 ms  trySubmit owns bytes and returns Enqueued(f42)
 12.000 ms  worker dequeues C42
 12.100 ms  runtime returns CheckpointRequired, no WAL mutation
-12.200 ms  worker starts synchronous checkpoint
+12.120 ms  attempt-1 completion preserves CheckpointRequired
+12.200 ms  coordinator starts synchronous checkpoint
 20.000 ms  checkpoint completes
-20.100 ms  worker retries exact C42
+20.100 ms  coordinator retries exact C42 through trySubmit
 20.400 ms  WAL append completes
 22.000 ms  WAL force completes
 22.300 ms  core apply + identity commit complete
@@ -162,7 +166,7 @@ enqueued = completed
 ```text
 scheduled→admission = 0.080 ms
 admission→dequeue   = 1.920 ms
-dequeue→completion  = 10.350 ms
+dequeue→attempt-1 completion = 0.120 ms
 scheduled→completion= 12.350 ms
 ```
 
@@ -175,7 +179,7 @@ scheduled→completion= 12.350 ms
 1. 从 `trySubmit` 的 queue-full 分支向下追踪，证明它到达任何 decoder、WAL writer、identity index 或 core mutation 之前已经终止。
 2. 从 `Enqueued` 携带的 completion 追到 owner worker，确认只有 worker 调用 `LocalMatchingRuntime`，且 FIFO task 不被第二 worker 重排。
 3. 找到 caller bytes 防御性所有权测试，观察 enqueue 后修改源 buffer 的反例。
-4. 找到 `CheckpointRequired` 分支，确认同一 task/envelope 同步 checkpoint 后重试，且只产生一个 workload identity。
+4. 找到 `CheckpointRequired` 分支，确认服务原样完成；再检查 coordinator 用同一 identity/envelope 记录独立 retry attempt，同时只保留一个 logical workload identity。
 5. 分别阅读 quiesce/drain 与 failed-close 路径，确认所有 enqueued task 都有 terminal completion。
 
 具体 source path、测试报告和 scenario identity 在实现完成后由 evidence 填入。草稿只固定要证明的 mutation boundary，不预先宣称代码已经满足它。
@@ -188,7 +192,7 @@ scheduled→completion= 12.350 ms
 - reject 前 WAL position、ApplicationSequence、producer cursor、identity binding 与 core digest 均不变；
 - `Enqueued` 与 durable completion 是两个不同事件；
 - 单 worker FIFO 在并发 caller 的成功准入顺序上成立；
-- checkpoint pause 没有被删样本，同 envelope 只完成一次；
+- checkpoint pause 没有被删样本，每个 admission attempt 恰好完成一次，logical operation 只形成一个最终 outcome；
 - graceful close 拒绝新任务并 drain 已接纳任务；
 - failure close 明确终结 pending completion，且不继续 apply；
 - caller 修改原 buffer 不改变实际执行 envelope；
@@ -198,6 +202,6 @@ scheduled→completion= 12.350 ms
 
 ## 有界准入只解决本地过载，不等于高可用
 
-M10 到这里获得的是一个明确的单进程服务边界：内存队列有上限，满载拒绝不污染权威状态，排队成功不冒充持久结果，同步 checkpoint 与失败会进入真实 completion 语义。
+M10 到这里获得的是一个明确的单进程服务边界：内存队列有上限，满载拒绝不污染权威状态，排队成功不冒充持久结果，所有既有 `SubmissionResult` 原样完成；同步 checkpoint/retry 属于 coordinator 的显式维护流程，也进入同一个逻辑 operation 的真实延迟与证据。
 
 它没有复制 queue task，没有 leader，也没有在进程崩溃后替客户端决定 outcome。尚未获得 durable completion 的请求仍是 `UNKNOWN`，必须用同一 identity 重试。下一篇会在这个诚实的 API 上定义 percentile、saturation、knee 与 QOP；若跳过本篇，所谓 capacity 只能说明“某个队列在某次运行里没有爆”，不能指导安全准入。

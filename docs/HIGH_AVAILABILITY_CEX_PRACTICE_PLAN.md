@@ -1647,9 +1647,9 @@ M09 不实现通用 N/N-1 Snapshot/WAL 迁移、rolling upgrade、后台线程�
 - `matching-core` 零业务改动，继续无 I/O、线程、时钟、队列、随机数、WAL、JMH 与 Aeron；
 - `LocalMatchingService.open(WalConfig, ServiceConfig)` 独占一个 `LocalMatchingRuntime` 和一条 owner worker，所有已准入任务按有界 FIFO 顺序进入既有 `submit`；
 - `trySubmit(byte[])` 只做防御性 bytes 所有权转移和非阻塞准入，返回 `Enqueued(completion)` 或 `Rejected(OVERLOADED | NOT_ACCEPTING | FAILED_CLOSED)`；
-- `Enqueued` 只说明任务进入有界内存队列，**不是 durable ACK**。只有 completion 中的既有 `SubmissionResult` 才表达 M08/M09 的 durable、duplicate、rejected、unknown 或 failed-closed 结果；
+- `Enqueued` 只说明任务进入有界内存队列，**不是 durable ACK**。completion 必须恰好一次终结：要么原样携带既有 `SubmissionResult`，要么在 service 无法调用/完成既有 runtime 边界时给出显式 service failure；只有 durable result variants 才是 ACK；
 - `OVERLOADED` 必须在 decode、WAL append、identity binding 与 core apply 之前完成。调用方可以原样重试同一 command identity；拒绝不能占用 producer sequence、commandId 或订单身份；
-- worker 遇到 `CheckpointRequired` 时同步执行既有 M09 checkpoint，再以同一 envelope 重试。checkpoint 停顿属于端到端尾延迟，不能从样本中删除或另起一条伪装为新命令；
+- worker 对 `CheckpointRequired` 也必须像其他既有 `SubmissionResult` 一样原样完成，不能在服务内部吞掉中间结果。workload coordinator 随后同步执行既有 M09 checkpoint，并以同一 command identity 与同一 envelope 发起一个可核对的 retry attempt；逻辑 operation 仍沿用最初 scheduled arrival，因此 checkpoint 停顿不能从端到端尾延迟中删除；
 - runtime 一旦 failed closed，服务停止新准入；已成功入队但尚未 apply 的任务必须得到明确 failed-closed completion，不能静默丢失或继续越过失败点 apply；真实进程崩溃仍由客户端观察为 `UNKNOWN`，M10 不伪造本地回调；
 - graceful close 的顺序是停止新准入、排空并完成已准入任务、关闭 runtime。固定 queue capacity 运行时不可扩缩；API 允许并发调用，但本单元只发布单 load-producer 容量数字。
 
@@ -2092,7 +2092,7 @@ git switch -c unit/m01 course/m01-start
 
 | 日期 | 版本 | 变更 |
 | --- | --- | --- |
-| 2026-09-02 | v0.12 | M10 从候选风险图升级为正式合同，并收窄为“单机持久运行时的性能包络与有界过载准入”：冻结单 worker/固定 FIFO capacity、enqueue≠durable ACK、pre-WAL overload、CheckpointRequired 同 identity 同步 checkpoint/retry、CI_SMOKE 与 RELEASE_QUALIFICATION 分层、绝对 open-loop schedule、四段延迟、三次 sweep 的 saturation/knee/QOP 算法、环境/资源指纹、30 分钟有限 soak、20 fixed、64×256 admission model、28 项 obligation、12 个 mutant、五篇 permalink 与 `matching-0.5.0`；撮合/WAL 语义优化、Aeron/Cluster、三节点性能和通用 SLA 继续排除 |
+| 2026-09-02 | v0.12 | M10 从候选风险图升级为正式合同，并收窄为“单机持久运行时的性能包络与有界过载准入”：冻结单 worker/固定 FIFO capacity、enqueue≠durable ACK、pre-WAL overload、所有既有 SubmissionResult 原样完成、CheckpointRequired 由 coordinator 以同 identity/envelope 执行同步 checkpoint 与可核对 retry、CI_SMOKE 与 RELEASE_QUALIFICATION 分层、绝对 open-loop schedule、四段延迟、三次 sweep 的 saturation/knee/QOP 算法、环境/资源指纹、30 分钟有限 soak、20 fixed、64×256 admission model、28 项 obligation、12 个 mutant、五篇 permalink 与 `matching-0.5.0`；撮合/WAL 语义优化、Aeron/Cluster、三节点性能和通用 SLA 继续排除 |
 | 2026-09-01 | v0.11 | M09 从候选风险图升级为正式合同并收窄为唯一的 Snapshot 检查点与有界恢复轴：冻结完整已 apply state cut、caller-serialized 无半完成控制动作、原子 Snapshot 发布、Snapshot@S + 连续 WAL(S+1...) 与 genesis replay 的 semantic equivalence、RecoveryBudget(maxReplayRecords=64, maxReplayBytes=1048576)、安全前缀回收、失败关闭边界和五篇 permalink；通用 N/N-1 格式迁移、后台 Snapshot、Aeron、复制、性能与毫秒恢复 SLA 继续排除 |
 | 2026-08-31 | v0.10 | M08 从候选风险图升级为正式合同，唯一新增单进程、单 shard、caller-serialized 的本地 WAL/ACK/durable idempotency：冻结 `matching-local-runtime`、M08C1 command envelope、commandId/slot/payloadHash 双向绑定、producer epoch/continuous sequence、append→force→apply→ACK、M08W1 segment/rollover/directory force、genesis recovery、torn tail/corruption 失败关闭、20 fixed、SplitMix64 seed 5808 的 96×48 四 lane、24 项 coverage、10 项 mutant 与五篇 permalink；Snapshot/复制/数据库双写/性能/Aeron/HA 继续排除，且必须等 M07 `CODE_VERIFIED`、complete/evidence/review 封存后才能创建 start ref |
 | 2026-08-31 | v0.9 | M07 从候选风险图升级为正式合同，唯一新增 opaque participant group 与 taker-side STP disposition：冻结 0/NONE legacy 映射、raw group/policy 校验、CANCEL_TAKER/CANCEL_MAKER/CANCEL_BOTH、SelfTradePrevented attribution、cross-level 扫描、FOK STP-aware 预演、POST_ONLY raw-book 优先级、16/72 fixed、SplitMix64 seed 5707 的 160×64 五 lane、24 项 coverage、8 项 mutant 与五篇 permalink；账户查询、资产风控、DECREMENT_AND_CANCEL 与 WAL 继续排除，且必须等 M06 `CODE_VERIFIED`、complete/evidence/review 封存后才能创建 start ref |
