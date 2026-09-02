@@ -1,22 +1,22 @@
 # 高可用 CEX 交易核心实战课程设计
 
-> 状态：M09 当前 `PUBLISHED`（M00～M09 均已发布；M10 尚未开启）
+> 状态：M10 当前 `IN_PROGRESS`（M00～M09 均已发布；M10 已按 PLAN v0.12 签约并打开唯一实施窗口）
 >
 > 规划日期：2026-08-26
 >
-> `planVersion`：`0.11`
+> `planVersion`：`0.12`
 >
-> 当前最新签约单元合同 `planVersion`：`0.11`（M09）
+> 当前最新签约单元合同 `planVersion`：`0.12`（M10）
 >
-> 当前推荐动作：保持 M09 已发布身份不动，只评审 M10 是否值得从候选风险图升级为正式合同；在合同批准前不创建 M10 代码窗口、起点 tag、教程或 evidence
+> 当前推荐动作：只完成 M10 的结构化 RED → 有界准入与资格 harness → 本地 release profile → evidence → 五篇教程 → 发布闭环；在 M10 线上验证完成前不打开 M11 代码窗口
 >
 > 案例 slug：`high-availability-cex`
 >
 > 当前 Profile：`SPOT-CEX-1.0`
 >
-> 当前规划基线：`SPOT-CEX-1.0` 的 32 个候选交付单元（Matching 15 + Counter 10 + Rest 7），3 个按门禁顺序创建的代码仓库；M00–M09 已发布，M10 及以后仍为候选
+> 当前规划基线：`SPOT-CEX-1.0` 的 32 个候选交付单元（Matching 15 + Counter 10 + Rest 7），3 个按门禁顺序创建的代码仓库；M00–M09 已发布，M10 已签约，M11 及以后仍为候选
 >
-> 当前发布边界：M00～M09 均为 `PUBLISHED`。M09 的 annotated `course/m09-complete` peeled 到 `147a7e7dd2439764d4a5fe4d1048142645d26f2d`，五篇精品教程和静态 evidence 已公开；manifest SHA-256 为 `22b0d234e7257a74461e56feccfe6f859cc4f401dbae32fb11a8e966d9bf984a`，`productRelease=null`。M09 仍只是单进程、单 shard、caller-serialized 的本地 Snapshot 与有界恢复停止点，不含 Lab、复制、Aeron 或高可用；最新命名产品停止点仍为 `matching-0.1.0`
+> 当前发布边界：M00～M09 均为 `PUBLISHED`。M09 的 annotated `course/m09-complete` peeled 到 `147a7e7dd2439764d4a5fe4d1048142645d26f2d`，五篇精品教程和静态 evidence 已公开；manifest SHA-256 为 `22b0d234e7257a74461e56feccfe6f859cc4f401dbae32fb11a8e966d9bf984a`，`productRelease=null`。M10 已签约但尚未发布；最新命名产品停止点在 M10 完成前仍为 `matching-0.1.0`
 
 ## 1. 这份文档决定什么
 
@@ -28,7 +28,7 @@
 
 > 怎样从一个可证明正确的限价单撮合内核开始，先交付边界清楚、可恢复、可运维、证据完整的高可用现货核心，再在每个前置 Profile 真正通过资格审查后，分别引入债务、持仓重估、到期结算和非线性风险？
 
-路线图可以完整，实施级设计默认只覆盖当前和下一个单元；只有用户明确批准的连续批次可以预先签约，但代码窗口永远只有当前单元。M01～M09 已逐步完成输入验证、撮合语义、运行控制、本地 WAL、durable idempotency、Snapshot 与有界恢复的 RED→GREEN→evidence→内容发布闭环。PLAN v0.11 只把 M09 的 Snapshot 检查点与有界恢复从风险图升级为正式合同；通用 N/N-1 格式迁移、Aeron、复制、性能与后台 Snapshot 线程继续排除。M10 及以后仍只是候选课程地图。任何超出已签约单元合同的能力，必须删除等量范围、拆分单元或进入 backlog。
+路线图可以完整，实施级设计默认只覆盖当前和下一个单元；只有用户明确批准的连续批次可以预先签约，但代码窗口永远只有当前单元。M01～M09 已逐步完成输入验证、撮合语义、运行控制、本地 WAL、durable idempotency、Snapshot 与有界恢复的 RED→GREEN→evidence→内容发布闭环。PLAN v0.12 只把 M10 的单机持久运行时有界准入与环境绑定性能包络从风险图升级为正式合同；Aeron、复制、集群性能、撮合优化大全与预写绝对 TPS/SLA 继续排除。M11 及以后仍只是候选课程地图。任何超出已签约单元合同的能力，必须删除等量范围、拆分单元或进入 backlog。
 
 ## 2. 旧专题为何失败，以及本次怎样避免重演
 
@@ -233,7 +233,7 @@ Rest 初期是一个仓库和一个部署应用，内部划分 PriAPI、OpenAPI�
 
 | 顺序 | 仓库 | 创建条件 | 主要制品 |
 | ---: | --- | --- | --- |
-| 1 | [`cex-matching`](https://github.com/lcha-reln/cex-matching) | 已创建；M00～M09 均为 `PUBLISHED`，M10 尚未签约或开启，最新命名产品停止点仍为 `matching-0.1.0` | Matching core、test-only reference、testkit、runtime、协议、故障实验 |
+| 1 | [`cex-matching`](https://github.com/lcha-reln/cex-matching) | 已创建；M00～M09 均为 `PUBLISHED`，M10 为 `IN_PROGRESS`，完成后发布 `matching-0.5.0` | Matching core、test-only reference、testkit、runtime、协议、故障实验 |
 | 2 | `counter` | `matching-1.0.0` 发布并从干净环境复验 | Counter core、Cluster runtime、bridge、sync、query |
 | 3 | `rest` | `counter-1.0.0` 发布并从干净环境复验 | PriAPI、OpenAPI、WS、system tests |
 
@@ -314,11 +314,12 @@ rest     = rest-1.0.0
 | M07 | `PUBLISHED` | `CONTRACT` | 随 `cex-matching` 仓库 | opaque participant group、taker-side `CANCEL_TAKER/CANCEL_MAKER/CANCEL_BOTH` 与四策略组合已由 16/72 fixed、160×64、24/24 coverage、8/8 mutant、五篇教程与 tag-bound evidence 闭环；无产品 release |
 | M08 | `PUBLISHED` | `CONTRACT` | 随 `cex-matching` 仓库 | 本地单写者 WAL、ACK 边界、durable identity/slot/epoch 与 genesis recovery 已由 20 fixed、96×48、24/24 coverage、10/10 mutant、三个 child JVM crash smoke、五篇教程与 tag-bound evidence 闭环；无产品 release |
 | M09 | `PUBLISHED` | `CONTRACT` | 随 `cex-matching` 仓库 | 完整 state cut、连续 suffix、RecoveryBudget、whole-segment retirement 已由 22/88 fixed、96×40 generated + 65 budget prelude、32/32 obligation、9+3 candidate、五篇教程与 tag-bound evidence 闭环；无 Lab 或产品 release |
-| M10–M14 | `CANDIDATE` | `RISK_MAP` | 随 `cex-matching` 仓库 | 记录能力、关键不变量和危险故障，不冻结类、Schema 字段编号、依赖版本或文章标题 |
+| M10 | `IN_PROGRESS` | `CONTRACT + RED` | 随 `cex-matching` 仓库 | 冻结有界准入、CI/release profile、open-loop/knee/QOP/soak、28 项义务、12 个 mutant、五篇教程与 `matching-0.5.0` |
+| M11–M14 | `CANDIDATE` | `RISK_MAP` | 随 `cex-matching` 仓库 | 记录能力、关键不变量和危险故障，不冻结类、Schema 字段编号、依赖版本或文章标题 |
 | C00–C09 | `CANDIDATE` | `RISK_MAP` | `LOCKED` | 记录权威边界和关键故障；Matching 1.0 前不创建仓库 |
 | R00–R06 | `CANDIDATE` | `RISK_MAP` | `LOCKED` | 记录外部契约边界和关键故障；Counter 1.0 前不创建仓库 |
 
-任何时刻全专题最多一个 `IN_PROGRESS`，最多一个下一单元处于 `READY`。候选总数 32（Matching 15 + Counter 10 + Rest 7）只是当前 SPOT Profile 的课程容量基线；未进入 `CONTRACTED` 的候选单元可以在评审时拆分、合并或调整 ID，已签约或已发布的单元不能静默改变。LOCKED Profile 不进入这个计数，也不占用实施窗口。M06–M08 是一次已完成的有界批次例外。当前没有 `IN_PROGRESS` 单元；M09 已发布，M10 仍为候选，合同批准前不得打开其代码窗口。
+任何时刻全专题最多一个 `IN_PROGRESS`，最多一个下一单元处于 `READY`。候选总数 32（Matching 15 + Counter 10 + Rest 7）只是当前 SPOT Profile 的课程容量基线；未进入 `CONTRACTED` 的候选单元可以在评审时拆分、合并或调整 ID，已签约或已发布的单元不能静默改变。LOCKED Profile 不进入这个计数，也不占用实施窗口。M06–M08 是一次已完成的有界批次例外。当前唯一 `IN_PROGRESS` 是 M10；M11 在 M10 完整发布和线上验证前不能打开代码窗口。
 
 ### 6.2 单元状态机
 
@@ -487,7 +488,7 @@ Matching 是唯一优先启动的项目。它先证明业务语义，再证明�
 | M07 自成交保护 | opaque participant group 与 taker-side 冲突 disposition | Matching 在不拥有账户资产的前提下以 CANCEL_TAKER/MAKER/BOTH 阻止 self trade | `PUBLISHED / CONTRACT` |
 | M08 WAL 与确认边界 | 单机持久确认和 durable idempotency | 单写者本地运行时在 append/force/apply 后 ACK，可从 genesis WAL 重建命令结果与幂等索引 | `PUBLISHED / CONTRACT` |
 | M09 Snapshot 检查点与有界恢复 | checkpointed bounded recovery | 完整已 apply Snapshot cut + 连续受限 WAL suffix 等价于全量重放，前缀只在可恢复集合持久后回收 | `PUBLISHED / CONTRACT` |
-| M10 性能与过载资格 | 容量和背压 | 发布 `matching-0.5.0` | `CANDIDATE / RISK_MAP` |
+| M10 性能与过载资格 | 容量和背压 | 发布 `matching-0.5.0` | `IN_PROGRESS / CONTRACT + RED` |
 | M11 Aeron Cluster Adapter | 复制运行时适配 | 单节点 Cluster 与 direct runner 业务等价 | `CANDIDATE / RISK_MAP` |
 | M12 三节点 HA | 切主、fencing 和结果未知 | 发布 `matching-0.8.0` | `CANDIDATE / RISK_MAP` |
 | M13 多交易对静态分片 | instrument 到 shard 的权威路由 | 多订单簿故障域和容量可解释 | `CANDIDATE / RISK_MAP` |
@@ -647,7 +648,7 @@ Matching 是唯一优先启动的项目。它先证明业务语义，再证明�
 
 > M02 单元合同 `planVersion`：`0.4`
 >
-> 当前 PLAN v0.11 在 M08 之后只为 M09 冻结 Snapshot 检查点与有界恢复；M02 可寻址生命周期、10/34 corpus、M02H1、complete tag 与 evidence 不回写，也不表示后续 Java event hierarchy、WAL/Snapshot record shape 或 runtime 与 M02 完成提交相同。
+> 当前 PLAN v0.12 在 M09 之后只为 M10 冻结单机有界准入与环境绑定性能包络；M02 可寻址生命周期、10/34 corpus、M02H1、complete tag 与 evidence 不回写，也不表示后续 Java event hierarchy、WAL/Snapshot record shape、queue 或 runtime 与 M02 完成提交相同。
 >
 > 生命周期：`PUBLISHED`。M01 是已发布前置；权威起点为 annotated [`course/m02-start`](https://github.com/lcha-reln/cex-matching/tree/course/m02-start)，peeled commit 是 `fbaa744912147fdb1d802fb16cf4a9f9d62e8112`。权威完成身份为 annotated [`course/m02-complete`](https://github.com/lcha-reln/cex-matching/tree/course/m02-complete)，commit 是 `b54b4dfb51b61a5041d60c50dc1ff3404d73b27d`。完成门禁为 10 场景、34 命令、4 个状态化验证优先级探针、100 次 fresh replay、4 个 required mutant 与 `SYSTEM_ERROR` control；M02 不发布产品 release。
 
@@ -811,7 +812,7 @@ The evidence makes no throughput, latency, recovery, durable-idempotency, or pro
 
 > M03 单元合同 `planVersion`：`0.5`
 >
-> 当前 PLAN v0.11 在 M08 之后只为 M09 冻结 Snapshot 检查点与有界恢复；M03 冻结 tag、M03G1 command canonical 身份、`matching-0.1.0` 与 evidence 不回写。后续新增 event shape、WAL/Snapshot source 和 runtime 只由对应单元的架构门禁验收，不重绑 M03 证据。
+> 当前 PLAN v0.12 在 M09 之后只为 M10 冻结单机有界准入与环境绑定性能包络；M03 冻结 tag、M03G1 command canonical 身份、`matching-0.1.0` 与 evidence 不回写。后续新增 event shape、WAL/Snapshot source、queue 和 runtime 只由对应单元的架构门禁验收，不重绑 M03 证据。
 >
 > 生命周期：`PUBLISHED`。权威起点仍是 annotated [`course/m03-start`](https://github.com/lcha-reln/cex-matching/tree/course/m03-start)，tag peeled commit 为 `4bcf4e060e8bc596d3246f1b98cec346cc66221f`；annotated [`course/m03-complete`](https://github.com/lcha-reln/cex-matching/tree/course/m03-complete) 与 annotated [`matching-0.1.0`](https://github.com/lcha-reln/cex-matching/tree/matching-0.1.0) 均 peeled 到完成提交 `dab4a2a1dccf06d6b9769c979a6ae5af6d1d2bdc`。四篇教程、共享 Matching Lab 与[持久 evidence](https://lcha-reln.github.io/signal-grid-blog/practice/high-availability-cex/m03/evidence/manifest.json) 已原子公开；manifest SHA-256 为 `14ea367d5f08029679b22a5efd2a9c0a34b16f97bb28273771b3c5125c851b52`。
 
@@ -946,7 +947,7 @@ M03-CANCELED-ID-REUSE
 >
 > 当前生命周期：`PUBLISHED`；annotated `course/m04-complete` peeled 到提交 `9d1bca13da6b13aa97a8002baff37fbc2393abe4`，五篇教程、Matching Lab 与公开 evidence 已闭合；本单元 `productRelease=null`
 >
-> 当前 PLAN v0.11 在 M08 之后只为 M09 冻结 Snapshot 检查点与有界恢复；M04 的五字段 ExecutionPolicy、14/48 固定语料、M04F1/M04H1/M04X1、complete tag、产品停止点与 evidence 不回写，后续归因、STP 事件、WAL frame 或 Snapshot state 也不表示 M04 Java event shape/event bytes 曾被冻结。
+> 当前 PLAN v0.12 在 M09 之后只为 M10 冻结单机有界准入与环境绑定性能包络；M04 的五字段 ExecutionPolicy、14/48 固定语料、M04F1/M04H1/M04X1、complete tag、产品停止点与 evidence 不回写，后续归因、STP 事件、WAL frame、Snapshot state 或 queue 也不表示 M04 Java event shape/event bytes 曾被冻结。
 
 **目标**
 
@@ -1053,7 +1054,7 @@ git switch -c unit/m04 course/m04-start
 >
 > 完成边界：annotated `course/m05-complete` peeled 到 `e593c13292c0f97665f90239a4c8d4a1ca40f579`；`./gradlew clean build m05Evidence -Pm05.unitTag=course/m05-complete --no-daemon` 为 GREEN，[Matching Lab](https://lcha-reln.github.io/signal-grid-blog/practice/high-availability-cex/m05/lab/)与[公开 evidence](https://lcha-reln.github.io/signal-grid-blog/practice/high-availability-cex/m05/evidence/manifest.json)已发布，manifest SHA-256 为 `d5ee9a4c278d204bfbb8df90feae570302339fb8028849b7ab44f39fc090a69a`。本单元 `productRelease=null`
 >
-> 当前 PLAN v0.11 在 M08 之后只为 M09 冻结 Snapshot 检查点与有界恢复；M05 的 RuleSet/activation fence、12/54 fixed、160×64、20 项 coverage、8 项 mutant、五篇 permalink、complete tag 与公开 evidence 保持不变，不因 Snapshot 合同回写。
+> 当前 PLAN v0.12 在 M09 之后只为 M10 冻结单机有界准入与环境绑定性能包络；M05 的 RuleSet/activation fence、12/54 fixed、160×64、20 项 coverage、8 项 mutant、五篇 permalink、complete tag 与公开 evidence 保持不变，不因 Snapshot 或性能资格合同回写。
 
 **Adds**
 
@@ -1169,7 +1170,7 @@ git switch --detach course/m05-complete
 >
 > 当前状态：`PUBLISHED`；annotated `course/m06-start` peeled 到 `b8e11a59c62b2c09fc0d418a8731e758f25be8ce`，annotated `course/m06-complete` peeled 到 `854dcf470a9ea8a2765982861b21026be1416258`
 >
-> PLAN v0.11 在 M08 之后只为 M09 冻结 Snapshot 检查点与有界恢复；M06 的 mode/Mass Cancel 语义、15/64 fixed、160×64、26 项 coverage、10 项 mutant、complete tag 与公开 evidence 不回写，Snapshot 也不能把恢复状态默认为 OPEN。
+> PLAN v0.12 在 M09 之后只为 M10 冻结单机有界准入与环境绑定性能包络；M06 的 mode/Mass Cancel 语义、15/64 fixed、160×64、26 项 coverage、10 项 mutant、complete tag 与公开 evidence 不回写，Snapshot 或负载路径也不能把恢复状态默认为 OPEN。
 
 **唯一新增轴**
 
@@ -1292,7 +1293,7 @@ M06 明确不实现 STP、WAL、Snapshot、认证/授权系统、管理 UI、节
 >
 > 当前状态：`PUBLISHED`；annotated `course/m07-start` peeled 到 `7df44b40107847ae7e959d84ce0593fdf528e810`，annotated `course/m07-complete` peeled 到 `8e9c147b12bfb6b55e69ff04ecfe3aa4c510ed23`
 >
-> PLAN v0.11 在 M08 之后只为 M09 冻结 Snapshot 检查点与有界恢复；M07 的 opaque participant group、taker-owned STP disposition、16/72 fixed、160×64、24 项 coverage、8 项 mutant、complete tag 与公开 evidence 不回写，Snapshot 必须完整保存其可恢复结果。
+> PLAN v0.12 在 M09 之后只为 M10 冻结单机有界准入与环境绑定性能包络；M07 的 opaque participant group、taker-owned STP disposition、16/72 fixed、160×64、24 项 coverage、8 项 mutant、complete tag 与公开 evidence 不回写，Snapshot 与负载后恢复都必须完整保存其可恢复结果。
 
 **唯一新增轴**
 
@@ -1400,7 +1401,7 @@ M07 不实现账户/母子账户查询、资产风控、节点本地策略热切
 
 > M08 单元合同 `planVersion`：`0.10`
 >
-> PLAN v0.11 在 M08 之后只为 M09 冻结 Snapshot 检查点与有界恢复；M08 的 M08C1/M08W1、append→force→apply→ACK、durable identity、genesis recovery、complete tag 与公开 evidence 均不回写，M09 也不把 Snapshot bytes 声称为 M08 WAL 格式的一部分。
+> PLAN v0.12 在 M09 之后只为 M10 冻结单机有界准入与环境绑定性能包络；M08 的 M08C1/M08W1、append→force→apply→ACK、durable identity、genesis recovery、complete tag 与公开 evidence 均不回写，M09 Snapshot 与 M10 queue 也不能被声称为 M08 WAL 格式的一部分。
 >
 > 当前状态：`PUBLISHED`；annotated `course/m08-start` 保存结构化 RED，annotated `course/m08-complete`、完整提交、五篇教程与本站持久 evidence 共同定义完成身份
 
@@ -1520,6 +1521,8 @@ M08 不实现 Snapshot、有界恢复、WAL retention、复制、Aeron、leader/
 > M09 单元合同 `planVersion`：`0.11`
 >
 > 当前状态：`PUBLISHED`；annotated `course/m09-start` peeled 到 `2e688ec725a4d83755fa3811988a7d65f13cd115` 并冻结 RED，annotated `course/m09-complete` peeled 到 `147a7e7dd2439764d4a5fe4d1048142645d26f2d`。五篇教程与同源静态 evidence 已公开，manifest SHA-256 为 `22b0d234e7257a74461e56feccfe6f859cc4f401dbae32fb11a8e966d9bf984a`；`productRelease=null`，没有浏览器 Lab
+>
+> 当前 PLAN v0.12 只在 M09 之后为 M10 冻结单机有界准入与环境绑定性能包络；M09 的 M09S1、RecoveryBudget、22/88 fixed、96×40 generated、32 项 obligation、12 个 candidate、complete tag 与公开 evidence 不回写，M10 queue 或 benchmark 也不成为 M09 Snapshot/WAL 格式的一部分。
 
 **唯一新增轴**
 
@@ -1623,15 +1626,179 @@ prefix unlink、segment namespace 变化与清理结果都需要 parent-director
 
 M09 不实现通用 N/N-1 Snapshot/WAL 迁移、rolling upgrade、后台线程、copy-on-write、边恢复边接流量、group commit、Aeron/Cluster snapshot、复制、failover、多 shard、网络 exactly-once、数据库恢复源、压缩/加密/远程备份、性能或恢复毫秒 SLA。`FileChannel.force` 与有限故障语料仍不能扩大成真实断电、任意文件系统或 production-readiness 证明。
 
-当前为 `PUBLISHED`：五篇教程、complete 身份和静态 evidence 已闭合。停止点仍是单进程、单 shard、caller-serialized 本地 runtime；它拥有 Snapshot 检查点与 records+bytes 双重有界恢复，但没有 Lab、产品 release、复制、Aeron、故障切换、性能或高可用资格。M10 仍停留在候选能力地图，没有进入实施窗口。
+当前为 `PUBLISHED`：五篇教程、complete 身份和静态 evidence 已闭合。停止点仍是单进程、单 shard、caller-serialized 本地 runtime；它拥有 Snapshot 检查点与 records+bytes 双重有界恢复，但没有 Lab、产品 release、复制、Aeron、故障切换、性能或高可用资格。M10 已在其上打开独立实施窗口，但不能回写 M09 的完成身份或证据声明。
 
-### 8.12 M10–M14 候选能力地图
+### 8.12 M10：单机性能包络与有界过载准入
+
+> M10 单元合同 `planVersion`：`0.12`
+>
+> 当前生命周期：`IN_PROGRESS`。权威起点是 annotated `course/m10-start`；完成身份必须由 annotated `course/m10-complete` 与 annotated `matching-0.5.0` 共同指向同一 clean commit。M10 尚未完成前，任何数字都不能写成已发布容量结论。
+
+**Objective**
+
+为 M09 单进程、单 shard、可恢复本地运行时增加一个明确有界、不会把排队成功冒充 durable ACK 的异步准入边界，并在保留 WAL force、同步 checkpoint 和全部正确性检查的条件下，生成与具体环境绑定的 micro、open-loop、knee、资源和有限 soak 证据。
+
+**Adds**
+
+只增加一个复杂度维度：**单机持久运行时的性能包络与有界过载准入**。M10 不改撮合业务语义，不优化 `matching-core`，不改 M08W1/M09S1、force/ACK 或恢复语义，也不提前引入 Aeron。产品代码只在 `matching-local-runtime` 增加一个拥有既有 `LocalMatchingRuntime` 的单 worker 服务；非生产的 `matching-benchmarks` 承载测量工具。
+
+**生产边界**
+
+- `matching-core` 零业务改动，继续无 I/O、线程、时钟、队列、随机数、WAL、JMH 与 Aeron；
+- `LocalMatchingService.open(WalConfig, ServiceConfig)` 独占一个 `LocalMatchingRuntime` 和一条 owner worker，所有已准入任务按有界 FIFO 顺序进入既有 `submit`；
+- `trySubmit(byte[])` 只做防御性 bytes 所有权转移和非阻塞准入，返回 `Enqueued(completion)` 或 `Rejected(OVERLOADED | NOT_ACCEPTING | FAILED_CLOSED)`；
+- `Enqueued` 只说明任务进入有界内存队列，**不是 durable ACK**。只有 completion 中的既有 `SubmissionResult` 才表达 M08/M09 的 durable、duplicate、rejected、unknown 或 failed-closed 结果；
+- `OVERLOADED` 必须在 decode、WAL append、identity binding 与 core apply 之前完成。调用方可以原样重试同一 command identity；拒绝不能占用 producer sequence、commandId 或订单身份；
+- worker 遇到 `CheckpointRequired` 时同步执行既有 M09 checkpoint，再以同一 envelope 重试。checkpoint 停顿属于端到端尾延迟，不能从样本中删除或另起一条伪装为新命令；
+- runtime 一旦 failed closed，服务停止新准入；已成功入队但尚未 apply 的任务必须得到明确 failed-closed completion，不能静默丢失或继续越过失败点 apply；真实进程崩溃仍由客户端观察为 `UNKNOWN`，M10 不伪造本地回调；
+- graceful close 的顺序是停止新准入、排空并完成已准入任务、关闭 runtime。固定 queue capacity 运行时不可扩缩；API 允许并发调用，但本单元只发布单 load-producer 容量数字。
+
+**冻结 workload 与两类 profile**
+
+权威输入为 `matching.m10.workload.v1`，seed `6010`。结构化 RED 固定 20 个 admission/methodology scenario、64×256=16,384 个 admission-model action、四个 lane：`BELOW_CAPACITY / QUEUE_FULL / CHECKPOINT_PAUSE / FAIL_CLOSE_RETRY`，以及 28 个 obligation、12 个 executable mutant 和五篇 permalink。相同输入必须 byte-exact 重生；环境测量值本身当然不要求跨机器相同。
+
+| Profile | 用途 | 允许的结论 |
+| --- | --- | --- |
+| `CI_SMOKE` | GitHub hosted runner 上验证 harness、Schema、计数、拒绝、恢复和方法闭环；采用短窗口 | 只能写 `METHOD_SMOKE_ONLY`，不得成为产品容量或 soak 结论 |
+| `RELEASE_QUALIFICATION` | 在明确记录硬件/JVM/文件系统的发布环境运行完整 profile，并进入 M10 evidence | 只形成该环境、该 workload、该 commit 的 capacity envelope |
+
+release profile 冻结：先执行 20 秒 unpaced calibration，仅用于缩放到达率而不作为容量数字；随后三个独立 sweep，rate ladder 是 calibration 的 `25/50/70/85/100/115/135/160%`，每个 rate 先 10 秒 warmup、再 30 秒 measure；有界 queue capacity 为 64。到达由绝对 `nanoTime` schedule 驱动，不等待上一条 response；generator lag 必须单列，任何计划 offer 都不能因 producer 落后而从分母消失。
+
+每个 enqueued 样本至少保留：scheduled→admission、admission→dequeue、dequeue→completion 和 scheduled→completion；reject 单列 scheduled→decision。每个分布发布 count/min/max 与 p50/p95/p99/p99.9，端到端延迟必须从**计划到达时刻**起算，避免 coordinated omission。raw record、直方图/quantile 汇总与总计必须可互相对账；只给 average 不合格。
+
+**Knee、QOP 与有限 soak**
+
+一个 measured rate 满足以下任一条件即为 saturated：
+
+- `OVERLOADED` 数量大于零；
+- queue-depth p99 达到 capacity 的 80%；
+- measure window 内 `completed / admitted < 99.5%`；
+- window 末 backlog 相对开头增长超过 capacity 的 10%。
+
+单个 sweep 的 knee 是第一对连续 saturated rate 中较小的那个；没有连续对就失败关闭，不能挑一个好看的 rate。发布 knee 取三个 sweep 的最小值，`QOP = floor(70% × published knee)`。这套算法是确定的，但输入测量含环境噪声；QOP 不是跨机器 SLA。
+
+release soak 在 QOP 下连续 30 分钟，必须跨过多次同步 checkpoint，并保留资源时间序列。结束后 quiesce、fresh reopen、同 identity duplicate replay 与 accepted trace 的直接串行重放必须在有序结果、original result 和 semantic digest 上一致。有限 30 分钟运行不是长期稳定性证明。
+
+**Micro 与资源证据**
+
+纯 core micro 使用 JMH `SampleTime` 和独立 fork，只诊断确定性内核热路径；它不执行 WAL、force、checkpoint 或 queue，因此不得与端到端结果合并，也不能称为产品 TPS。release evidence 必须同时记录：
+
+- commit/tag/dirty、Java vendor/version、完整 JVM flags、heap 上限与 GC、OS/kernel/arch；
+- CPU model、logical cores、RAM、FileStore type/path/usable space；
+- queue、WAL、Snapshot、workload hash/seed、rate/window/repetition 和计时器配置；
+- allocation/op（JMH 精确计数或明确标注的 sampled 估计）、GC count/time/pause、process CPU、heap/non-heap、RSS 和 queue depth；
+- JFR sampled 数据只能标为采样观察，不能写成精确 allocation proof。
+
+**冻结 28 项 obligation**
+
+```text
+POSITIVE_FINITE_CAPACITY
+TRY_SUBMIT_NON_BLOCKING
+CALLER_BYTES_OWNED
+FULL_REJECTS_OVERLOADED
+REJECTION_PRE_WAL
+REJECTION_PRE_APPLY_IDENTITY
+ENQUEUE_NOT_ACK
+SINGLE_WORKER_FIFO
+DURABLE_RESULT_UNCHANGED
+CHECKPOINT_SAME_ENVELOPE_RETRY
+CHECKPOINT_LATENCY_INCLUDED
+FAILURE_CLOSES_ADMISSION
+PENDING_EXPLICIT_FAILURE
+QUIESCE_REJECTS_NEW
+QUIESCE_DRAINS_ACCEPTED
+QUEUE_BOUNDED
+OFFER_RECONCILIATION
+COMPLETION_RECONCILIATION
+OPEN_LOOP_INDEPENDENT
+SCHEDULED_ARRIVAL_ORIGIN
+RAW_PERCENTILE_RECONCILIATION
+ENVIRONMENT_FINGERPRINT
+MICRO_E2E_SEPARATED
+DETERMINISTIC_KNEE
+ABOVE_KNEE_EXPLICIT_REJECTION
+RESOURCE_DIMENSIONS_PRESENT
+LOAD_REPLAY_RECOVERY_EXACT
+SYSTEM_ERROR_NEVER_PASS
+```
+
+**冻结 12 个 executable mutant**
+
+```text
+M10-UNBOUNDED-QUEUE
+M10-BLOCKING-PUT
+M10-REJECT-AFTER-WAL
+M10-REJECT-BINDS-IDENTITY
+M10-ENQUEUE-AS-ACK
+M10-DUAL-WORKER-REORDER
+M10-DROPPED-COMPLETION
+M10-METRICS-UNDERCOUNT
+M10-CLOSED-LOOP-GENERATOR
+M10-LATENCY-FROM-ACTUAL-SEND
+M10-WRONG-PERCENTILE-KNEE
+M10-SKIP-LOAD-RECOVERY-CHECK
+```
+
+只有同一冻结输入下可复现的 `STUDENT_FAILURE` 才能算 kill。异常、缺失工具、计时器失效、环境指纹不完整、文件系统错误或 judge 缺陷都是 `SYSTEM_ERROR`，不得把“跑不起来”冒充杀死错误实现。
+
+**教程合同**
+
+| Order | Permalink | 教学职责 |
+| ---: | --- | --- |
+| 10 | `performance-contract-and-open-loop-workload` | 区分 micro、end-to-end、closed/open loop、计划到达与 evidence 作用域 |
+| 20 | `bounded-admission-and-overload-semantics` | 有界 FIFO、非阻塞准入、enqueue≠ACK、pre-WAL reject、checkpoint 与关闭语义 |
+| 30 | `percentiles-knee-point-and-capacity-envelope` | 四段延迟、percentile、saturation、三次 sweep、knee 和 QOP |
+| 40 | `allocation-gc-resource-and-soak-evidence` | 环境指纹、allocation/GC/CPU/memory/queue、30 分钟有限 soak 与局限 |
+| 50 | `matching-0-5-0-release-evidence` | RED→GREEN、负载中正确性、reopen/duplicate、mutant、manifest 与产品 tag |
+
+本站不登记 M10 浏览器 Lab。浏览器无法权威复现 JVM JIT、WAL force、调度器、文件系统、JFR 或真实资源压力；所有编译、benchmark、soak 和裁判由读者本地运行，网站只发布同源静态 evidence。
+
+**Gate 与 Evidence**
+
+- annotated `course/m10-start` 必须保存 schema-valid `matching.m10.check.v1 / GOAL_NOT_IMPLEMENTED`，并与未来 complete/product tag 是否已经存在无关；历史 start workflow 不得因后来发布而变红；
+- M00～M09 累计回归在负载前后保持 GREEN，`matching-core` 零 M10 修改，production module 不依赖 JMH、testkit 或 benchmark module；
+- 20 个 fixed scenario、64×256 admission model、28/28 obligation、12/12 `STUDENT_FAILURE` mutant 与 throwing `SYSTEM_ERROR` control 通过；
+- queue 任意时刻不超过 64；quiescent 后 `offered = enqueued + rejected`、`enqueued = completed`，所有 overload 均有 pre-WAL/pre-apply/identity 证据；
+- core micro 与 runtime end-to-end 分开发布，三个 sweep 的 raw offer/latency/queue/resource 数据和 percentile 汇总逐项对账，按冻结算法得出 knee/QOP；
+- release profile 在 QOP 完成 30 分钟有限 soak，保留 checkpoint 停顿，accepted trace 经串行重放、fresh reopen 和 duplicate replay 后结果与 semantic digest 一致；
+- clean evidence 必须绑定 annotated `course/m10-complete`、annotated `matching-0.5.0`、同一完整 source commit、dirty=false、环境/workload 原始数据、全部 artifact SHA-256、claim 与 limitation；
+- `matching-0.5.0` 只表示“可恢复单机撮合 + 有界准入 + 环境绑定容量证据”停止点，不表示任意硬件的 production-readiness 认证。
+
+**Evidence claims**
+
+```text
+inherited-m09-correctness
+bounded-admission
+fixed-generated-admission
+open-loop-methodology
+latency-capacity-knee
+resource-soak
+correctness-under-load-recovery
+mutants-architecture-release
+```
+
+至少公开 inherited/check、fixed/generated canonical、admission ledger、workload profile、environment、JMH raw 与 micro summary、rate-sweep raw/summary、knee、overload、resource、soak samples/summary、accepted trace、replay、recovery、mutants/counterexamples、architecture、release 和 manifest。原始数据必须有界并由 hash 绑定；CI smoke artifact 不能替换 release evidence。
+
+**Excludes**
+
+- Aeron/Cluster、复制、leader、quorum、failover、Cluster Backup、三节点或 Cluster 性能；
+- 网络协议、Rest、Counter、账户、资产、仓位、手续费、结算和风险；
+- 多 shard、多 instrument 容量，以及多 producer scalability 声明；
+- 新撮合策略、业务语义改动、WAL/Snapshot 格式迁移、异步 Snapshot、group commit 或持久语义重写；
+- off-heap ring、kernel bypass、NUMA/绑核、特定 GC 调优与“优化大全”；
+- 预写绝对 TPS/p99/RTO SLA、跨硬件直接比较、形式化证明或泛化 production-readiness；
+- 真实断电、设备缓存认证、外部监控系统、浏览器 benchmark 或远程 Java 执行。
+
+**Stop Point**
+
+M10 完成后形成 `matching-0.5.0`：一个单进程、单 shard、可恢复的本地撮合服务，拥有显式有界准入、pre-WAL overload、环境绑定 capacity envelope、knee/QOP、percentile/resource/30 分钟有限 soak 与负载中正确性证据；它仍不是复制或高可用系统。
+
+### 8.13 M11–M14 候选能力地图
 
 这些行不是已冻结合同。任一行进入 `CONTRACTED` 前必须重新验证“一句话、一个复杂度维度”；必要时允许拆分或调整候选总数。
 
 | 单元 | Adds | Delivers | Excludes | Gate 与 Evidence |
 | --- | --- | --- | --- | --- |
-| M10 性能与过载资格 | 容量边界和背压 | micro/end-to-end 分离，open-loop 负载，p50/p95/p99/p99.9，分配/GC/CPU/内存/队列，过载策略，soak | 只报平均值、用 closed-loop 隐藏排队、关闭正确性换跑分、无环境数字承诺 | 保存硬件/JVM/负载和原始数据；找到 knee point；负载期间不变量仍开；发布 `matching-0.5.0` |
 | M11 Aeron Cluster Adapter | 复制运行时适配 | core 保持无 Aeron；单节点 `ClusteredService` adapter、ingress、log apply、correlated response、Cluster snapshot、command/event/snapshot N/N-1 与 codec golden bytes | 三节点 HA、Aeron session 当业务 ID、ClusteredService 访问 DB/HTTP、双写 standalone WAL | Direct runner 与单节点 Cluster 比较规范化业务事件和 semantic digest，排除 runtime metadata；snapshot/restart 和 N/N-1 兼容通过 |
 | M12 三节点 HA | Leader 故障下的唯一业务效果 | 三节点 Cluster、quorum/election/catch-up、复制结果表、`UNKNOWN` 使用同一 command identity 重试、epoch/fencing、Cluster Backup/restore、外部故障控制器 | 超时即失败、换身份重试、无 quorum 继续确认、跨地域 | 历史校验记录 invocation/response/command identity/term/log/apply position；只有 committed+applied 后成功；受控 hook 覆盖各窗口；三节点 open-loop、failover-under-load、catch-up/snapshot 压力有原始证据；发布 `matching-0.8.0` |
 | M13 多交易对静态分片 | instrument 到 shard 的权威路由 | 每个 shard 是独立三节点 Cluster group；一个 shard 多订单簿；route artifact owner/hash、静态热点隔离、shard 容量和故障 Runbook | 一张订单簿跨 shard、在线迁移、自动再均衡、跨交易对原子命令 | shard 拒绝非本 shard instrument；路由变更只新增 instrument，已有 instrument 迁移必须 HALT、清空订单簿并离线验证；一个 shard 故障不改变其他 shard |
@@ -1646,7 +1813,7 @@ M14 的两条流不能混为一个恢复合同：
 
 权威 batch 必须先存在于复制、可 replay 的 output outbox；有界传输队列只是优化。外部持久化达到已验证边界后才能推进可裁剪位置，snapshot 必须包含 next batch sequence、last durable publication position 和未裁剪 batch。若 Execution retention 无法覆盖 Counter 的恢复窗口，系统必须 fail closed 或进入受控停市，而不能静默跳过历史。输出发布可重复，但旧 Leader 或 stale runtime 不能发布新的权威 sequence。
 
-### 8.13 Matching 进入下一阶段的门禁
+### 8.14 Matching 进入下一阶段的门禁
 
 - M03 发布前不允许出现 WAL、Aeron 或多交易对实现；
 - M04 发布前只允许 ExecutionPolicy 轴；M05 只允许 versioned order-entry price band；M06 只允许 mode/Mass Cancel；M07 只允许 opaque group + STP disposition；M08 只允许单写者本地 WAL/ACK/durable idempotency；
@@ -1813,7 +1980,7 @@ signal-grid-blog
 ```
 
 - 实战章节使用独立 `practiceLessons` collection，不进入 `posts`、文章归档和主 RSS；
-- `config.ts` 管案例与 Profile，`units.ts` 管已签约及之后的单元，Markdown 只管一篇教程；M00～M09 保留各自已发布 ref、完整提交、evidence 与教程，以及适用单元的 Matching Lab。M09 五篇教程已原子公开，但没有登记 Lab 或产品 release；M10 及以后仍不创建 Markdown；
+- `config.ts` 管案例与 Profile，`units.ts` 管已签约及之后的单元，Markdown 只管一篇教程；M00～M09 保留各自已发布 ref、完整提交、evidence 与教程，以及适用单元的 Matching Lab。M09 五篇教程已原子公开，但没有登记 Lab 或产品 release；M10 五篇 permalink 已冻结并在实施分支保持 draft，M11 及以后仍不创建 Markdown；
 - 教程用 `project / profileVersion / unitCode` 关联单元，同单元的 `lessonOrder` 和 `permalink` 必须唯一；路由为 `/practice/<project>/<unit>/<lesson>/`；
 - 教程一律从 `draft: true` 开始。单元达到 `PUBLISHED` 前不得公开；草稿不生成生产路由，不进入搜索、sitemap、文章统计或主 RSS；`CONTENT_VERIFIED` 冻结预期教程的排序与 permalink，`PUBLISHED` 必须原子公开完整集合；`CODE_VERIFIED` 冻结 complete tag、完整提交 SHA、仓库内 evidence 路径和发布证据合同。M00～M09 的 evidence 都托管到 Signal Grid 的固定静态路径，由 verifier 复核 CI manifest SHA-256、来源、精确 claim/限制、全部 artifact hash，以及 `reportFacts` 中冻结的业务状态和关键报告字段；
 - `pnpm verify:practice` 拒绝缺失或 `LOCKED` 单元、重复排序/地址、未 `PUBLISHED` 非草稿和 `main`、`unit/*` 等浮动 ref。它不联网读取课程仓；跨仓 tag/evidence 在发布前独立核验；
@@ -1884,7 +2051,7 @@ M00 已在独立公开仓库 [`lcha-reln/cex-matching`](https://github.com/lcha-
 
 生命周期现为 `PUBLISHED`：17 条固定记录、37 行/3199 字节 canonical history、100 次 fresh replay、必需 semantic mutant、架构边界和 evidence manifest 都已通过；M00·01～04 已按冻结顺序原子公开。tag CI 的原始 bundle 已固化为[持久 evidence](https://lcha-reln.github.io/signal-grid-blog/practice/high-availability-cex/m00/evidence/manifest.json)，manifest SHA-256 为 `a8962136833f185bee24fd45f22ea58b0db0ac1c837106f02dba7d2483f9deee`，站点 verifier 会继续复核来源、五项 claim、五条限制和全部 artifact hash。
 
-当前 PLAN v0.11 在 M08 之后只为 M09 冻结 Snapshot 检查点与有界恢复；M00 输入、验证、canonical history、digest 与 evidence 合同不变。因此 M00 的 `course.properties` 与不可移动起点继续记录合同 `planVersion=0.1`，网站另行公开当前计划版本和这条兼容说明，不改 tag、不回写冻结证据，也不把后续 WAL 或 Snapshot 格式声称为 M00 canonical format。
+当前 PLAN v0.12 在 M09 之后只为 M10 冻结单机有界准入与环境绑定性能包络；M00 输入、验证、canonical history、digest 与 evidence 合同不变。因此 M00 的 `course.properties` 与不可移动起点继续记录合同 `planVersion=0.1`，网站另行公开当前计划版本和这条兼容说明，不改 tag、不回写冻结证据，也不把后续 WAL、Snapshot 或 benchmark 数据声称为 M00 canonical format。
 
 Bootstrap 已冻结这些维护选择：
 
@@ -1908,7 +2075,7 @@ M01 已按 v0.3 合同完成并发布。不可移动练习起点是 annotated [`
 
 M01·01～04 已按冻结 `expectedLessons` 原子公开；[Matching Lab](https://lcha-reln.github.io/signal-grid-blog/practice/high-availability-cex/m01/lab/)把 Java Golden 回放与有界浏览器模型分成两个模式。浏览器模型在解锁前必须 fresh-state 重放全部 8/22 corpus，逐事件和逐盘口与静态 evidence 一致；任何读取或语义差异都会保持禁用。它只用于预测和解释，不上传源码、不运行 Java，也不输出课程裁判结论。M01 不是命名停止点，因此 `productRelease` 仍为 `null`，`matching-0.1.0` 继续留给 M03。
 
-当前 PLAN v0.11 在 M08 之后只为 M09 冻结 Snapshot 检查点与有界恢复；M01 价格时间优先业务语义、冻结 event batch、Golden corpus 与 evidence 不回写，也不表示后续 Java event hierarchy、WAL/Snapshot bytes 或恢复运行时与 M01 完成提交相同。因此 M01 的 `course.properties`、起点、完成 tag、教程与持久 evidence 继续保留合同 `planVersion=0.3`。
+当前 PLAN v0.12 在 M09 之后只为 M10 冻结单机有界准入与环境绑定性能包络；M01 价格时间优先业务语义、冻结 event batch、Golden corpus 与 evidence 不回写，也不表示后续 Java event hierarchy、WAL/Snapshot bytes、queue 或恢复运行时与 M01 完成提交相同。因此 M01 的 `course.properties`、起点、完成 tag、教程与持久 evidence 继续保留合同 `planVersion=0.3`。
 
 权威本地入口保持最小：
 
@@ -1925,6 +2092,7 @@ git switch -c unit/m01 course/m01-start
 
 | 日期 | 版本 | 变更 |
 | --- | --- | --- |
+| 2026-09-02 | v0.12 | M10 从候选风险图升级为正式合同，并收窄为“单机持久运行时的性能包络与有界过载准入”：冻结单 worker/固定 FIFO capacity、enqueue≠durable ACK、pre-WAL overload、CheckpointRequired 同 identity 同步 checkpoint/retry、CI_SMOKE 与 RELEASE_QUALIFICATION 分层、绝对 open-loop schedule、四段延迟、三次 sweep 的 saturation/knee/QOP 算法、环境/资源指纹、30 分钟有限 soak、20 fixed、64×256 admission model、28 项 obligation、12 个 mutant、五篇 permalink 与 `matching-0.5.0`；撮合/WAL 语义优化、Aeron/Cluster、三节点性能和通用 SLA 继续排除 |
 | 2026-09-01 | v0.11 | M09 从候选风险图升级为正式合同并收窄为唯一的 Snapshot 检查点与有界恢复轴：冻结完整已 apply state cut、caller-serialized 无半完成控制动作、原子 Snapshot 发布、Snapshot@S + 连续 WAL(S+1...) 与 genesis replay 的 semantic equivalence、RecoveryBudget(maxReplayRecords=64, maxReplayBytes=1048576)、安全前缀回收、失败关闭边界和五篇 permalink；通用 N/N-1 格式迁移、后台 Snapshot、Aeron、复制、性能与毫秒恢复 SLA 继续排除 |
 | 2026-08-31 | v0.10 | M08 从候选风险图升级为正式合同，唯一新增单进程、单 shard、caller-serialized 的本地 WAL/ACK/durable idempotency：冻结 `matching-local-runtime`、M08C1 command envelope、commandId/slot/payloadHash 双向绑定、producer epoch/continuous sequence、append→force→apply→ACK、M08W1 segment/rollover/directory force、genesis recovery、torn tail/corruption 失败关闭、20 fixed、SplitMix64 seed 5808 的 96×48 四 lane、24 项 coverage、10 项 mutant 与五篇 permalink；Snapshot/复制/数据库双写/性能/Aeron/HA 继续排除，且必须等 M07 `CODE_VERIFIED`、complete/evidence/review 封存后才能创建 start ref |
 | 2026-08-31 | v0.9 | M07 从候选风险图升级为正式合同，唯一新增 opaque participant group 与 taker-side STP disposition：冻结 0/NONE legacy 映射、raw group/policy 校验、CANCEL_TAKER/CANCEL_MAKER/CANCEL_BOTH、SelfTradePrevented attribution、cross-level 扫描、FOK STP-aware 预演、POST_ONLY raw-book 优先级、16/72 fixed、SplitMix64 seed 5707 的 160×64 五 lane、24 项 coverage、8 项 mutant 与五篇 permalink；账户查询、资产风控、DECREMENT_AND_CANCEL 与 WAL 继续排除，且必须等 M06 `CODE_VERIFIED`、complete/evidence/review 封存后才能创建 start ref |
@@ -1941,6 +2109,8 @@ git switch -c unit/m01 course/m01-start
 
 | 日期 | 单元 | 生命周期 | 记录 |
 | --- | --- | --- | --- |
+| 2026-09-02 | M10 | `IN_PROGRESS` | PLAN v0.12 已冻结有界准入、open-loop/knee/QOP、资源/soak、28 项 obligation、12 个 mutant、五篇 permalink 和 `matching-0.5.0` target；当前唯一代码窗口已打开，正在形成 annotated `course/m10-start` 的结构化 RED。此记录没有 complete/product tag、PASS、容量数字、manifest 或线上教程 |
+| 2026-09-02 | M10 | `CONTRACTED` | 只增加单机持久运行时的性能包络与有界过载准入；明确 enqueue 不是 ACK、overload 在 WAL/identity/apply 前、CI smoke 不是 release qualification，Aeron/Cluster 与所有绝对通用 SLA 排除在外 |
 | 2026-09-01 | M09 | `PUBLISHED` | annotated `course/m09-complete` peeled 到 `147a7e7dd2439764d4a5fe4d1048142645d26f2d`。22/88 fixed、32/32 obligation、seed 5909 的 96×40=3,840 个声明生成操作与另计 65 个 budget prelude 通过；2,703 次预算预测为 2,702 accept + 1 reject。fixed/generated/counterexample digest 分别为 `1636ed177f59347ec11b8e9ffe1fb6d872fd3de5225298381a161a0b7d755f43`、`9551ad7a3026964b57b366e39d6307510789cd83c750bf239098f9ba299354e5`、`0dd88e0ced4a35dab53f357a657c299484eabeeb6111cd70221603a971f0a3eb`；七个 child halt、八个 declared pre-hook seam、9+3 executable candidate、64 个不计 kill 的 `INVALID_HISTORY` single-delete trial 与 55 core / 39 local-runtime / 0 violation 架构报告闭环。manifest SHA-256 为 `22b0d234e7257a74461e56feccfe6f859cc4f401dbae32fb11a8e966d9bf984a`，五篇教程和 evidence 已公开；无 Lab、产品 release、Aeron、复制或高可用声明，M10 未开启 |
 | 2026-09-01 | M09 | `IN_PROGRESS` | annotated `course/m09-start` peeled 到 `2e688ec725a4d83755fa3811988a7d65f13cd115` 并冻结结构化 RED；`8f6a357` 加入主体 Snapshot/recovery，当前审查 HEAD `c26a613` 又补齐 recovery-scan hard budget，两者都不是 complete 身份。五篇 permalink 已扩写为完整 draft 教程并校准 publication/retirement 屏障；当前仍无 `course/m09-complete`、完成 judge/evidence、manifest、公开 lesson route、Lab、产品 release 或 PASS 数字 |
 | 2026-09-01 | M09 | `CONTRACTED` | PLAN v0.11 冻结完整已 apply Snapshot cut、连续 WAL suffix、RecoveryBudget(64 records / 1,048,576 encoded bytes)、原子 generation 发布、安全前缀回收、独立等价裁判、失败关闭门禁与五篇 draft permalink；当前无 start/complete ref、实现、完成提交、公开 evidence、Lab、产品 release 或通过数字 |

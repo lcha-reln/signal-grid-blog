@@ -1914,7 +1914,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.1",
     planCompatibility:
-      "当前 PLAN v0.11 在 M08 之后只为 M09 冻结 Snapshot 检查点与有界恢复；M00 输入、验证、canonical history、digest 与 evidence 合同不变。因此 M00 的 `course.properties` 与不可移动起点继续记录合同 `planVersion=0.1`，网站另行公开当前计划版本和这条兼容说明，不改 tag、不回写冻结证据，也不把后续 WAL 或 Snapshot 格式声称为 M00 canonical format。",
+      "当前 PLAN v0.12 在 M09 之后只为 M10 冻结单机有界准入与环境绑定性能包络；M00 输入、验证、canonical history、digest 与 evidence 合同不变。因此 M00 的 `course.properties` 与不可移动起点继续记录合同 `planVersion=0.1`，网站另行公开当前计划版本和这条兼容说明，不改 tag、不回写冻结证据，也不把后续 WAL、Snapshot 或 benchmark 数据声称为 M00 canonical format。",
     prerequisiteUnitCodes: [],
     startRef: "course/m00.2-start",
     supersededStartRefs: [
@@ -2166,7 +2166,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.3",
     planCompatibility:
-      "当前 PLAN v0.11 在 M08 之后只为 M09 冻结 Snapshot 检查点与有界恢复；M01 价格时间优先业务语义、冻结 event batch、Golden corpus 与 evidence 不回写，也不表示后续 Java event hierarchy、WAL/Snapshot bytes 或恢复运行时与 M01 完成提交相同。因此 M01 的 `course.properties`、起点、完成 tag、教程与持久 evidence 继续保留合同 `planVersion=0.3`。",
+      "当前 PLAN v0.12 在 M09 之后只为 M10 冻结单机有界准入与环境绑定性能包络；M01 价格时间优先业务语义、冻结 event batch、Golden corpus 与 evidence 不回写，也不表示后续 Java event hierarchy、WAL/Snapshot bytes、queue 或恢复运行时与 M01 完成提交相同。因此 M01 的 `course.properties`、起点、完成 tag、教程与持久 evidence 继续保留合同 `planVersion=0.3`。",
     prerequisiteUnitCodes: ["M00"],
     startRef: "course/m01-start",
     completeRef: "course/m01-complete",
@@ -2689,7 +2689,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.4",
     planCompatibility:
-      "当前 PLAN v0.11 在 M08 之后只为 M09 冻结 Snapshot 检查点与有界恢复；M02 可寻址生命周期、10/34 corpus、M02H1、complete tag 与 evidence 不回写，也不表示后续 Java event hierarchy、WAL/Snapshot record shape 或 runtime 与 M02 完成提交相同。",
+      "当前 PLAN v0.12 在 M09 之后只为 M10 冻结单机有界准入与环境绑定性能包络；M02 可寻址生命周期、10/34 corpus、M02H1、complete tag 与 evidence 不回写，也不表示后续 Java event hierarchy、WAL/Snapshot record shape、queue 或 runtime 与 M02 完成提交相同。",
     prerequisiteUnitCodes: ["M01"],
     startRef: "course/m02-start",
     completeRef: "course/m02-complete",
@@ -2769,7 +2769,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.5",
     planCompatibility:
-      "当前 PLAN v0.11 在 M08 之后只为 M09 冻结 Snapshot 检查点与有界恢复；M03 冻结 tag、M03G1 command canonical 身份、`matching-0.1.0` 与 evidence 不回写。后续新增 event shape、WAL/Snapshot source 和 runtime 只由对应单元的架构门禁验收，不重绑 M03 证据。",
+      "当前 PLAN v0.12 在 M09 之后只为 M10 冻结单机有界准入与环境绑定性能包络；M03 冻结 tag、M03G1 command canonical 身份、`matching-0.1.0` 与 evidence 不回写。后续新增 event shape、WAL/Snapshot source、queue 和 runtime 只由对应单元的架构门禁验收，不重绑 M03 证据。",
     prerequisiteUnitCodes: ["M02"],
     startRef: "course/m03-start",
     completeRef: "course/m03-complete",
@@ -2855,7 +2855,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.6",
     planCompatibility:
-      "当前 PLAN v0.11 在 M08 之后只为 M09 冻结 Snapshot 检查点与有界恢复；M04 的五字段 ExecutionPolicy、14/48 固定语料、M04F1/M04H1/M04X1、complete tag、产品停止点与 evidence 不回写，后续归因、STP 事件、WAL frame 或 Snapshot state 也不表示 M04 Java event shape/event bytes 曾被冻结。",
+      "当前 PLAN v0.12 在 M09 之后只为 M10 冻结单机有界准入与环境绑定性能包络；M04 的五字段 ExecutionPolicy、14/48 固定语料、M04F1/M04H1/M04X1、complete tag、产品停止点与 evidence 不回写，后续归因、STP 事件、WAL frame、Snapshot state 或 queue 也不表示 M04 Java event shape/event bytes 曾被冻结。",
     prerequisiteUnitCodes: ["M03"],
     startRef: "course/m04-start",
     completeRef: "course/m04-complete",
@@ -2949,7 +2949,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.7",
     planCompatibility:
-      "当前 PLAN v0.11 在 M08 之后只为 M09 冻结 Snapshot 检查点与有界恢复；M05 的 RuleSet/activation fence、12/54 fixed、160×64、20 项 coverage、8 项 mutant、五篇 permalink、complete tag 与公开 evidence 保持不变，不因 Snapshot 合同回写。",
+      "当前 PLAN v0.12 在 M09 之后只为 M10 冻结单机有界准入与环境绑定性能包络；M05 的 RuleSet/activation fence、12/54 fixed、160×64、20 项 coverage、8 项 mutant、五篇 permalink、complete tag 与公开 evidence 保持不变，不因 Snapshot 或性能资格合同回写。",
     prerequisiteUnitCodes: ["M04"],
     startRef: "course/m05-start",
     completeRef: "course/m05-complete",
@@ -3042,7 +3042,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.8",
     planCompatibility:
-      "PLAN v0.11 在 M08 之后只为 M09 冻结 Snapshot 检查点与有界恢复；M06 的 mode/Mass Cancel 语义、15/64 fixed、160×64、26 项 coverage、10 项 mutant、complete tag 与公开 evidence 不回写，Snapshot 也不能把恢复状态默认为 OPEN。",
+      "PLAN v0.12 在 M09 之后只为 M10 冻结单机有界准入与环境绑定性能包络；M06 的 mode/Mass Cancel 语义、15/64 fixed、160×64、26 项 coverage、10 项 mutant、complete tag 与公开 evidence 不回写，Snapshot 或负载路径也不能把恢复状态默认为 OPEN。",
     prerequisiteUnitCodes: ["M05"],
     startRef: "course/m06-start",
     completeRef: "course/m06-complete",
@@ -3119,7 +3119,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.9",
     planCompatibility:
-      "PLAN v0.11 在 M08 之后只为 M09 冻结 Snapshot 检查点与有界恢复；M07 的 opaque participant group、taker-owned STP disposition、16/72 fixed、160×64、24 项 coverage、8 项 mutant、complete tag 与公开 evidence 不回写，Snapshot 必须完整保存其可恢复结果。",
+      "PLAN v0.12 在 M09 之后只为 M10 冻结单机有界准入与环境绑定性能包络；M07 的 opaque participant group、taker-owned STP disposition、16/72 fixed、160×64、24 项 coverage、8 项 mutant、complete tag 与公开 evidence 不回写，Snapshot 与负载后恢复都必须完整保存其可恢复结果。",
     prerequisiteUnitCodes: ["M06"],
     startRef: "course/m07-start",
     completeRef: "course/m07-complete",
@@ -3198,7 +3198,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.10",
     planCompatibility:
-      "PLAN v0.11 在 M08 之后只为 M09 冻结 Snapshot 检查点与有界恢复；M08 的 M08C1/M08W1、append→force→apply→ACK、durable identity、genesis recovery、complete tag 与公开 evidence 均不回写，M09 也不把 Snapshot bytes 声称为 M08 WAL 格式的一部分。",
+      "PLAN v0.12 在 M09 之后只为 M10 冻结单机有界准入与环境绑定性能包络；M08 的 M08C1/M08W1、append→force→apply→ACK、durable identity、genesis recovery、complete tag 与公开 evidence 均不回写，M09 Snapshot 与 M10 queue 也不能被声称为 M08 WAL 格式的一部分。",
     prerequisiteUnitCodes: ["M07"],
     startRef: "course/m08-start",
     completeRef: "course/m08-complete",
@@ -3283,6 +3283,8 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     order: 100,
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.11",
+    planCompatibility:
+      "当前 PLAN v0.12 只在 M09 之后为 M10 冻结单机有界准入与环境绑定性能包络；M09 的 M09S1、RecoveryBudget、22/88 fixed、96×40 generated、32 项 obligation、12 个 candidate、complete tag 与公开 evidence 不回写，M10 queue 或 benchmark 也不成为 M09 Snapshot/WAL 格式的一部分。",
     prerequisiteUnitCodes: ["M08"],
     startRef: "course/m09-start",
     completeRef: "course/m09-complete",
@@ -3353,6 +3355,84 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
       "./gradlew clean build --no-daemon",
       "./gradlew m09Check --no-daemon",
       "./gradlew m09Evidence -Pm09.unitTag=course/m09-complete --no-daemon",
+    ],
+  },
+  {
+    projectSlug: "high-availability-cex",
+    profileVersion: "SPOT-CEX-1.0",
+    code: "M10",
+    trackCode: "M",
+    title: "单机性能包络与有界过载准入",
+    summary:
+      "为 M09 可恢复本地运行时增加单 worker、有界 FIFO、pre-WAL overload，并用环境绑定的 open-loop、knee、资源和有限 soak 证据形成 matching-0.5.0。",
+    objective:
+      "在不改撮合与持久语义的前提下，让准入有明确容量上界、排队不冒充 ACK、过载可安全重试，并用不会隐藏排队或关闭正确性的测量合同找到该环境的保守操作点。",
+    order: 110,
+    lifecycle: "IN_PROGRESS",
+    contractPlanVersion: "0.12",
+    prerequisiteUnitCodes: ["M09"],
+    startRef: "course/m10-start",
+    releaseTarget: "matching-0.5.0",
+    expectedLessons: [
+      { lessonOrder: 10, permalink: "performance-contract-and-open-loop-workload" },
+      { lessonOrder: 20, permalink: "bounded-admission-and-overload-semantics" },
+      { lessonOrder: 30, permalink: "percentiles-knee-point-and-capacity-envelope" },
+      { lessonOrder: 40, permalink: "allocation-gc-resource-and-soak-evidence" },
+      { lessonOrder: 50, permalink: "matching-0-5-0-release-evidence" },
+    ],
+    adds: [
+      "唯一新增复杂度是单机持久运行时的性能包络与有界过载准入：生产服务只增加有界 FIFO 和一条 owner worker，资格模块只测量而不进入生产依赖。",
+    ],
+    delivers: [
+      "LocalMatchingService 独占既有 LocalMatchingRuntime，以固定 capacity 的 FIFO 和单 worker 保持 apply 顺序；trySubmit 防御性复制 caller bytes，并以非阻塞 Enqueued 或 OVERLOADED/NOT_ACCEPTING/FAILED_CLOSED 完成准入决策",
+      "Enqueued 只提供 completion handle，不是 durable ACK；只有既有 SubmissionResult 表达 append/force/apply 后的 durable outcome。queue-full 拒绝发生在 decode、WAL、identity 和 core 之前，同 identity 可原样重试",
+      "worker 在 CheckpointRequired 后同步 checkpoint 并用同一 envelope 重试；checkpoint 暂停保留在 scheduled-arrival 到 completion 的端到端延迟内，不引入后台 Snapshot 或 group commit",
+      "matching-benchmarks 将纯 core JMH SampleTime 与真实 WAL/Snapshot open-loop 完全分离，保留 p50/p95/p99/p99.9、generator lag、queue/resource 原始数据和环境指纹",
+      "三个 release sweep 按冻结 saturation 算法选择最保守 knee，并令 QOP=floor(70%×knee)；QOP 下 30 分钟有限 soak 后执行 quiesce、fresh reopen、duplicate replay 和 accepted-trace 串行重放",
+      "matching-0.5.0 与 course/m10-complete 在同一 clean commit 上形成可恢复单机撮合、有界准入和环境绑定容量证据的命名停止点",
+    ],
+    freezes: [
+      "matching.m10.workload.v1、seed 6010、20 个 fixed scenario、64×256 admission action、四个 lane、28 个 obligation、12 个 executable mutant 和五篇 permalink 在 annotated start ref 冻结",
+      "CI_SMOKE 只能验证方法闭环并标记 METHOD_SMOKE_ONLY；只有完整 RELEASE_QUALIFICATION 能进入发布 evidence，且数字只适用于该 commit、环境、文件系统、JVM 与 workload",
+      "open-loop 绝对计划不等待 response；端到端延迟从 scheduled arrival 起算，generator lag 与 overload 都保留在分母和 raw data，不能用 closed-loop 制造漂亮尾延迟",
+      "单 sweep knee 是第一对连续 saturated rate 的第一个；published knee 取三次最小值，QOP 取 70%。算法固定不代表测量跨环境确定",
+      "core micro 不含 queue/WAL/force/checkpoint，只是热路径诊断，不能与端到端 TPS 合并或称为产品容量",
+      "有限 corpus、mutant、sweep 与 30 分钟 soak 都不是形式化证明、跨硬件 SLA 或 production-readiness 认证",
+    ],
+    excludes: [
+      "Aeron、Cluster、复制、leader、quorum、failover、Backup、三节点或 Cluster 性能；这些从 M11/M12 独立评审",
+      "业务撮合策略、matching-core 性能重写、M08W1/M09S1 迁移、异步 Snapshot、group commit、off-heap ring 与 NUMA/绑核优化",
+      "多 shard、多 instrument、多 producer scalability、网络协议、Counter/Rest、账户、资产、仓位、手续费、结算与风险",
+      "预写绝对 TPS/p99/RTO、跨环境排行榜、真实断电、浏览器 benchmark、远程 Java 执行和泛化 production-readiness",
+    ],
+    gate: [
+      "annotated course/m10-start 必须保存 matching.m10.check.v1 / GOAL_NOT_IMPLEMENTED；历史 start workflow 不查询未来 tag 的存在性，未来发布后仍能独立保持预期 RED",
+      "M00～M09 累计回归前后 GREEN；matching-core 无 M10 业务改动，production module 不依赖 benchmark、JMH 或 testkit",
+      "20 个 fixed scenario、64×256 generated admission model、28/28 obligation 与 12/12 STUDENT_FAILURE mutant 通过；SYSTEM_ERROR 永不计 PASS 或 kill",
+      "queue 永不越过 capacity；drain 后 offered=enqueued+rejected、enqueued=completed，overload 明确发生在 WAL/apply/identity 前，enqueue 与 durable completion 分离",
+      "release profile 保存环境、JMH、三个 open-loop sweep、四段延迟、knee/QOP、allocation/GC/CPU/memory/RSS/queue 和原始对账数据；CI smoke 不能替代",
+      "QOP 下 30 分钟有限 soak 跨多次 checkpoint；accepted trace 串行重放、fresh reopen、duplicate replay 与 semantic digest 一致",
+      "clean course/m10-complete、matching-0.5.0、source commit、dirty=false、八项 claim、limitation 和全部 artifact SHA-256 必须一致",
+    ],
+    interaction: [
+      "先判断 trySubmit 的返回只是准入还是 durable outcome，再沿 queue→dequeue→checkpoint→WAL force→apply→completion 时间线揭示真实边界",
+      "比较 closed-loop 与绝对 open-loop 到达，观察为什么从实际 send 起算会删除 generator lag 并制造 coordinated omission",
+      "给定三次 rate sweep 的 raw count、queue p99、completion ratio 和 backlog，按冻结规则手算 saturation、knee 与 QOP",
+      "网页只解释同源静态 evidence；JMH、WAL force、30 分钟 soak、JFR/资源采样和 Java 裁判只在独立仓库本地执行，不登记浏览器 Lab",
+    ],
+    evidence: [
+      "结构化 RED、workload/profile schema 与 hash、20 fixed、64×256 generated admission model、28 obligation、12 mutant 和 M00～M09 累计回归",
+      "有界 queue ledger、pre-WAL/pre-apply/identity rejection、enqueue/completion 分离、checkpoint same-envelope retry、failure/close/drain 与 caller-bytes ownership",
+      "环境指纹、JMH raw、三个 open-loop sweep raw/summary、percentile、knee/QOP、overload、allocation/GC/CPU/memory/RSS/queue 和有限 soak 时间序列",
+      "accepted trace 串行重放、fresh reopen、duplicate original result、semantic digest、architecture 与 clean release/tag/manifest 绑定",
+    ],
+    stopPoint:
+      "目标停止点 matching-0.5.0 是一个单进程、单 shard、可恢复的本地撮合服务：拥有显式有界准入、pre-WAL overload、环境绑定 capacity envelope、knee/QOP、percentile/resource/30 分钟有限 soak 与负载中正确性证据；仍无复制、Aeron、故障切换或高可用保证。",
+    localCommands: [
+      "git switch -c unit/m10 course/m10-start",
+      "./gradlew clean build --no-daemon",
+      "./gradlew m10Check --no-daemon",
+      "./gradlew m10ReleaseQualification --no-daemon",
     ],
   },
 ];
