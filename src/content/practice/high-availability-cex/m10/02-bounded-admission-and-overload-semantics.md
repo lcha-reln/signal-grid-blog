@@ -137,7 +137,7 @@ offered = enqueued + rejected
 enqueued = completed
 ```
 
-这里的 `completed` 表示 completion 已终结，不等于业务成功。它可以携带 durable accepted、durable business reject、duplicate original result 或明确 failed-closed。把所有 exception 都算作业务失败同样不对：工具缺失、线程异常、账本断裂或 judge 缺陷属于 `SYSTEM_ERROR`，不能替实现生成一个看似合规的 completion。
+这里的 `completed` 表示 completion 已终结，不等于业务成功。它必须原样携带既有 `SubmissionResult`：可能是 structural/preflight reject、durably applied、duplicate original result、checkpoint 后结果或明确 failed-closed。把所有 exception 都算作业务失败同样不对：工具缺失、线程异常、账本断裂或 judge 缺陷属于 `SYSTEM_ERROR`，不能替实现生成一个看似合规的 completion。
 
 ## Worked example：一条命令跨过 queue、checkpoint 与 durable ACK
 
