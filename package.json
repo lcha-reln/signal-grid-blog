@@ -12,7 +12,7 @@
     "verify:practice": "node scripts/verify-practice-plan.mjs"
   },
   "dependencies": {
-    "@astrojs/markdown-satteri": "^0.3.5",
+    "@astrojs/markdown-satteri": "^0.4.0",
     "@astrojs/rss": "^4.0.19",
     "@astrojs/sitemap": "^3.7.3",
     "astro": "^7.2.1",
