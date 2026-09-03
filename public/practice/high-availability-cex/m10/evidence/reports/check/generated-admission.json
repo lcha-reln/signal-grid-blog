@@ -1,0 +1,43 @@
+{
+  "schemaVersion" : "matching.m10.generated-report.v1",
+  "status" : "PASS",
+  "algorithm" : "splitmix64-v1",
+  "baseSeed" : "6010",
+  "histories" : 64,
+  "actionsPerHistory" : 256,
+  "actions" : 16384,
+  "executedActions" : 16384,
+  "comparisons" : 65728,
+  "ledgerChecks" : 65728,
+  "terminalReconciliations" : 64,
+  "lanes" : {
+    "BELOW_CAPACITY" : 16,
+    "FAIL_CLOSE_RETRY" : 16,
+    "CHECKPOINT_PAUSE" : 16,
+    "QUEUE_FULL" : 16
+  },
+  "actionKinds" : {
+    "CHECKPOINT_REQUIRED" : 512,
+    "FAIL_WORKER" : 256,
+    "COMPLETE" : 3072,
+    "QUIESCE" : 256,
+    "REJECT_CLOSED" : 512,
+    "OFFER" : 9968,
+    "REOPEN" : 512,
+    "PUBLISH_CHECKPOINT" : 512,
+    "DRAIN" : 16,
+    "RETRY_SAME_ENVELOPE" : 768
+  },
+  "laneWitnesses" : {
+    "BELOW_CAPACITY" : 16,
+    "FAIL_CLOSE_RETRY" : 16,
+    "CHECKPOINT_PAUSE" : 16,
+    "QUEUE_FULL" : 16
+  },
+  "digest" : "a4fc04af46e3f64d66ca0e3f2fa031d45d2abf222899b431a08894d7fbc78e67",
+  "freshRegenerationDigest" : "a4fc04af46e3f64d66ca0e3f2fa031d45d2abf222899b431a08894d7fbc78e67",
+  "byteExactRegeneration" : true,
+  "businessAttemptLedgerSeparate" : true,
+  "maintenanceLedgerSeparate" : true,
+  "logicalOfferLedgerSeparate" : true
+}

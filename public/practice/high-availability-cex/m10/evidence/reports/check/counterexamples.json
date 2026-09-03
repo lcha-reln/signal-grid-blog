@@ -1,0 +1,13 @@
+{
+  "schemaVersion" : "matching.m10.counterexamples-report.v1",
+  "status" : "PASS",
+  "required" : 12,
+  "persisted" : 12,
+  "rawActions" : 44,
+  "minimalActions" : 40,
+  "shrinkTrials" : 50,
+  "digest" : "62f7423d64f4438bb83c9b6a625023fc161291f9ad89bc3eb07f496cd2b67778",
+  "minimalityScope" : "ONE_MINIMAL_WITHIN_DECLARED_STEP_DELETION_GRAMMAR",
+  "globalMinimumClaim" : false,
+  "invalidHistoryCountedAsKill" : false
+}

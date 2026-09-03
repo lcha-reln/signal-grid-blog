@@ -1,0 +1,13 @@
+{
+  "unit" : "M09",
+  "completeRef" : "course/m09-complete",
+  "status" : "PASS",
+  "fixedScenarios" : 22,
+  "generatedOperations" : 3840,
+  "mutantsKilled" : 12,
+  "semanticSource" : "CURRENT_HEAD_COMPILED_PRODUCTION_CLASSES",
+  "semanticSourceCommit" : "77e80b0962cd6a74f6d8cd0ac203b3be5bdd6bdb",
+  "sourceOnlyArchitectureBaseline" : "course/m09-complete",
+  "sourceOnlyArchitectureBaselineCommit" : "147a7e7dd2439764d4a5fe4d1048142645d26f2d",
+  "sourceOnlyArchitectureSupersededBy" : "M10_ARCHITECTURE_GATE"
+}

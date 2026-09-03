@@ -1,0 +1,11 @@
+{
+  "schemaVersion" : "matching.m10.replay-report.v1",
+  "status" : "PASS",
+  "strictReplays" : 12,
+  "sameFingerprint" : true,
+  "freshCandidateStatePerReplay" : true,
+  "oneMinimal" : true,
+  "minimalityScope" : "ONE_MINIMAL_WITHIN_DECLARED_STEP_DELETION_GRAMMAR",
+  "globalMinimumClaim" : false,
+  "invalidHistoryCountedAsKill" : false
+}

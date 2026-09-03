@@ -1,0 +1,13 @@
+{
+  "schemaVersion" : "matching.m10.reconciliation.v1",
+  "scope" : "CI_SMOKE_METHOD_MODEL",
+  "offers" : 512,
+  "admitted" : 484,
+  "overloaded" : 28,
+  "closedOrInvalid" : 0,
+  "submissionResultCompletions" : 484,
+  "explicitServiceFailures" : 0,
+  "terminalPending" : 0,
+  "offerEquation" : true,
+  "completionEquation" : true
+}

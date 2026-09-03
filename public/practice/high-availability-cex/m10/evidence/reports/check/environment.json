@@ -1,0 +1,21 @@
+{
+  "schemaVersion" : "matching.m10.environment.v1",
+  "status" : "PASS",
+  "scope" : "METHOD_SMOKE_EXECUTION_ENVIRONMENT",
+  "javaRuntime" : "OpenJDK Runtime Environment",
+  "javaVersion" : "25.0.4.1+1-LTS",
+  "javaVendor" : "Eclipse Adoptium",
+  "vmName" : "OpenJDK 64-Bit Server VM",
+  "jvmArguments" : [ "-Dfile.encoding=UTF-8", "-Duser.country=CN", "-Duser.language=zh", "-Duser.variant" ],
+  "osName" : "Mac OS X",
+  "osVersion" : "26.0.1",
+  "osArchitecture" : "aarch64",
+  "availableProcessors" : 8,
+  "maximumHeapBytes" : 2147483648,
+  "filesystemName" : "/dev/disk3s5",
+  "filesystemType" : "apfs",
+  "cpuModel" : "REQUIRED_FROM_RELEASE_RUNNER_FOR_RELEASE_EVIDENCE",
+  "storageDevice" : "REQUIRED_FROM_RELEASE_RUNNER_FOR_RELEASE_EVIDENCE",
+  "powerPolicy" : "REQUIRED_FROM_RELEASE_RUNNER_FOR_RELEASE_EVIDENCE",
+  "releaseEnvironmentComplete" : false
+}

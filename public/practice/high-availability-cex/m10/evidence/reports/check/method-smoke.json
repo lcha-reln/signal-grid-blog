@@ -1,0 +1,283 @@
+{
+  "schemaVersion" : "matching.m10.method-smoke.v2",
+  "status" : "PASS",
+  "evidenceMode" : "REAL_CI_SMOKE_BUNDLE",
+  "profileId" : "CI_SMOKE",
+  "resultScope" : "METHOD_SMOKE_ONLY",
+  "eligibleForReleaseEvidence" : false,
+  "methodIsomorphic" : true,
+  "verifiedRawRecords" : 32557,
+  "verifiedBundleFiles" : 9,
+  "qualificationSha256" : "12059525c88808c1dde893005a9736482375a26972a628d14ba9b43884441b6e",
+  "rawRecomputation" : {
+    "status" : "PASS",
+    "fromDecompressedRaw" : true,
+    "arrivalRecords" : 8445,
+    "completionRecords" : 7782,
+    "queueRecords" : 8445,
+    "resourceRecords" : 52,
+    "maintenanceRecords" : 34,
+    "phaseCutRecords" : 17,
+    "acceptedTraceRecords" : 7782,
+    "reconstructedRecoveryTraces" : 9,
+    "exactAttemptJoin" : true,
+    "reconstructedTraceHashesExact" : true,
+    "recoverySuffixRecordsAndBytesExact" : true,
+    "allNewWalRecordsWithinPlanningCeiling" : true,
+    "verifiedPublishedPoints" : 9,
+    "rawRecords" : 32557,
+    "rawPoints" : 17,
+    "percentilesRecomputed" : true,
+    "accountingReconciled" : true,
+    "capacityEnvelopeRecomputed" : true
+  },
+  "capacity" : {
+    "sweepKnees" : [ 348 ],
+    "publishedKnee" : 348,
+    "qualifiedOperatingPointCandidate" : 243,
+    "provisionalSoakCandidates" : [ 243, 174, 87 ],
+    "qualifiedOperatingPoint" : 243
+  },
+  "environment" : {
+    "javaRuntime" : "OpenJDK Runtime Environment",
+    "javaVersion" : "25.0.4.1+1-LTS",
+    "javaVendor" : "Eclipse Adoptium",
+    "vmName" : "OpenJDK 64-Bit Server VM",
+    "jvmArguments" : [ "-Dfile.encoding=UTF-8", "-Duser.country=CN", "-Duser.language=zh", "-Duser.variant" ],
+    "osName" : "Mac OS X",
+    "osVersion" : "26.0.1",
+    "osArchitecture" : "aarch64",
+    "availableProcessors" : 8,
+    "physicalMemoryBytes" : 8589934592,
+    "maximumHeapBytes" : 2147483648,
+    "garbageCollectorNames" : [ "G1 Concurrent GC", "G1 Old Generation", "G1 Young Generation" ],
+    "cpuModel" : "METHOD_SMOKE_UNSPECIFIED",
+    "storageDevice" : "METHOD_SMOKE_UNSPECIFIED",
+    "filesystem" : "METHOD_SMOKE_UNSPECIFIED",
+    "powerPolicy" : "METHOD_SMOKE_UNSPECIFIED",
+    "walRoot" : "/Users/reln/cex-matching-m09/build/tmp/m10-ci-smoke-wal",
+    "walRootUri" : "file:///Users/reln/cex-matching-m09/build/tmp/m10-ci-smoke-wal/",
+    "walFileStoreName" : "/dev/disk3s5",
+    "walFileStoreType" : "apfs",
+    "walFileStoreTotalSpaceBytes" : 245107195904,
+    "walFileStoreUsableSpaceBytes" : 24987660288,
+    "walFileStoreUnallocatedSpaceBytes" : 24987660288,
+    "runStartedAt" : "2026-09-03T00:27:10.993760Z",
+    "runFinishedAt" : "2026-09-03T00:28:02.744207Z"
+  },
+  "bundleArtifactBindings" : [ {
+    "path" : "accepted-trace/part-00000.jsonl.gz",
+    "sha256" : "12e8fcba29666487160d31acab3b6d572d5a614dbc23acb99ec5759b1dea67d7",
+    "bytes" : 1484390
+  }, {
+    "path" : "qualification.json",
+    "sha256" : "12059525c88808c1dde893005a9736482375a26972a628d14ba9b43884441b6e",
+    "bytes" : 55516
+  }, {
+    "path" : "raw-arrivals/part-00000.jsonl.gz",
+    "sha256" : "a3df73d22c7c600facbe0f90fc65e6e96286657b52cc9e77316db5297bf1867f",
+    "bytes" : 584161
+  }, {
+    "path" : "raw-completions/part-00000.jsonl.gz",
+    "sha256" : "4ae899d8067f32c0774d3769b7c2b6932f94f75dbabdd900c1b6c1179cc0a700",
+    "bytes" : 1186241
+  }, {
+    "path" : "raw-maintenance/part-00000.jsonl.gz",
+    "sha256" : "1f2a96e88e7ba44f5367063372c37e786f3097ec83830876879f0a3af776e5c5",
+    "bytes" : 2070
+  }, {
+    "path" : "raw-phase-cuts/part-00000.jsonl.gz",
+    "sha256" : "9b9d952ab9249511816b283af1bad9056d4d8696f9467835cfdf0a52436c4e3d",
+    "bytes" : 3188
+  }, {
+    "path" : "raw-queue/part-00000.jsonl.gz",
+    "sha256" : "cd225f738474c3f643e9027b3d2aa45dd28009f740057c7196820ea4322588ee",
+    "bytes" : 119849
+  }, {
+    "path" : "recovery.json",
+    "sha256" : "cb76d165ad856387cdb74ad4c1922cd316ad30eb7c88b5be57cbb18f10526876",
+    "bytes" : 19896
+  }, {
+    "path" : "resources/part-00000.jsonl.gz",
+    "sha256" : "6a8d384f4887fca25906991f46487b2fc39986d950ed7578c2f3f5addd02e9ce",
+    "bytes" : 4125
+  } ],
+  "deterministicDiagnostic" : {
+    "schemaVersion" : "matching.m10.method-smoke.v1",
+    "profileId" : "CI_SMOKE",
+    "resultScope" : "METHOD_SMOKE_ONLY",
+    "eligibleForReleaseEvidence" : false,
+    "evidenceMode" : "MODEL_ONLY",
+    "methodIsomorphic" : false,
+    "clock" : "DETERMINISTIC_MODEL_CLOCK",
+    "performanceClaim" : false,
+    "latencyOrigin" : "SCHEDULED_ARRIVAL",
+    "percentileRankRule" : "NEAREST_RANK_CEIL_Q_TIMES_N",
+    "rates" : [ {
+      "ladderPermille" : 250,
+      "offeredRate" : 250,
+      "offers" : 64,
+      "admitted" : 64,
+      "overloaded" : 0,
+      "completed" : 64,
+      "startQueueDepth" : 0,
+      "endQueueDepth" : 4,
+      "p99QueueDepth" : 4,
+      "saturated" : false,
+      "latencyNanos" : {
+        "p50" : 8989,
+        "p95" : 9709,
+        "p99" : 9897,
+        "p99_9" : 9897
+      },
+      "rawLatencySamples" : 64,
+      "percentilesRecomputed" : true
+    }, {
+      "ladderPermille" : 500,
+      "offeredRate" : 500,
+      "offers" : 64,
+      "admitted" : 64,
+      "overloaded" : 0,
+      "completed" : 64,
+      "startQueueDepth" : 5,
+      "endQueueDepth" : 10,
+      "p99QueueDepth" : 10,
+      "saturated" : false,
+      "latencyNanos" : {
+        "p50" : 11037,
+        "p95" : 11909,
+        "p99" : 12308,
+        "p99_9" : 12308
+      },
+      "rawLatencySamples" : 64,
+      "percentilesRecomputed" : true
+    }, {
+      "ladderPermille" : 700,
+      "offeredRate" : 700,
+      "offers" : 64,
+      "admitted" : 64,
+      "overloaded" : 0,
+      "completed" : 64,
+      "startQueueDepth" : 10,
+      "endQueueDepth" : 1,
+      "p99QueueDepth" : 22,
+      "saturated" : false,
+      "latencyNanos" : {
+        "p50" : 13140,
+        "p95" : 14218,
+        "p99" : 14865,
+        "p99_9" : 14865
+      },
+      "rawLatencySamples" : 64,
+      "percentilesRecomputed" : true
+    }, {
+      "ladderPermille" : 850,
+      "offeredRate" : 850,
+      "offers" : 64,
+      "admitted" : 64,
+      "overloaded" : 0,
+      "completed" : 64,
+      "startQueueDepth" : 10,
+      "endQueueDepth" : 24,
+      "p99QueueDepth" : 34,
+      "saturated" : true,
+      "latencyNanos" : {
+        "p50" : 14685,
+        "p95" : 16462,
+        "p99" : 17127,
+        "p99_9" : 17127
+      },
+      "rawLatencySamples" : 64,
+      "percentilesRecomputed" : true
+    }, {
+      "ladderPermille" : 1000,
+      "offeredRate" : 1000,
+      "offers" : 64,
+      "admitted" : 64,
+      "overloaded" : 0,
+      "completed" : 64,
+      "startQueueDepth" : 20,
+      "endQueueDepth" : 6,
+      "p99QueueDepth" : 48,
+      "saturated" : false,
+      "latencyNanos" : {
+        "p50" : 16304,
+        "p95" : 18600,
+        "p99" : 19242,
+        "p99_9" : 19242
+      },
+      "rawLatencySamples" : 64,
+      "percentilesRecomputed" : true
+    }, {
+      "ladderPermille" : 1150,
+      "offeredRate" : 1150,
+      "offers" : 64,
+      "admitted" : 60,
+      "overloaded" : 4,
+      "completed" : 60,
+      "startQueueDepth" : 10,
+      "endQueueDepth" : 31,
+      "p99QueueDepth" : 56,
+      "saturated" : true,
+      "latencyNanos" : {
+        "p50" : 17868,
+        "p95" : 20660,
+        "p99" : 20871,
+        "p99_9" : 20871
+      },
+      "rawLatencySamples" : 60,
+      "percentilesRecomputed" : true
+    }, {
+      "ladderPermille" : 1350,
+      "offeredRate" : 1350,
+      "offers" : 64,
+      "admitted" : 56,
+      "overloaded" : 8,
+      "completed" : 56,
+      "startQueueDepth" : 27,
+      "endQueueDepth" : 27,
+      "p99QueueDepth" : 62,
+      "saturated" : true,
+      "latencyNanos" : {
+        "p50" : 19646,
+        "p95" : 22707,
+        "p99" : 22753,
+        "p99_9" : 22753
+      },
+      "rawLatencySamples" : 56,
+      "percentilesRecomputed" : true
+    }, {
+      "ladderPermille" : 1600,
+      "offeredRate" : 1600,
+      "offers" : 64,
+      "admitted" : 48,
+      "overloaded" : 16,
+      "completed" : 48,
+      "startQueueDepth" : 40,
+      "endQueueDepth" : 14,
+      "p99QueueDepth" : 53,
+      "saturated" : true,
+      "latencyNanos" : {
+        "p50" : 20858,
+        "p95" : 23975,
+        "p99" : 24397,
+        "p99_9" : 24397
+      },
+      "rawLatencySamples" : 48,
+      "percentilesRecomputed" : true
+    } ],
+    "sweepKnee" : 1150,
+    "publishedKnee" : 1150,
+    "qualifiedOperatingPointCandidate" : 805,
+    "qualifiedOperatingPoint" : 700,
+    "releaseSweepsClaimed" : 0,
+    "releaseSoakSecondsClaimed" : 0,
+    "smokeSoakSeconds" : 3,
+    "scheduledArrivalSamples" : 512,
+    "completionSamples" : 484,
+    "queueSamples" : 512,
+    "resourceSeries" : 8,
+    "resourceDimensionsPresent" : true,
+    "aboveKneeRetained" : true
+  }
+}

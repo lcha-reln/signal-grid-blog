@@ -61,43 +61,60 @@ export const PRACTICE_CASES: readonly PracticeCase[] = [
   {
     slug: "high-availability-cex",
     designDocument: "docs/HIGH_AVAILABILITY_CEX_PRACTICE_PLAN.md",
-    planVersion: "0.12",
+    planVersion: "0.13",
     index: "01",
     eyebrow: "FLAGSHIP BUILD / EXCHANGE SYSTEMS",
     title: "高可用 CEX 交易核心",
-    summary: "从单交易对限价撮合起步，先交付高可用现货核心，再按门禁演进到杠杆、永续、交割与期权。",
+    summary:
+      "从单交易对限价撮合起步，先交付高可用现货核心，再按门禁演进到杠杆、永续、交割与期权。",
     status: "BUILDING",
-    statusLabel: "SPOT · M10 实施中",
+    statusLabel: "SPOT · M10 已发布",
     totalUnits: 32,
     plannedRepositories: 3,
     stack: ["Java", "Aeron Cluster", "Gradle", "Docker", "Astro Labs"],
     theoryPath: "series/trading/",
     theoryLabel: "查看交易系统理论",
-    units: ["M00", "M01", "M02", "M03", "M04", "M05", "M06", "M07", "M08", "M09", "M10"],
+    units: [
+      "M00",
+      "M01",
+      "M02",
+      "M03",
+      "M04",
+      "M05",
+      "M06",
+      "M07",
+      "M08",
+      "M09",
+      "M10",
+    ],
     currentUnitCode: "M10",
     currentAction:
-      "M00～M09 已发布；M10 已按 PLAN v0.12 打开唯一实施窗口，只完成有界准入、环境绑定性能包络、release evidence 和五篇教程。在 M10 推送、部署与线上验证前不打开 M11。",
+      "M00～M10 已发布；M10 的 course/m10-complete 与 matching-0.5.0 同指 clean commit 77e80b0962cd6a74f6d8cd0ac203b3be5bdd6bdb，cex.lab-evidence.v2 记录三个 sweep 的 published knee 379、降序 231/165/82 三次完整 1800 秒 attempt（前两次 SATURATED、第三次 QUALIFIED）和只适用于所记录环境、单 producer 空簿 BUY IOC@100×1 workload 的 final QOP 82。当前没有 IN_PROGRESS 单元；下一步只做 M10 推送、Pages 部署与线上路由/manifest hash 验证，在这条发布闭环完成前不签约、不打开 M11。",
     profileRoadmapTitle: "现货是第一份完整交付，不是专题终点",
-    profileRoadmapDescription: "只有当前 Profile 展开单元、仓库与实施设计；LOCKED 只冻结产品方向和解锁门禁，不代表已经创建单元、仓库或服务；后续优先复用已发布的 Matching、Counter 与 Rest 边界，具体仓库拓扑在解锁时评审。",
+    profileRoadmapDescription:
+      "只有当前 Profile 展开单元、仓库与实施设计；LOCKED 只冻结产品方向和解锁门禁，不代表已经创建单元、仓库或服务；后续优先复用已发布的 Matching、Counter 与 Rest 边界，具体仓库拓扑在解锁时评审。",
     profileRoadmap: [
       {
         version: "SPOT-CEX-1.0",
         title: "单地域、高可用现货交易核心",
-        description: "现金资产交换在 Matching、Counter 与 Rest 之间形成可恢复闭环。",
+        description:
+          "现金资产交换在 Matching、Counter 与 Rest 之间形成可恢复闭环。",
         status: "CURRENT",
         gate: "当前从 M00 开始，只展开 SPOT 单元与仓库",
       },
       {
         version: "MARGIN-SPOT-1.0",
         title: "杠杆现货",
-        description: "以债务为核心，引入借贷、计息、抵押品、逐仓/全仓、风险率与强制减仓。",
+        description:
+          "以债务为核心，引入借贷、计息、抵押品、逐仓/全仓、风险率与强制减仓。",
         status: "LOCKED",
         gate: "SPOT-CEX-1.0 资格审查通过后再评审",
       },
       {
         version: "PERP-CEX-1.0",
         title: "永续合约",
-        description: "无到期日持仓按标记价持续重估，并引入资金费率、保险基金与 ADL。",
+        description:
+          "无到期日持仓按标记价持续重估，并引入资金费率、保险基金与 ADL。",
         status: "LOCKED",
         gate: "MARGIN-SPOT-1.0 资格审查通过后再评审",
       },
@@ -116,7 +133,8 @@ export const PRACTICE_CASES: readonly PracticeCase[] = [
         gate: "DELIVERY-FUTURES-1.0 资格审查通过后再评审",
       },
     ],
-    trackNarrative: "三个项目分别建仓、顺序出现；没有巨型单仓，也没有预建空服务。",
+    trackNarrative:
+      "三个项目分别建仓、顺序出现；没有巨型单仓，也没有预建空服务。",
     tracks: [
       {
         code: "M",
@@ -148,7 +166,8 @@ export const PRACTICE_CASES: readonly PracticeCase[] = [
       {
         version: "matching-0.1.0",
         title: "正确的限价撮合",
-        description: "确定性单机内核、参考模型和可重放反例；明确不持久、不高可用。",
+        description:
+          "确定性单机内核、参考模型和可重放反例；明确不持久、不高可用。",
       },
       {
         version: "matching-0.5.0",
@@ -158,7 +177,8 @@ export const PRACTICE_CASES: readonly PracticeCase[] = [
       {
         version: "matching-0.8.0",
         title: "单分片高可用",
-        description: "Aeron Cluster、切主、重试、结果未知和 fencing 通过故障门禁。",
+        description:
+          "Aeron Cluster、切主、重试、结果未知和 fencing 通过故障门禁。",
       },
       {
         version: "matching-1.0.0",
@@ -168,7 +188,8 @@ export const PRACTICE_CASES: readonly PracticeCase[] = [
       {
         version: "SPOT-CEX-1.0",
         title: "三项目商用 Profile",
-        description: "Matching、Counter、Rest 形成兼容版本组并通过端到端资格审查。",
+        description:
+          "Matching、Counter、Rest 形成兼容版本组并通过端到端资格审查。",
       },
     ],
     browserLabs: [

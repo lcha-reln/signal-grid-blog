@@ -1,0 +1,106 @@
+{
+  "schemaVersion" : "matching.m10.mutants-report.v1",
+  "status" : "PASS",
+  "required" : 12,
+  "executableCandidates" : 12,
+  "killedAsStudentFailure" : 12,
+  "systemErrorCountedAsKill" : false,
+  "results" : [ {
+    "id" : "M10-UNBOUNDED-QUEUE",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "QUEUE_ACCEPTED_PAST_CAPACITY",
+    "executableCandidate" : true,
+    "systemErrorCountedAsKill" : false,
+    "counterexampleId" : "cex-unbounded-queue"
+  }, {
+    "id" : "M10-BLOCKING-PUT",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "TRY_SUBMIT_WAITED_FOR_CAPACITY",
+    "executableCandidate" : true,
+    "systemErrorCountedAsKill" : false,
+    "counterexampleId" : "cex-blocking-put"
+  }, {
+    "id" : "M10-REJECT-AFTER-WAL",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "OVERLOAD_MUTATED_WAL",
+    "executableCandidate" : true,
+    "systemErrorCountedAsKill" : false,
+    "counterexampleId" : "cex-reject-after-wal"
+  }, {
+    "id" : "M10-REJECT-BINDS-IDENTITY",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "OVERLOAD_BOUND_IDENTITY",
+    "executableCandidate" : true,
+    "systemErrorCountedAsKill" : false,
+    "counterexampleId" : "cex-reject-binds-identity"
+  }, {
+    "id" : "M10-ENQUEUE-AS-ACK",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "ENQUEUE_UPGRADED_TO_DURABLE_ACK",
+    "executableCandidate" : true,
+    "systemErrorCountedAsKill" : false,
+    "counterexampleId" : "cex-enqueue-as-ack"
+  }, {
+    "id" : "M10-DUAL-WORKER-REORDER",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "FIFO_COMPLETION_REORDERED",
+    "executableCandidate" : true,
+    "systemErrorCountedAsKill" : false,
+    "counterexampleId" : "cex-dual-worker-reorder"
+  }, {
+    "id" : "M10-DROPPED-COMPLETION",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "ACCEPTED_ITEM_HAS_NO_TERMINAL_COMPLETION",
+    "executableCandidate" : true,
+    "systemErrorCountedAsKill" : false,
+    "counterexampleId" : "cex-dropped-completion"
+  }, {
+    "id" : "M10-METRICS-UNDERCOUNT",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "OFFERS_DO_NOT_RECONCILE",
+    "executableCandidate" : true,
+    "systemErrorCountedAsKill" : false,
+    "counterexampleId" : "cex-metrics-undercount"
+  }, {
+    "id" : "M10-CLOSED-LOOP-GENERATOR",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "ARRIVAL_DEPENDS_ON_PRIOR_COMPLETION",
+    "executableCandidate" : true,
+    "systemErrorCountedAsKill" : false,
+    "counterexampleId" : "cex-closed-loop-generator"
+  }, {
+    "id" : "M10-LATENCY-FROM-ACTUAL-SEND",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "LATENCY_DROPPED_SCHEDULER_DELAY",
+    "executableCandidate" : true,
+    "systemErrorCountedAsKill" : false,
+    "counterexampleId" : "cex-latency-from-actual-send"
+  }, {
+    "id" : "M10-WRONG-PERCENTILE-KNEE",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "PERCENTILE_AND_KNEE_RULE_DIVERGED",
+    "executableCandidate" : true,
+    "systemErrorCountedAsKill" : false,
+    "counterexampleId" : "cex-wrong-percentile-knee"
+  }, {
+    "id" : "M10-SKIP-LOAD-RECOVERY-CHECK",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "RECOVERY_MISMATCH_ACCEPTED",
+    "executableCandidate" : true,
+    "systemErrorCountedAsKill" : false,
+    "counterexampleId" : "cex-skip-load-recovery-check"
+  } ],
+  "controls" : [ {
+    "id" : "THROWING_HARNESS",
+    "classification" : "SYSTEM_ERROR",
+    "countedAsKill" : false
+  }, {
+    "id" : "UNAVAILABLE_RESOURCE_COLLECTOR",
+    "classification" : "SYSTEM_ERROR",
+    "countedAsKill" : false
+  }, {
+    "id" : "MALFORMED_RAW_SAMPLE",
+    "classification" : "SYSTEM_ERROR",
+    "countedAsKill" : false
+  } ]
+}

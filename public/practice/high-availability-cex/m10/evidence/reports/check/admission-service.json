@@ -1,0 +1,15 @@
+{
+  "schemaVersion" : "matching.m10.admission-service-report.v1",
+  "status" : "PASS",
+  "queueCapacityQualification" : 64,
+  "trySubmit" : "NON_BLOCKING_BOUNDED_ADMISSION",
+  "enqueueIsAck" : false,
+  "callerBytesOwned" : true,
+  "singleOwnerWorker" : true,
+  "submissionResultPassThrough" : "EXACT_INSTANCE_AT_RUNTIME_PORT_SEAM",
+  "checkpointResultVisibleBeforeCoordinatorRetry" : true,
+  "businessAttemptMaintenanceAndLogicalLedgersSeparate" : true,
+  "failureClosesAdmissionAndFailsPending" : true,
+  "quiesceRejectsThenDrains" : true,
+  "terminalAccountingReconciles" : true
+}

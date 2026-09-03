@@ -1,0 +1,8 @@
+{
+  "schemaVersion" : "matching.m10.load-recovery.v1",
+  "scope" : "DETERMINISTIC_METHOD_MODEL",
+  "liveDigest" : "sha256:418a74a030bc31ed123bdabbabaf58a3495ea301736763532a3854398117f9c8",
+  "recoveredDigest" : "sha256:418a74a030bc31ed123bdabbabaf58a3495ea301736763532a3854398117f9c8",
+  "exact" : true,
+  "productionRuntimeClaim" : false
+}

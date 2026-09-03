@@ -1,0 +1,10 @@
+{
+  "schemaVersion" : "matching.m10.micro-boundary.v1",
+  "status" : "PASS",
+  "harness" : "JMH",
+  "mode" : "SampleTime",
+  "resultScope" : "DIAGNOSTIC_ONLY",
+  "releaseGate" : false,
+  "combinedWithEndToEndScore" : false,
+  "numbersPublishedByOrdinaryCheck" : false
+}

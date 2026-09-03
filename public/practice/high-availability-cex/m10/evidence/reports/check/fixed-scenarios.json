@@ -1,0 +1,195 @@
+{
+  "schemaVersion" : "matching.m10.fixed-report.v1",
+  "status" : "PASS",
+  "required" : 20,
+  "passed" : 20,
+  "results" : [ {
+    "id" : "CAPACITY_REJECTS_NON_POSITIVE",
+    "status" : "PASS",
+    "evidenceMode" : "REAL_LOCAL_MATCHING_SERVICE",
+    "observations" : {
+      "negativeAndZeroRejected" : 2,
+      "qualificationCapacity" : 64
+    }
+  }, {
+    "id" : "TRY_SUBMIT_OWNS_CALLER_BYTES",
+    "status" : "PASS",
+    "evidenceMode" : "REAL_LOCAL_MATCHING_SERVICE",
+    "observations" : {
+      "callerArrayMutatedAfterEnqueue" : true,
+      "ownedEnvelopeApplied" : true
+    }
+  }, {
+    "id" : "FULL_QUEUE_REJECTS_IMMEDIATELY",
+    "status" : "PASS",
+    "evidenceMode" : "REAL_LOCAL_MATCHING_SERVICE",
+    "observations" : {
+      "capacity" : 2,
+      "maximumQueueDepth" : 2,
+      "rejection" : "OVERLOADED_BEFORE_WAL",
+      "waitedForCapacity" : false
+    }
+  }, {
+    "id" : "OVERLOAD_REJECTION_PRECEDES_WAL",
+    "status" : "PASS",
+    "evidenceMode" : "REAL_LOCAL_MATCHING_SERVICE",
+    "observations" : {
+      "walRecordsBeforeRetry" : 3,
+      "overloadedAttempts" : 1
+    }
+  }, {
+    "id" : "OVERLOAD_REJECTION_PRESERVES_IDENTITY",
+    "status" : "PASS",
+    "evidenceMode" : "REAL_LOCAL_MATCHING_SERVICE",
+    "observations" : {
+      "sameEnvelopeRetry" : true,
+      "retryResult" : "NEW_DURABLY_APPLIED"
+    }
+  }, {
+    "id" : "ENQUEUE_IS_NOT_DURABLE_ACK",
+    "status" : "PASS",
+    "evidenceMode" : "REAL_LOCAL_MATCHING_SERVICE",
+    "observations" : {
+      "admissionType" : "ENQUEUED",
+      "submissionResultAtAdmission" : false
+    }
+  }, {
+    "id" : "ONE_WORKER_PRESERVES_FIFO",
+    "status" : "PASS",
+    "evidenceMode" : "REAL_LOCAL_MATCHING_SERVICE",
+    "observations" : {
+      "admitted" : 3,
+      "strictWalOrder" : true
+    }
+  }, {
+    "id" : "SUBMISSION_RESULT_PASSES_THROUGH_UNCHANGED",
+    "status" : "PASS",
+    "evidenceMode" : "REAL_LOCAL_MATCHING_SERVICE",
+    "observations" : {
+      "realVariantsObserved" : [ "NEW_DURABLY_APPLIED" ],
+      "sealedSubmissionResultGrammarReused" : true,
+      "sameRuntimeResultInstance" : true,
+      "syntheticBusinessResultType" : false
+    }
+  }, {
+    "id" : "CHECKPOINT_RETRY_REUSES_ENVELOPE",
+    "status" : "PASS",
+    "evidenceMode" : "REAL_LOCAL_MATCHING_SERVICE",
+    "observations" : {
+      "logicalOperations" : 2,
+      "businessAttempts" : 3,
+      "checkpointRequiredResults" : 1,
+      "maintenanceAttempts" : 1,
+      "retryByteExact" : true
+    }
+  }, {
+    "id" : "CHECKPOINT_PAUSE_COUNTS_IN_LATENCY",
+    "status" : "PASS",
+    "evidenceMode" : "REAL_LOCAL_MATCHING_SERVICE",
+    "observations" : {
+      "latencyOrigin" : "ORIGINAL_LOGICAL_SCHEDULED_ARRIVAL",
+      "maintenanceInsideLogicalLatency" : true,
+      "intermediateSubmissionResultRetained" : true
+    }
+  }, {
+    "id" : "WORKER_FAILURE_CLOSES_ADMISSION",
+    "status" : "PASS",
+    "evidenceMode" : "REAL_LOCAL_MATCHING_SERVICE",
+    "observations" : {
+      "state" : "FAILED_CLOSED",
+      "newOfferRejection" : "SERVICE_FAILED_CLOSED"
+    }
+  }, {
+    "id" : "ACCEPTED_PENDING_COMMANDS_FAIL_EXPLICITLY",
+    "status" : "PASS",
+    "evidenceMode" : "REAL_LOCAL_MATCHING_SERVICE",
+    "observations" : {
+      "pendingAccepted" : 2,
+      "explicitFailures" : 2,
+      "terminalPending" : 0
+    }
+  }, {
+    "id" : "QUIESCE_REJECTS_NEW_OFFERS",
+    "status" : "PASS",
+    "evidenceMode" : "REAL_LOCAL_MATCHING_SERVICE",
+    "observations" : {
+      "observedState" : "QUIESCING",
+      "rejection" : "NOT_ACCEPTING"
+    }
+  }, {
+    "id" : "QUIESCE_DRAINS_ACCEPTED_OFFERS",
+    "status" : "PASS",
+    "evidenceMode" : "REAL_LOCAL_MATCHING_SERVICE",
+    "observations" : {
+      "acceptedBeforeQuiesce" : 2,
+      "completed" : 2,
+      "terminalPending" : 0
+    }
+  }, {
+    "id" : "OFFER_AND_COMPLETION_TOTALS_RECONCILE",
+    "status" : "PASS",
+    "evidenceMode" : "REAL_LOCAL_MATCHING_SERVICE",
+    "observations" : {
+      "offers" : 3,
+      "admitted" : 2,
+      "closedOrInvalid" : 1,
+      "offerEquation" : true,
+      "completionEquation" : true,
+      "variantEquation" : true
+    }
+  }, {
+    "id" : "OPEN_LOOP_USES_SCHEDULED_ARRIVAL",
+    "status" : "PASS",
+    "evidenceMode" : "DETERMINISTIC_METHOD_MODEL",
+    "observations" : {
+      "generator" : "OPEN_LOOP_SCHEDULED_ARRIVALS",
+      "latencyOrigin" : "SCHEDULED_ARRIVAL",
+      "rawScheduledArrivals" : 512
+    }
+  }, {
+    "id" : "RAW_SAMPLES_RECONCILE_PERCENTILES",
+    "status" : "PASS",
+    "evidenceMode" : "DETERMINISTIC_METHOD_MODEL",
+    "observations" : {
+      "rankRule" : "NEAREST_RANK_CEIL_Q_TIMES_N",
+      "publishedPercentilesRecomputed" : true,
+      "rawCompletionSamples" : 484
+    }
+  }, {
+    "id" : "ENVIRONMENT_AND_MICRO_RESULTS_ARE_SEPARATE",
+    "status" : "PASS",
+    "evidenceMode" : "DETERMINISTIC_METHOD_MODEL",
+    "observations" : {
+      "microHarness" : "JMH_SAMPLE_TIME",
+      "microScope" : "DIAGNOSTIC_ONLY",
+      "endToEndScope" : "METHOD_SMOKE_ONLY",
+      "combinedScore" : false,
+      "environmentRequiredForRelease" : true
+    }
+  }, {
+    "id" : "KNEE_AND_ABOVE_KNEE_ARE_EXPLICIT",
+    "status" : "PASS",
+    "evidenceMode" : "DETERMINISTIC_METHOD_MODEL",
+    "observations" : {
+      "sweepKnee" : 1150,
+      "qopCandidate" : 805,
+      "qop" : 700,
+      "qopSelection" : "HIGHEST_UNSATURATED_MEASURED_RATE_AT_OR_BELOW_CANDIDATE",
+      "aboveKneeRetained" : true,
+      "resourceDimensions" : [ "ALLOCATION", "GC", "CPU", "MEMORY", "QUEUE_DEPTH" ]
+    }
+  }, {
+    "id" : "LOAD_RECOVERY_REMAINS_EXACT",
+    "status" : "PASS",
+    "evidenceMode" : "REAL_LOCAL_RUNTIME_PLUS_METHOD_MODEL",
+    "observations" : {
+      "realRuntimeCommands" : 5,
+      "liveDigest" : "14d80d53130e3b41eeb2667a8b2feb3871de096aa7034d073fbca1a51daf7b80",
+      "recoveredDigest" : "14d80d53130e3b41eeb2667a8b2feb3871de096aa7034d073fbca1a51daf7b80",
+      "exact" : true,
+      "methodModelExact" : true,
+      "releaseBundleRequiresRealLoadRecovery" : true,
+      "systemErrorNeverPass" : true
+    }
+  } ]
+}

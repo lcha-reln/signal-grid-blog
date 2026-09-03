@@ -1,0 +1,21 @@
+{
+  "schemaVersion" : "matching.m10.architecture-report.v1",
+  "status" : "PASS",
+  "matchingCoreChangePolicy" : "M10_HOT_PATH_AUDIT_SPLIT_ONLY",
+  "matchingCoreBusinessContractsUnchanged" : true,
+  "fullRetainedOrderAuditColdBoundaries" : true,
+  "terminalIdentityRetentionUnchanged" : true,
+  "startCoreTree" : "ec2354a76641699ab7ed8b1574ecf1876aacf2ee",
+  "headCoreTree" : "58ce86179251a5a8cceba47ff41b1b2657a5d100",
+  "coreDeltaPaths" : [ "matching-core/src/main/java/io/github/lchareln/cex/matching/SingleInstrumentMatchingEngine.java", "matching-core/src/test/java/io/github/lchareln/cex/matching/SingleInstrumentTerminalHistoryGrowthTest.java" ],
+  "coreSources" : 55,
+  "localRuntimeSources" : 53,
+  "benchmarkSources" : 30,
+  "productionModulesDependOnBenchmarks" : false,
+  "localRuntimeDependsOnJmhOrTestkit" : false,
+  "testkitProbeOccurrences" : 1,
+  "runtimePortPublic" : false,
+  "openForTestingPublic" : false,
+  "coreInfrastructureFree" : true,
+  "violationDetails" : [ ]
+}

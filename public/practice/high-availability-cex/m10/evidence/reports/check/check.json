@@ -1,0 +1,303 @@
+{
+  "schemaVersion" : "matching.m10.check.v2",
+  "unit" : "M10",
+  "status" : "PASS",
+  "contractPlanVersion" : "0.13",
+  "objective" : "Add bounded local admission and honest open-loop performance qualification without changing durable matching semantics.",
+  "source" : {
+    "commit" : "77e80b0962cd6a74f6d8cd0ac203b3be5bdd6bdb",
+    "dirty" : false
+  },
+  "courseDeclaration" : {
+    "evidencePath" : "build/lab-evidence/M10/manifest.json",
+    "startRef" : "course/m10-start",
+    "m10Check.expectedStatus" : "PASS",
+    "lifecycle" : "COMPLETE",
+    "case" : "high-availability-cex",
+    "unit" : "M10",
+    "profile" : "SPOT-CEX-1.0",
+    "planVersion" : "0.13",
+    "project" : "matching",
+    "designDepth" : "IMPLEMENTED",
+    "completeRef" : "course/m10-complete"
+  },
+  "inheritedM09" : {
+    "unit" : "M09",
+    "completeRef" : "course/m09-complete",
+    "status" : "PASS",
+    "fixedScenarios" : 22,
+    "generatedOperations" : 3840,
+    "mutantsKilled" : 12,
+    "semanticSource" : "CURRENT_HEAD_COMPILED_PRODUCTION_CLASSES",
+    "semanticSourceCommit" : "77e80b0962cd6a74f6d8cd0ac203b3be5bdd6bdb",
+    "sourceOnlyArchitectureBaseline" : "course/m09-complete",
+    "sourceOnlyArchitectureBaselineCommit" : "147a7e7dd2439764d4a5fe4d1048142645d26f2d",
+    "sourceOnlyArchitectureSupersededBy" : "M10_ARCHITECTURE_GATE"
+  },
+  "workloadProfile" : {
+    "sha256" : "92300fe4580a99f7e8ece911bce2f68a41b945273c923ed484051a011be4fa9b",
+    "seed" : "6010",
+    "fixedScenarios" : 20,
+    "generatedHistories" : 64,
+    "actionsPerHistory" : 256,
+    "generatedActions" : 16384,
+    "lanes" : 4,
+    "queueCapacity" : 64,
+    "coverageObligations" : 28,
+    "requiredMutants" : 12,
+    "schemaProbes" : 8
+  },
+  "qualificationRuntime" : {
+    "policyId" : "M10Q1",
+    "scope" : "M10_DEDICATED_NOT_M09_DEFAULT",
+    "m09Default" : {
+      "maxSuffixRecords" : 64,
+      "maxSuffixBytes" : 1048576
+    },
+    "finiteRecoveryBudget" : {
+      "maxSuffixRecords" : 1000000,
+      "maxSuffixBytes" : 1073741824
+    },
+    "proactiveCheckpointOffsetNanos" : 100000000,
+    "proactiveCheckpointAdmissionLagMaxNanos" : 10000000,
+    "plannedRecordCeilingBytes" : 1024,
+    "phaseBudgetPreflight" : {
+      "prefixRecords" : "START_SUFFIX_PLUS_ARRIVALS_SCHEDULED_BEFORE_CHECKPOINT_ADMISSION_DEADLINE_PLUS_QUEUE_CAPACITY_PLUS_ONE_OWNER",
+      "postCheckpointSuffixRecords" : "ALL_PLANNED_DURABLE_ARRIVALS_PLUS_QUEUE_CAPACITY_PLUS_ONE_OWNER",
+      "validatePrefixAndSuffixSeparately" : true
+    },
+    "scheduler" : {
+      "initialArrivalThread" : "DEDICATED_NO_COMPLETION_CHECKPOINT_OR_ARTIFACT_IO",
+      "coordinator" : "ASYNC_COMPLETION_CHECKPOINT_RETRY_AND_ARTIFACT_IO",
+      "scheduledObservationCutDoesNotMove" : true,
+      "producerClosureGraceMaxNanos" : 250000000,
+      "allScheduledArrivalsMaterialized" : true,
+      "allAdmissionDecisionsWithinLagLimits" : true,
+      "p99ProducerLagMaxNanos" : 50000000,
+      "maxProducerLagMaxNanos" : 250000000,
+      "observationCutLagMaxNanos" : 10000000
+    },
+    "observationCut" : "IMMUTABLE_SCHEDULED_WINDOW_END_RAW_RECONSTRUCTED_BEFORE_PRODUCER_CLOSURE_AND_TERMINAL_DRAIN",
+    "rawTimeContract" : {
+      "admissionTimestamp" : "admissionDecisionNanos",
+      "admissionObservationKind" : "ADMISSION_GATE_DECISION",
+      "completionTimestamp" : "ownerCompletedNanos",
+      "completionTimeOrigin" : "OWNER_COMPLETED_UNDER_GATE"
+    },
+    "terminalDrain" : "ZERO_PENDING_BEFORE_RECOVERY",
+    "resourceSampling" : {
+      "targetCadenceNanos" : 1000000000,
+      "maximumScheduledGapNanos" : 2000000000,
+      "scope" : "SCHEDULED_WINDOW_THROUGH_TERMINAL_DRAIN",
+      "cumulativeCounters" : "MONOTONIC_NON_DECREASING",
+      "gauges" : "NON_NEGATIVE_NOT_CUMULATIVE"
+    },
+    "directReplay" : {
+      "runtimeConfig" : "M08_LEGACY_UNBOUNDED_NO_SNAPSHOT",
+      "purpose" : "FRESH_ORDERED_APPLY_DIAGNOSTIC_ONLY"
+    }
+  },
+  "fixed" : {
+    "scenarios" : 20,
+    "status" : "PASS"
+  },
+  "generator" : {
+    "algorithm" : "splitmix64-v1",
+    "histories" : 64,
+    "actionsPerHistory" : 256,
+    "actions" : 16384,
+    "executedActions" : 16384,
+    "comparisons" : 65728,
+    "ledgerChecks" : 65728,
+    "terminalReconciliations" : 64,
+    "lanes" : 4,
+    "byteExactRegeneration" : true,
+    "freshModelPerHistory" : true,
+    "terminalLedgersReconcile" : true,
+    "digest" : "a4fc04af46e3f64d66ca0e3f2fa031d45d2abf222899b431a08894d7fbc78e67"
+  },
+  "admissionService" : {
+    "bounded" : true,
+    "singleOwnerWorker" : true,
+    "enqueueIsAck" : false,
+    "overloadBeforeWalAndIdentity" : true,
+    "exactSubmissionResultPassThrough" : true,
+    "checkpointAttemptMaintenanceLogicalLedgersSeparate" : true,
+    "terminalAccountingReconciles" : true
+  },
+  "methodSmoke" : {
+    "profileId" : "CI_SMOKE",
+    "resultScope" : "METHOD_SMOKE_ONLY",
+    "eligibleForReleaseEvidence" : false,
+    "evidenceMode" : "REAL_CI_SMOKE_BUNDLE",
+    "methodIsomorphic" : true,
+    "latencyOrigin" : "SCHEDULED_ARRIVAL",
+    "rawArrivals" : 8445,
+    "rawCompletions" : 7782,
+    "verifiedRawRecords" : 32557,
+    "verifiedBundleFiles" : 9,
+    "qualificationSha256" : "12059525c88808c1dde893005a9736482375a26972a628d14ba9b43884441b6e",
+    "percentileRankRule" : "NEAREST_RANK_CEIL_Q_TIMES_N",
+    "percentilesRecomputed" : true,
+    "resourceDimensionsPresent" : true,
+    "aboveKneeRetained" : true,
+    "sweepKnee" : 348,
+    "qopCandidate" : 243,
+    "provisionalSoakCandidates" : [ 243, 174, 87 ],
+    "soakAttemptCount" : 1,
+    "retainedSaturatedSoakAttempts" : 0,
+    "qualifiedAttemptNumber" : 1,
+    "qualifiedPointId" : "qop-soak-attempt-01-rate-00000243",
+    "qop" : 243,
+    "deterministicDiagnosticEvidenceMode" : "MODEL_ONLY",
+    "deterministicDiagnosticMethodIsomorphic" : false,
+    "releaseThroughputClaim" : false
+  },
+  "loadRecovery" : {
+    "realLocalRuntimeExact" : true,
+    "methodModelExact" : true,
+    "releaseProfileStillRequired" : true
+  },
+  "coverage" : {
+    "required" : 28,
+    "observed" : 28
+  },
+  "mutants" : {
+    "required" : 12,
+    "killed" : 12,
+    "classification" : "STUDENT_FAILURE",
+    "systemErrorCountedAsKill" : false,
+    "systemErrorControls" : 3
+  },
+  "releaseBoundary" : {
+    "ordinaryCheckProfile" : "CI_SMOKE",
+    "ordinaryCheckScope" : "METHOD_SMOKE_ONLY",
+    "ordinaryCheckEligibleForReleaseEvidence" : false,
+    "fullReleaseProfileRequired" : true,
+    "fullReleaseSoakSeconds" : 1800,
+    "fullReleaseExecutedByThisCheck" : false,
+    "noReleaseNumbersFabricated" : true
+  },
+  "releaseTarget" : {
+    "unitTag" : "course/m10-complete",
+    "productRelease" : "matching-0.5.0",
+    "verification" : "FULL_RELEASE_PROFILE_AND_CLEAN_TREE_EVIDENCE"
+  },
+  "environment" : {
+    "schemaVersion" : "matching.m10.environment.v1",
+    "status" : "PASS",
+    "scope" : "METHOD_SMOKE_EXECUTION_ENVIRONMENT",
+    "javaRuntime" : "OpenJDK Runtime Environment",
+    "javaVersion" : "25.0.4.1+1-LTS",
+    "javaVendor" : "Eclipse Adoptium",
+    "vmName" : "OpenJDK 64-Bit Server VM",
+    "jvmArguments" : [ "-Dfile.encoding=UTF-8", "-Duser.country=CN", "-Duser.language=zh", "-Duser.variant" ],
+    "osName" : "Mac OS X",
+    "osVersion" : "26.0.1",
+    "osArchitecture" : "aarch64",
+    "availableProcessors" : 8,
+    "maximumHeapBytes" : 2147483648,
+    "filesystemName" : "/dev/disk3s5",
+    "filesystemType" : "apfs",
+    "cpuModel" : "REQUIRED_FROM_RELEASE_RUNNER_FOR_RELEASE_EVIDENCE",
+    "storageDevice" : "REQUIRED_FROM_RELEASE_RUNNER_FOR_RELEASE_EVIDENCE",
+    "powerPolicy" : "REQUIRED_FROM_RELEASE_RUNNER_FOR_RELEASE_EVIDENCE",
+    "releaseEnvironmentComplete" : false
+  },
+  "architecture" : {
+    "matchingCoreChangePolicy" : "M10_HOT_PATH_AUDIT_SPLIT_ONLY",
+    "matchingCoreBusinessContractsUnchanged" : true,
+    "fullRetainedOrderAuditColdBoundaries" : true,
+    "terminalIdentityRetentionUnchanged" : true,
+    "productionModulesDependOnBenchmarks" : false,
+    "localRuntimeDependsOnJmhOrTestkit" : false,
+    "testkitProbeOnly" : true,
+    "runtimeTestSeamsPackagePrivate" : true,
+    "coreInfrastructureFree" : true
+  },
+  "artifactBindings" : [ {
+    "path" : "inherited-m09.json",
+    "sha256" : "68b196dabbd89da4abda34962e13e5de31c30e2e24c5334bed2926ea231ae83a",
+    "bytes" : 513
+  }, {
+    "path" : "fixed-scenarios.json",
+    "sha256" : "2afac8b8138f7609dbf7078ad868a25a959974e030d1cf178acbc81bbcda9c7c",
+    "bytes" : 5983
+  }, {
+    "path" : "generated-admission.json",
+    "sha256" : "c88cb4bf9f86adb16382fe8cfcf2cb0fe374275fa86f4519a17aed5415f1165d",
+    "bytes" : 1188
+  }, {
+    "path" : "generated-actions.canonical.utf8",
+    "sha256" : "a4fc04af46e3f64d66ca0e3f2fa031d45d2abf222899b431a08894d7fbc78e67",
+    "bytes" : 2302145
+  }, {
+    "path" : "coverage.json",
+    "sha256" : "35b4110a7453d51976de8cff3641b82e5171617ab22cc0f93aaac1f7969a36ae",
+    "bytes" : 4102
+  }, {
+    "path" : "admission-service.json",
+    "sha256" : "0a3dff21fb186f9318cf1cf44042272f7c704a3bf2651037245c3db2d19378c3",
+    "bytes" : 583
+  }, {
+    "path" : "method-smoke.json",
+    "sha256" : "4a4c2156c688c0e74f14bef394ee5aa2273c301a1c1cce9d564c27390b0a71a5",
+    "bytes" : 8670
+  }, {
+    "path" : "raw-arrivals.jsonl",
+    "sha256" : "a6eae41ffffbef62a9548b8575463bc1e892c71064d40ed2e3044ec364b30c57",
+    "bytes" : 173086
+  }, {
+    "path" : "raw-completions.jsonl",
+    "sha256" : "ee7665c9946002ded988a0168f887c8d91972f6606f547e8fb6d0a7adfc28552",
+    "bytes" : 141267
+  }, {
+    "path" : "raw-queue.jsonl",
+    "sha256" : "b054890044f268ab3cae86f65f8f36588e9496e8099b56f9d8c3caecc408524d",
+    "bytes" : 119366
+  }, {
+    "path" : "resources.jsonl",
+    "sha256" : "6778d174e7b3bb17a8eab9a9fd5344530fe566408ce9c61c5078c2a2979021d2",
+    "bytes" : 3104
+  }, {
+    "path" : "reconciliation.json",
+    "sha256" : "e8ddb61d153a80f299647210f73e2cf931095bd6cd0650c98f949c9ecda58ff8",
+    "bytes" : 332
+  }, {
+    "path" : "load-recovery.json",
+    "sha256" : "914f794217ef5d495f8d3da6aa2767ed70cdf528d45ff5fe0c34db4d2e9d2565",
+    "bytes" : 341
+  }, {
+    "path" : "micro-boundary.json",
+    "sha256" : "4fb44bc3c3108ed6770a16e53deaba14f4b9d686781b603e6c496187e1174b20",
+    "bytes" : 270
+  }, {
+    "path" : "counterexamples-v1.json",
+    "sha256" : "acd06adfd9995c2e6bb7167f4f925c23d25e19cd5dc97b51737ac67703b65dd2",
+    "bytes" : 7554
+  }, {
+    "path" : "counterexamples.json",
+    "sha256" : "5e8c61a147e6a75294ca46ce0f14b2f1f00450ac247ed45433112049a5eefa6d",
+    "bytes" : 423
+  }, {
+    "path" : "counterexamples.canonical.utf8",
+    "sha256" : "62f7423d64f4438bb83c9b6a625023fc161291f9ad89bc3eb07f496cd2b67778",
+    "bytes" : 5354
+  }, {
+    "path" : "replay.json",
+    "sha256" : "c50253a19c0c999a6d6a45225a6ca2dbf2667b4cc64cd80963cff4f835f203fe",
+    "bytes" : 341
+  }, {
+    "path" : "mutants.json",
+    "sha256" : "ae3c109f9e4036399ca31a8f38f888c6a4145691a5a7c0606e5d0dc05c1f1d54",
+    "bytes" : 3736
+  }, {
+    "path" : "environment.json",
+    "sha256" : "0683c674ed0856e150223d6c56d5f451e3d859c2b27f36f3cddce4bfd0ad985b",
+    "bytes" : 862
+  }, {
+    "path" : "architecture.json",
+    "sha256" : "ea61bc297e479c4404b17aac0d1f55eaca13e937b210f0ddeaa4c4106788df45",
+    "bytes" : 991
+  } ]
+}

@@ -1,0 +1,119 @@
+{
+  "schemaVersion" : "matching.m10.coverage-report.v1",
+  "status" : "PASS",
+  "required" : 28,
+  "observed" : 28,
+  "obligations" : [ {
+    "id" : "POSITIVE_FINITE_CAPACITY",
+    "status" : "PASS",
+    "witnessIds" : [ "FIXED:CAPACITY_REJECTS_NON_POSITIVE" ]
+  }, {
+    "id" : "TRY_SUBMIT_NON_BLOCKING",
+    "status" : "PASS",
+    "witnessIds" : [ "FIXED:TRY_SUBMIT_OWNS_CALLER_BYTES" ]
+  }, {
+    "id" : "CALLER_BYTES_OWNED",
+    "status" : "PASS",
+    "witnessIds" : [ "FIXED:TRY_SUBMIT_OWNS_CALLER_BYTES" ]
+  }, {
+    "id" : "FULL_REJECTS_OVERLOADED",
+    "status" : "PASS",
+    "witnessIds" : [ "FIXED:FULL_QUEUE_REJECTS_IMMEDIATELY" ]
+  }, {
+    "id" : "REJECTION_PRE_WAL",
+    "status" : "PASS",
+    "witnessIds" : [ "FIXED:OVERLOAD_REJECTION_PRECEDES_WAL" ]
+  }, {
+    "id" : "REJECTION_PRE_APPLY_IDENTITY",
+    "status" : "PASS",
+    "witnessIds" : [ "FIXED:OVERLOAD_REJECTION_PRESERVES_IDENTITY" ]
+  }, {
+    "id" : "ENQUEUE_NOT_ACK",
+    "status" : "PASS",
+    "witnessIds" : [ "FIXED:ENQUEUE_IS_NOT_DURABLE_ACK" ]
+  }, {
+    "id" : "SINGLE_WORKER_FIFO",
+    "status" : "PASS",
+    "witnessIds" : [ "FIXED:ONE_WORKER_PRESERVES_FIFO", "GENERATED:64x256_FRESH_MODEL" ]
+  }, {
+    "id" : "SUBMISSION_RESULT_UNCHANGED",
+    "status" : "PASS",
+    "witnessIds" : [ "FIXED:SUBMISSION_RESULT_PASSES_THROUGH_UNCHANGED" ]
+  }, {
+    "id" : "CHECKPOINT_SAME_ENVELOPE_RETRY",
+    "status" : "PASS",
+    "witnessIds" : [ "FIXED:CHECKPOINT_RETRY_REUSES_ENVELOPE", "GENERATED:64x256_FRESH_MODEL" ]
+  }, {
+    "id" : "CHECKPOINT_LATENCY_INCLUDED",
+    "status" : "PASS",
+    "witnessIds" : [ "FIXED:CHECKPOINT_PAUSE_COUNTS_IN_LATENCY" ]
+  }, {
+    "id" : "FAILURE_CLOSES_ADMISSION",
+    "status" : "PASS",
+    "witnessIds" : [ "FIXED:WORKER_FAILURE_CLOSES_ADMISSION", "GENERATED:64x256_FRESH_MODEL" ]
+  }, {
+    "id" : "PENDING_EXPLICIT_FAILURE",
+    "status" : "PASS",
+    "witnessIds" : [ "FIXED:ACCEPTED_PENDING_COMMANDS_FAIL_EXPLICITLY", "GENERATED:64x256_FRESH_MODEL" ]
+  }, {
+    "id" : "QUIESCE_REJECTS_NEW",
+    "status" : "PASS",
+    "witnessIds" : [ "FIXED:QUIESCE_REJECTS_NEW_OFFERS" ]
+  }, {
+    "id" : "QUIESCE_DRAINS_ACCEPTED",
+    "status" : "PASS",
+    "witnessIds" : [ "FIXED:QUIESCE_DRAINS_ACCEPTED_OFFERS" ]
+  }, {
+    "id" : "QUEUE_BOUNDED",
+    "status" : "PASS",
+    "witnessIds" : [ "FIXED:FULL_QUEUE_REJECTS_IMMEDIATELY", "GENERATED:64x256_FRESH_MODEL" ]
+  }, {
+    "id" : "OFFER_RECONCILIATION",
+    "status" : "PASS",
+    "witnessIds" : [ "FIXED:OFFER_AND_COMPLETION_TOTALS_RECONCILE", "GENERATED:64x256_FRESH_MODEL" ]
+  }, {
+    "id" : "COMPLETION_RECONCILIATION",
+    "status" : "PASS",
+    "witnessIds" : [ "FIXED:OFFER_AND_COMPLETION_TOTALS_RECONCILE", "GENERATED:64x256_FRESH_MODEL" ]
+  }, {
+    "id" : "OPEN_LOOP_INDEPENDENT",
+    "status" : "PASS",
+    "witnessIds" : [ "FIXED:OPEN_LOOP_USES_SCHEDULED_ARRIVAL" ]
+  }, {
+    "id" : "SCHEDULED_ARRIVAL_ORIGIN",
+    "status" : "PASS",
+    "witnessIds" : [ "FIXED:OPEN_LOOP_USES_SCHEDULED_ARRIVAL" ]
+  }, {
+    "id" : "RAW_PERCENTILE_RECONCILIATION",
+    "status" : "PASS",
+    "witnessIds" : [ "FIXED:RAW_SAMPLES_RECONCILE_PERCENTILES" ]
+  }, {
+    "id" : "ENVIRONMENT_FINGERPRINT",
+    "status" : "PASS",
+    "witnessIds" : [ "FIXED:ENVIRONMENT_AND_MICRO_RESULTS_ARE_SEPARATE" ]
+  }, {
+    "id" : "MICRO_E2E_SEPARATED",
+    "status" : "PASS",
+    "witnessIds" : [ "FIXED:ENVIRONMENT_AND_MICRO_RESULTS_ARE_SEPARATE" ]
+  }, {
+    "id" : "DETERMINISTIC_KNEE",
+    "status" : "PASS",
+    "witnessIds" : [ "FIXED:KNEE_AND_ABOVE_KNEE_ARE_EXPLICIT" ]
+  }, {
+    "id" : "ABOVE_KNEE_EXPLICIT_REJECTION",
+    "status" : "PASS",
+    "witnessIds" : [ "FIXED:KNEE_AND_ABOVE_KNEE_ARE_EXPLICIT" ]
+  }, {
+    "id" : "RESOURCE_DIMENSIONS_PRESENT",
+    "status" : "PASS",
+    "witnessIds" : [ "FIXED:KNEE_AND_ABOVE_KNEE_ARE_EXPLICIT" ]
+  }, {
+    "id" : "LOAD_REPLAY_RECOVERY_EXACT",
+    "status" : "PASS",
+    "witnessIds" : [ "FIXED:LOAD_RECOVERY_REMAINS_EXACT" ]
+  }, {
+    "id" : "SYSTEM_ERROR_NEVER_PASS",
+    "status" : "PASS",
+    "witnessIds" : [ "FIXED:LOAD_RECOVERY_REMAINS_EXACT", "MUTANT_CONTROLS:SYSTEM_ERROR_EXCLUDED" ]
+  } ]
+}

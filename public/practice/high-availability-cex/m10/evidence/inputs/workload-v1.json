@@ -1,0 +1,279 @@
+{
+  "schemaVersion": "matching.m10.workload.v1",
+  "seed": "6010",
+  "fixedAdmissionScenarios": [
+    {
+      "id": "CAPACITY_REJECTS_NON_POSITIVE",
+      "proofObligations": ["POSITIVE_FINITE_CAPACITY"]
+    },
+    {
+      "id": "TRY_SUBMIT_OWNS_CALLER_BYTES",
+      "proofObligations": ["TRY_SUBMIT_NON_BLOCKING", "CALLER_BYTES_OWNED"]
+    },
+    {
+      "id": "FULL_QUEUE_REJECTS_IMMEDIATELY",
+      "proofObligations": ["FULL_REJECTS_OVERLOADED", "QUEUE_BOUNDED"]
+    },
+    {
+      "id": "OVERLOAD_REJECTION_PRECEDES_WAL",
+      "proofObligations": ["REJECTION_PRE_WAL"]
+    },
+    {
+      "id": "OVERLOAD_REJECTION_PRESERVES_IDENTITY",
+      "proofObligations": ["REJECTION_PRE_APPLY_IDENTITY"]
+    },
+    {
+      "id": "ENQUEUE_IS_NOT_DURABLE_ACK",
+      "proofObligations": ["ENQUEUE_NOT_ACK"]
+    },
+    {
+      "id": "ONE_WORKER_PRESERVES_FIFO",
+      "proofObligations": ["SINGLE_WORKER_FIFO"]
+    },
+    {
+      "id": "SUBMISSION_RESULT_PASSES_THROUGH_UNCHANGED",
+      "proofObligations": ["SUBMISSION_RESULT_UNCHANGED"]
+    },
+    {
+      "id": "CHECKPOINT_RETRY_REUSES_ENVELOPE",
+      "proofObligations": ["CHECKPOINT_SAME_ENVELOPE_RETRY"]
+    },
+    {
+      "id": "CHECKPOINT_PAUSE_COUNTS_IN_LATENCY",
+      "proofObligations": ["CHECKPOINT_LATENCY_INCLUDED"]
+    },
+    {
+      "id": "WORKER_FAILURE_CLOSES_ADMISSION",
+      "proofObligations": ["FAILURE_CLOSES_ADMISSION"]
+    },
+    {
+      "id": "ACCEPTED_PENDING_COMMANDS_FAIL_EXPLICITLY",
+      "proofObligations": ["PENDING_EXPLICIT_FAILURE"]
+    },
+    {
+      "id": "QUIESCE_REJECTS_NEW_OFFERS",
+      "proofObligations": ["QUIESCE_REJECTS_NEW"]
+    },
+    {
+      "id": "QUIESCE_DRAINS_ACCEPTED_OFFERS",
+      "proofObligations": ["QUIESCE_DRAINS_ACCEPTED"]
+    },
+    {
+      "id": "OFFER_AND_COMPLETION_TOTALS_RECONCILE",
+      "proofObligations": ["OFFER_RECONCILIATION", "COMPLETION_RECONCILIATION"]
+    },
+    {
+      "id": "OPEN_LOOP_USES_SCHEDULED_ARRIVAL",
+      "proofObligations": ["OPEN_LOOP_INDEPENDENT", "SCHEDULED_ARRIVAL_ORIGIN"]
+    },
+    {
+      "id": "RAW_SAMPLES_RECONCILE_PERCENTILES",
+      "proofObligations": ["RAW_PERCENTILE_RECONCILIATION"]
+    },
+    {
+      "id": "ENVIRONMENT_AND_MICRO_RESULTS_ARE_SEPARATE",
+      "proofObligations": ["ENVIRONMENT_FINGERPRINT", "MICRO_E2E_SEPARATED"]
+    },
+    {
+      "id": "KNEE_AND_ABOVE_KNEE_ARE_EXPLICIT",
+      "proofObligations": [
+        "DETERMINISTIC_KNEE",
+        "ABOVE_KNEE_EXPLICIT_REJECTION",
+        "RESOURCE_DIMENSIONS_PRESENT"
+      ]
+    },
+    {
+      "id": "LOAD_RECOVERY_REMAINS_EXACT",
+      "proofObligations": ["LOAD_REPLAY_RECOVERY_EXACT", "SYSTEM_ERROR_NEVER_PASS"]
+    }
+  ],
+  "generatedAdmissionModel": {
+    "algorithm": "splitmix64-v1",
+    "histories": 64,
+    "actionsPerHistory": 256,
+    "totalActions": 16384,
+    "lanes": [
+      {"id": "BELOW_CAPACITY", "historyModulo": 0},
+      {"id": "QUEUE_FULL", "historyModulo": 1},
+      {"id": "CHECKPOINT_PAUSE", "historyModulo": 2},
+      {"id": "FAIL_CLOSE_RETRY", "historyModulo": 3}
+    ]
+  },
+  "admissionContract": {
+    "queueCapacity": 64,
+    "submission": "TRY_SUBMIT_NON_BLOCKING",
+    "callerBytes": "OWNED_BEFORE_RETURN",
+    "fullResult": "OVERLOADED_BEFORE_WAL",
+    "workerModel": "ONE_CALLER_SERIALIZED_LOCAL_RUNTIME_WORKER",
+    "acceptedCompletion": "EXACTLY_ONE_SUBMISSION_RESULT_OR_EXPLICIT_FAILURE",
+    "failureMode": "CLOSE_ADMISSION_AND_FAIL_PENDING",
+    "quiesce": "REJECT_NEW_THEN_DRAIN_ACCEPTED"
+  },
+  "microbenchmark": {
+    "harness": "JMH",
+    "mode": "SampleTime",
+    "benchmarks": [
+      "io.github.lchareln.cex.matching.benchmark.CoreMatchingBenchmark.restingMakerThenMatchingTaker",
+      "io.github.lchareln.cex.matching.benchmark.CoreMatchingBenchmark.canonicalEnvelopeDecode"
+    ],
+    "resultScope": "DIAGNOSTIC_ONLY",
+    "releaseGate": false
+  },
+  "qualificationRuntime": {
+    "policyId": "M10Q1",
+    "scope": "M10_DEDICATED_NOT_M09_DEFAULT",
+    "m09Default": {
+      "maxSuffixRecords": 64,
+      "maxSuffixBytes": 1048576
+    },
+    "finiteRecoveryBudget": {
+      "maxSuffixRecords": 1000000,
+      "maxSuffixBytes": 1073741824
+    },
+    "proactiveCheckpointOffsetNanos": 100000000,
+    "proactiveCheckpointAdmissionLagMaxNanos": 10000000,
+    "plannedRecordCeilingBytes": 1024,
+    "phaseBudgetPreflight": {
+      "prefixRecords": "START_SUFFIX_PLUS_ARRIVALS_SCHEDULED_BEFORE_CHECKPOINT_ADMISSION_DEADLINE_PLUS_QUEUE_CAPACITY_PLUS_ONE_OWNER",
+      "postCheckpointSuffixRecords": "ALL_PLANNED_DURABLE_ARRIVALS_PLUS_QUEUE_CAPACITY_PLUS_ONE_OWNER",
+      "validatePrefixAndSuffixSeparately": true
+    },
+    "scheduler": {
+      "initialArrivalThread": "DEDICATED_NO_COMPLETION_CHECKPOINT_OR_ARTIFACT_IO",
+      "coordinator": "ASYNC_COMPLETION_CHECKPOINT_RETRY_AND_ARTIFACT_IO",
+      "scheduledObservationCutDoesNotMove": true,
+      "producerClosureGraceMaxNanos": 250000000,
+      "allScheduledArrivalsMaterialized": true,
+      "allAdmissionDecisionsWithinLagLimits": true,
+      "p99ProducerLagMaxNanos": 50000000,
+      "maxProducerLagMaxNanos": 250000000,
+      "observationCutLagMaxNanos": 10000000
+    },
+    "observationCut": "IMMUTABLE_SCHEDULED_WINDOW_END_RAW_RECONSTRUCTED_BEFORE_PRODUCER_CLOSURE_AND_TERMINAL_DRAIN",
+    "rawTimeContract": {
+      "admissionTimestamp": "admissionDecisionNanos",
+      "admissionObservationKind": "ADMISSION_GATE_DECISION",
+      "completionTimestamp": "ownerCompletedNanos",
+      "completionTimeOrigin": "OWNER_COMPLETED_UNDER_GATE"
+    },
+    "terminalDrain": "ZERO_PENDING_BEFORE_RECOVERY",
+    "resourceSampling": {
+      "targetCadenceNanos": 1000000000,
+      "maximumScheduledGapNanos": 2000000000,
+      "scope": "SCHEDULED_WINDOW_THROUGH_TERMINAL_DRAIN",
+      "cumulativeCounters": "MONOTONIC_NON_DECREASING",
+      "gauges": "NON_NEGATIVE_NOT_CUMULATIVE"
+    },
+    "directReplay": {
+      "runtimeConfig": "M08_LEGACY_UNBOUNDED_NO_SNAPSHOT",
+      "purpose": "FRESH_ORDERED_APPLY_DIAGNOSTIC_ONLY"
+    }
+  },
+  "releaseOpenLoop": {
+    "profileId": "RELEASE_QUALIFICATION",
+    "generator": "OPEN_LOOP_SCHEDULED_ARRIVALS",
+    "latencyOrigin": "SCHEDULED_ARRIVAL",
+    "calibration": {
+      "mode": "UNPACED",
+      "seconds": 20,
+      "purpose": "RATE_SELECTION_ONLY"
+    },
+    "sweeps": 3,
+    "warmupSecondsPerRate": 10,
+    "measurementSecondsPerRate": 30,
+    "rateLadderPermille": [250, 500, 700, 850, 1000, 1150, 1350, 1600],
+    "percentiles": [0.5, 0.95, 0.99, 0.999],
+    "resultScope": "RELEASE_QUALIFICATION"
+  },
+  "ciSmoke": {
+    "profileId": "CI_SMOKE",
+    "generator": "OPEN_LOOP_SCHEDULED_ARRIVALS",
+    "latencyOrigin": "SCHEDULED_ARRIVAL",
+    "calibrationSeconds": 1,
+    "sweeps": 1,
+    "warmupSecondsPerRate": 1,
+    "measurementSecondsPerRate": 2,
+    "rateLadderPermille": [250, 500, 700, 850, 1000, 1150, 1350, 1600],
+    "percentiles": [0.5, 0.95, 0.99, 0.999],
+    "soakSeconds": 3,
+    "resultScope": "METHOD_SMOKE_ONLY",
+    "eligibleForReleaseEvidence": false
+  },
+  "saturation": {
+    "overloadRejectCount": "GREATER_THAN_ZERO",
+    "p99QueueDepthPermilleOfCapacity": 800,
+    "minimumCompletedPerAdmittedPermille": 995,
+    "maximumEndBacklogGrowthPermilleOfCapacity": 100,
+    "endingBacklog": "SCHEDULED_DECISION_BACKLOG_PLUS_SERVICE_PENDING_AT_CUT",
+    "postCutRule": "MAY_ADD_SATURATION_OR_FAILURE_NEVER_CLEAR_CUT",
+    "perSweepKnee": "FIRST_OF_TWO_CONSECUTIVE_SATURATED_RATES",
+    "publishedKnee": "MIN_OF_THREE_SWEEP_KNEES",
+    "qualifiedOperatingPointCandidate": "FLOOR_70_PERCENT_OF_PUBLISHED_KNEE",
+    "qualifiedOperatingPoint": "HIGHEST_ALL_SWEEP_UNSATURATED_MEASURED_RATE_AT_OR_BELOW_CANDIDATE"
+  },
+  "releaseSoak": {
+    "load": "QUALIFIED_OPERATING_POINT",
+    "durationSeconds": 1800,
+    "resultScope": "RELEASE_QUALIFICATION"
+  },
+  "resourceDimensions": ["ALLOCATION", "GC", "CPU", "MEMORY", "QUEUE_DEPTH"],
+  "correctnessContract": {
+    "acceptedCommands": "PASS_THROUGH_SUBMISSION_RESULT_AND_MATCH_DURABLE_TRANSCRIPT",
+    "overloadRejections": "NEVER_MUTATE_WAL_IDENTITY_OR_MATCHING_STATE",
+    "loadThenRecovery": "EXACT_CANONICAL_RESULT_AND_STATE_DIGEST",
+    "rawAttemptJoin": "POINT_LOGICAL_ID_AND_ATTEMPT_EXACTLY_ONCE",
+    "recoveryTrace": "RECONSTRUCT_BINARY_HASH_FROM_ACCEPTED_TRACE",
+    "systemError": "NEVER_PASS_OR_MUTANT_KILL"
+  },
+  "coverageRequirements": [
+    "POSITIVE_FINITE_CAPACITY",
+    "TRY_SUBMIT_NON_BLOCKING",
+    "CALLER_BYTES_OWNED",
+    "FULL_REJECTS_OVERLOADED",
+    "REJECTION_PRE_WAL",
+    "REJECTION_PRE_APPLY_IDENTITY",
+    "ENQUEUE_NOT_ACK",
+    "SINGLE_WORKER_FIFO",
+    "SUBMISSION_RESULT_UNCHANGED",
+    "CHECKPOINT_SAME_ENVELOPE_RETRY",
+    "CHECKPOINT_LATENCY_INCLUDED",
+    "FAILURE_CLOSES_ADMISSION",
+    "PENDING_EXPLICIT_FAILURE",
+    "QUIESCE_REJECTS_NEW",
+    "QUIESCE_DRAINS_ACCEPTED",
+    "QUEUE_BOUNDED",
+    "OFFER_RECONCILIATION",
+    "COMPLETION_RECONCILIATION",
+    "OPEN_LOOP_INDEPENDENT",
+    "SCHEDULED_ARRIVAL_ORIGIN",
+    "RAW_PERCENTILE_RECONCILIATION",
+    "ENVIRONMENT_FINGERPRINT",
+    "MICRO_E2E_SEPARATED",
+    "DETERMINISTIC_KNEE",
+    "ABOVE_KNEE_EXPLICIT_REJECTION",
+    "RESOURCE_DIMENSIONS_PRESENT",
+    "LOAD_REPLAY_RECOVERY_EXACT",
+    "SYSTEM_ERROR_NEVER_PASS"
+  ],
+  "requiredMutants": [
+    "M10-UNBOUNDED-QUEUE",
+    "M10-BLOCKING-PUT",
+    "M10-REJECT-AFTER-WAL",
+    "M10-REJECT-BINDS-IDENTITY",
+    "M10-ENQUEUE-AS-ACK",
+    "M10-DUAL-WORKER-REORDER",
+    "M10-DROPPED-COMPLETION",
+    "M10-METRICS-UNDERCOUNT",
+    "M10-CLOSED-LOOP-GENERATOR",
+    "M10-LATENCY-FROM-ACTUAL-SEND",
+    "M10-WRONG-PERCENTILE-KNEE",
+    "M10-SKIP-LOAD-RECOVERY-CHECK"
+  ],
+  "tutorialPermalinks": [
+    "performance-contract-and-open-loop-workload",
+    "bounded-admission-and-overload-semantics",
+    "percentiles-knee-point-and-capacity-envelope",
+    "allocation-gc-resource-and-soak-evidence",
+    "matching-0-5-0-release-evidence"
+  ]
+}
