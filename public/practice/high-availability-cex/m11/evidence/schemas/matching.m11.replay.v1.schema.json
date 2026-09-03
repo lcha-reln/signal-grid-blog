@@ -1,0 +1,153 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/lcha-reln/cex-matching/main/schemas/matching.m11.replay.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "status",
+    "replayInterpreter",
+    "persistedBytesSha256",
+    "persistedBytesParsed",
+    "required",
+    "replayed",
+    "orderedUniqueIds",
+    "stepCountsExact",
+    "freshCandidatePerReplay",
+    "productionControlsPassed",
+    "fingerprintsExact",
+    "oneDeleteAudits",
+    "invalidHistoryCountedAsKill",
+    "systemErrorCountedAsKill",
+    "canonicalSha256",
+    "results"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "matching.m11.replay.v1" },
+    "status": { "const": "PASS" },
+    "replayInterpreter": { "const": "M11_TYPED_STEP_INTERPRETER_V2" },
+    "persistedBytesSha256": { "$ref": "#/$defs/sha256" },
+    "persistedBytesParsed": { "const": true },
+    "required": { "const": 10 },
+    "replayed": { "const": 10 },
+    "orderedUniqueIds": { "const": true },
+    "stepCountsExact": { "const": true },
+    "freshCandidatePerReplay": { "const": true },
+    "productionControlsPassed": { "const": 10 },
+    "fingerprintsExact": { "const": true },
+    "oneDeleteAudits": { "const": 10 },
+    "invalidHistoryCountedAsKill": { "const": false },
+    "systemErrorCountedAsKill": { "const": false },
+    "canonicalSha256": { "$ref": "#/$defs/sha256" },
+    "results": {
+      "type": "array",
+      "minItems": 10,
+      "maxItems": 10,
+      "uniqueItems": true,
+      "prefixItems": [
+        { "$ref": "#/$defs/offerResult" },
+        { "$ref": "#/$defs/sessionResult" },
+        { "$ref": "#/$defs/correlationResult" },
+        { "$ref": "#/$defs/respondResult" },
+        { "$ref": "#/$defs/dropIdentityResult" },
+        { "$ref": "#/$defs/corruptSnapshotResult" },
+        { "$ref": "#/$defs/rejectPreviousResult" },
+        { "$ref": "#/$defs/metadataDigestResult" },
+        { "$ref": "#/$defs/doubleWalResult" },
+        { "$ref": "#/$defs/unsupportedVersionResult" }
+      ],
+      "items": false
+    }
+  },
+  "$defs": {
+    "result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "counterexampleId",
+        "mutant",
+        "classification",
+        "fingerprint",
+        "steps",
+        "actualMutationActions",
+        "freshCandidate",
+        "freshProductionControl",
+        "fingerprintExact",
+        "oneMinimal"
+      ],
+      "properties": {
+        "counterexampleId": { "type": "string", "pattern": "^cex-m11-[a-z0-9-]+$" },
+        "mutant": { "type": "string", "pattern": "^M11-[A-Z0-9-]+$" },
+        "classification": { "const": "STUDENT_FAILURE" },
+        "fingerprint": { "type": "string", "pattern": "^[A-Z0-9_]+$" },
+        "steps": { "type": "integer", "minimum": 1 },
+        "actualMutationActions": { "type": "integer", "minimum": 1 },
+        "freshCandidate": { "const": true },
+        "freshProductionControl": { "const": true },
+        "fingerprintExact": { "const": true },
+        "oneMinimal": { "const": true }
+      }
+    },
+    "offerResult": {
+      "allOf": [
+        { "$ref": "#/$defs/result" },
+        { "properties": { "counterexampleId": { "const": "cex-m11-offer-as-success" }, "mutant": { "const": "M11-OFFER-AS-SUCCESS" } } }
+      ]
+    },
+    "sessionResult": {
+      "allOf": [
+        { "$ref": "#/$defs/result" },
+        { "properties": { "counterexampleId": { "const": "cex-m11-session-as-identity" }, "mutant": { "const": "M11-SESSION-AS-IDENTITY" } } }
+      ]
+    },
+    "correlationResult": {
+      "allOf": [
+        { "$ref": "#/$defs/result" },
+        { "properties": { "counterexampleId": { "const": "cex-m11-correlation-as-identity" }, "mutant": { "const": "M11-CORRELATION-AS-IDENTITY" } } }
+      ]
+    },
+    "respondResult": {
+      "allOf": [
+        { "$ref": "#/$defs/result" },
+        { "properties": { "counterexampleId": { "const": "cex-m11-respond-before-bind" }, "mutant": { "const": "M11-RESPOND-BEFORE-BIND" } } }
+      ]
+    },
+    "dropIdentityResult": {
+      "allOf": [
+        { "$ref": "#/$defs/result" },
+        { "properties": { "counterexampleId": { "const": "cex-m11-drop-identity-from-snapshot" }, "mutant": { "const": "M11-DROP-IDENTITY-FROM-SNAPSHOT" } } }
+      ]
+    },
+    "corruptSnapshotResult": {
+      "allOf": [
+        { "$ref": "#/$defs/result" },
+        { "properties": { "counterexampleId": { "const": "cex-m11-corrupt-snapshot-to-genesis" }, "mutant": { "const": "M11-CORRUPT-SNAPSHOT-TO-GENESIS" } } }
+      ]
+    },
+    "rejectPreviousResult": {
+      "allOf": [
+        { "$ref": "#/$defs/result" },
+        { "properties": { "counterexampleId": { "const": "cex-m11-reject-n-minus-one" }, "mutant": { "const": "M11-REJECT-N-MINUS-ONE" } } }
+      ]
+    },
+    "metadataDigestResult": {
+      "allOf": [
+        { "$ref": "#/$defs/result" },
+        { "properties": { "counterexampleId": { "const": "cex-m11-include-runtime-metadata-in-digest" }, "mutant": { "const": "M11-INCLUDE-RUNTIME-METADATA-IN-DIGEST" } } }
+      ]
+    },
+    "doubleWalResult": {
+      "allOf": [
+        { "$ref": "#/$defs/result" },
+        { "properties": { "counterexampleId": { "const": "cex-m11-double-write-local-wal" }, "mutant": { "const": "M11-DOUBLE-WRITE-LOCAL-WAL" } } }
+      ]
+    },
+    "unsupportedVersionResult": {
+      "allOf": [
+        { "$ref": "#/$defs/result" },
+        { "properties": { "counterexampleId": { "const": "cex-m11-accept-unsupported-version" }, "mutant": { "const": "M11-ACCEPT-UNSUPPORTED-VERSION" } } }
+      ]
+    },
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+  }
+}

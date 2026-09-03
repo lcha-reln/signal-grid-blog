@@ -68,7 +68,7 @@ export const PRACTICE_CASES: readonly PracticeCase[] = [
     summary:
       "从单交易对限价撮合起步，先交付高可用现货核心，再按门禁演进到杠杆、永续、交割与期权。",
     status: "BUILDING",
-    statusLabel: "SPOT · M11 实施中",
+    statusLabel: "SPOT · M11 已发布",
     totalUnits: 32,
     plannedRepositories: 3,
     stack: ["Java", "Aeron Cluster", "Gradle", "Docker", "Astro Labs"],
@@ -90,7 +90,7 @@ export const PRACTICE_CASES: readonly PracticeCase[] = [
     ],
     currentUnitCode: "M11",
     currentAction:
-      "M00～M10 已发布；M11 已按 PLAN v0.14 打开唯一实施窗口，只接入真实单节点 Aeron Cluster Adapter，冻结 application request/response/snapshot codec（current=2、minReadable=1、六份 Golden）、ingress→log apply→correlated response、Cluster snapshot/restart 与 Direct/Cluster 规范化业务等价。五篇教程保持草稿；在 clean complete tag、真实 evidence、内容审查、推送部署与线上验证闭合前，不公开 M11，也不打开 M12 三节点故障窗口。",
+      "M00～M11 已冻结发布身份；M11 已具备 clean course/m11-complete、真实单节点 Aeron Cluster evidence 与五篇完整教程，正等待本次推送、部署、生产教程路由和 manifest 哈希验证闭合。M12 三节点故障窗口仍未签约，也未登记；只有本次线上闭环全部通过后，才单独冻结 M12 合同和结构化 RED。",
     profileRoadmapTitle: "现货是第一份完整交付，不是专题终点",
     profileRoadmapDescription:
       "只有当前 Profile 展开单元、仓库与实施设计；LOCKED 只冻结产品方向和解锁门禁，不代表已经创建单元、仓库或服务；后续优先复用已发布的 Matching、Counter 与 Rest 边界，具体仓库拓扑在解锁时评审。",

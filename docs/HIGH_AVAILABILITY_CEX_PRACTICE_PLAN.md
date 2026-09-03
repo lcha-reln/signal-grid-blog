@@ -1,6 +1,6 @@
 # 高可用 CEX 交易核心实战课程设计
 
-> 状态：M11 当前 `IN_PROGRESS`（M00～M10 均已发布；M11 是唯一实施单元）
+> 状态：M11 当前 `PUBLISHED`（M00～M11 均已发布；当前没有 `IN_PROGRESS` / `READY` 单元，M12 仍是未签约候选）
 >
 > 规划日期：2026-08-26
 >
@@ -8,15 +8,15 @@
 >
 > 当前最新签约单元合同 `planVersion`：`0.14`（M11）
 >
-> 当前推荐动作：只实现 M11 的真实单节点 Aeron Cluster Adapter、application request/response/snapshot codec（current=2、minReadable=1、六份 Golden）、ingress→log apply→response、Cluster snapshot/restart 与 Direct/Cluster 规范化业务等价；在 complete/evidence/内容/部署闭环前不公开草稿、不打开 M12
+> 当前推荐动作：保持 M11 的 complete tag、公开 evidence、五篇教程和单节点停止边界一致；不把 M11 的结果外推为三节点高可用，也不在下一次独立合同评审前签约或打开 M12
 >
 > 案例 slug：`high-availability-cex`
 >
 > 当前 Profile：`SPOT-CEX-1.0`
 >
-> 当前规划基线：`SPOT-CEX-1.0` 的 32 个候选交付单元（Matching 15 + Counter 10 + Rest 7），3 个按门禁顺序创建的代码仓库；M00–M10 已发布，M11 已签约并进入实施，M12 及以后仍为候选
+> 当前规划基线：`SPOT-CEX-1.0` 的 32 个候选交付单元（Matching 15 + Counter 10 + Rest 7），3 个按门禁顺序创建的代码仓库；M00–M11 已发布，M12 及以后仍为候选
 >
-> 当前发布边界：M00～M10 均为 `PUBLISHED`。M10 的 annotated `course/m10-complete` 与 annotated `matching-0.5.0` 同指 clean commit `77e80b0962cd6a74f6d8cd0ac203b3be5bdd6bdb`；`cex.lab-evidence.v2` manifest SHA-256 为 `03134fc4e80e6a29ba425a1e383d393af0cceeb1692b865e2c4c833b45bcc717`。完整 release qualification 在所记录环境与冻结 workload 下得到 final QOP `82 offers/s`，该数字不是 Cluster 容量或高可用声明。M11 当前只有 annotated `course/m11-start` 所代表的结构化 RED、正式合同和五篇 `draft: true` 教程；没有 complete ref、完成提交、公开 evidence、浏览器 Lab、产品 release、三节点故障或通过数字
+> 当前发布边界：M00～M11 均为 `PUBLISHED`。M11 的 annotated `course/m11-start` peeled 到 `e80c786425dd5766b0e3568c87f01b366e44e8e6`，冻结 workload SHA-256 `f856c8dcf2e902add248a59cdb97525083bae469745682eed0ea7ae9169033b6`；annotated `course/m11-complete` 指向 clean commit `6997e05cea81cb93b883e882c8d75887d0622a22`。公开 `cex.lab-evidence.v2` manifest SHA-256 为 `6785175b2e8657c054bc55d49c60293c5740f23770631037f51d4af6bb1caef2`，绑定 7 项 claim、8 条 limitation、27 个 artifact、12 个 child report 和约 1.27 MiB 紧凑证据；22/22 fixed、28/28 obligation、32 条 executed assertion fact、10/10 个从 production-component seam 产生的 production-derived candidate、3 个不计 kill 的 `SYSTEM_ERROR` control 以及两个真实 Cluster run 共 8,192 次 ingress 闭合。五篇教程已原子公开；M11 不登记浏览器 Lab，不创建产品 release，也不包含三节点故障、Cluster 容量或高可用通过声明
 
 ## 1. 这份文档决定什么
 
@@ -28,7 +28,7 @@
 
 > 怎样从一个可证明正确的限价单撮合内核开始，先交付边界清楚、可恢复、可运维、证据完整的高可用现货核心，再在每个前置 Profile 真正通过资格审查后，分别引入债务、持仓重估、到期结算和非线性风险？
 
-路线图可以完整，实施级设计默认只覆盖当前和下一个单元；只有用户明确批准的连续批次可以预先签约，但代码窗口永远只有当前单元。M01～M10 已逐步完成输入验证、撮合语义、运行控制、本地 WAL、durable idempotency、Snapshot、有界恢复，以及单机持久运行时有界准入与环境绑定性能包络的 RED→GREEN→evidence→内容发布闭环。PLAN v0.14 只为 M11 打开真实单节点 Aeron Cluster Adapter：core 保持无 Aeron，Cluster log/snapshot 成为唯一恢复真相，并用 application request/response/snapshot current2/minReadable1 codec、六份 Golden 与 Direct/Cluster/restart 规范化业务等价验收。完整业务 events 只用于观察等价，不在 M11 冻结下游 event stream；三节点复制故障、集群性能、撮合优化大全与预写绝对 TPS/SLA 继续排除。任何超出已签约单元合同的能力，必须删除等量范围、拆分单元或进入 backlog。
+路线图可以完整，实施级设计默认只覆盖当前和下一个单元；只有用户明确批准的连续批次可以预先签约，但代码窗口永远只有当前单元。M01～M10 已逐步完成输入验证、撮合语义、运行控制、本地 WAL、durable idempotency、Snapshot、有界恢复，以及单机持久运行时有界准入与环境绑定性能包络的 RED→GREEN→evidence→内容发布闭环。PLAN v0.14 已让 M11 以同样流程完成真实单节点 Aeron Cluster Adapter：core 保持无 Aeron，Cluster log/snapshot 成为唯一恢复真相，并用 application request/response/snapshot current2/minReadable1 codec、六份 Golden 与 Direct/Cluster/restart 规范化业务等价验收。完整业务 events 只用于观察等价，不在 M11 冻结下游 event stream；三节点复制故障、集群性能、撮合优化大全与预写绝对 TPS/SLA 继续排除。任何超出已签约单元合同的能力，必须删除等量范围、拆分单元或进入 backlog。
 
 ## 2. 旧专题为何失败，以及本次怎样避免重演
 
@@ -153,7 +153,7 @@ Matching 不从 Aeron Cluster 脚手架开始。
 → 静态分片和可续接输出
 ```
 
-M00–M10 不允许生产代码依赖 Aeron。M11 接入 Cluster 时，撮合算法保持不变，只替换命令排序、复制日志、snapshot 生命周期和对外响应适配。Aeron runtime 不再双写自研 WAL，避免两个恢复真相。
+M00–M10 不允许生产代码依赖 Aeron。M11 接入 Cluster 时，撮合算法保持不变，只替换命令排序、复制日志、snapshot 生命周期和对外响应适配。Cluster adapter 以不引用自研 WAL 为设计边界，避免两个恢复真相；发布证据只把它证明到完整 `ClusteredService` callback-reachable production source graph，不能把静态 source-reference count 解释成运行时写调用 counter。
 
 ### 4.2 Counter 的演进结论
 
@@ -233,7 +233,7 @@ Rest 初期是一个仓库和一个部署应用，内部划分 PriAPI、OpenAPI�
 
 | 顺序 | 仓库                                                        | 创建条件                                                                                   | 主要制品                                                             |
 | ---: | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------ | -------------------------------------------------------------------- |
-|    1 | [`cex-matching`](https://github.com/lcha-reln/cex-matching) | 已创建；M00～M10 均为 `PUBLISHED`，`matching-0.5.0` 已形成完成身份；M11 当前 `IN_PROGRESS` | Matching core、test-only reference、testkit、runtime、协议、故障实验 |
+|    1 | [`cex-matching`](https://github.com/lcha-reln/cex-matching) | 已创建；M00～M11 均为 `PUBLISHED`，`matching-0.5.0` 与 `course/m11-complete` 已形成各自停止点身份 | Matching core、test-only reference、testkit、runtime、协议、故障实验 |
 |    2 | `counter`                                                   | `matching-1.0.0` 发布并从干净环境复验                                                      | Counter core、Cluster runtime、bridge、sync、query                   |
 |    3 | `rest`                                                      | `counter-1.0.0` 发布并从干净环境复验                                                       | PriAPI、OpenAPI、WS、system tests                                    |
 
@@ -265,6 +265,7 @@ course/m09-complete
 course/m10-start
 course/m10-complete
 course/m11-start
+course/m11-complete
 ```
 
 发现错误时发布递增的补丁 tag，不移动旧 tag，例如 `course/m00.1-start`、`course/m00.2-start` 或 `course/m00.1-complete`。只有命名停止点才另外发布 `matching-0.1.0` 等产品 release；普通单元没有产品 release。
@@ -318,12 +319,12 @@ rest     = rest-1.0.0
 | M08     | `PUBLISHED`   | `CONTRACT` | 随 `cex-matching` 仓库 | 本地单写者 WAL、ACK 边界、durable identity/slot/epoch 与 genesis recovery 已由 20 fixed、96×48、24/24 coverage、10/10 mutant、三个 child JVM crash smoke、五篇教程与 tag-bound evidence 闭环；无产品 release                                          |
 | M09     | `PUBLISHED`   | `CONTRACT` | 随 `cex-matching` 仓库 | 完整 state cut、连续 suffix、RecoveryBudget、whole-segment retirement 已由 22/88 fixed、96×40 generated + 65 budget prelude、32/32 obligation、9+3 candidate、五篇教程与 tag-bound evidence 闭环；无 Lab 或产品 release                               |
 | M10     | `PUBLISHED`   | `CONTRACT` | 随 `cex-matching` 仓库 | 有界准入、CI/release profile、open-loop/knee、M10Q2 降序长稳态晋级/final QOP 已由 20 fixed、64×256 generated、28/28 obligation、12/12 mutant、三次 1800 秒 attempt、五篇教程、tag-bound evidence 与 `matching-0.5.0` 闭环                             |
-| M11     | `IN_PROGRESS` | `CONTRACT` | 随 `cex-matching` 仓库 | 真实单节点 Aeron Cluster Adapter、log-only apply、application request/response/snapshot current2/minReadable1 六份 Golden、Cluster snapshot/restart 与 Direct/Cluster 规范化业务等价；五篇教程保持草稿，无产品 release、三节点故障或 Cluster 容量声明 |
+| M11     | `PUBLISHED`   | `CONTRACT` | 随 `cex-matching` 仓库 | 真实单节点 Aeron Cluster Adapter、log-only apply、application request/response/snapshot current2/minReadable1 六份 Golden、Cluster snapshot/restart 与 Direct/Cluster 规范化业务等价，已由 22/22 fixed、28/28 obligation、32 条 assertion fact、10/10 production-derived candidate、3 个 SYSTEM_ERROR control、8,192 次真实 ingress、五篇教程与 tag-bound evidence 闭环；无产品 release、三节点故障或 Cluster 容量声明 |
 | M12–M14 | `CANDIDATE`   | `RISK_MAP` | 随 `cex-matching` 仓库 | 记录能力、关键不变量和危险故障，不冻结类、Schema 字段编号、依赖版本或文章标题                                                                                                                                                                         |
 | C00–C09 | `CANDIDATE`   | `RISK_MAP` | `LOCKED`               | 记录权威边界和关键故障；Matching 1.0 前不创建仓库                                                                                                                                                                                                     |
 | R00–R06 | `CANDIDATE`   | `RISK_MAP` | `LOCKED`               | 记录外部契约边界和关键故障；Counter 1.0 前不创建仓库                                                                                                                                                                                                  |
 
-任何时刻全专题最多一个 `IN_PROGRESS`，最多一个下一单元处于 `READY`。候选总数 32（Matching 15 + Counter 10 + Rest 7）只是当前 SPOT Profile 的课程容量基线；未进入 `CONTRACTED` 的候选单元可以在评审时拆分、合并或调整 ID，已签约或已发布的单元不能静默改变。LOCKED Profile 不进入这个计数，也不占用实施窗口。M06–M08 是一次已完成的有界批次例外。当前 M11 是唯一 `IN_PROGRESS` 单元；M12 在 M11 complete/evidence、内容、推送部署与线上验证完整闭合前不能签约或打开代码窗口。
+任何时刻全专题最多一个 `IN_PROGRESS`，最多一个下一单元处于 `READY`。候选总数 32（Matching 15 + Counter 10 + Rest 7）只是当前 SPOT Profile 的课程容量基线；未进入 `CONTRACTED` 的候选单元可以在评审时拆分、合并或调整 ID，已签约或已发布的单元不能静默改变。LOCKED Profile 不进入这个计数，也不占用实施窗口。M06–M08 是一次已完成的有界批次例外。M11 已完整发布，当前没有 `IN_PROGRESS` / `READY` 单元；M12 仍须经过下一次独立合同评审，本文不签约也不打开其代码窗口。
 
 ### 6.2 单元状态机
 
@@ -491,7 +492,7 @@ Matching 是唯一优先启动的项目。它先证明业务语义，再证明�
 | M08 WAL 与确认边界             | 单机持久确认和 durable idempotency                      | 单写者本地运行时在 append/force/apply 后 ACK，可从 genesis WAL 重建命令结果与幂等索引        | `PUBLISHED / CONTRACT`   |
 | M09 Snapshot 检查点与有界恢复  | checkpointed bounded recovery                           | 完整已 apply Snapshot cut + 连续受限 WAL suffix 等价于全量重放，前缀只在可恢复集合持久后回收 | `PUBLISHED / CONTRACT`   |
 | M10 性能与过载资格             | 容量和背压                                              | 已发布 `matching-0.5.0`                                                                      | `PUBLISHED / CONTRACT`   |
-| M11 Aeron Cluster Adapter      | 单成员 Cluster 日志与 Snapshot 运行时适配              | 单节点 Cluster 与 direct runner 业务等价                                                     | `IN_PROGRESS / CONTRACT` |
+| M11 Aeron Cluster Adapter      | 单成员 Cluster 日志与 Snapshot 运行时适配              | 单节点 Cluster 与 direct runner 业务等价                                                     | `PUBLISHED / CONTRACT`   |
 | M12 三节点 HA                  | 切主、fencing 和结果未知                                | 发布 `matching-0.8.0`                                                                        | `CANDIDATE / RISK_MAP`   |
 | M13 多交易对静态分片           | instrument 到 shard 的权威路由                          | 多订单簿故障域和容量可解释                                                                   | `CANDIDATE / RISK_MAP`   |
 | M14 可续接业务输出             | 下游连续消费                                            | 发布 `matching-1.0.0`                                                                        | `CANDIDATE / RISK_MAP`   |
@@ -1832,17 +1833,17 @@ M10 已形成 `matching-0.5.0`：一个单进程、单 shard、可恢复的本�
 
 > M11 单元合同 `planVersion`：`0.14`
 >
-> 当前生命周期：`IN_PROGRESS`
+> 当前生命周期：`PUBLISHED`
 >
 > 唯一新增复杂度：真实单节点 Aeron Cluster 的日志与 Snapshot 运行时适配
 >
-> 当前边界：annotated `course/m11-start` 冻结结构化 RED、22 fixed、seed 6111 的连续 32 segment×128 action corpus、两个 fresh Cluster run 共 8,192 actual ingress，以及 `CURRENT_NEW[0..7] → DUPLICATE_REPLAY[0..3] → PREVIOUS_NEW[0..7] → DUPLICATE_REPLAY[4..7] → IDENTITY_CONFLICT[0..7]` 的显式段表；全局 action 2,048 后 snapshot/restart 必须让第一条恢复后输入成为真实 NEW。另有 28 obligation、10 candidate、3 SYSTEM_ERROR control、六份 Golden 与五篇 permalink；没有 complete ref、完成提交、公开 evidence、产品 release 或通过数字
+> 当前边界：annotated `course/m11-start` peeled 到 `e80c786425dd5766b0e3568c87f01b366e44e8e6`，冻结结构化 RED 与 workload SHA-256 `f856c8dcf2e902add248a59cdb97525083bae469745682eed0ea7ae9169033b6`；annotated `course/m11-complete` 指向 clean commit `6997e05cea81cb93b883e882c8d75887d0622a22`。完成 evidence 证明 22/22 fixed、28/28 obligation、32 条 executed assertion fact、10/10 个从 production-component seam 产生的 production-derived candidate、3 个不计 kill 的 `SYSTEM_ERROR` control、六份 Golden 和两个 fresh Cluster run 共 8,192 次真实 ingress。公开 manifest SHA-256 为 `6785175b2e8657c054bc55d49c60293c5740f23770631037f51d4af6bb1caef2`，绑定 7 项 claim、8 条 limitation、27 个 artifact、12 个 child report 和约 1.27 MiB 紧凑证据；五篇教程已公开，无浏览器 Lab、产品 release、三节点故障或 Cluster 容量声明
 
 M11 不是把 M10 的 `LocalMatchingService` 换一个启动类，也不是提前做一套缩水的三节点高可用。它只回答一个更窄但必须先回答的问题：同一个已经证明过的确定性业务状态机，怎样在真实单 member Aeron Cluster 的 ingress、Cluster log、`ClusteredService` apply 和 Cluster snapshot 生命周期里运行，同时不产生第二套业务语义或第二份恢复真相？单 member 没有冗余副本，M11 不宣称复制高可用。
 
 #### 8.13.1 权威边界：Aeron 只能在 Adapter 外层
 
-`matching-core` 继续拥有订单簿、订单生命周期、RuleSet、市场模式、Mass Cancel、STP 和 deterministic state transition，并且必须相对 `course/m10-complete` 保持 byte-identical。M11 的完成目标新增一个 `matching-cluster-runtime` production module，依赖基线固定为 Aeron `1.52.2`、Agrona `2.5.0` 与 Java 25；只有这个模块可以依赖 Aeron。Cluster runtime/codec 负责：
+`matching-core` 继续拥有订单簿、订单生命周期、RuleSet、市场模式、Mass Cancel、STP 和 deterministic state transition，并且相对 `course/m10-complete` 保持 byte-identical。M11 已新增一个 `matching-cluster-runtime` production module，依赖基线固定为 Aeron `1.52.2`、Agrona `2.5.0` 与 Java 25；只有这个模块可以依赖 Aeron。Cluster runtime/codec 负责：
 
 - 把包含 canonical M08C1 envelope 的 application request bytes 经 ingress 送入 Cluster；
 - 只在 `ClusteredService` 收到按 Cluster log 排序的消息时 decode 和 apply；
@@ -1869,7 +1870,7 @@ Cluster snapshot
   → continuous log suffix apply
 ```
 
-Cluster adapter 不再写 M08W1，也不把 M09S1 作为 fallback。若同时维护 standalone WAL 与 Cluster log，一个 crash window 就可能留下“Cluster 已 apply、本地 WAL 未写”或相反状态，恢复时将无法回答哪一份才是权威。M11 因此把 `standaloneWalDualWrite=false` 作为可执行架构事实，而不是运维约定。
+Cluster adapter 不再写 M08W1，也不把 M09S1 作为 fallback。若同时维护 standalone WAL 与 Cluster log，一个 crash window 就可能留下“Cluster 已 apply、本地 WAL 未写”或相反状态，恢复时将无法回答哪一份才是权威。M11 的发布证据把这一边界限定为对完整 `ClusteredService` callback-reachable production source graph 的静态检查：该图中的 standalone-WAL 与 external-I/O reference 均为 0。报告里的 `standaloneWalWrites=0` 只是为兼容 schema 保留的 source-reference count，不是运行时写调用计数，不能据此声称完成了动态 I/O 追踪。
 
 #### 8.13.3 Ingress、apply 与响应的顺序合同
 
@@ -1924,16 +1925,16 @@ restart 路径必须真实装载 Cluster snapshot，并从其后的连续 log su
 - annotated `course/m11-start` 保存 schema-valid `matching.m11.check.v1 / GOAL_NOT_IMPLEMENTED`，且历史起点不查询未来 complete tag；
 - 默认 build 与 M00～M10 累计回归保持 GREEN，M10 的环境绑定容量数字不复制到 Cluster；
 - Aeron 1.52.2 / Agrona 2.5.0 / Java 25 下必须启动真实 localhost 单节点 Media Driver、Archive、Consensus Module 与 ClusteredService，member 0 成为 appointed Leader；使用 `build/tmp/m11` 独占目录、`maxWorkers=1`、有界 poll 与 error/counter capture，不能用 fake transport、直接调用 callback、固定 sleep 或普通内存队列冒充 Cluster；
-- architecture 报告证明 core 无 Aeron、Aeron 依赖被限制在 adapter/codec、ClusteredService 无外部业务副作用（Aeron 自身仍拥有网络和文件 I/O）、Cluster runtime 不双写 standalone WAL；
+- architecture 报告证明 core 无 Aeron、Aeron 依赖被限制在 adapter/codec，并对完整 `ClusteredService` callback-reachable production source graph 验证 standalone-WAL / external-I/O reference 均为 0（Aeron 自身仍拥有网络和文件 I/O）；该 source-graph 事实不是运行时写调用 counter；
 - 22 个 fixed scenario 全部执行；seed 6111 生成一个连续的 32 segment × 128 action = 4,096 action corpus，不在 segment 间重置状态。32 段的顺序是冻结数据而不是由 lane 枚举顺序推导：`CURRENT_NEW[0..7] → DUPLICATE_REPLAY[0..3] → PREVIOUS_NEW[0..7] → DUPLICATE_REPLAY[4..7] → IDENTITY_CONFLICT[0..7]`。NEW 使用独立 `newOrdinal=1..2048`，application sequence 与 producer cursor 只随 NEW 连续推进；两次 fresh generation byte-exact；
 - 同一份 4,096-action corpus 完整经过 Direct、独立 fresh uninterrupted Cluster 和第二个独立 fresh snapshot/restart Cluster；两个 Cluster 使用不同 owned root 与不重叠端口块，共产生 8,192 次真实 Cluster ingress；
 - Direct/Cluster fresh-state 路径产生相同的规范化 disposition、完整 business events 和 semantic digest；runtime metadata 另行记录，不得通过删除业务字段制造假等价；
 - application request/response/snapshot 的六份 version 1/2 Golden byte-exact，范围外版本、noncanonical 或 trailing bytes 在 apply 前失败关闭；
 - 全局 generated action 2,048 后暂停新 ingress；此时前缀必须实际得到 1,536 个 NEW 与 512 个 duplicate，Snapshot 保存 `applicationSequence=1536`、`nextApplicationSequence=1537`。Admin snapshot `OK` 只证明请求被接受；关闭前还必须在有界期限内同时观察 snapshot counter 增量、control toggle 回到 `NEUTRAL`、Recording Log 新增 service ID `-1` 与 `0` 的同 term/同 log-position 且 recording ID 均为新值、以及 Service 记录的 application snapshot payload SHA。fresh reopen 后 `onStart` 必须消费 non-null snapshot Image，loaded digest 与 application sequence 精确匹配该已完成 Snapshot；第一条真实 suffix ingress 必须是 `PREVIOUS_NEW` 且返回 `NEW_APPLIED/applicationSequence=1537`，其后还要逐条核对 512 个跨 Snapshot duplicate 的完整 original result、1,024 个 conflict 的零状态变化、连续 cursor 与三路径一致；
-- 28/28 obligation 必须有 executed witness；十个 executable candidate 只有 `STUDENT_FAILURE` 才计 kill并保存 one-minimal replay，三个 `SYSTEM_ERROR` control、环境启动失败、端口冲突或超时不能冒充业务反例；
-- 完成阶段才允许写入精确测试数量、digest、complete commit、manifest、claim、limitation 和 artifact hash；当前合同不预写通过数字。
+- 28/28 obligation 由 32 条 executed assertion fact 覆盖；十个 executable candidate 从 production-component fault seam 产生 production-derived observation，只有 `STUDENT_FAILURE` 才计 kill 并保存 one-minimal replay。这不表示十条路径都在真实 Aeron 进程内注入故障；三个 `SYSTEM_ERROR` control、环境启动失败、端口冲突或超时均不冒充业务反例；
+- 完成身份已经冻结：annotated `course/m11-complete` 指向 clean commit `6997e05cea81cb93b883e882c8d75887d0622a22`；7 项 claim、8 条 limitation、27 个 artifact 与全部 artifact hash 由 SHA-256 `6785175b2e8657c054bc55d49c60293c5740f23770631037f51d4af6bb1caef2` 的 manifest 绑定。
 
-公开 evidence 使用紧凑导出，不复制 Aeron archive、term buffer、cluster-dir 或完整 driver 日志。目标不超过 5 MiB，硬上限 10 MiB、64 个文件、单文件 2 MiB；发布清单记录精确字节数、最大文件和 `containsAeronArchive=false`。完整临时运行目录只存在于代码仓库 `build/`，不进入 Git。M10 的 460 MiB 性能 raw 是性能资格特例，不是 M11 模板。
+公开 evidence 使用紧凑导出，不复制 Aeron archive、term buffer、cluster-dir 或完整 driver 日志。实际导出约 1.27 MiB，包含 27 个 manifest-bound artifact 和 12 个 child report；它通过不超过 5 MiB 的目标以及 10 MiB、64 个文件、单文件 2 MiB 的硬门禁，并记录 `containsAeronArchive=false`。完整临时运行目录只存在于代码仓库 `build/`，不进入 Git。M10 的 460 MiB 性能 raw 是性能资格特例，不是 M11 模板。
 
 完成态 `cex.lab-evidence.v2` manifest 的 claim 顺序已经冻结为：
 
@@ -1947,7 +1948,7 @@ protocol-compatibility-and-mutants
 architecture-and-unit-identity
 ```
 
-当前阶段只冻结这些 identity，不填写 claim status、实际 comparison count、digest、complete source 或 manifest hash。
+这 7 项 claim 已全部以 `pass` 写入公开 manifest，并绑定实际 observation、comparison count、digest、complete source 与 artifact hash；8 条 limitation 同时保留有限语料、单节点、受控同机 restart、无性能结论、无三节点故障、无外部服务、仅 current/N-1 codec 和兼容 `walRoot` 字段等边界。
 
 **冻结教程 permalink**
 
@@ -1957,7 +1958,7 @@ architecture-and-unit-identity
 4. `cluster-snapshot-restart-and-direct-equivalence`
 5. `single-node-aeron-adapter-evidence`
 
-五篇教程全部以 `draft: true` 开始。本站不登记 M11 浏览器 Lab；网页只解释合同、提供静态 Golden/evidence 和预测练习，真实 Java 编译、Aeron 进程与 restart 由读者在独立仓库本地运行。
+五篇教程已从 `draft: true` 原子切换为公开状态。本站不登记 M11 浏览器 Lab；网页只解释合同、提供静态 Golden/evidence 和预测练习，真实 Java 编译、Aeron 进程与 restart 由读者在独立仓库本地运行。
 
 **Excludes**
 
@@ -1969,7 +1970,7 @@ architecture-and-unit-identity
 
 **Stop Point**
 
-M11 的目标停止点是一个真实但仅单节点的 Aeron Cluster Adapter：业务只在 log apply 时推进，Aeron log/Cluster snapshot 是唯一恢复真相，当前 reader 可读取冻结的 application request/response/snapshot version 1/2，Direct、连续 Cluster 与 snapshot/restart Cluster 的规范化业务结果等价；完整 events 仍只是观察数据，不是下游可续接流。它没有产品 release，仍无三节点 quorum、切主、fencing、`UNKNOWN`、Cluster Backup、Cluster 性能或高可用保证。
+M11 已发布的停止点是一个真实但仅单节点的 Aeron Cluster Adapter：业务只在 log apply 时推进，Aeron log/Cluster snapshot 是唯一恢复真相，当前 reader 可读取冻结的 application request/response/snapshot version 1/2，Direct、连续 Cluster 与 snapshot/restart Cluster 的规范化业务结果等价；完整 events 仍只是观察数据，不是下游可续接流。它没有产品 release，仍无三节点 quorum、切主、fencing、`UNKNOWN`、Cluster Backup、Cluster 性能或高可用保证。
 
 ### 8.14 M12–M14 候选能力地图
 
@@ -2157,9 +2158,9 @@ signal-grid-blog
 ```
 
 - 实战章节使用独立 `practiceLessons` collection，不进入 `posts`、文章归档和主 RSS；
-- `config.ts` 管案例与 Profile，`units.ts` 管已签约及之后的单元，Markdown 只管一篇教程；M00～M10 保留各自已发布 ref、完整提交、evidence 与教程，以及适用单元的 Matching Lab。M09 五篇教程已原子公开但没有登记 Lab 或产品 release；M10 五篇教程、`matching-0.5.0` 与环境绑定 release evidence 已原子登记；M11 已登记五篇非空 `draft: true` 教程但没有 complete/evidence/Lab/product release，M12 及以后仍不创建 Markdown；
+- `config.ts` 管案例与 Profile，`units.ts` 管已签约及之后的单元，Markdown 只管一篇教程；M00～M11 保留各自已发布 ref、完整提交、evidence 与教程，以及适用单元的 Matching Lab。M09 五篇教程已原子公开但没有登记 Lab 或产品 release；M10 五篇教程、`matching-0.5.0` 与环境绑定 release evidence 已原子登记；M11 五篇教程、`course/m11-complete` 与单节点 Aeron Adapter evidence 已原子登记，但没有 Lab 或产品 release；M12 及以后仍不创建 Markdown；
 - 教程用 `project / profileVersion / unitCode` 关联单元，同单元的 `lessonOrder` 和 `permalink` 必须唯一；路由为 `/practice/<project>/<unit>/<lesson>/`；
-- 教程一律从 `draft: true` 开始。单元达到 `PUBLISHED` 前不得公开；草稿不生成生产路由，不进入搜索、sitemap、文章统计或主 RSS；`CONTENT_VERIFIED` 冻结预期教程的排序与 permalink，`PUBLISHED` 必须原子公开完整集合；`CODE_VERIFIED` 冻结 complete tag、完整提交 SHA、仓库内 evidence 路径和发布证据合同。M00～M10 的 evidence 都托管到 Signal Grid 的固定静态路径，由 verifier 复核 CI manifest SHA-256、来源、精确 claim/限制、全部 artifact hash，以及 `reportFacts` 中冻结的业务状态和关键报告字段；M11 在完成 manifest 产生前不得预建 public evidence 或 evidenceContract；
+- 教程一律从 `draft: true` 开始。单元达到 `PUBLISHED` 前不得公开；草稿不生成生产路由，不进入搜索、sitemap、文章统计或主 RSS；`CONTENT_VERIFIED` 冻结预期教程的排序与 permalink，`PUBLISHED` 必须原子公开完整集合；`CODE_VERIFIED` 冻结 complete tag、完整提交 SHA、仓库内 evidence 路径和发布证据合同。M00～M11 的 evidence 都托管到 Signal Grid 的固定静态路径，由 verifier 复核 CI manifest SHA-256、来源、精确 claim/限制、全部 artifact hash，以及 `reportFacts` 中冻结的业务状态和关键报告字段；
 - `pnpm verify:practice` 拒绝缺失或 `LOCKED` 单元、重复排序/地址、未 `PUBLISHED` 非草稿和 `main`、`unit/*` 等浮动 ref。它不联网读取课程仓；跨仓 tag/evidence 在发布前独立核验；
 - 案例驾驶舱把 Profile 路线与项目路线分层展示，把“真实已发布数”、“已签约未实现数”和“当前 Profile 候选规划数”分开显示，并只给出一个当前推荐动作；
 - `LOCKED` Profile 只展示能力增量和解锁门禁，不创建单元、仓库、起点 tag、空教程或虚假进度；
@@ -2269,7 +2270,7 @@ git switch -c unit/m01 course/m01-start
 
 | 日期       | 版本  | 变更                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | ---------- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 2026-09-03 | v0.14 | M11 从候选风险图升级为正式合同，唯一新增真实单 member Aeron Cluster Adapter：冻结 Aeron 1.52.2、Agrona 2.5.0、Java 25、core 无 Aeron、Cluster log/snapshot 唯一恢复真相、无 standalone WAL 双写、application request/response/snapshot current2/minReadable1 与六份 Golden、request v1→response v1 / v2 只协商 1/2 / 全部 outcome 可降 v1、optional commandId echo、payloadHash 精确 hash domain、两 binding Snapshot Golden 与严格 identity 顺序、ingress→log apply→result bind→correlated response、22 fixed、seed 6111 的连续 32 segment×128=4,096 action corpus、两个 fresh Cluster run 共 8,192 actual ingress、全局 action 2,048 后区分 Admin acceptance 与 counter/toggle/RecordingLog/written+loaded digest 完成证据、28 obligation、10 semantic candidate、3 SYSTEM_ERROR control、七项 evidence claim 与五篇 permalink；三节点 quorum/failover/fencing/UNKNOWN/Backup、Cluster 性能、matching-0.8.0、Counter/Rest/DB/HTTP 继续排除                                                                     |
+| 2026-09-03 | v0.14 | M11 从候选风险图升级为正式合同，唯一新增真实单 member Aeron Cluster Adapter：冻结 Aeron 1.52.2、Agrona 2.5.0、Java 25、core 无 Aeron、Cluster log/snapshot 唯一恢复真相、完整 `ClusteredService` callback-reachable production source graph 不引用 standalone WAL / external I/O（不是 runtime write counter）、application request/response/snapshot current2/minReadable1 与六份 Golden、request v1→response v1 / v2 只协商 1/2 / 全部 outcome 可降 v1、optional commandId echo、payloadHash 精确 hash domain、两 binding Snapshot Golden 与严格 identity 顺序、ingress→log apply→result bind→correlated response、22 fixed、seed 6111 的连续 32 segment×128=4,096 action corpus、两个 fresh Cluster run 共 8,192 actual ingress、全局 action 2,048 后区分 Admin acceptance 与 counter/toggle/RecordingLog/written+loaded digest 完成证据、28 obligation、10 个来自 production-component seam 的 production-derived candidate、3 SYSTEM_ERROR control、七项 evidence claim 与五篇 permalink；三节点 quorum/failover/fencing/UNKNOWN/Backup、Cluster 性能、matching-0.8.0、Counter/Rest/DB/HTTP 继续排除                                                                     |
 | 2026-09-03 | v0.13 | M10 资格合同升级为 `matching.m10.qualification.v2 / M10Q2`，保留 workload hash、三次 sweep、saturation 阈值、70% 上界、有限恢复预算与每次 1800 秒时长，但把短窗口共同未饱和实测档位改为严格降序 `provisionalSoakCandidates`：attempts 必须是其连续前缀；前置 `SATURATED` point 完成 fixed cut、closure、terminal drain、raw、finite reopen 与 direct replay 后才可降档；任何 `SYSTEM_ERROR` 立即停止；首个 `QUALIFIED` point 才绑定 final QOP；最终 evidence 保留全部失败候选，并按 k 动态核对 release `48+k/24+k`、CI `16+k/8+k` 计数。v0.12 的单 soak 合同作为历史记录保留，不回写为已通过结果                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | 2026-09-02 | v0.12 | M10 从候选风险图升级为正式合同，并收窄为“单机持久运行时的性能包络与有界过载准入”：冻结单 worker/固定 FIFO capacity、enqueue≠durable ACK、pre-WAL overload、所有既有 SubmissionResult 原样完成、通用 service/judge 的 CheckpointRequired same-envelope retry 与 qualification 的 CheckpointRequired=0；M09 默认 64 records/1 MiB 保持不变，资格显式使用 `M10Q1` 的 1000000 records/1 GiB、100 ms same-FIFO checkpoint、1024-byte ceiling 与 checkpoint 两侧独立预算；CI_SMOKE/RELEASE 分层、独立 initial-arrival thread/异步 coordinator、fixed scheduled RAW_RECONSTRUCTED cut/250 ms closure/terminal drain、producer lag 50/250 ms、资源 1 Hz/2 秒、三次 sweep saturation/knee、70% candidate 后选择三轮共同未饱和实测 QOP、soak 不得饱和、有限 M10Q1 reopen、M08 direct replay 诊断、两个无 allocation profiler 的 JMH SampleTime 入口、20 fixed、64×256 admission model、28 项 obligation、12 个 mutant、五篇 permalink 与 `matching-0.5.0`；撮合/WAL 语义优化、Aeron/Cluster、三节点性能和通用 SLA 继续排除 |
 | 2026-09-01 | v0.11 | M09 从候选风险图升级为正式合同并收窄为唯一的 Snapshot 检查点与有界恢复轴：冻结完整已 apply state cut、caller-serialized 无半完成控制动作、原子 Snapshot 发布、Snapshot@S + 连续 WAL(S+1...) 与 genesis replay 的 semantic equivalence、RecoveryBudget(maxReplayRecords=64, maxReplayBytes=1048576)、安全前缀回收、失败关闭边界和五篇 permalink；通用 N/N-1 格式迁移、后台 Snapshot、Aeron、复制、性能与毫秒恢复 SLA 继续排除                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
@@ -2288,8 +2289,8 @@ git switch -c unit/m01 course/m01-start
 
 | 日期       | 单元 | 生命周期        | 记录                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | ---------- | ---- | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 2026-09-03 | M11  | `IN_PROGRESS`   | annotated `course/m11-start` peeled 到 `941d8e57a725eba4127d05e7d5fd0ab505e4e93c`，冻结 PLAN v0.14、schema-valid `matching.m11.check.v1 / GOAL_NOT_IMPLEMENTED`、workload SHA-256 `ec19d23ab95973dca8f5b9c41d773d0f7fe47db679f659bc3e776dd95739b7e7`、Aeron 1.52.2/Agrona 2.5.0/Java 25、22 fixed、连续 32 segment×128=4,096 action corpus、两个 fresh Cluster run 共 8,192 actual ingress、全局 action 2,048 的强 Snapshot completion/load witness、28 obligation、10 semantic candidate、3 SYSTEM_ERROR control、精确 response 协商与两 binding Snapshot Golden、七项 evidence claim及五篇 permalink。五篇教程当前均为 `draft: true`；没有 complete ref、完成提交、公开 evidence、Lab、product release、三节点故障或通过数字                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| 2026-09-03 | M10  | `PUBLISHED`     | annotated `course/m10-complete` 与 annotated `matching-0.5.0` 同指 clean commit `77e80b0962cd6a74f6d8cd0ac203b3be5bdd6bdb`。20 fixed、seed 6010 的 64×256=16,384 generated action、28/28 obligation、12/12 `STUDENT_FAILURE` mutant 和 M00～M09 当前 HEAD 累计回归通过；普通 check 的真实 `CI_SMOKE / METHOD_SMOKE_ONLY` 不提供 release throughput claim。完整 `matching.m10.qualification.v2 / M10Q2` 在 OpenJDK `25.0.4.1+1-LTS`、Apple M2/8 cores/8 GiB、macOS `26.0.1`、APFS `APPLE SSD AP0256Z` 与冻结 power policy/WAL FileStore 下得到 sweep knee `379/379/379`、published knee `379`、candidate `265`，依次保留 `231/SATURATED`、`165/SATURATED`、`82/QUALIFIED` 三个 1800 秒 attempt，final QOP=`82`；decompressed raw recomputation `PASS`，1,153,200 arrival、1,113,889 completion、6,401 resource、51 phase-cut 与 27 recovery trace 闭合。`cex.lab-evidence.v2` manifest 以七项 claim、十一条 limitation 和全部 artifact hash 绑定，SHA-256 为 `03134fc4e80e6a29ba425a1e383d393af0cceeb1692b865e2c4c833b45bcc717`；五篇教程完整登记。本次数字只适用于该环境与单 producer、空簿 `BUY IOC@100×1` workload，不是跨环境 SLA、复制或高可用声明。当前无 `IN_PROGRESS`/`READY` 单元，M11 等本次推送、部署与线上验证闭合后再评审 |
+| 2026-09-03 | M11  | `PUBLISHED`     | annotated `course/m11-start` peeled 到 `e80c786425dd5766b0e3568c87f01b366e44e8e6`，冻结 PLAN v0.14、schema-valid `matching.m11.check.v1 / GOAL_NOT_IMPLEMENTED` 与 workload SHA-256 `f856c8dcf2e902add248a59cdb97525083bae469745682eed0ea7ae9169033b6`；annotated `course/m11-complete` 指向 clean commit `6997e05cea81cb93b883e882c8d75887d0622a22`。Aeron 1.52.2/Agrona 2.5.0/Java 25 下，22/22 fixed、连续 32 segment×128=4,096 action corpus、两个 fresh Cluster run 共 8,192 次 actual ingress、全局 action 2,048 的 Snapshot completion/load witness、28/28 obligation、32 条 executed assertion fact、10/10 个从 production-component seam 产生的 production-derived candidate 与 3 个不计 kill 的 SYSTEM_ERROR control 闭合；完整 `ClusteredService` callback-reachable production source graph 中 standalone-WAL / external-I/O reference 为 0，该事实不是 runtime write counter。`cex.lab-evidence.v2` manifest SHA-256 `6785175b2e8657c054bc55d49c60293c5740f23770631037f51d4af6bb1caef2` 绑定 7 项 claim、8 条 limitation、27 个 artifact、12 个 child report 与约 1.27 MiB 紧凑 evidence；五篇教程已原子公开。M11 无 Lab、product release、三节点故障、Cluster 容量或高可用声明；当前没有 `IN_PROGRESS` / `READY` 单元，M12 仍未签约                                                                                                                                                                                                                                                                                                                                                                                  |
+| 2026-09-03 | M10  | `PUBLISHED`     | annotated `course/m10-complete` 与 annotated `matching-0.5.0` 同指 clean commit `77e80b0962cd6a74f6d8cd0ac203b3be5bdd6bdb`。20 fixed、seed 6010 的 64×256=16,384 generated action、28/28 obligation、12/12 `STUDENT_FAILURE` mutant 和 M00～M09 当前 HEAD 累计回归通过；普通 check 的真实 `CI_SMOKE / METHOD_SMOKE_ONLY` 不提供 release throughput claim。完整 `matching.m10.qualification.v2 / M10Q2` 在 OpenJDK `25.0.4.1+1-LTS`、Apple M2/8 cores/8 GiB、macOS `26.0.1`、APFS `APPLE SSD AP0256Z` 与冻结 power policy/WAL FileStore 下得到 sweep knee `379/379/379`、published knee `379`、candidate `265`，依次保留 `231/SATURATED`、`165/SATURATED`、`82/QUALIFIED` 三个 1800 秒 attempt，final QOP=`82`；decompressed raw recomputation `PASS`，1,153,200 arrival、1,113,889 completion、6,401 resource、51 phase-cut 与 27 recovery trace 闭合。`cex.lab-evidence.v2` manifest 以七项 claim、十一条 limitation 和全部 artifact hash 绑定，SHA-256 为 `03134fc4e80e6a29ba425a1e383d393af0cceeb1692b865e2c4c833b45bcc717`；五篇教程完整登记。本次数字只适用于该环境与单 producer、空簿 `BUY IOC@100×1` workload，不是跨环境 SLA、复制或高可用声明。M11 后续已由自己的 complete tag 与 evidence 独立收口，不回写 M10 的性能资格结论 |
 | 2026-09-03 | M10  | `IN_PROGRESS`   | PLAN v0.13 已冻结 M10Q2 降序长稳态晋级、失败候选完整保留、首个 QUALIFIED final QOP 与动态证据计数；五篇教程仍为 draft，当前记录不包含正式性能数字、release PASS、manifest 或线上 evidence                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | 2026-09-02 | M10  | `IN_PROGRESS`   | PLAN v0.12 已冻结有界准入、open-loop/knee/QOP、资源/soak、28 项 obligation、12 个 mutant、五篇 permalink 和 `matching-0.5.0` target；当前唯一代码窗口已打开，正在形成 annotated `course/m10-start` 的结构化 RED。此记录没有 complete/product tag、PASS、容量数字、manifest 或线上教程                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | 2026-09-02 | M10  | `CONTRACTED`    | 只增加单机持久运行时的性能包络与有界过载准入；明确 enqueue 不是 ACK、overload 在 WAL/identity/apply 前、CI smoke 不是 release qualification，Aeron/Cluster 与所有绝对通用 SLA 排除在外                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |

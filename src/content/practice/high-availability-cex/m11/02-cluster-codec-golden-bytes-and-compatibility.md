@@ -12,10 +12,10 @@ tags:
   - 二进制协议
   - 向后兼容
   - Snapshot
-draft: true
+draft: false
 ---
 
-> 当前状态：M11 仍是 `IN_PROGRESS`。协议边界由 annotated [`course/m11-start`](https://github.com/lcha-reln/cex-matching/tree/course/m11-start) 中的 [M11 合同](https://github.com/lcha-reln/cex-matching/blob/course/m11-start/docs/specs/m11.md) 与 [`matching.m11.workload.v1` Schema](https://github.com/lcha-reln/cex-matching/blob/course/m11-start/schemas/matching.m11.workload.v1.schema.json) 冻结；没有完成实现、通过报告或公开 evidence。
+> 发布状态：annotated [`course/m11-start`](https://github.com/lcha-reln/cex-matching/tree/course/m11-start) 保留历史结构化 RED，并冻结 [M11 合同](https://github.com/lcha-reln/cex-matching/blob/course/m11-start/docs/specs/m11.md) 与 [`matching.m11.workload.v1` Schema](https://github.com/lcha-reln/cex-matching/blob/course/m11-start/schemas/matching.m11.workload.v1.schema.json)；annotated [`course/m11-complete`](https://github.com/lcha-reln/cex-matching/tree/course/m11-complete) 固定了通过实现与 PASS 报告。公开 evidence 路径为 `/practice/high-availability-cex/m11/evidence/manifest.json`，可在 [manifest](/signal-grid-blog/practice/high-availability-cex/m11/evidence/manifest.json) 逐项复核。
 
 “协议支持 N/N-1”很容易写成一句没有约束力的话：decoder 多接受一个数字，就算兼容。真正困难的是，旧 bytes 中的业务身份、原始结果和 Snapshot 状态能否无损进入当前模型；当前响应能否按调用方请求降级；损坏或越界输入能否在 apply 前失败关闭。
 
@@ -131,16 +131,16 @@ S2 不扩大业务状态覆盖，只新增：
 
 ## 六份 Golden 冻结的不是 JSON 长相
 
-M11 起点生成且固定以下六份 binary fixture；精确目录、版本矩阵和生成规模由 fixed tag 下的 [`workload-v1.json`](https://github.com/lcha-reln/cex-matching/blob/course/m11-start/matching-testkit/src/test/resources/m11/workload-v1.json) 共同约束：
+M11 起点生成且固定以下六份 binary fixture；精确目录、版本矩阵和生成规模由 fixed tag 下的 [`workload-v1.json`](https://github.com/lcha-reln/cex-matching/blob/course/m11-complete/matching-testkit/src/test/resources/m11/workload-v1.json) 共同约束：
 
 | Golden                                                                                                                                            | bytes | SHA-256                                                           | 主要证明                                                  |
 | ------------------------------------------------------------------------------------------------------------------------------------------------- | ----: | ----------------------------------------------------------------- | --------------------------------------------------------- |
-| [`request-v1.bin`](https://github.com/lcha-reln/cex-matching/blob/course/m11-start/matching-testkit/src/test/resources/m11/goldens/request-v1.bin)   |   203 | `30e8cde285dcbefcd3bf7a3ffafb2a6e2ec09b039db7d793a792d6ceb01fa609` | 当前 reader 能提取 correlation 与完整 M08C1 envelope      |
-| [`request-v2.bin`](https://github.com/lcha-reln/cex-matching/blob/course/m11-start/matching-testkit/src/test/resources/m11/goldens/request-v2.bin)   |   207 | `4c109a796e18aa628ee95184497bd9dc819e48a3f11fb7411d2440b6442ee409` | response version request 不改变 durable command identity  |
-| [`response-v1.bin`](https://github.com/lcha-reln/cex-matching/blob/course/m11-start/matching-testkit/src/test/resources/m11/goldens/response-v1.bin) |    72 | `64eca820223db940aa7499d727b351ac0df1dfdcbfe0aefea2f591ae194ccfec` | 有界结果承诺的旧布局可读取，并可被显式 down-encode        |
-| [`response-v2.bin`](https://github.com/lcha-reln/cex-matching/blob/course/m11-start/matching-testkit/src/test/resources/m11/goldens/response-v2.bin) |   121 | `3956d17420c85f95842d913b8e923f4e376b6743369e6d055e164c5ced8eee4b` | 可选 commandId echo 与 semantic digest 的当前布局可复现   |
-| [`snapshot-v1.bin`](https://github.com/lcha-reln/cex-matching/blob/course/m11-start/matching-testkit/src/test/resources/m11/goldens/snapshot-v1.bin) | 3,595 | `3bdd0490d0c0e8943eb67a573ff84c97eb6d2a93ab5438b2960011e49c5a6d67` | 两条有序 binding 证明旧格式完整携带 identity/result table |
-| [`snapshot-v2.bin`](https://github.com/lcha-reln/cex-matching/blob/course/m11-start/matching-testkit/src/test/resources/m11/goldens/snapshot-v2.bin) | 3,667 | `1df85f21c8ea4bc1ff483d220e5794d2e770393d3252e2150426c169b769a044` | 两条有序 binding 与当前 bounds/integrity 字段 byte-exact  |
+| [`request-v1.bin`](https://github.com/lcha-reln/cex-matching/blob/course/m11-complete/matching-testkit/src/test/resources/m11/goldens/request-v1.bin)   |   203 | `30e8cde285dcbefcd3bf7a3ffafb2a6e2ec09b039db7d793a792d6ceb01fa609` | 当前 reader 能提取 correlation 与完整 M08C1 envelope      |
+| [`request-v2.bin`](https://github.com/lcha-reln/cex-matching/blob/course/m11-complete/matching-testkit/src/test/resources/m11/goldens/request-v2.bin)   |   207 | `4c109a796e18aa628ee95184497bd9dc819e48a3f11fb7411d2440b6442ee409` | response version request 不改变 durable command identity  |
+| [`response-v1.bin`](https://github.com/lcha-reln/cex-matching/blob/course/m11-complete/matching-testkit/src/test/resources/m11/goldens/response-v1.bin) |    72 | `64eca820223db940aa7499d727b351ac0df1dfdcbfe0aefea2f591ae194ccfec` | 有界结果承诺的旧布局可读取，并可被显式 down-encode        |
+| [`response-v2.bin`](https://github.com/lcha-reln/cex-matching/blob/course/m11-complete/matching-testkit/src/test/resources/m11/goldens/response-v2.bin) |   121 | `3956d17420c85f95842d913b8e923f4e376b6743369e6d055e164c5ced8eee4b` | 可选 commandId echo 与 semantic digest 的当前布局可复现   |
+| [`snapshot-v1.bin`](https://github.com/lcha-reln/cex-matching/blob/course/m11-complete/matching-testkit/src/test/resources/m11/goldens/snapshot-v1.bin) | 3,595 | `3bdd0490d0c0e8943eb67a573ff84c97eb6d2a93ab5438b2960011e49c5a6d67` | 两条有序 binding 证明旧格式完整携带 identity/result table |
+| [`snapshot-v2.bin`](https://github.com/lcha-reln/cex-matching/blob/course/m11-complete/matching-testkit/src/test/resources/m11/goldens/snapshot-v2.bin) | 3,667 | `1df85f21c8ea4bc1ff483d220e5794d2e770393d3252e2150426c169b769a044` | 两条有序 binding 与当前 bounds/integrity 字段 byte-exact  |
 
 每份 Golden 至少要绑定：
 
@@ -160,16 +160,14 @@ Golden 的意义是阻止“代码和期望一起改”。若测试每次运行�
 
 ## 本篇实作：从 Golden 反推三套 Codec
 
-完成实现的固定阅读坐标是：
+通过实现的固定阅读坐标是：
 
-```text
-course/m11-complete:matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11RequestCodec.java
-course/m11-complete:matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11ResponseCodec.java
-course/m11-complete:matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11SnapshotCodec.java
-course/m11-complete:matching-cluster-runtime/src/test/java/io/github/lchareln/cex/matching/cluster/M11ProtocolCompatibilityTest.java
-```
+- [`M11RequestCodec.java`](https://github.com/lcha-reln/cex-matching/blob/course/m11-complete/matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11RequestCodec.java)
+- [`M11ResponseCodec.java`](https://github.com/lcha-reln/cex-matching/blob/course/m11-complete/matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11ResponseCodec.java)
+- [`M11SnapshotCodec.java`](https://github.com/lcha-reln/cex-matching/blob/course/m11-complete/matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11SnapshotCodec.java)
+- [`M11ProtocolCompatibilityTest.java`](https://github.com/lcha-reln/cex-matching/blob/course/m11-complete/matching-cluster-runtime/src/test/java/io/github/lchareln/cex/matching/cluster/M11ProtocolCompatibilityTest.java)
 
-当前 `IN_PROGRESS` 页面只记录坐标；等 complete ref 在 `CODE_VERIFIED` 注册并推送后，发布步骤再转换成固定链接，不能假定远端现在已经存在该 tag。
+链接都指向 annotated complete tag，因而读者看到的 codec 与公开 evidence 审阅的是同一份源码。
 
 在实现分支只运行协议门禁：
 
@@ -225,7 +223,7 @@ v2 internal result
 → compare with the same projection of v2 result
 ```
 
-M11 已冻结所有有效业务 outcome 都能投影到 v1；降级只删除 v2 extension，不得把任何 outcome 映射成 `SUCCESS` 或 generic error。若未来新增 v1 无法表达的 outcome，必须在未来协议合同中显式升级，不能回写 M11。
+M11 已冻结所有有效业务 outcome 都能投影到 v1；降级只删除 v2 extension，不得把任何 outcome 映射成 `SUCCESS` 或 generic error。若后续新增 v1 无法表达的 outcome，必须在新的协议合同中显式升级，不能回写 M11。
 
 ## Snapshot transport 与 Snapshot format 是两件事
 
@@ -240,7 +238,7 @@ Aeron 可能把 Snapshot bytes 分成多个 publication frame。M11 的 applicat
 
 ## 六份 Golden 能保证什么，仍不能保证什么
 
-完成门禁需要证明当前程序读取 version 1/2 request、response、snapshot，并按冻结规则写 version 2 或 down-encode response；对应反例还必须杀死“拒绝 N-1”和“接受 unsupported version”这类候选。当前草稿只陈述这项责任，实际结论以后续 complete-tag evidence 为准。
+完成门禁已证明当前程序读取 version 1/2 request、response、snapshot，并按冻结规则写 version 2 或 down-encode response。包括“拒绝 N-1”和“接受 unsupported version”在内的 10 个单故障 candidate 都由真实 production 组件派生，并进入 10/10 可重放失败集；candidate replay 本身不启动 Aeron，真实 Cluster 证据由 8,192 次 ingress 与 Snapshot/restart runtime claim 单独承担。三个裁判环境 control 稳定分类为 `SYSTEM_ERROR`，没有被冒充为 candidate kill。
 
 它不能证明：
 

@@ -1,0 +1,14 @@
+{
+  "schemaVersion" : "matching.m11.inherited-m10.v1",
+  "unit" : "M10",
+  "completeRef" : "course/m10-complete",
+  "productRelease" : "matching-0.5.0",
+  "status" : "PASS",
+  "fixedScenarios" : 20,
+  "generatedActions" : 16384,
+  "byteExactRegeneration" : true,
+  "mutantsKilled" : 12,
+  "methodSmoke" : "PASS",
+  "currentCompiledClasses" : true,
+  "baselineCommit" : "77e80b0962cd6a74f6d8cd0ac203b3be5bdd6bdb"
+}

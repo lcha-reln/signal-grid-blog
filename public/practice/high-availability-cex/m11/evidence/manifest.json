@@ -1,0 +1,492 @@
+{
+  "schemaVersion" : "cex.lab-evidence.v2",
+  "case" : "high-availability-cex",
+  "project" : "matching",
+  "unit" : "M11",
+  "unitTag" : "course/m11-complete",
+  "productRelease" : null,
+  "planVersion" : "0.14",
+  "source" : {
+    "commit" : "6997e05cea81cb93b883e882c8d75887d0622a22",
+    "dirty" : false
+  },
+  "environment" : {
+    "java" : "25.0.4.1+1-LTS",
+    "os" : "Mac OS X 26.0.1",
+    "arch" : "aarch64",
+    "javaRuntime" : "OpenJDK Runtime Environment",
+    "javaVersion" : "25.0.4.1+1-LTS",
+    "javaVendor" : "Eclipse Adoptium",
+    "vmName" : "OpenJDK 64-Bit Server VM",
+    "jvmArguments" : [ "--add-opens=java.base/jdk.internal.misc=ALL-UNNAMED", "-Dfile.encoding=UTF-8", "-Duser.country=CN", "-Duser.language=zh", "-Duser.variant" ],
+    "osName" : "Mac OS X",
+    "osVersion" : "26.0.1",
+    "osArchitecture" : "aarch64",
+    "availableProcessors" : 8,
+    "physicalMemoryBytes" : 8589934592,
+    "maximumHeapBytes" : 2147483648,
+    "garbageCollectorNames" : [ "G1 Concurrent GC", "G1 Old Generation", "G1 Young Generation" ],
+    "cpuModel" : "M11_CORRECTNESS_CPU_NOT_PROFILED",
+    "storageDevice" : "/dev/disk3s5",
+    "filesystem" : "apfs",
+    "powerPolicy" : "M11_CORRECTNESS_POWER_POLICY_NOT_PROFILED",
+    "walRoot" : "/private/tmp/cex-matching-m11-testkit/build/tmp/m11",
+    "walRootUri" : "file:///private/tmp/cex-matching-m11-testkit/build/tmp/m11/",
+    "walFileStoreName" : "/dev/disk3s5",
+    "walFileStoreType" : "apfs",
+    "walFileStoreTotalSpaceBytes" : 245107195904,
+    "walFileStoreUsableSpaceBytes" : 22964621312,
+    "walFileStoreUnallocatedSpaceBytes" : 22964621312,
+    "runStartedAt" : "2026-09-03T04:34:55.112036Z",
+    "runFinishedAt" : "2026-09-03T04:36:37.104381Z"
+  },
+  "claims" : [ {
+    "id" : "m00-m10-semantic-regression",
+    "category" : "correctness",
+    "statement" : "The current compiled M10 fixed, generated, mutant, and admission-method regression suites remain PASS at the M11 source boundary.",
+    "status" : "pass",
+    "command" : "./gradlew m11Check --no-daemon",
+    "observations" : {
+      "inheritedM10" : {
+        "unit" : "M10",
+        "completeRef" : "course/m10-complete",
+        "productRelease" : "matching-0.5.0",
+        "status" : "PASS",
+        "fixedScenarios" : 20,
+        "generatedActions" : 16384,
+        "mutantsKilled" : 12,
+        "methodSmoke" : "PASS",
+        "currentCompiledClasses" : true,
+        "baselineCommit" : "77e80b0962cd6a74f6d8cd0ac203b3be5bdd6bdb"
+      }
+    },
+    "artifacts" : [ {
+      "path" : "reports/check/inherited-m10.json",
+      "sha256" : "9c051b03f9460776833a855b60600cf25a109724cee94ec7e024d62308bba8d3"
+    } ]
+  }, {
+    "id" : "single-node-clustered-service",
+    "category" : "correctness",
+    "statement" : "A real fresh single-member Aeron Cluster accepts and correlates 4,096 commands in each of two independent runs without component errors or external services.",
+    "status" : "pass",
+    "command" : "./gradlew m11Check --no-daemon",
+    "observations" : {
+      "clusterRuntime" : {
+        "implementation" : "REAL_AERON_CLUSTER",
+        "memberCount" : 1,
+        "memberId" : 0,
+        "appointedLeaderId" : 0,
+        "clusterRuns" : 2,
+        "actionsPerRun" : 4096,
+        "acceptedIngressOffers" : 8192,
+        "correlatedResponses" : 8192,
+        "serviceObservations" : 8192,
+        "newBusinessApplications" : 4096,
+        "duplicateReplays" : 2048,
+        "rejectedApplications" : 2048,
+        "snapshotAdminAccepted" : 1,
+        "snapshotsCompleted" : 1,
+        "restarts" : 1,
+        "componentErrors" : 0,
+        "componentErrorsSampledAfterTeardown" : true,
+        "teardownsCompleted" : 2,
+        "serviceRole" : "LEADER",
+        "aeronConfiguredVersion" : "1.52.2",
+        "agronaConfiguredVersion" : "2.5.0",
+        "aeronRuntimeVersion" : "1.52.2",
+        "agronaRuntimeVersion" : "2.5.0",
+        "udpPortProbe" : true,
+        "portProbeMaxAttempts" : 2048,
+        "portProbeAttempts" : 2,
+        "portBlockSize" : 6,
+        "clusterLaunchRetryBound" : 8,
+        "clusterLaunchAttempts" : 2,
+        "portBlocksDisjoint" : true,
+        "ownedRootsDisjoint" : true,
+        "portBlocks" : [ {
+          "run" : "UNINTERRUPTED",
+          "root" : "/private/tmp/cex-matching-m11-testkit/build/tmp/m11/uninterrupted",
+          "protocol" : "UDP",
+          "base" : 23111,
+          "last" : 23116,
+          "size" : 6,
+          "probeAttempts" : 1
+        }, {
+          "run" : "SNAPSHOT_RESTART",
+          "root" : "/private/tmp/cex-matching-m11-testkit/build/tmp/m11/snapshot-restart",
+          "protocol" : "UDP",
+          "base" : 33111,
+          "last" : 33116,
+          "size" : 6,
+          "probeAttempts" : 1
+        } ],
+        "runtimeWitnesses" : [ {
+          "phase" : "UNINTERRUPTED",
+          "clusterId" : 11,
+          "memberCount" : 1,
+          "memberId" : 0,
+          "appointedLeaderId" : 0,
+          "clusterMembers" : "0,127.0.0.1:23113,127.0.0.1:23114,127.0.0.1:23115,127.0.0.1:23116,127.0.0.1:23112|",
+          "serviceRole" : "LEADER",
+          "aeronImplementationVersion" : "1.52.2",
+          "agronaImplementationVersion" : "2.5.0",
+          "rootDirectory" : "/private/tmp/cex-matching-m11-testkit/build/tmp/m11/uninterrupted",
+          "udpPortBlockBase" : 23111
+        }, {
+          "phase" : "SNAPSHOT_RESTART_BEFORE",
+          "clusterId" : 11,
+          "memberCount" : 1,
+          "memberId" : 0,
+          "appointedLeaderId" : 0,
+          "clusterMembers" : "0,127.0.0.1:33113,127.0.0.1:33114,127.0.0.1:33115,127.0.0.1:33116,127.0.0.1:33112|",
+          "serviceRole" : "LEADER",
+          "aeronImplementationVersion" : "1.52.2",
+          "agronaImplementationVersion" : "2.5.0",
+          "rootDirectory" : "/private/tmp/cex-matching-m11-testkit/build/tmp/m11/snapshot-restart",
+          "udpPortBlockBase" : 33111
+        }, {
+          "phase" : "SNAPSHOT_RESTART_AFTER",
+          "clusterId" : 11,
+          "memberCount" : 1,
+          "memberId" : 0,
+          "appointedLeaderId" : 0,
+          "clusterMembers" : "0,127.0.0.1:33113,127.0.0.1:33114,127.0.0.1:33115,127.0.0.1:33116,127.0.0.1:33112|",
+          "serviceRole" : "LEADER",
+          "aeronImplementationVersion" : "1.52.2",
+          "agronaImplementationVersion" : "2.5.0",
+          "rootDirectory" : "/private/tmp/cex-matching-m11-testkit/build/tmp/m11/snapshot-restart",
+          "udpPortBlockBase" : 33111
+        } ],
+        "correlationRoundTrips" : 8192,
+        "allBusinessOutcomesFromCorrelatedEgress" : true,
+        "singleMemberOnly" : true,
+        "highAvailabilityClaim" : false,
+        "performanceClaim" : false,
+        "dockerRequired" : false,
+        "externalServices" : false
+      }
+    },
+    "artifacts" : [ {
+      "path" : "reports/check/cluster-runtime.json",
+      "sha256" : "9601454061a2c59a3d29e77f18776ecf0ae643554a1231de340665beb0e9613d"
+    }, {
+      "path" : "reports/check/environment.json",
+      "sha256" : "0891ba966832ea38b0ac580a014eb96cb14383207c27d2b798bdd51887e16826"
+    } ]
+  }, {
+    "id" : "correlated-apply-response",
+    "category" : "correctness",
+    "statement" : "The fixed scenarios witness that ingress publication is not business success, log callbacks exclusively apply business state, and responses correlate only after the result is bound.",
+    "status" : "pass",
+    "command" : "./gradlew m11Check --no-daemon",
+    "observations" : {
+      "fixed" : {
+        "scenarios" : 22,
+        "passed" : 22,
+        "status" : "PASS"
+      },
+      "coverage" : {
+        "required" : 28,
+        "observed" : 28,
+        "allWitnessed" : true,
+        "source" : "EXECUTED_ASSERTION_WITNESS_LEDGER",
+        "witnessContract" : "M11_EXECUTED_ASSERTION_WITNESS_V1",
+        "systemErrorEvaluatedAfterControls" : true,
+        "assertionsExecuted" : 32,
+        "allAssertionsPassed" : true,
+        "ledgerVerifiedAgainstExecutionReplay" : true,
+        "obligationEvidenceRecomputed" : true,
+        "duplicateAssertionIdsRejected" : true,
+        "factCount" : 32,
+        "ledgerSha256" : "9bf3d51eedb2826089f45fbf641a9dcaadbdbddb80860ece753c495711a9e828"
+      }
+    },
+    "artifacts" : [ {
+      "path" : "reports/check/fixed-scenarios.json",
+      "sha256" : "9d14fa82b8dc8b52f5da34d28d51bb21e3b108288add1a12ca045e08ffc658b2"
+    }, {
+      "path" : "reports/check/coverage.json",
+      "sha256" : "27aa8087e6211072c7f3cae723d4dfafd236eb2e0636959910286eb41d8053a0"
+    } ]
+  }, {
+    "id" : "direct-cluster-business-equivalence",
+    "category" : "correctness",
+    "statement" : "Two fresh SplitMix64 generations reproduce one continuous 4,096-action corpus byte-for-byte, and the direct, uninterrupted Cluster, and snapshot-restart Cluster paths agree on every business result and final semantic state.",
+    "status" : "pass",
+    "command" : "./gradlew m11Check --no-daemon",
+    "observations" : {
+      "generator" : {
+        "algorithm" : "splitmix64-v1",
+        "seed" : "6111",
+        "histories" : 32,
+        "continuousCorpus" : true,
+        "actionsPerHistory" : 128,
+        "actionsPerPath" : 4096,
+        "clusterRuns" : 2,
+        "totalActualClusterIngress" : 8192,
+        "freshGenerations" : 2,
+        "byteExactRegeneration" : true,
+        "canonicalSha256" : "553a963b5cf79f09e11489718b12aff02927a50fd1bdd23bfe1bd634aa67ee96",
+        "newApplied" : 2048,
+        "duplicateReplayed" : 1024,
+        "identityRejected" : 1024,
+        "commandIdConflicts" : 512,
+        "slotConflicts" : 512,
+        "directClusterComparisons" : 8192,
+        "clusterClusterComparisons" : 4096,
+        "threePathFullBusinessEquivalent" : true,
+        "finalIdentityBindings" : 2048,
+        "finalNextApplicationSequence" : 2049,
+        "newOrdinalsContinuous" : true,
+        "duplicateStateInvariantChecks" : 1024,
+        "conflictStateInvariantChecks" : 1024,
+        "segmentSchedule" : [ "CURRENT_NEW[0]", "CURRENT_NEW[1]", "CURRENT_NEW[2]", "CURRENT_NEW[3]", "CURRENT_NEW[4]", "CURRENT_NEW[5]", "CURRENT_NEW[6]", "CURRENT_NEW[7]", "DUPLICATE_REPLAY[0]", "DUPLICATE_REPLAY[1]", "DUPLICATE_REPLAY[2]", "DUPLICATE_REPLAY[3]", "PREVIOUS_NEW[0]", "PREVIOUS_NEW[1]", "PREVIOUS_NEW[2]", "PREVIOUS_NEW[3]", "PREVIOUS_NEW[4]", "PREVIOUS_NEW[5]", "PREVIOUS_NEW[6]", "PREVIOUS_NEW[7]", "DUPLICATE_REPLAY[4]", "DUPLICATE_REPLAY[5]", "DUPLICATE_REPLAY[6]", "DUPLICATE_REPLAY[7]", "IDENTITY_CONFLICT[0]", "IDENTITY_CONFLICT[1]", "IDENTITY_CONFLICT[2]", "IDENTITY_CONFLICT[3]", "IDENTITY_CONFLICT[4]", "IDENTITY_CONFLICT[5]", "IDENTITY_CONFLICT[6]", "IDENTITY_CONFLICT[7]" ]
+      }
+    },
+    "artifacts" : [ {
+      "path" : "inputs/workload-v1.json",
+      "sha256" : "f856c8dcf2e902add248a59cdb97525083bae469745682eed0ea7ae9169033b6"
+    }, {
+      "path" : "reports/check/generated-differential.json",
+      "sha256" : "364947904a583f28e7d1bff6f71f327b9a9f9a6ffac63e8c246450aaec0e2436"
+    }, {
+      "path" : "reports/check/generated-requests.canonical.bin",
+      "sha256" : "553a963b5cf79f09e11489718b12aff02927a50fd1bdd23bfe1bd634aa67ee96"
+    } ]
+  }, {
+    "id" : "cluster-snapshot-restart",
+    "category" : "correctness",
+    "statement" : "After global action 2,048, the administrative acceptance and RecordingLog completion are separately witnessed before close; restart loads the exact application snapshot identity, digests, and next sequence.",
+    "status" : "pass",
+    "command" : "./gradlew m11Check --no-daemon",
+    "observations" : {
+      "snapshotRestart" : {
+        "schemaVersion" : "matching.m11.snapshot-restart.v1",
+        "status" : "PASS",
+        "requestedAfterAction" : 2048,
+        "snapshotPrefixNewApplied" : 1536,
+        "snapshotPrefixDuplicateReplayed" : 512,
+        "snapshotIdentityBindings" : 1536,
+        "snapshotNextApplicationSequence" : 1537,
+        "firstPostRestartLane" : "PREVIOUS_NEW",
+        "firstPostRestartStatus" : "NEW_APPLIED",
+        "firstPostRestartApplicationSequence" : 1537,
+        "firstPostRestartProducerSequence" : 1537,
+        "postRestartCrossSnapshotDuplicates" : 512,
+        "postRestartDuplicateFullResultExact" : true,
+        "postRestartDuplicateStateInvariantChecks" : 512,
+        "postRestartDuplicateSequenceInvariantChecks" : 512,
+        "postRestartDuplicateIdentityInvariantChecks" : 512,
+        "postRestartDuplicateCursorInvariantChecks" : 512,
+        "postRestartConflictStateInvariantChecks" : 1024,
+        "postRestartConflictSequenceInvariantChecks" : 1024,
+        "postRestartConflictIdentityInvariantChecks" : 1024,
+        "postRestartConflictCursorInvariantChecks" : 1024,
+        "adminRequestAccepted" : true,
+        "completionBounded" : true,
+        "controlToggleResetToNeutral" : true,
+        "recordingLogNewSnapshotEntry" : true,
+        "acceptanceDistinctFromCompletion" : true,
+        "closedOnlyAfterCompletion" : true,
+        "componentErrorsAfterTeardown" : 0,
+        "restartCount" : 1,
+        "directoriesPreserved" : true,
+        "loadedSnapshot" : true,
+        "identityDigestExact" : true,
+        "semanticDigestExact" : true,
+        "nextApplicationSequenceExact" : true,
+        "duplicateOriginalResultsSurvived" : 512,
+        "conflictsRemainNonMutating" : 1024,
+        "distinctClientSessionIds" : 2,
+        "preSnapshotSessionId" : 1,
+        "postRestartSessionId" : 2,
+        "replayedDuplicateSessionId" : 2,
+        "identityReplayedAcrossSessions" : true,
+        "adminCorrelationId" : 1,
+        "completionCountBefore" : 0,
+        "completionCountAfter" : 1,
+        "controlToggleState" : "NEUTRAL",
+        "previousServiceRecordingId" : -1,
+        "previousConsensusRecordingId" : -1,
+        "serviceLeadershipTermId" : 0,
+        "consensusLeadershipTermId" : 0,
+        "serviceLogPosition" : 590176,
+        "consensusLogPosition" : 590176,
+        "serviceRecordingId" : 1,
+        "consensusRecordingId" : 2,
+        "recordingIdsChanged" : true,
+        "sameTermAndLogPosition" : true,
+        "snapshotSequence" : 1536,
+        "snapshotStateSha256" : "98c44cb2485b3e637850cd4ec5c16e9327801d71a3aee7578f595152baebd64d",
+        "identityTableSha256" : "fd03806bcfbf2c2fc5c882adbbd5643720ffd7163e9ccded511c18e9de128681",
+        "semanticStateSha256" : "bd394009fb95165be9d5ef113b4fec2a943335d16ee68ba91c257fd28b78c43f",
+        "restoredNextApplicationSequence" : 1537,
+        "finalNextApplicationSequence" : 2049
+      }
+    },
+    "artifacts" : [ {
+      "path" : "reports/check/check.json",
+      "sha256" : "86f8fef1e04fc015516fd7a7f3cd06a5ec2f33715e5469e048598d137a4dcaa3"
+    } ]
+  }, {
+    "id" : "protocol-compatibility-and-mutants",
+    "category" : "mutation-testing",
+    "statement" : "Six byte-exact current and N-1 fixtures fail closed outside the bounded protocol contract, while all ten executable semantic candidates produce persisted, schema-valid, fresh-production replayed STUDENT_FAILURE witnesses and three SYSTEM_ERROR controls never count as kills.",
+    "status" : "pass",
+    "command" : "./gradlew m11Check --no-daemon",
+    "observations" : {
+      "protocol" : {
+        "goldens" : 6,
+        "requestV1Readable" : true,
+        "requestV1FixesResponseV1" : true,
+        "requestV2Current" : true,
+        "requestV2ResponseBounds" : "ONE_OR_TWO_ONLY_PRE_APPLY",
+        "invalidRequestedResponseStateMutations" : 0,
+        "fabricatedBusinessResults" : 0,
+        "responseV1DownEncoded" : true,
+        "responseV1OutcomesCovered" : 4,
+        "payloadHashOuterInvariant" : true,
+        "payloadHashOuterFieldProbes" : 8,
+        "payloadHashPayloadMutationProbes" : 10,
+        "payloadHashPayloadSensitive" : true,
+        "forgedPayloadHashPreApplyRejected" : true,
+        "forgedPayloadHashStateMutations" : 0,
+        "responseV2Current" : true,
+        "snapshotS1ReadableAndRestorable" : true,
+        "snapshotS2Current" : true,
+        "snapshotIdentityBindingsMinimum" : 2,
+        "snapshotIdentityOrder" : "ORIGINAL_APPLICATION_SEQUENCE_1_TO_N",
+        "snapshotProducerCursorContinuityValidated" : true,
+        "nMinusOneIdempotencyPreserved" : true,
+        "malformedFailsClosed" : true,
+        "unsupportedFailsClosed" : true,
+        "boundedResponse" : true,
+        "fullEventStreamInResponse" : false
+      },
+      "mutants" : {
+        "required" : 10,
+        "killed" : 10,
+        "classification" : "STUDENT_FAILURE",
+        "executableCandidates" : 10,
+        "systemErrorControls" : 3,
+        "systemErrorsObserved" : 3,
+        "systemErrorCountedAsKill" : false,
+        "counterexampleSha256" : "bd14422bedc830ab9d63fb2441d2e18aa5d48da61c3aaea3cefc669e3397786d",
+        "counterexampleCanonicalSha256" : "30bfdad011b7460838e8b3166053429ef9ac1d20d197f76fa21496cc5f3ec23a",
+        "productionControlsPassed" : 10,
+        "serializedFreshReplays" : 10,
+        "serializedReplayFingerprintsExact" : true,
+        "oneMinimalCounterexamples" : 10,
+        "actualMutationActions" : 14,
+        "rawActions" : 45,
+        "minimalActions" : 23,
+        "shrinkTrials" : 68
+      }
+    },
+    "artifacts" : [ {
+      "path" : "inputs/goldens/request-v1.bin",
+      "sha256" : "30e8cde285dcbefcd3bf7a3ffafb2a6e2ec09b039db7d793a792d6ceb01fa609"
+    }, {
+      "path" : "inputs/goldens/request-v2.bin",
+      "sha256" : "4c109a796e18aa628ee95184497bd9dc819e48a3f11fb7411d2440b6442ee409"
+    }, {
+      "path" : "inputs/goldens/response-v1.bin",
+      "sha256" : "64eca820223db940aa7499d727b351ac0df1dfdcbfe0aefea2f591ae194ccfec"
+    }, {
+      "path" : "inputs/goldens/response-v2.bin",
+      "sha256" : "3956d17420c85f95842d913b8e923f4e376b6743369e6d055e164c5ced8eee4b"
+    }, {
+      "path" : "inputs/goldens/snapshot-v1.bin",
+      "sha256" : "3bdd0490d0c0e8943eb67a573ff84c97eb6d2a93ab5438b2960011e49c5a6d67"
+    }, {
+      "path" : "inputs/goldens/snapshot-v2.bin",
+      "sha256" : "1df85f21c8ea4bc1ff483d220e5794d2e770393d3252e2150426c169b769a044"
+    }, {
+      "path" : "schemas/matching.m11.workload.v1.schema.json",
+      "sha256" : "8c7d1b547e24270018fd5b0ba4bc3286e03f68868b3afa4cf9dbd2c6956c4d2c"
+    }, {
+      "path" : "schemas/matching.m11.check.v2.schema.json",
+      "sha256" : "3421ca96644228a211963c0500e0804e204a74447669018f925e9abf6be2b268"
+    }, {
+      "path" : "schemas/matching.m11.counterexamples.v1.schema.json",
+      "sha256" : "c8a553363ded6b568368752d94496aa1052ab62b8f1b4f8a2fcc42636e74ea5b"
+    }, {
+      "path" : "schemas/matching.m11.replay.v1.schema.json",
+      "sha256" : "051c3bbbd7eaec785299bcc50b15d6f82d2315273591f6092d6475373d6a4df8"
+    }, {
+      "path" : "schemas/matching.m11.coverage.v2.schema.json",
+      "sha256" : "691ab8a1a8c9eb7271772e6f093328bf046cf2e7f6bd94e06ce91bf1c0be5a31"
+    }, {
+      "path" : "schemas/matching.m11.mutants.v1.schema.json",
+      "sha256" : "599849dc4c48924d313de1ca3900adc9c5892fba2dcc65bd8007bf8981571cef"
+    }, {
+      "path" : "reports/check/protocol-goldens.json",
+      "sha256" : "cb6108bfa1ee08b93ef7d76d9b21106ac38a303f0d65d4dbb2d805fe282b0d35"
+    }, {
+      "path" : "reports/check/mutants.json",
+      "sha256" : "6043dcb22bc3eb2959f311684185df805c051371ff7b6a5fa8c85d4c8618f81b"
+    }, {
+      "path" : "reports/check/counterexamples.json",
+      "sha256" : "bd14422bedc830ab9d63fb2441d2e18aa5d48da61c3aaea3cefc669e3397786d"
+    }, {
+      "path" : "reports/check/replay.json",
+      "sha256" : "c50dfe2b1e2afead6a378c67f28e7e3e1737366f651b6ae0a3438dfe87a5eed9"
+    } ]
+  }, {
+    "id" : "architecture-and-unit-identity",
+    "category" : "architecture",
+    "statement" : "matching-core remains byte-identical to M10 and infrastructure-free; Aeron is confined to matching-cluster-runtime, the complete production ClusteredService callback-reachable source graph contains no standalone-WAL or external-I/O reference, and the annotated M11 unit tag identifies this exact clean commit without a product release.",
+    "status" : "pass",
+    "command" : "./gradlew m11Evidence --no-daemon",
+    "observations" : {
+      "architecture" : {
+        "m10CoreTree" : "58ce86179251a5a8cceba47ff41b1b2657a5d100",
+        "headCoreTree" : "58ce86179251a5a8cceba47ff41b1b2657a5d100",
+        "matchingCoreByteIdentical" : true,
+        "coreInfrastructureFree" : true,
+        "aeronProductionModule" : "matching-cluster-runtime",
+        "aeronJavaImportViolations" : 0,
+        "aeronDependencyViolations" : 0,
+        "clusterServiceLocalWalViolations" : 0,
+        "clusterServiceExternalIoViolations" : 0,
+        "callbackReachableStandaloneWalReferences" : 0,
+        "callbackReachableExternalIoReferences" : 0,
+        "standaloneWalWrites" : 0,
+        "standaloneWalWritesEvidenceMode" : "CALLBACK_REACHABLE_SOURCE_REFERENCE_COUNT_COMPATIBILITY",
+        "runtimeMetadataInBusinessDigest" : false,
+        "callbackInterface" : "io.aeron.cluster.service.ClusteredService",
+        "abstractProductionCallbacks" : 8,
+        "implementedProductionCallbacks" : 8,
+        "callbackReachableClasses" : 27,
+        "callbackModuleViolations" : 0,
+        "businessApplyCalls" : 1,
+        "logCallbackBusinessApplyCalls" : 1,
+        "nonLogCallbackBusinessApplyCalls" : 0,
+        "egressStateInputViolations" : 0,
+        "configuredAeronVersion" : "1.52.2",
+        "configuredAgronaVersion" : "2.5.0",
+        "versionConfigurationExact" : true,
+        "runtimeMetadataSpyExecuted" : true,
+        "runtimeMetadataVariants" : 2,
+        "runtimeMetadataDigestStable" : true,
+        "callbackReachableProductionSources" : [ "DirectM11MatchingRuntime", "M11AeronSnapshotTransport", "M11ApplicationObserver", "M11ApplicationResult", "M11ApplicationSnapshotWitness", "M11Binary", "M11BoundedProgress", "M11ClusteredMatchingService", "M11CommandRequest", "M11CommandResponse", "M11CommandStateCodec", "M11Digests", "M11EncodingBounds", "M11FaultPolicy", "M11FullResultCodec", "M11IdentityBinding", "M11IdentityTable", "M11ProtocolException", "M11RequestCodec", "M11ResponseCodec", "M11ResponseStatus", "M11RuntimeState", "M11RuntimeStateCodec", "M11ServiceObservation", "M11Snapshot", "M11SnapshotCodec", "M11SnapshotFrameCodec" ],
+        "violations" : [ ]
+      },
+      "releaseTarget" : {
+        "unitTag" : "course/m11-complete",
+        "productRelease" : null,
+        "verification" : "CLEAN_TREE_ANNOTATED_TAG_EVIDENCE"
+      }
+    },
+    "artifacts" : [ {
+      "path" : "schemas/cex.lab-evidence.v2.schema.json",
+      "sha256" : "ab8e2b390458afb729ca37aa1fcb9c6dcf7c8f2314a691d8bfc59e931a5c6872"
+    }, {
+      "path" : "reports/check/architecture.json",
+      "sha256" : "70023d58f62a2caa74f6904306d4fe31095b878858dfea623fe22dddb41f520c"
+    } ]
+  } ],
+  "limitations" : [ "M11 runs one Aeron Cluster member with an appointed leader. It is not a replicated or high-availability deployment and makes no quorum, election, or failover claim.", "The fixed 22 scenarios, one continuous 4,096-action generated corpus, 28 obligations, and 10 executable mutants are finite evidence, not exhaustive exploration or formal verification.", "The snapshot witness covers an accepted administrative request, observed snapshot completion, preserved directories, and a controlled same-machine restart; it is not a process-crash, host-loss, disk-loss, or power-loss test.", "M11 makes no throughput, latency, capacity, resource-efficiency, or production performance claim; environment fields scope this correctness run only.", "M11 does not run a three-node cluster, inject member or network faults, prove leader failover, run Cluster Backup, or exercise disaster recovery.", "M11 uses no external service and excludes Rest, WebSocket, TLS, load balancers, accounts, balances, positions, settlement, database synchronization, and external side effects.", "Protocol evidence is limited to the frozen current and N-1 request, response, and snapshot fixtures; it does not claim arbitrary-version compatibility, rollback safety, or online mixed-version upgrade safety.", "The evidence manifest keeps the shared walRoot field for schema compatibility; in M11 it identifies the owned Aeron Cluster runtime root and does not imply a standalone application WAL." ],
+  "supersedes" : null,
+  "generatedAt" : "2026-09-03T04:36:37.689987Z"
+}

@@ -1,0 +1,1001 @@
+{
+  "schemaVersion" : "matching.m11.fixed-scenarios.v1",
+  "status" : "PASS",
+  "scenarios" : 22,
+  "passed" : 22,
+  "assertionFacts" : 31,
+  "assertionsExecuted" : 31,
+  "allAssertionsPassed" : true,
+  "witnessContract" : "M11_EXECUTED_ASSERTION_WITNESS_V1",
+  "factSource" : "EXECUTED_ASSERTION_WITNESS_LEDGER",
+  "ledgerSha256" : "0d7e8be5b7903878ccb4660e1139cb0dae35f0db9c704e180ae2467458713fec",
+  "results" : [ {
+    "id" : "CODEC_V1_GOLDENS",
+    "status" : "PASS",
+    "evidenceMode" : "REAL_PRODUCTION_CODEC_GOLDEN",
+    "proofObligations" : [ "N_MINUS_ONE_READABLE" ],
+    "assertedFacts" : [ {
+      "obligation" : "N_MINUS_ONE_READABLE",
+      "scenarioId" : "CODEC_V1_GOLDENS",
+      "sourceArtifact" : "protocol-goldens.json",
+      "assertionId" : "M11.CODEC_V1_GOLDENS.N_MINUS_ONE_READABLE.V1",
+      "producer" : "M11FixedSuite#assertScenario(CODEC_V1_GOLDENS)",
+      "assertion" : "request-v1, response-v1, and snapshot-v1 were decoded by current production codecs; snapshot identity remained replayable",
+      "observedValue" : "requestV1=true,responseV1=true,snapshotS1=true",
+      "observationSha256" : "6bb4d37aa422feb3db8df322d10b2e8fb2d3905ecaa43621e38f91a421678092",
+      "witnessSha256" : "273a9ca4aa2391974da4c6185de2ba14a879815c045d829526f572f714edf4fe",
+      "executed" : true,
+      "passed" : true
+    } ],
+    "observations" : {
+      "executed" : true,
+      "source" : "protocol-goldens.json",
+      "detail" : "Frozen scenario assertion executed without weakening its proof obligation"
+    }
+  }, {
+    "id" : "CODEC_V2_GOLDENS",
+    "status" : "PASS",
+    "evidenceMode" : "REAL_PRODUCTION_CODEC_GOLDEN",
+    "proofObligations" : [ "CURRENT_GOLDEN_WRITE_EXACT" ],
+    "assertedFacts" : [ {
+      "obligation" : "CURRENT_GOLDEN_WRITE_EXACT",
+      "scenarioId" : "CODEC_V2_GOLDENS",
+      "sourceArtifact" : "protocol-goldens.json",
+      "assertionId" : "M11.CODEC_V2_GOLDENS.CURRENT_GOLDEN_WRITE_EXACT.V1",
+      "producer" : "M11FixedSuite#assertScenario(CODEC_V2_GOLDENS)",
+      "assertion" : "current request, response, and snapshot fixtures re-encoded byte-exact",
+      "observedValue" : "goldens=6",
+      "observationSha256" : "c195b27aef6feda60f45d308236b02eee660dc5a030ec0b5e6e1aaa7fbf59789",
+      "witnessSha256" : "86c07dfb6813d1c595b780935e85de0d3274c4a951dda2d7dda7c161803967b8",
+      "executed" : true,
+      "passed" : true
+    } ],
+    "observations" : {
+      "executed" : true,
+      "source" : "protocol-goldens.json",
+      "detail" : "Frozen scenario assertion executed without weakening its proof obligation"
+    }
+  }, {
+    "id" : "MALFORMED_FAILS_CLOSED",
+    "status" : "PASS",
+    "evidenceMode" : "REAL_PRODUCTION_CODEC_GOLDEN",
+    "proofObligations" : [ "MALFORMED_FAILS_CLOSED", "SYSTEM_ERROR_NEVER_PASS" ],
+    "assertedFacts" : [ {
+      "obligation" : "MALFORMED_FAILS_CLOSED",
+      "scenarioId" : "MALFORMED_FAILS_CLOSED",
+      "sourceArtifact" : "protocol-goldens.json",
+      "assertionId" : "M11.MALFORMED_FAILS_CLOSED.MALFORMED_FAILS_CLOSED.V1",
+      "producer" : "M11FixedSuite#assertScenario(MALFORMED_FAILS_CLOSED)",
+      "assertion" : "malformed and forged payload-hash inputs were rejected before apply",
+      "observedValue" : "stateMutations=0",
+      "observationSha256" : "554be10eecdc051b33a63e47184addd35a852e3c0f7711be21b009a405d2ecb3",
+      "witnessSha256" : "49ad56de58d60091d0253aa4ed4ac893d84db123768f3d656ec39038ac71774c",
+      "executed" : true,
+      "passed" : true
+    } ],
+    "observations" : {
+      "executed" : true,
+      "source" : "protocol-goldens.json",
+      "detail" : "Frozen scenario assertion executed without weakening its proof obligation"
+    }
+  }, {
+    "id" : "UNSUPPORTED_VERSION_FAILS_CLOSED",
+    "status" : "PASS",
+    "evidenceMode" : "REAL_PRODUCTION_CODEC_GOLDEN",
+    "proofObligations" : [ "UNSUPPORTED_VERSION_FAILS_CLOSED" ],
+    "assertedFacts" : [ {
+      "obligation" : "UNSUPPORTED_VERSION_FAILS_CLOSED",
+      "scenarioId" : "UNSUPPORTED_VERSION_FAILS_CLOSED",
+      "sourceArtifact" : "protocol-goldens.json",
+      "assertionId" : "M11.UNSUPPORTED_VERSION_FAILS_CLOSED.UNSUPPORTED_VERSION_FAILS_CLOSED.V1",
+      "producer" : "M11FixedSuite#assertScenario(UNSUPPORTED_VERSION_FAILS_CLOSED)",
+      "assertion" : "unsupported request/response negotiation was rejected before apply without a fabricated business result",
+      "observedValue" : "stateMutations=0,fabricatedResults=0",
+      "observationSha256" : "0eecf8fb78339571de5e34b7e04250d1d7542409d777fa7cec910382aad9d6fe",
+      "witnessSha256" : "21d6250a0db703aca84fffd03723de5b7e0c5c975ee2232b4405b4645992434c",
+      "executed" : true,
+      "passed" : true
+    } ],
+    "observations" : {
+      "executed" : true,
+      "source" : "protocol-goldens.json",
+      "detail" : "Frozen scenario assertion executed without weakening its proof obligation"
+    }
+  }, {
+    "id" : "REAL_SINGLE_MEMBER_LEADER",
+    "status" : "PASS",
+    "evidenceMode" : "REAL_AERON_CLUSTER_AND_DIRECT_ORACLE",
+    "proofObligations" : [ "AERON_VERSION_PINNED", "REAL_SINGLE_MEMBER_CLUSTER", "AERON_DEPENDENCY_CONFINED" ],
+    "assertedFacts" : [ {
+      "obligation" : "AERON_VERSION_PINNED",
+      "scenarioId" : "REAL_SINGLE_MEMBER_LEADER",
+      "sourceArtifact" : "architecture.json+cluster-runtime.json",
+      "assertionId" : "M11.REAL_SINGLE_MEMBER_LEADER.AERON_VERSION_PINNED.V1",
+      "producer" : "M11FixedSuite#assertScenario(REAL_SINGLE_MEMBER_LEADER)",
+      "assertion" : "resolved production Aeron dependency matched the frozen version catalog",
+      "observedValue" : "1.52.2",
+      "observationSha256" : "56a97bbc40d7ca983ef1ec03eabd9d209b4a01e0f73c24b134995e79d9a9d342",
+      "witnessSha256" : "97b26a6302f33914bb2df66079c0deb326634fb647a317672ebf545ab4db6171",
+      "executed" : true,
+      "passed" : true
+    }, {
+      "obligation" : "REAL_SINGLE_MEMBER_CLUSTER",
+      "scenarioId" : "REAL_SINGLE_MEMBER_LEADER",
+      "sourceArtifact" : "architecture.json+cluster-runtime.json",
+      "assertionId" : "M11.REAL_SINGLE_MEMBER_LEADER.REAL_SINGLE_MEMBER_CLUSTER.V1",
+      "producer" : "M11FixedSuite#assertScenario(REAL_SINGLE_MEMBER_LEADER)",
+      "assertion" : "two fresh one-member Aeron Cluster runs completed all ingress with no component errors",
+      "observedValue" : "runs=2,ingress=8192",
+      "observationSha256" : "2bc334f21eeb9fe76cd8d3ab289af6fbe14c8863b0b32498d779380b165e2375",
+      "witnessSha256" : "b01d9179a75bd4a8934e8c133b9f764c764f06774d28783687272508b6957af5",
+      "executed" : true,
+      "passed" : true
+    }, {
+      "obligation" : "AERON_DEPENDENCY_CONFINED",
+      "scenarioId" : "REAL_SINGLE_MEMBER_LEADER",
+      "sourceArtifact" : "architecture.json+cluster-runtime.json",
+      "assertionId" : "M11.REAL_SINGLE_MEMBER_LEADER.AERON_DEPENDENCY_CONFINED.V1",
+      "producer" : "M11FixedSuite#assertScenario(REAL_SINGLE_MEMBER_LEADER)",
+      "assertion" : "Aeron imports and dependencies were confined to matching-cluster-runtime main and test scopes",
+      "observedValue" : "importViolations=0,dependencyViolations=0",
+      "observationSha256" : "2b3cb3772689fb492b884845653283c1ca5a8a90bebba8ad018a7e4949f9d520",
+      "witnessSha256" : "c7383b5cf95a2f0e9b0bc5923a3f2a1c8ad4eba7a38912aad7b6addc90c8ed6b",
+      "executed" : true,
+      "passed" : true
+    } ],
+    "observations" : {
+      "executed" : true,
+      "source" : "architecture.json+cluster-runtime.json",
+      "detail" : "Two independently fresh localhost single-member Aeron Cluster runs completed"
+    }
+  }, {
+    "id" : "OFFER_IS_NOT_SUCCESS",
+    "status" : "PASS",
+    "evidenceMode" : "REAL_AERON_CLUSTER_AND_DIRECT_ORACLE",
+    "proofObligations" : [ "INGRESS_OFFER_NOT_ACK" ],
+    "assertedFacts" : [ {
+      "obligation" : "INGRESS_OFFER_NOT_ACK",
+      "scenarioId" : "OFFER_IS_NOT_SUCCESS",
+      "sourceArtifact" : "generated-differential.json+cluster-runtime.json",
+      "assertionId" : "M11.OFFER_IS_NOT_SUCCESS.INGRESS_OFFER_NOT_ACK.V1",
+      "producer" : "M11FixedSuite#assertScenario(OFFER_IS_NOT_SUCCESS)",
+      "assertion" : "every accepted ingress obtained its business outcome from correlated egress",
+      "observedValue" : "ingress=8192,egress=8192",
+      "observationSha256" : "a0aa9154587114a8eed23118f53c46c73fa2c95aadf69b19e86fda3ac6d8a60a",
+      "witnessSha256" : "24db4be7586e125ad77f04926f1f86df67cd9bed386055eeaa9a3dfbfa96558e",
+      "executed" : true,
+      "passed" : true
+    } ],
+    "observations" : {
+      "executed" : true,
+      "source" : "generated-differential.json+cluster-runtime.json",
+      "detail" : "Every accepted ingress was followed by its correlated applied/rejected response"
+    }
+  }, {
+    "id" : "CORRELATION_ROUND_TRIP",
+    "status" : "PASS",
+    "evidenceMode" : "REAL_AERON_CLUSTER_AND_DIRECT_ORACLE",
+    "proofObligations" : [ "CORRELATION_ROUND_TRIP" ],
+    "assertedFacts" : [ {
+      "obligation" : "CORRELATION_ROUND_TRIP",
+      "scenarioId" : "CORRELATION_ROUND_TRIP",
+      "sourceArtifact" : "generated-differential.json+cluster-runtime.json",
+      "assertionId" : "M11.CORRELATION_ROUND_TRIP.CORRELATION_ROUND_TRIP.V1",
+      "producer" : "M11FixedSuite#assertScenario(CORRELATION_ROUND_TRIP)",
+      "assertion" : "every actual Cluster response preserved the submitted correlation ID",
+      "observedValue" : "roundTrips=8192",
+      "observationSha256" : "0dc5743cf55a4ad8f99fce63e47eeea4b75a17029229906c9cf8f24a63782539",
+      "witnessSha256" : "1cc0a5274ce6cb4ffa35e7885122f93bfffe0fb03a96685a157038881c2ca5c0",
+      "executed" : true,
+      "passed" : true
+    } ],
+    "observations" : {
+      "executed" : true,
+      "source" : "generated-differential.json+cluster-runtime.json",
+      "detail" : "Frozen scenario assertion executed without weakening its proof obligation"
+    }
+  }, {
+    "id" : "SESSION_NOT_BUSINESS_IDENTITY",
+    "status" : "PASS",
+    "evidenceMode" : "REAL_AERON_CLUSTER_AND_DIRECT_ORACLE",
+    "proofObligations" : [ "COMMAND_ID_STABLE", "SESSION_NOT_BUSINESS_IDENTITY" ],
+    "assertedFacts" : [ {
+      "obligation" : "COMMAND_ID_STABLE",
+      "scenarioId" : "SESSION_NOT_BUSINESS_IDENTITY",
+      "sourceArtifact" : "generated-differential.json+cluster-runtime.json",
+      "assertionId" : "M11.SESSION_NOT_BUSINESS_IDENTITY.COMMAND_ID_STABLE.V1",
+      "producer" : "M11FixedSuite#assertScenario(SESSION_NOT_BUSINESS_IDENTITY)",
+      "assertion" : "the same durable command identity replayed its original result across a client-session change",
+      "observedValue" : "sessions=2",
+      "observationSha256" : "f6b1a121ca385d2bdb2a553a637dae7e4c19af35c442c17cb0e7cfd63f234af8",
+      "witnessSha256" : "6374d98048861c5306b72ddebcb5021f66e909e33cac212cd60e97b8dd92ddb1",
+      "executed" : true,
+      "passed" : true
+    }, {
+      "obligation" : "SESSION_NOT_BUSINESS_IDENTITY",
+      "scenarioId" : "SESSION_NOT_BUSINESS_IDENTITY",
+      "sourceArtifact" : "generated-differential.json+cluster-runtime.json",
+      "assertionId" : "M11.SESSION_NOT_BUSINESS_IDENTITY.SESSION_NOT_BUSINESS_IDENTITY.V1",
+      "producer" : "M11FixedSuite#assertScenario(SESSION_NOT_BUSINESS_IDENTITY)",
+      "assertion" : "the restart path observed different client session IDs without changing durable identity",
+      "observedValue" : "1->2",
+      "observationSha256" : "8d9b3ac3d88986cf00f68c3da492bea63b410823ef2efe57f7b472f7e372f26a",
+      "witnessSha256" : "e22d5ede0258ab10410f126dbcfdd0bb004a8eb5d860f97b22478a5a27c5fb45",
+      "executed" : true,
+      "passed" : true
+    } ],
+    "observations" : {
+      "executed" : true,
+      "source" : "generated-differential.json+cluster-runtime.json",
+      "detail" : "Frozen scenario assertion executed without weakening its proof obligation"
+    }
+  }, {
+    "id" : "NEW_RESPONSE_AFTER_APPLY",
+    "status" : "PASS",
+    "evidenceMode" : "REAL_AERON_CLUSTER_AND_DIRECT_ORACLE",
+    "proofObligations" : [ "LOG_CALLBACK_ONLY_APPLY", "RESPONSE_AFTER_RESULT_BIND", "EGRESS_OFFER_NOT_STATE_INPUT" ],
+    "assertedFacts" : [ {
+      "obligation" : "LOG_CALLBACK_ONLY_APPLY",
+      "scenarioId" : "NEW_RESPONSE_AFTER_APPLY",
+      "sourceArtifact" : "architecture.json+cluster-runtime.json",
+      "assertionId" : "M11.NEW_RESPONSE_AFTER_APPLY.LOG_CALLBACK_ONLY_APPLY.V1",
+      "producer" : "M11FixedSuite#assertScenario(NEW_RESPONSE_AFTER_APPLY)",
+      "assertion" : "all production business applies were reachable from the committed-log callback and none from another callback",
+      "observedValue" : "businessApplyCalls=1,logCallback=1,nonLog=0",
+      "observationSha256" : "a539fcfac08afc00ba0657741085a53295c313a4422af9b0a12e99ecce0a5831",
+      "witnessSha256" : "438df23950d61966c5aad4e06d98437c4c09fe228e698526e597960df8f4985d",
+      "executed" : true,
+      "passed" : true
+    }, {
+      "obligation" : "RESPONSE_AFTER_RESULT_BIND",
+      "scenarioId" : "NEW_RESPONSE_AFTER_APPLY",
+      "sourceArtifact" : "architecture.json+cluster-runtime.json",
+      "assertionId" : "M11.NEW_RESPONSE_AFTER_APPLY.RESPONSE_AFTER_RESULT_BIND.V1",
+      "producer" : "M11FixedSuite#assertScenario(NEW_RESPONSE_AFTER_APPLY)",
+      "assertion" : "every NEW Cluster observation carried the full result before its correlated response",
+      "observedValue" : "observations=8192",
+      "observationSha256" : "712a24371e9a35b26dbe75bd363aa4f77540bf16617fccb163c8a092d4d1d099",
+      "witnessSha256" : "23382807a0864c44ac972fba6af65db2a0be4e301c16031177662aa0874d9be4",
+      "executed" : true,
+      "passed" : true
+    }, {
+      "obligation" : "EGRESS_OFFER_NOT_STATE_INPUT",
+      "scenarioId" : "NEW_RESPONSE_AFTER_APPLY",
+      "sourceArtifact" : "architecture.json+cluster-runtime.json",
+      "assertionId" : "M11.NEW_RESPONSE_AFTER_APPLY.EGRESS_OFFER_NOT_STATE_INPUT.V1",
+      "producer" : "M11FixedSuite#assertScenario(NEW_RESPONSE_AFTER_APPLY)",
+      "assertion" : "source reachability found no business-state transition driven by egress offer outcome",
+      "observedValue" : "violations=0",
+      "observationSha256" : "df19dcfb46d92c3beecad257f77e68f4dd9242ee374074f5e971f9ec13965687",
+      "witnessSha256" : "2ae5aeb11e9d5d92ad4b27016d7e864d197b9a19b63acea43d9ca0f672705050",
+      "executed" : true,
+      "passed" : true
+    } ],
+    "observations" : {
+      "executed" : true,
+      "source" : "architecture.json+cluster-runtime.json",
+      "detail" : "Frozen scenario assertion executed without weakening its proof obligation"
+    }
+  }, {
+    "id" : "DUPLICATE_REPLAYS_ORIGINAL",
+    "status" : "PASS",
+    "evidenceMode" : "REAL_AERON_CLUSTER_AND_DIRECT_ORACLE",
+    "proofObligations" : [ "DUPLICATE_ORIGINAL_RESULT" ],
+    "assertedFacts" : [ {
+      "obligation" : "DUPLICATE_ORIGINAL_RESULT",
+      "scenarioId" : "DUPLICATE_REPLAYS_ORIGINAL",
+      "sourceArtifact" : "generated-differential.json+cluster-runtime.json",
+      "assertionId" : "M11.DUPLICATE_REPLAYS_ORIGINAL.DUPLICATE_ORIGINAL_RESULT.V1",
+      "producer" : "M11FixedSuite#assertScenario(DUPLICATE_REPLAYS_ORIGINAL)",
+      "assertion" : "each duplicate full result and result digest equaled the earlier NEW result at the same application sequence",
+      "observedValue" : "exactDuplicates=1024",
+      "observationSha256" : "08129422bf6056c3e9701782d37e68d8c8650b7f153ebdbc4ea009ae9e81758f",
+      "witnessSha256" : "242c3385a377328498a7359ba80aa592d5a2a38004a9f3c40ef209ecdd5bc98e",
+      "executed" : true,
+      "passed" : true
+    } ],
+    "observations" : {
+      "executed" : true,
+      "source" : "generated-differential.json+cluster-runtime.json",
+      "detail" : "Frozen scenario assertion executed without weakening its proof obligation"
+    }
+  }, {
+    "id" : "COMMAND_ID_CONFLICT_NO_MUTATION",
+    "status" : "PASS",
+    "evidenceMode" : "REAL_AERON_CLUSTER_AND_DIRECT_ORACLE",
+    "proofObligations" : [ "ID_CONFLICT_NO_MUTATION" ],
+    "assertedFacts" : [ {
+      "obligation" : "ID_CONFLICT_NO_MUTATION",
+      "scenarioId" : "COMMAND_ID_CONFLICT_NO_MUTATION",
+      "sourceArtifact" : "generated-differential.json+cluster-runtime.json",
+      "assertionId" : "M11.COMMAND_ID_CONFLICT_NO_MUTATION.ID_CONFLICT_NO_MUTATION.V1",
+      "producer" : "M11FixedSuite#assertScenario(COMMAND_ID_CONFLICT_NO_MUTATION)",
+      "assertion" : "all command-ID conflicts were rejected with per-action state and sequence invariants",
+      "observedValue" : "conflicts=512,stateChecks=1024,sequenceChecks=1024",
+      "observationSha256" : "040fda7b1a11184a9d9f9a400f27d9f86b0c41cc8852701dc44ec3602c0441a7",
+      "witnessSha256" : "afcda2bb801dfce4849d22e0d24b9c51454212cdd8dbb21a136b1355fcbf44c2",
+      "executed" : true,
+      "passed" : true
+    } ],
+    "observations" : {
+      "executed" : true,
+      "source" : "generated-differential.json+cluster-runtime.json",
+      "detail" : "Frozen scenario assertion executed without weakening its proof obligation"
+    }
+  }, {
+    "id" : "SLOT_CONFLICT_NO_MUTATION",
+    "status" : "PASS",
+    "evidenceMode" : "REAL_AERON_CLUSTER_AND_DIRECT_ORACLE",
+    "proofObligations" : [ "SLOT_CONFLICT_NO_MUTATION" ],
+    "assertedFacts" : [ {
+      "obligation" : "SLOT_CONFLICT_NO_MUTATION",
+      "scenarioId" : "SLOT_CONFLICT_NO_MUTATION",
+      "sourceArtifact" : "generated-differential.json+cluster-runtime.json",
+      "assertionId" : "M11.SLOT_CONFLICT_NO_MUTATION.SLOT_CONFLICT_NO_MUTATION.V1",
+      "producer" : "M11FixedSuite#assertScenario(SLOT_CONFLICT_NO_MUTATION)",
+      "assertion" : "all slot conflicts were rejected with per-action identity and producer-cursor invariants",
+      "observedValue" : "conflicts=512,identityChecks=1024,cursorChecks=1024",
+      "observationSha256" : "05464cb499aff78d143970c37ed97fef4d73bfadef97639d4bf7b2561a72ff65",
+      "witnessSha256" : "8212f12ca2505a629698cc4cdf3aad646b59f521519ac413f8038d70574b3a0a",
+      "executed" : true,
+      "passed" : true
+    } ],
+    "observations" : {
+      "executed" : true,
+      "source" : "generated-differential.json+cluster-runtime.json",
+      "detail" : "Frozen scenario assertion executed without weakening its proof obligation"
+    }
+  }, {
+    "id" : "DIRECT_CLUSTER_EVENTS_EQUAL",
+    "status" : "PASS",
+    "evidenceMode" : "THREE_PATH_DIFFERENTIAL_AND_SOURCE_GATE",
+    "proofObligations" : [ "CORE_INFRASTRUCTURE_FREE", "DIRECT_CLUSTER_EVENT_EQUIVALENCE" ],
+    "assertedFacts" : [ {
+      "obligation" : "CORE_INFRASTRUCTURE_FREE",
+      "scenarioId" : "DIRECT_CLUSTER_EVENTS_EQUAL",
+      "sourceArtifact" : "architecture.json+generated-differential.json",
+      "assertionId" : "M11.DIRECT_CLUSTER_EVENTS_EQUAL.CORE_INFRASTRUCTURE_FREE.V1",
+      "producer" : "M11FixedSuite#assertScenario(DIRECT_CLUSTER_EVENTS_EQUAL)",
+      "assertion" : "the M10 matching-core tree remained byte-identical and infrastructure-free",
+      "observedValue" : "58ce86179251a5a8cceba47ff41b1b2657a5d100",
+      "observationSha256" : "e24a5336010cb900e71cdb07f33f47563b01660ebadfd3a292aad9dad3bb68b0",
+      "witnessSha256" : "caa6241d2e5cd7a3e304e28a18395712051f07f8413d0c59abe9b1522896c340",
+      "executed" : true,
+      "passed" : true
+    }, {
+      "obligation" : "DIRECT_CLUSTER_EVENT_EQUIVALENCE",
+      "scenarioId" : "DIRECT_CLUSTER_EVENTS_EQUAL",
+      "sourceArtifact" : "architecture.json+generated-differential.json",
+      "assertionId" : "M11.DIRECT_CLUSTER_EVENTS_EQUAL.DIRECT_CLUSTER_EVENT_EQUIVALENCE.V1",
+      "producer" : "M11FixedSuite#assertScenario(DIRECT_CLUSTER_EVENTS_EQUAL)",
+      "assertion" : "direct, uninterrupted Cluster, and restart Cluster emitted equal full application-result streams",
+      "observedValue" : "comparisons=8192",
+      "observationSha256" : "c9a8747cc9ce2acd478975e10b2d05b3aa3d9291bf3d43aeb9d48dec1da2ab63",
+      "witnessSha256" : "8a7e3d489b4c917bc1f0ab98d4f00ddbc565a9d2f03751eb82a1393d61313074",
+      "executed" : true,
+      "passed" : true
+    } ],
+    "observations" : {
+      "executed" : true,
+      "source" : "architecture.json+generated-differential.json",
+      "detail" : "Direct, uninterrupted Cluster, and snapshot-restart Cluster paths agreed"
+    }
+  }, {
+    "id" : "DIRECT_CLUSTER_DIGEST_EQUAL",
+    "status" : "PASS",
+    "evidenceMode" : "THREE_PATH_DIFFERENTIAL_AND_SOURCE_GATE",
+    "proofObligations" : [ "DIRECT_CLUSTER_RESULT_EQUIVALENCE", "DIRECT_CLUSTER_STATE_EQUIVALENCE" ],
+    "assertedFacts" : [ {
+      "obligation" : "DIRECT_CLUSTER_RESULT_EQUIVALENCE",
+      "scenarioId" : "DIRECT_CLUSTER_DIGEST_EQUAL",
+      "sourceArtifact" : "generated-differential.json+cluster-runtime.json",
+      "assertionId" : "M11.DIRECT_CLUSTER_DIGEST_EQUAL.DIRECT_CLUSTER_RESULT_EQUIVALENCE.V1",
+      "producer" : "M11FixedSuite#assertScenario(DIRECT_CLUSTER_DIGEST_EQUAL)",
+      "assertion" : "all three paths produced identical bounded responses and full canonical results",
+      "observedValue" : "clusterComparisons=4096",
+      "observationSha256" : "cf4335b61cc884b23f1d801b23460862cc0ce451f1c515f6729eaf2e8ff53fa1",
+      "witnessSha256" : "e38bb785e006fe4b6e0219cbd301fb98163bb3979f6b4834517c23579186409f",
+      "executed" : true,
+      "passed" : true
+    }, {
+      "obligation" : "DIRECT_CLUSTER_STATE_EQUIVALENCE",
+      "scenarioId" : "DIRECT_CLUSTER_DIGEST_EQUAL",
+      "sourceArtifact" : "generated-differential.json+cluster-runtime.json",
+      "assertionId" : "M11.DIRECT_CLUSTER_DIGEST_EQUAL.DIRECT_CLUSTER_STATE_EQUIVALENCE.V1",
+      "producer" : "M11FixedSuite#assertScenario(DIRECT_CLUSTER_DIGEST_EQUAL)",
+      "assertion" : "all three paths ended at the exact same complete business-state image",
+      "observedValue" : "nextSequence=2049",
+      "observationSha256" : "150555933c1e2239a32a56f2599eede1b6c30a1bc7412f17b5e1450c34cf53ba",
+      "witnessSha256" : "cd53f56e9af2a8dd698668c02d0d8932c70812251616a8c38ce2e87a4c353327",
+      "executed" : true,
+      "passed" : true
+    } ],
+    "observations" : {
+      "executed" : true,
+      "source" : "generated-differential.json+cluster-runtime.json",
+      "detail" : "Direct, uninterrupted Cluster, and snapshot-restart Cluster paths agreed"
+    }
+  }, {
+    "id" : "RUNTIME_METADATA_EXCLUDED",
+    "status" : "PASS",
+    "evidenceMode" : "THREE_PATH_DIFFERENTIAL_AND_SOURCE_GATE",
+    "proofObligations" : [ "RUNTIME_METADATA_EXCLUDED" ],
+    "assertedFacts" : [ {
+      "obligation" : "RUNTIME_METADATA_EXCLUDED",
+      "scenarioId" : "RUNTIME_METADATA_EXCLUDED",
+      "sourceArtifact" : "architecture.json",
+      "assertionId" : "M11.RUNTIME_METADATA_EXCLUDED.RUNTIME_METADATA_EXCLUDED.V1",
+      "producer" : "M11FixedSuite#assertScenario(RUNTIME_METADATA_EXCLUDED)",
+      "assertion" : "runtime metadata variants were exercised while the business semantic digest remained stable",
+      "observedValue" : "spy=true,variants=2",
+      "observationSha256" : "2fc0404ad0e44d9ab37e5889786fb3b80543ef1ecbe912e90ab7fc738d1fe68d",
+      "witnessSha256" : "86525a4407358bad205de27a2ebbcc51b04b42d3d997401432e24f2a6c2658f7",
+      "executed" : true,
+      "passed" : true
+    } ],
+    "observations" : {
+      "executed" : true,
+      "source" : "architecture.json",
+      "detail" : "Frozen scenario assertion executed without weakening its proof obligation"
+    }
+  }, {
+    "id" : "NO_STANDALONE_WAL_WRITE",
+    "status" : "PASS",
+    "evidenceMode" : "THREE_PATH_DIFFERENTIAL_AND_SOURCE_GATE",
+    "proofObligations" : [ "NO_STANDALONE_WAL_WRITE" ],
+    "assertedFacts" : [ {
+      "obligation" : "NO_STANDALONE_WAL_WRITE",
+      "scenarioId" : "NO_STANDALONE_WAL_WRITE",
+      "sourceArtifact" : "architecture.json",
+      "assertionId" : "M11.NO_STANDALONE_WAL_WRITE.NO_STANDALONE_WAL_WRITE.V1",
+      "producer" : "M11FixedSuite#assertScenario(NO_STANDALONE_WAL_WRITE)",
+      "assertion" : "the ClusteredService callback-reachable production source graph contains no standalone-WAL reference",
+      "observedValue" : "callbackReachableReferences=0,evidenceMode=CALLBACK_REACHABLE_SOURCE_REFERENCE_COUNT_COMPATIBILITY",
+      "observationSha256" : "0226340076eeba4ff7cccb1379be4e354b3efafe277ed219f6688bf33079dd33",
+      "witnessSha256" : "5c5e2a92060d7d546cbc87e817aca0b8e3c4a19f8ed2e7f50e6280e1f1e57d19",
+      "executed" : true,
+      "passed" : true
+    } ],
+    "observations" : {
+      "executed" : true,
+      "source" : "architecture.json",
+      "detail" : "Frozen scenario assertion executed without weakening its proof obligation"
+    }
+  }, {
+    "id" : "SNAPSHOT_ACCEPTANCE_AND_COMPLETION_DISTINCT",
+    "status" : "PASS",
+    "evidenceMode" : "REAL_AERON_CLUSTER_AND_DIRECT_ORACLE",
+    "proofObligations" : [ "REAL_SINGLE_MEMBER_CLUSTER", "SNAPSHOT_COMPLETION_RECORDED" ],
+    "assertedFacts" : [ {
+      "obligation" : "REAL_SINGLE_MEMBER_CLUSTER",
+      "scenarioId" : "SNAPSHOT_ACCEPTANCE_AND_COMPLETION_DISTINCT",
+      "sourceArtifact" : "cluster-runtime.json",
+      "assertionId" : "M11.SNAPSHOT_ACCEPTANCE_AND_COMPLETION_DISTINCT.REAL_SINGLE_MEMBER_CLUSTER.V1",
+      "producer" : "M11FixedSuite#assertScenario(SNAPSHOT_ACCEPTANCE_AND_COMPLETION_DISTINCT)",
+      "assertion" : "the real single-member harness performed an accepted and completed admin snapshot",
+      "observedValue" : "completed=1",
+      "observationSha256" : "74b274b91e3ac08fef79e2127d9709dddc919d6f564e165eeaa772d4c0bde1e8",
+      "witnessSha256" : "3a8b6b595cf5b0d9e5abb606997b49e0814dcba44e5c0940c1431bb7b5ebbcbe",
+      "executed" : true,
+      "passed" : true
+    }, {
+      "obligation" : "SNAPSHOT_COMPLETION_RECORDED",
+      "scenarioId" : "SNAPSHOT_ACCEPTANCE_AND_COMPLETION_DISTINCT",
+      "sourceArtifact" : "cluster-runtime.json",
+      "assertionId" : "M11.SNAPSHOT_ACCEPTANCE_AND_COMPLETION_DISTINCT.SNAPSHOT_COMPLETION_RECORDED.V1",
+      "producer" : "M11FixedSuite#assertScenario(SNAPSHOT_ACCEPTANCE_AND_COMPLETION_DISTINCT)",
+      "assertion" : "admin acceptance preceded a bounded completed recording-log snapshot with changed recording IDs, same term/position, and NEUTRAL toggle",
+      "observedValue" : "0->1",
+      "observationSha256" : "f99c2b63e36fdaab400fff657cf5d315012c0f7c70b9ad32028e3c45728b38ca",
+      "witnessSha256" : "13f36d18801741ad0b192f6280e167b062d575cafca52f7c7b9d76b7515ef9df",
+      "executed" : true,
+      "passed" : true
+    } ],
+    "observations" : {
+      "executed" : true,
+      "source" : "cluster-runtime.json",
+      "detail" : "Admin request accepted, then bounded completion was witnessed before close"
+    }
+  }, {
+    "id" : "SNAPSHOT_STATE_EXACT_AFTER_RESTART",
+    "status" : "PASS",
+    "evidenceMode" : "REAL_AERON_CLUSTER_AND_DIRECT_ORACLE",
+    "proofObligations" : [ "SNAPSHOT_RESTART_EXACT" ],
+    "assertedFacts" : [ {
+      "obligation" : "SNAPSHOT_RESTART_EXACT",
+      "scenarioId" : "SNAPSHOT_STATE_EXACT_AFTER_RESTART",
+      "sourceArtifact" : "cluster-runtime.json",
+      "assertionId" : "M11.SNAPSHOT_STATE_EXACT_AFTER_RESTART.SNAPSHOT_RESTART_EXACT.V1",
+      "producer" : "M11FixedSuite#assertScenario(SNAPSHOT_STATE_EXACT_AFTER_RESTART)",
+      "assertion" : "restart loaded the completed snapshot from preserved directories with exact identity and semantic digests",
+      "observedValue" : "98c44cb2485b3e637850cd4ec5c16e9327801d71a3aee7578f595152baebd64d",
+      "observationSha256" : "e2c9a2503f543f4f1ea5b2e378277ed7e24f7e15e11497554e9761a79d3a2682",
+      "witnessSha256" : "081356d889db988074f49dc6a6674ff213060d6b9c62632c676ceb910dcd2731",
+      "executed" : true,
+      "passed" : true
+    } ],
+    "observations" : {
+      "executed" : true,
+      "source" : "cluster-runtime.json",
+      "detail" : "Frozen scenario assertion executed without weakening its proof obligation"
+    }
+  }, {
+    "id" : "SNAPSHOT_IDENTITY_RESULT_SURVIVES",
+    "status" : "PASS",
+    "evidenceMode" : "REAL_AERON_CLUSTER_AND_DIRECT_ORACLE",
+    "proofObligations" : [ "SNAPSHOT_IDENTITY_SURVIVES" ],
+    "assertedFacts" : [ {
+      "obligation" : "SNAPSHOT_IDENTITY_SURVIVES",
+      "scenarioId" : "SNAPSHOT_IDENTITY_RESULT_SURVIVES",
+      "sourceArtifact" : "cluster-runtime.json",
+      "assertionId" : "M11.SNAPSHOT_IDENTITY_RESULT_SURVIVES.SNAPSHOT_IDENTITY_SURVIVES.V1",
+      "producer" : "M11FixedSuite#assertScenario(SNAPSHOT_IDENTITY_RESULT_SURVIVES)",
+      "assertion" : "every cross-snapshot duplicate replayed the original result with per-action state, sequence, identity, and cursor invariants",
+      "observedValue" : "duplicates=512,fullResultExact=true",
+      "observationSha256" : "f2794069bdd365b6ff5e09cd9ee353d87341fbde0b236f2c9ea281ceac5c7de2",
+      "witnessSha256" : "7db5d63110dabbebafa3edefb2c8612eb3ed1913fb07593518dfeadfc62ec991",
+      "executed" : true,
+      "passed" : true
+    } ],
+    "observations" : {
+      "executed" : true,
+      "source" : "cluster-runtime.json",
+      "detail" : "Frozen scenario assertion executed without weakening its proof obligation"
+    }
+  }, {
+    "id" : "SNAPSHOT_SEQUENCE_CONTINUES",
+    "status" : "PASS",
+    "evidenceMode" : "REAL_AERON_CLUSTER_AND_DIRECT_ORACLE",
+    "proofObligations" : [ "SNAPSHOT_SEQUENCE_CONTINUES" ],
+    "assertedFacts" : [ {
+      "obligation" : "SNAPSHOT_SEQUENCE_CONTINUES",
+      "scenarioId" : "SNAPSHOT_SEQUENCE_CONTINUES",
+      "sourceArtifact" : "cluster-runtime.json",
+      "assertionId" : "M11.SNAPSHOT_SEQUENCE_CONTINUES.SNAPSHOT_SEQUENCE_CONTINUES.V1",
+      "producer" : "M11FixedSuite#assertScenario(SNAPSHOT_SEQUENCE_CONTINUES)",
+      "assertion" : "snapshot restored next sequence 1537 and the first post-restart PREVIOUS_NEW applied at that exact sequence",
+      "observedValue" : "restoredNext=1537,firstApplied=1537",
+      "observationSha256" : "89193b7d54486e2a3dbbe66f6bf1485cab267c45858c43b9d2bae275b6c98d41",
+      "witnessSha256" : "59c1fce4ab80de5343f44fe1d2e740ac73783410d39d08024520fcfa12e2d78b",
+      "executed" : true,
+      "passed" : true
+    } ],
+    "observations" : {
+      "executed" : true,
+      "source" : "cluster-runtime.json",
+      "detail" : "Frozen scenario assertion executed without weakening its proof obligation"
+    }
+  }, {
+    "id" : "CURRENT_READS_PREVIOUS_SNAPSHOT",
+    "status" : "PASS",
+    "evidenceMode" : "REAL_PRODUCTION_CODEC_GOLDEN",
+    "proofObligations" : [ "N_MINUS_ONE_READABLE", "SNAPSHOT_IDENTITY_SURVIVES" ],
+    "assertedFacts" : [ {
+      "obligation" : "N_MINUS_ONE_READABLE",
+      "scenarioId" : "CURRENT_READS_PREVIOUS_SNAPSHOT",
+      "sourceArtifact" : "protocol-goldens.json",
+      "assertionId" : "M11.CURRENT_READS_PREVIOUS_SNAPSHOT.N_MINUS_ONE_READABLE.V1",
+      "producer" : "M11FixedSuite#assertScenario(CURRENT_READS_PREVIOUS_SNAPSHOT)",
+      "assertion" : "current snapshot codec decoded/restored S1 with ordered durable identity results",
+      "observedValue" : "bindings=2",
+      "observationSha256" : "4d0b53824be11584b31d4ca23076f875b3d4c4581e3179ceeff9a390b2a587e5",
+      "witnessSha256" : "6a4623a6533d711a80ff99b29e152e5fa307bd708efe0a716266ff96f89b4428",
+      "executed" : true,
+      "passed" : true
+    }, {
+      "obligation" : "SNAPSHOT_IDENTITY_SURVIVES",
+      "scenarioId" : "CURRENT_READS_PREVIOUS_SNAPSHOT",
+      "sourceArtifact" : "protocol-goldens.json",
+      "assertionId" : "M11.CURRENT_READS_PREVIOUS_SNAPSHOT.SNAPSHOT_IDENTITY_SURVIVES.V1",
+      "producer" : "M11FixedSuite#assertScenario(CURRENT_READS_PREVIOUS_SNAPSHOT)",
+      "assertion" : "an S1-restored duplicate replayed its original canonical result",
+      "observedValue" : "preserved=true",
+      "observationSha256" : "585b27983e5672971347eb57b528b4934919c1e6f263efea1393634e4142383f",
+      "witnessSha256" : "b8f8b6c9c651a494b02b4d2fd144b3c022cdfdef1c391507f370188c3d339bfa",
+      "executed" : true,
+      "passed" : true
+    } ],
+    "observations" : {
+      "executed" : true,
+      "source" : "protocol-goldens.json",
+      "detail" : "Frozen scenario assertion executed without weakening its proof obligation"
+    }
+  }, {
+    "id" : "CURRENT_DOWN_ENCODES_PREVIOUS_RESPONSE",
+    "status" : "PASS",
+    "evidenceMode" : "REAL_PRODUCTION_CODEC_GOLDEN",
+    "proofObligations" : [ "N_MINUS_ONE_READABLE" ],
+    "assertedFacts" : [ {
+      "obligation" : "N_MINUS_ONE_READABLE",
+      "scenarioId" : "CURRENT_DOWN_ENCODES_PREVIOUS_RESPONSE",
+      "sourceArtifact" : "protocol-goldens.json",
+      "assertionId" : "M11.CURRENT_DOWN_ENCODES_PREVIOUS_RESPONSE.N_MINUS_ONE_READABLE.V1",
+      "producer" : "M11FixedSuite#assertScenario(CURRENT_DOWN_ENCODES_PREVIOUS_RESPONSE)",
+      "assertion" : "current runtime down-encoded all four promised response-v1 outcomes and current decoder read them",
+      "observedValue" : "outcomes=4",
+      "observationSha256" : "a1e67b201f6d3c6748f2574213c56627b46b8c621e1a71b6e0cf1b764373db03",
+      "witnessSha256" : "94b2a0e14600c6bf16de9f98d1c0206f7f24c7996776392e76aacf3aa3b42fb4",
+      "executed" : true,
+      "passed" : true
+    } ],
+    "observations" : {
+      "executed" : true,
+      "source" : "protocol-goldens.json",
+      "detail" : "Frozen scenario assertion executed without weakening its proof obligation"
+    }
+  } ],
+  "executedAssertionIds" : [ "M11.CODEC_V1_GOLDENS.N_MINUS_ONE_READABLE.V1", "M11.CODEC_V2_GOLDENS.CURRENT_GOLDEN_WRITE_EXACT.V1", "M11.MALFORMED_FAILS_CLOSED.MALFORMED_FAILS_CLOSED.V1", "M11.UNSUPPORTED_VERSION_FAILS_CLOSED.UNSUPPORTED_VERSION_FAILS_CLOSED.V1", "M11.REAL_SINGLE_MEMBER_LEADER.AERON_VERSION_PINNED.V1", "M11.REAL_SINGLE_MEMBER_LEADER.REAL_SINGLE_MEMBER_CLUSTER.V1", "M11.REAL_SINGLE_MEMBER_LEADER.AERON_DEPENDENCY_CONFINED.V1", "M11.OFFER_IS_NOT_SUCCESS.INGRESS_OFFER_NOT_ACK.V1", "M11.CORRELATION_ROUND_TRIP.CORRELATION_ROUND_TRIP.V1", "M11.SESSION_NOT_BUSINESS_IDENTITY.COMMAND_ID_STABLE.V1", "M11.SESSION_NOT_BUSINESS_IDENTITY.SESSION_NOT_BUSINESS_IDENTITY.V1", "M11.NEW_RESPONSE_AFTER_APPLY.LOG_CALLBACK_ONLY_APPLY.V1", "M11.NEW_RESPONSE_AFTER_APPLY.RESPONSE_AFTER_RESULT_BIND.V1", "M11.NEW_RESPONSE_AFTER_APPLY.EGRESS_OFFER_NOT_STATE_INPUT.V1", "M11.DUPLICATE_REPLAYS_ORIGINAL.DUPLICATE_ORIGINAL_RESULT.V1", "M11.COMMAND_ID_CONFLICT_NO_MUTATION.ID_CONFLICT_NO_MUTATION.V1", "M11.SLOT_CONFLICT_NO_MUTATION.SLOT_CONFLICT_NO_MUTATION.V1", "M11.DIRECT_CLUSTER_EVENTS_EQUAL.CORE_INFRASTRUCTURE_FREE.V1", "M11.DIRECT_CLUSTER_EVENTS_EQUAL.DIRECT_CLUSTER_EVENT_EQUIVALENCE.V1", "M11.DIRECT_CLUSTER_DIGEST_EQUAL.DIRECT_CLUSTER_RESULT_EQUIVALENCE.V1", "M11.DIRECT_CLUSTER_DIGEST_EQUAL.DIRECT_CLUSTER_STATE_EQUIVALENCE.V1", "M11.RUNTIME_METADATA_EXCLUDED.RUNTIME_METADATA_EXCLUDED.V1", "M11.NO_STANDALONE_WAL_WRITE.NO_STANDALONE_WAL_WRITE.V1", "M11.SNAPSHOT_ACCEPTANCE_AND_COMPLETION_DISTINCT.REAL_SINGLE_MEMBER_CLUSTER.V1", "M11.SNAPSHOT_ACCEPTANCE_AND_COMPLETION_DISTINCT.SNAPSHOT_COMPLETION_RECORDED.V1", "M11.SNAPSHOT_STATE_EXACT_AFTER_RESTART.SNAPSHOT_RESTART_EXACT.V1", "M11.SNAPSHOT_IDENTITY_RESULT_SURVIVES.SNAPSHOT_IDENTITY_SURVIVES.V1", "M11.SNAPSHOT_SEQUENCE_CONTINUES.SNAPSHOT_SEQUENCE_CONTINUES.V1", "M11.CURRENT_READS_PREVIOUS_SNAPSHOT.N_MINUS_ONE_READABLE.V1", "M11.CURRENT_READS_PREVIOUS_SNAPSHOT.SNAPSHOT_IDENTITY_SURVIVES.V1", "M11.CURRENT_DOWN_ENCODES_PREVIOUS_RESPONSE.N_MINUS_ONE_READABLE.V1" ],
+  "factLedger" : [ {
+    "obligation" : "N_MINUS_ONE_READABLE",
+    "scenarioId" : "CODEC_V1_GOLDENS",
+    "sourceArtifact" : "protocol-goldens.json",
+    "assertionId" : "M11.CODEC_V1_GOLDENS.N_MINUS_ONE_READABLE.V1",
+    "producer" : "M11FixedSuite#assertScenario(CODEC_V1_GOLDENS)",
+    "assertion" : "request-v1, response-v1, and snapshot-v1 were decoded by current production codecs; snapshot identity remained replayable",
+    "observedValue" : "requestV1=true,responseV1=true,snapshotS1=true",
+    "observationSha256" : "6bb4d37aa422feb3db8df322d10b2e8fb2d3905ecaa43621e38f91a421678092",
+    "witnessSha256" : "273a9ca4aa2391974da4c6185de2ba14a879815c045d829526f572f714edf4fe",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "CURRENT_GOLDEN_WRITE_EXACT",
+    "scenarioId" : "CODEC_V2_GOLDENS",
+    "sourceArtifact" : "protocol-goldens.json",
+    "assertionId" : "M11.CODEC_V2_GOLDENS.CURRENT_GOLDEN_WRITE_EXACT.V1",
+    "producer" : "M11FixedSuite#assertScenario(CODEC_V2_GOLDENS)",
+    "assertion" : "current request, response, and snapshot fixtures re-encoded byte-exact",
+    "observedValue" : "goldens=6",
+    "observationSha256" : "c195b27aef6feda60f45d308236b02eee660dc5a030ec0b5e6e1aaa7fbf59789",
+    "witnessSha256" : "86c07dfb6813d1c595b780935e85de0d3274c4a951dda2d7dda7c161803967b8",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "MALFORMED_FAILS_CLOSED",
+    "scenarioId" : "MALFORMED_FAILS_CLOSED",
+    "sourceArtifact" : "protocol-goldens.json",
+    "assertionId" : "M11.MALFORMED_FAILS_CLOSED.MALFORMED_FAILS_CLOSED.V1",
+    "producer" : "M11FixedSuite#assertScenario(MALFORMED_FAILS_CLOSED)",
+    "assertion" : "malformed and forged payload-hash inputs were rejected before apply",
+    "observedValue" : "stateMutations=0",
+    "observationSha256" : "554be10eecdc051b33a63e47184addd35a852e3c0f7711be21b009a405d2ecb3",
+    "witnessSha256" : "49ad56de58d60091d0253aa4ed4ac893d84db123768f3d656ec39038ac71774c",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "UNSUPPORTED_VERSION_FAILS_CLOSED",
+    "scenarioId" : "UNSUPPORTED_VERSION_FAILS_CLOSED",
+    "sourceArtifact" : "protocol-goldens.json",
+    "assertionId" : "M11.UNSUPPORTED_VERSION_FAILS_CLOSED.UNSUPPORTED_VERSION_FAILS_CLOSED.V1",
+    "producer" : "M11FixedSuite#assertScenario(UNSUPPORTED_VERSION_FAILS_CLOSED)",
+    "assertion" : "unsupported request/response negotiation was rejected before apply without a fabricated business result",
+    "observedValue" : "stateMutations=0,fabricatedResults=0",
+    "observationSha256" : "0eecf8fb78339571de5e34b7e04250d1d7542409d777fa7cec910382aad9d6fe",
+    "witnessSha256" : "21d6250a0db703aca84fffd03723de5b7e0c5c975ee2232b4405b4645992434c",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "AERON_VERSION_PINNED",
+    "scenarioId" : "REAL_SINGLE_MEMBER_LEADER",
+    "sourceArtifact" : "architecture.json+cluster-runtime.json",
+    "assertionId" : "M11.REAL_SINGLE_MEMBER_LEADER.AERON_VERSION_PINNED.V1",
+    "producer" : "M11FixedSuite#assertScenario(REAL_SINGLE_MEMBER_LEADER)",
+    "assertion" : "resolved production Aeron dependency matched the frozen version catalog",
+    "observedValue" : "1.52.2",
+    "observationSha256" : "56a97bbc40d7ca983ef1ec03eabd9d209b4a01e0f73c24b134995e79d9a9d342",
+    "witnessSha256" : "97b26a6302f33914bb2df66079c0deb326634fb647a317672ebf545ab4db6171",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "REAL_SINGLE_MEMBER_CLUSTER",
+    "scenarioId" : "REAL_SINGLE_MEMBER_LEADER",
+    "sourceArtifact" : "architecture.json+cluster-runtime.json",
+    "assertionId" : "M11.REAL_SINGLE_MEMBER_LEADER.REAL_SINGLE_MEMBER_CLUSTER.V1",
+    "producer" : "M11FixedSuite#assertScenario(REAL_SINGLE_MEMBER_LEADER)",
+    "assertion" : "two fresh one-member Aeron Cluster runs completed all ingress with no component errors",
+    "observedValue" : "runs=2,ingress=8192",
+    "observationSha256" : "2bc334f21eeb9fe76cd8d3ab289af6fbe14c8863b0b32498d779380b165e2375",
+    "witnessSha256" : "b01d9179a75bd4a8934e8c133b9f764c764f06774d28783687272508b6957af5",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "AERON_DEPENDENCY_CONFINED",
+    "scenarioId" : "REAL_SINGLE_MEMBER_LEADER",
+    "sourceArtifact" : "architecture.json+cluster-runtime.json",
+    "assertionId" : "M11.REAL_SINGLE_MEMBER_LEADER.AERON_DEPENDENCY_CONFINED.V1",
+    "producer" : "M11FixedSuite#assertScenario(REAL_SINGLE_MEMBER_LEADER)",
+    "assertion" : "Aeron imports and dependencies were confined to matching-cluster-runtime main and test scopes",
+    "observedValue" : "importViolations=0,dependencyViolations=0",
+    "observationSha256" : "2b3cb3772689fb492b884845653283c1ca5a8a90bebba8ad018a7e4949f9d520",
+    "witnessSha256" : "c7383b5cf95a2f0e9b0bc5923a3f2a1c8ad4eba7a38912aad7b6addc90c8ed6b",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "INGRESS_OFFER_NOT_ACK",
+    "scenarioId" : "OFFER_IS_NOT_SUCCESS",
+    "sourceArtifact" : "generated-differential.json+cluster-runtime.json",
+    "assertionId" : "M11.OFFER_IS_NOT_SUCCESS.INGRESS_OFFER_NOT_ACK.V1",
+    "producer" : "M11FixedSuite#assertScenario(OFFER_IS_NOT_SUCCESS)",
+    "assertion" : "every accepted ingress obtained its business outcome from correlated egress",
+    "observedValue" : "ingress=8192,egress=8192",
+    "observationSha256" : "a0aa9154587114a8eed23118f53c46c73fa2c95aadf69b19e86fda3ac6d8a60a",
+    "witnessSha256" : "24db4be7586e125ad77f04926f1f86df67cd9bed386055eeaa9a3dfbfa96558e",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "CORRELATION_ROUND_TRIP",
+    "scenarioId" : "CORRELATION_ROUND_TRIP",
+    "sourceArtifact" : "generated-differential.json+cluster-runtime.json",
+    "assertionId" : "M11.CORRELATION_ROUND_TRIP.CORRELATION_ROUND_TRIP.V1",
+    "producer" : "M11FixedSuite#assertScenario(CORRELATION_ROUND_TRIP)",
+    "assertion" : "every actual Cluster response preserved the submitted correlation ID",
+    "observedValue" : "roundTrips=8192",
+    "observationSha256" : "0dc5743cf55a4ad8f99fce63e47eeea4b75a17029229906c9cf8f24a63782539",
+    "witnessSha256" : "1cc0a5274ce6cb4ffa35e7885122f93bfffe0fb03a96685a157038881c2ca5c0",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "COMMAND_ID_STABLE",
+    "scenarioId" : "SESSION_NOT_BUSINESS_IDENTITY",
+    "sourceArtifact" : "generated-differential.json+cluster-runtime.json",
+    "assertionId" : "M11.SESSION_NOT_BUSINESS_IDENTITY.COMMAND_ID_STABLE.V1",
+    "producer" : "M11FixedSuite#assertScenario(SESSION_NOT_BUSINESS_IDENTITY)",
+    "assertion" : "the same durable command identity replayed its original result across a client-session change",
+    "observedValue" : "sessions=2",
+    "observationSha256" : "f6b1a121ca385d2bdb2a553a637dae7e4c19af35c442c17cb0e7cfd63f234af8",
+    "witnessSha256" : "6374d98048861c5306b72ddebcb5021f66e909e33cac212cd60e97b8dd92ddb1",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "SESSION_NOT_BUSINESS_IDENTITY",
+    "scenarioId" : "SESSION_NOT_BUSINESS_IDENTITY",
+    "sourceArtifact" : "generated-differential.json+cluster-runtime.json",
+    "assertionId" : "M11.SESSION_NOT_BUSINESS_IDENTITY.SESSION_NOT_BUSINESS_IDENTITY.V1",
+    "producer" : "M11FixedSuite#assertScenario(SESSION_NOT_BUSINESS_IDENTITY)",
+    "assertion" : "the restart path observed different client session IDs without changing durable identity",
+    "observedValue" : "1->2",
+    "observationSha256" : "8d9b3ac3d88986cf00f68c3da492bea63b410823ef2efe57f7b472f7e372f26a",
+    "witnessSha256" : "e22d5ede0258ab10410f126dbcfdd0bb004a8eb5d860f97b22478a5a27c5fb45",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "LOG_CALLBACK_ONLY_APPLY",
+    "scenarioId" : "NEW_RESPONSE_AFTER_APPLY",
+    "sourceArtifact" : "architecture.json+cluster-runtime.json",
+    "assertionId" : "M11.NEW_RESPONSE_AFTER_APPLY.LOG_CALLBACK_ONLY_APPLY.V1",
+    "producer" : "M11FixedSuite#assertScenario(NEW_RESPONSE_AFTER_APPLY)",
+    "assertion" : "all production business applies were reachable from the committed-log callback and none from another callback",
+    "observedValue" : "businessApplyCalls=1,logCallback=1,nonLog=0",
+    "observationSha256" : "a539fcfac08afc00ba0657741085a53295c313a4422af9b0a12e99ecce0a5831",
+    "witnessSha256" : "438df23950d61966c5aad4e06d98437c4c09fe228e698526e597960df8f4985d",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "RESPONSE_AFTER_RESULT_BIND",
+    "scenarioId" : "NEW_RESPONSE_AFTER_APPLY",
+    "sourceArtifact" : "architecture.json+cluster-runtime.json",
+    "assertionId" : "M11.NEW_RESPONSE_AFTER_APPLY.RESPONSE_AFTER_RESULT_BIND.V1",
+    "producer" : "M11FixedSuite#assertScenario(NEW_RESPONSE_AFTER_APPLY)",
+    "assertion" : "every NEW Cluster observation carried the full result before its correlated response",
+    "observedValue" : "observations=8192",
+    "observationSha256" : "712a24371e9a35b26dbe75bd363aa4f77540bf16617fccb163c8a092d4d1d099",
+    "witnessSha256" : "23382807a0864c44ac972fba6af65db2a0be4e301c16031177662aa0874d9be4",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "EGRESS_OFFER_NOT_STATE_INPUT",
+    "scenarioId" : "NEW_RESPONSE_AFTER_APPLY",
+    "sourceArtifact" : "architecture.json+cluster-runtime.json",
+    "assertionId" : "M11.NEW_RESPONSE_AFTER_APPLY.EGRESS_OFFER_NOT_STATE_INPUT.V1",
+    "producer" : "M11FixedSuite#assertScenario(NEW_RESPONSE_AFTER_APPLY)",
+    "assertion" : "source reachability found no business-state transition driven by egress offer outcome",
+    "observedValue" : "violations=0",
+    "observationSha256" : "df19dcfb46d92c3beecad257f77e68f4dd9242ee374074f5e971f9ec13965687",
+    "witnessSha256" : "2ae5aeb11e9d5d92ad4b27016d7e864d197b9a19b63acea43d9ca0f672705050",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "DUPLICATE_ORIGINAL_RESULT",
+    "scenarioId" : "DUPLICATE_REPLAYS_ORIGINAL",
+    "sourceArtifact" : "generated-differential.json+cluster-runtime.json",
+    "assertionId" : "M11.DUPLICATE_REPLAYS_ORIGINAL.DUPLICATE_ORIGINAL_RESULT.V1",
+    "producer" : "M11FixedSuite#assertScenario(DUPLICATE_REPLAYS_ORIGINAL)",
+    "assertion" : "each duplicate full result and result digest equaled the earlier NEW result at the same application sequence",
+    "observedValue" : "exactDuplicates=1024",
+    "observationSha256" : "08129422bf6056c3e9701782d37e68d8c8650b7f153ebdbc4ea009ae9e81758f",
+    "witnessSha256" : "242c3385a377328498a7359ba80aa592d5a2a38004a9f3c40ef209ecdd5bc98e",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "ID_CONFLICT_NO_MUTATION",
+    "scenarioId" : "COMMAND_ID_CONFLICT_NO_MUTATION",
+    "sourceArtifact" : "generated-differential.json+cluster-runtime.json",
+    "assertionId" : "M11.COMMAND_ID_CONFLICT_NO_MUTATION.ID_CONFLICT_NO_MUTATION.V1",
+    "producer" : "M11FixedSuite#assertScenario(COMMAND_ID_CONFLICT_NO_MUTATION)",
+    "assertion" : "all command-ID conflicts were rejected with per-action state and sequence invariants",
+    "observedValue" : "conflicts=512,stateChecks=1024,sequenceChecks=1024",
+    "observationSha256" : "040fda7b1a11184a9d9f9a400f27d9f86b0c41cc8852701dc44ec3602c0441a7",
+    "witnessSha256" : "afcda2bb801dfce4849d22e0d24b9c51454212cdd8dbb21a136b1355fcbf44c2",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "SLOT_CONFLICT_NO_MUTATION",
+    "scenarioId" : "SLOT_CONFLICT_NO_MUTATION",
+    "sourceArtifact" : "generated-differential.json+cluster-runtime.json",
+    "assertionId" : "M11.SLOT_CONFLICT_NO_MUTATION.SLOT_CONFLICT_NO_MUTATION.V1",
+    "producer" : "M11FixedSuite#assertScenario(SLOT_CONFLICT_NO_MUTATION)",
+    "assertion" : "all slot conflicts were rejected with per-action identity and producer-cursor invariants",
+    "observedValue" : "conflicts=512,identityChecks=1024,cursorChecks=1024",
+    "observationSha256" : "05464cb499aff78d143970c37ed97fef4d73bfadef97639d4bf7b2561a72ff65",
+    "witnessSha256" : "8212f12ca2505a629698cc4cdf3aad646b59f521519ac413f8038d70574b3a0a",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "CORE_INFRASTRUCTURE_FREE",
+    "scenarioId" : "DIRECT_CLUSTER_EVENTS_EQUAL",
+    "sourceArtifact" : "architecture.json+generated-differential.json",
+    "assertionId" : "M11.DIRECT_CLUSTER_EVENTS_EQUAL.CORE_INFRASTRUCTURE_FREE.V1",
+    "producer" : "M11FixedSuite#assertScenario(DIRECT_CLUSTER_EVENTS_EQUAL)",
+    "assertion" : "the M10 matching-core tree remained byte-identical and infrastructure-free",
+    "observedValue" : "58ce86179251a5a8cceba47ff41b1b2657a5d100",
+    "observationSha256" : "e24a5336010cb900e71cdb07f33f47563b01660ebadfd3a292aad9dad3bb68b0",
+    "witnessSha256" : "caa6241d2e5cd7a3e304e28a18395712051f07f8413d0c59abe9b1522896c340",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "DIRECT_CLUSTER_EVENT_EQUIVALENCE",
+    "scenarioId" : "DIRECT_CLUSTER_EVENTS_EQUAL",
+    "sourceArtifact" : "architecture.json+generated-differential.json",
+    "assertionId" : "M11.DIRECT_CLUSTER_EVENTS_EQUAL.DIRECT_CLUSTER_EVENT_EQUIVALENCE.V1",
+    "producer" : "M11FixedSuite#assertScenario(DIRECT_CLUSTER_EVENTS_EQUAL)",
+    "assertion" : "direct, uninterrupted Cluster, and restart Cluster emitted equal full application-result streams",
+    "observedValue" : "comparisons=8192",
+    "observationSha256" : "c9a8747cc9ce2acd478975e10b2d05b3aa3d9291bf3d43aeb9d48dec1da2ab63",
+    "witnessSha256" : "8a7e3d489b4c917bc1f0ab98d4f00ddbc565a9d2f03751eb82a1393d61313074",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "DIRECT_CLUSTER_RESULT_EQUIVALENCE",
+    "scenarioId" : "DIRECT_CLUSTER_DIGEST_EQUAL",
+    "sourceArtifact" : "generated-differential.json+cluster-runtime.json",
+    "assertionId" : "M11.DIRECT_CLUSTER_DIGEST_EQUAL.DIRECT_CLUSTER_RESULT_EQUIVALENCE.V1",
+    "producer" : "M11FixedSuite#assertScenario(DIRECT_CLUSTER_DIGEST_EQUAL)",
+    "assertion" : "all three paths produced identical bounded responses and full canonical results",
+    "observedValue" : "clusterComparisons=4096",
+    "observationSha256" : "cf4335b61cc884b23f1d801b23460862cc0ce451f1c515f6729eaf2e8ff53fa1",
+    "witnessSha256" : "e38bb785e006fe4b6e0219cbd301fb98163bb3979f6b4834517c23579186409f",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "DIRECT_CLUSTER_STATE_EQUIVALENCE",
+    "scenarioId" : "DIRECT_CLUSTER_DIGEST_EQUAL",
+    "sourceArtifact" : "generated-differential.json+cluster-runtime.json",
+    "assertionId" : "M11.DIRECT_CLUSTER_DIGEST_EQUAL.DIRECT_CLUSTER_STATE_EQUIVALENCE.V1",
+    "producer" : "M11FixedSuite#assertScenario(DIRECT_CLUSTER_DIGEST_EQUAL)",
+    "assertion" : "all three paths ended at the exact same complete business-state image",
+    "observedValue" : "nextSequence=2049",
+    "observationSha256" : "150555933c1e2239a32a56f2599eede1b6c30a1bc7412f17b5e1450c34cf53ba",
+    "witnessSha256" : "cd53f56e9af2a8dd698668c02d0d8932c70812251616a8c38ce2e87a4c353327",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "RUNTIME_METADATA_EXCLUDED",
+    "scenarioId" : "RUNTIME_METADATA_EXCLUDED",
+    "sourceArtifact" : "architecture.json",
+    "assertionId" : "M11.RUNTIME_METADATA_EXCLUDED.RUNTIME_METADATA_EXCLUDED.V1",
+    "producer" : "M11FixedSuite#assertScenario(RUNTIME_METADATA_EXCLUDED)",
+    "assertion" : "runtime metadata variants were exercised while the business semantic digest remained stable",
+    "observedValue" : "spy=true,variants=2",
+    "observationSha256" : "2fc0404ad0e44d9ab37e5889786fb3b80543ef1ecbe912e90ab7fc738d1fe68d",
+    "witnessSha256" : "86525a4407358bad205de27a2ebbcc51b04b42d3d997401432e24f2a6c2658f7",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "NO_STANDALONE_WAL_WRITE",
+    "scenarioId" : "NO_STANDALONE_WAL_WRITE",
+    "sourceArtifact" : "architecture.json",
+    "assertionId" : "M11.NO_STANDALONE_WAL_WRITE.NO_STANDALONE_WAL_WRITE.V1",
+    "producer" : "M11FixedSuite#assertScenario(NO_STANDALONE_WAL_WRITE)",
+    "assertion" : "the ClusteredService callback-reachable production source graph contains no standalone-WAL reference",
+    "observedValue" : "callbackReachableReferences=0,evidenceMode=CALLBACK_REACHABLE_SOURCE_REFERENCE_COUNT_COMPATIBILITY",
+    "observationSha256" : "0226340076eeba4ff7cccb1379be4e354b3efafe277ed219f6688bf33079dd33",
+    "witnessSha256" : "5c5e2a92060d7d546cbc87e817aca0b8e3c4a19f8ed2e7f50e6280e1f1e57d19",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "REAL_SINGLE_MEMBER_CLUSTER",
+    "scenarioId" : "SNAPSHOT_ACCEPTANCE_AND_COMPLETION_DISTINCT",
+    "sourceArtifact" : "cluster-runtime.json",
+    "assertionId" : "M11.SNAPSHOT_ACCEPTANCE_AND_COMPLETION_DISTINCT.REAL_SINGLE_MEMBER_CLUSTER.V1",
+    "producer" : "M11FixedSuite#assertScenario(SNAPSHOT_ACCEPTANCE_AND_COMPLETION_DISTINCT)",
+    "assertion" : "the real single-member harness performed an accepted and completed admin snapshot",
+    "observedValue" : "completed=1",
+    "observationSha256" : "74b274b91e3ac08fef79e2127d9709dddc919d6f564e165eeaa772d4c0bde1e8",
+    "witnessSha256" : "3a8b6b595cf5b0d9e5abb606997b49e0814dcba44e5c0940c1431bb7b5ebbcbe",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "SNAPSHOT_COMPLETION_RECORDED",
+    "scenarioId" : "SNAPSHOT_ACCEPTANCE_AND_COMPLETION_DISTINCT",
+    "sourceArtifact" : "cluster-runtime.json",
+    "assertionId" : "M11.SNAPSHOT_ACCEPTANCE_AND_COMPLETION_DISTINCT.SNAPSHOT_COMPLETION_RECORDED.V1",
+    "producer" : "M11FixedSuite#assertScenario(SNAPSHOT_ACCEPTANCE_AND_COMPLETION_DISTINCT)",
+    "assertion" : "admin acceptance preceded a bounded completed recording-log snapshot with changed recording IDs, same term/position, and NEUTRAL toggle",
+    "observedValue" : "0->1",
+    "observationSha256" : "f99c2b63e36fdaab400fff657cf5d315012c0f7c70b9ad32028e3c45728b38ca",
+    "witnessSha256" : "13f36d18801741ad0b192f6280e167b062d575cafca52f7c7b9d76b7515ef9df",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "SNAPSHOT_RESTART_EXACT",
+    "scenarioId" : "SNAPSHOT_STATE_EXACT_AFTER_RESTART",
+    "sourceArtifact" : "cluster-runtime.json",
+    "assertionId" : "M11.SNAPSHOT_STATE_EXACT_AFTER_RESTART.SNAPSHOT_RESTART_EXACT.V1",
+    "producer" : "M11FixedSuite#assertScenario(SNAPSHOT_STATE_EXACT_AFTER_RESTART)",
+    "assertion" : "restart loaded the completed snapshot from preserved directories with exact identity and semantic digests",
+    "observedValue" : "98c44cb2485b3e637850cd4ec5c16e9327801d71a3aee7578f595152baebd64d",
+    "observationSha256" : "e2c9a2503f543f4f1ea5b2e378277ed7e24f7e15e11497554e9761a79d3a2682",
+    "witnessSha256" : "081356d889db988074f49dc6a6674ff213060d6b9c62632c676ceb910dcd2731",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "SNAPSHOT_IDENTITY_SURVIVES",
+    "scenarioId" : "SNAPSHOT_IDENTITY_RESULT_SURVIVES",
+    "sourceArtifact" : "cluster-runtime.json",
+    "assertionId" : "M11.SNAPSHOT_IDENTITY_RESULT_SURVIVES.SNAPSHOT_IDENTITY_SURVIVES.V1",
+    "producer" : "M11FixedSuite#assertScenario(SNAPSHOT_IDENTITY_RESULT_SURVIVES)",
+    "assertion" : "every cross-snapshot duplicate replayed the original result with per-action state, sequence, identity, and cursor invariants",
+    "observedValue" : "duplicates=512,fullResultExact=true",
+    "observationSha256" : "f2794069bdd365b6ff5e09cd9ee353d87341fbde0b236f2c9ea281ceac5c7de2",
+    "witnessSha256" : "7db5d63110dabbebafa3edefb2c8612eb3ed1913fb07593518dfeadfc62ec991",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "SNAPSHOT_SEQUENCE_CONTINUES",
+    "scenarioId" : "SNAPSHOT_SEQUENCE_CONTINUES",
+    "sourceArtifact" : "cluster-runtime.json",
+    "assertionId" : "M11.SNAPSHOT_SEQUENCE_CONTINUES.SNAPSHOT_SEQUENCE_CONTINUES.V1",
+    "producer" : "M11FixedSuite#assertScenario(SNAPSHOT_SEQUENCE_CONTINUES)",
+    "assertion" : "snapshot restored next sequence 1537 and the first post-restart PREVIOUS_NEW applied at that exact sequence",
+    "observedValue" : "restoredNext=1537,firstApplied=1537",
+    "observationSha256" : "89193b7d54486e2a3dbbe66f6bf1485cab267c45858c43b9d2bae275b6c98d41",
+    "witnessSha256" : "59c1fce4ab80de5343f44fe1d2e740ac73783410d39d08024520fcfa12e2d78b",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "N_MINUS_ONE_READABLE",
+    "scenarioId" : "CURRENT_READS_PREVIOUS_SNAPSHOT",
+    "sourceArtifact" : "protocol-goldens.json",
+    "assertionId" : "M11.CURRENT_READS_PREVIOUS_SNAPSHOT.N_MINUS_ONE_READABLE.V1",
+    "producer" : "M11FixedSuite#assertScenario(CURRENT_READS_PREVIOUS_SNAPSHOT)",
+    "assertion" : "current snapshot codec decoded/restored S1 with ordered durable identity results",
+    "observedValue" : "bindings=2",
+    "observationSha256" : "4d0b53824be11584b31d4ca23076f875b3d4c4581e3179ceeff9a390b2a587e5",
+    "witnessSha256" : "6a4623a6533d711a80ff99b29e152e5fa307bd708efe0a716266ff96f89b4428",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "SNAPSHOT_IDENTITY_SURVIVES",
+    "scenarioId" : "CURRENT_READS_PREVIOUS_SNAPSHOT",
+    "sourceArtifact" : "protocol-goldens.json",
+    "assertionId" : "M11.CURRENT_READS_PREVIOUS_SNAPSHOT.SNAPSHOT_IDENTITY_SURVIVES.V1",
+    "producer" : "M11FixedSuite#assertScenario(CURRENT_READS_PREVIOUS_SNAPSHOT)",
+    "assertion" : "an S1-restored duplicate replayed its original canonical result",
+    "observedValue" : "preserved=true",
+    "observationSha256" : "585b27983e5672971347eb57b528b4934919c1e6f263efea1393634e4142383f",
+    "witnessSha256" : "b8f8b6c9c651a494b02b4d2fd144b3c022cdfdef1c391507f370188c3d339bfa",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "N_MINUS_ONE_READABLE",
+    "scenarioId" : "CURRENT_DOWN_ENCODES_PREVIOUS_RESPONSE",
+    "sourceArtifact" : "protocol-goldens.json",
+    "assertionId" : "M11.CURRENT_DOWN_ENCODES_PREVIOUS_RESPONSE.N_MINUS_ONE_READABLE.V1",
+    "producer" : "M11FixedSuite#assertScenario(CURRENT_DOWN_ENCODES_PREVIOUS_RESPONSE)",
+    "assertion" : "current runtime down-encoded all four promised response-v1 outcomes and current decoder read them",
+    "observedValue" : "outcomes=4",
+    "observationSha256" : "a1e67b201f6d3c6748f2574213c56627b46b8c621e1a71b6e0cf1b764373db03",
+    "witnessSha256" : "94b2a0e14600c6bf16de9f98d1c0206f7f24c7996776392e76aacf3aa3b42fb4",
+    "executed" : true,
+    "passed" : true
+  } ]
+}

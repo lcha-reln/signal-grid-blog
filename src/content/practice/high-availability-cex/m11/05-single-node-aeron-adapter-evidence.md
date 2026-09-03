@@ -1,6 +1,6 @@
 ---
 title: "M11·05：为单节点 Aeron Adapter 设计可复核 Evidence"
-description: "把结构化 RED、真实 Cluster、六份 codec Golden、Direct/Cluster 差分、Snapshot restart、mutant 与架构边界组织成紧凑证据，并严格区分冻结规模和未来完成结果。"
+description: "把结构化 RED、真实 Cluster、六份 codec Golden、Direct/Cluster 差分、Snapshot restart、mutant 与架构边界组织成紧凑证据，并逐项对照冻结合同与实际观察。"
 date: 2026-09-03T09:50:00+08:00
 project: high-availability-cex
 profileVersion: SPOT-CEX-1.0
@@ -12,49 +12,40 @@ tags:
   - 软件测试
   - Evidence
   - 确定性
-draft: true
+draft: false
 ---
 
-> 当前状态：M11 只有 annotated [`course/m11-start`](https://github.com/lcha-reln/cex-matching/tree/course/m11-start) 冻结的 [结构化 RED 合同](https://github.com/lcha-reln/cex-matching/blob/course/m11-start/docs/specs/m11.md)。本文可以写冻结的输入规模、场景 ID、candidate ID 和验收方法；不能填写未来 complete commit、PASS、实际 comparison count、运行摘要、manifest hash 或线上 evidence。
+> 发布状态：annotated [`course/m11-start`](https://github.com/lcha-reln/cex-matching/tree/course/m11-start) 保留历史 [结构化 RED 合同](https://github.com/lcha-reln/cex-matching/blob/course/m11-start/docs/specs/m11.md)；annotated [`course/m11-complete`](https://github.com/lcha-reln/cex-matching/tree/course/m11-complete) 固定了通过实现与 PASS 报告。公开 evidence 路径为 `/practice/high-availability-cex/m11/evidence/manifest.json`，可在 [manifest](/signal-grid-blog/practice/high-availability-cex/m11/evidence/manifest.json) 逐项复核。
 
 “启动过一次单节点 Cluster”不是证据，“Direct 和 Cluster 最后盘口一样”也不够。前者没有证明业务一定从 log apply 推进，后者可能漏掉 original result、事件顺序和 identity table。相反，把整个 Aeron Archive 和数百兆 driver 日志提交进博客，也不会自动提高结论质量，只会让证据难以审阅和长期维护。
 
 M11 的证据设计遵循一个原则：**每项公开 claim 都绑定能直接支持它的最小 artifact；冻结输入与实际观察分开；环境错误不能伪装成业务失败；完整 runtime 临时目录不进入 Git。**
 
-## 先区分“合同数字”与“结果数字”
+## 冻结合同必须与实际观察逐项对账
 
-起点已经冻结以下试验规模，所以草稿可以准确引用：
+起点数字只定义“裁判必须运行什么”；complete 报告才回答“本次到底观察到了什么”。M11 的对账结果如下：
 
-| 冻结项目                       |                        合同值 |
-| ------------------------------ | ----------------------------: |
-| fixed scenarios                |                            22 |
-| generator                      | `splitmix64-v1` / seed `6111` |
-| continuous corpus segments     |                            32 |
-| actions per segment            |                           128 |
-| actual Cluster ingress actions |             2 × 4,096 = 8,192 |
-| lanes                          |          4，每组 8 个 segment |
-| controlled snapshot cut        |        全局 action 2,048 之后 |
-| proof obligations              |                            28 |
-| semantic candidates            |                            10 |
-| `SYSTEM_ERROR` controls        |                             3 |
-| binary Golden                  |                             6 |
+| 证据面             | 冻结合同                                                | complete tag 的实际观察                                      |
+| ------------------ | ------------------------------------------------------- | ------------------------------------------------------------------ |
+| fixed scenarios    | 22 个固定场景                                         | 22/22 PASS，每个保留 scenario ID 与 observation                  |
+| generated corpus   | `splitmix64-v1`、seed `6111`、32 段×128 action          | 连续 corpus 两条 Cluster 路径分别完成 4,096/4,096 action     |
+| real ingress       | uninterrupted 与 restart 必须各走全量 Cluster ingress | 共观察 8,192 次真实 Cluster ingress                            |
+| Snapshot cut       | action 2,048 后切分历史                               | 前缀 1,536 NEW + 512 duplicate；恢复后首条 NEW 的 sequence=1537 |
+| restart suffix     | duplicate/conflict 不得产生第二个业务效果              | 512 个跨 Snapshot duplicate 和 1,024 个 conflict 全部通过      |
+| proof obligations  | 28 项                                                    | 28/28 PASS                                                         |
+| assertion ledger   | 不得以一个总 PASS 掩盖局部证明                          | fixed/coverage ledger 记录 32 条 assertion fact                    |
+| semantic faults    | 10 个由 production 组件派生的单故障 candidate                | 10/10 都产生 fresh persisted replay 并通过 one-delete audit；replay 不启动 Aeron |
+| judge controls     | 3 个环境/裁判故障不得计为 kill                            | 3/3 保持 `SYSTEM_ERROR`，且 `systemErrorCountedAsKill=false`       |
+| report inventory   | 报告集合必须完整、无重复绑定                              | 12 份 child report                                               |
+| evidence inventory | 公开 artifact 需逐文件哈希并限制体积                         | manifest 绑定 27 个 payload artifact；公开目录另含 manifest，共 28 个文件 |
+| runtime identity   | 真实 localhost 单 member Cluster                              | Aeron `1.52.2`、Agrona `2.5.0`、member 0 / `LEADER`             |
+| teardown           | 按所有权关闭并收集 component error                         | teardown 结束后无 component error                              |
 
-这些数字只说明“必须运行什么”，不说明“已经运行成功”。下列数字必须等完成裁判真实产生后才能写：
-
-- fixed 通过数；
-- Direct/Cluster comparison 数；
-- event、result、state digest；
-- Snapshot frame/entry/byte 数；
-- candidate kill 数与反例长度；
-- Aeron component/runtime observation；
-- public artifact 数与总大小；
-- complete SHA 与 manifest SHA-256。
-
-把计划数写成通过数，是课程证据最隐蔽的造假方式之一。
+这个表的用途不是让两列数字“看起来一样”，而是防止把冻结规模偷换成运行结果。具体 digest、artifact SHA-256 和每个观察字段仍以公开 manifest 及其绑定报告为准。
 
 ## 七项 claim 应形成一条因果链
 
-完成态 `cex.lab-evidence.v2` manifest 的 claim identity 已在起点冻结，顺序为：
+`cex.lab-evidence.v2` manifest 的 claim identity 已在起点冻结，complete evidence 保持同一顺序并将七项全部判为 PASS：
 
 ```text
 m00-m10-semantic-regression
@@ -74,7 +65,7 @@ architecture-and-unit-identity
 
 ### 真实 Service 再证明“不是模拟”
 
-`single-node-clustered-service` 绑定真实 localhost Media Driver、Archive、Consensus Module 和 Service Container 的启动身份、member 0/appointed leader 0、actual ingress 与 bounded deadline/error capture。fake queue 只能作局部测试，不能进入这项 claim。
+`single-node-clustered-service` 绑定真实 localhost Media Driver、Archive、Consensus Module 和 Service Container 的启动身份、member 0/appointed leader 0、实际 role=`LEADER`、8,192 次 ingress 与 bounded deadline/error capture。fake queue 只能作局部测试，不能进入这项 claim。
 
 ### 提交链证明“offer 不是成功”
 
@@ -90,13 +81,13 @@ architecture-and-unit-identity
 
 ### Codec 与 candidate 证明“反面路径会被抓住”
 
-`protocol-compatibility-and-mutants` 绑定六份 request/response/snapshot version 1/2 Golden、current2/minReadable1 matrix、范围外版本/损坏输入，以及十个 executable semantic candidate。三个 throwing/environment control 仍必须是 `SYSTEM_ERROR`。
+`protocol-compatibility-and-mutants` 绑定六份 request/response/snapshot version 1/2 Golden、current2/minReadable1 matrix、范围外版本/损坏输入，以及十个 executable semantic candidate。报告观察到 10/10 个 candidate 被 `STUDENT_FAILURE` 反例杀死，对应 10 份 fresh persisted replay 通过 one-delete audit；三个 throwing/environment control 保持 `SYSTEM_ERROR`。
 
 ### 架构与身份证明“证据来自要发布的源码”
 
-`architecture-and-unit-identity` 最终绑定 core 无 Aeron、Cluster runtime 无 standalone WAL、ClusteredService 无外部业务副作用、依赖版本、Java/OS/arch、clean source、complete tag、`productRelease=null` 与全部 artifact hash。Aeron runtime 自身的网络/文件 I/O 不是这里的禁止项。
+`architecture-and-unit-identity` 绑定 core 无 Aeron、callback 可达 production source graph 无 standalone-WAL/API reference、ClusteredService 无外部业务副作用、Aeron `1.52.2` / Agrona `2.5.0`，以及 clean source、complete tag 和 `productRelease=null`。Java/OS/arch 位于 manifest 顶层环境，`environment.json` 由 `single-node-clustered-service` claim 绑定；27 个 payload artifact 的 SHA-256 则由 manifest 的各项 claim 共同登记。这项 WAL 观察是可达源码图证据，不是运行时写入计数器；Aeron runtime 自身的网络/文件 I/O 也不是这里的禁止项。
 
-M11 是普通课程单元，不创建产品 release。当前候选地图把 `matching-0.8.0` 暂列为 M12 的目标；M12 尚未签约时，这只是后续评审坐标。无论未来如何调整，M11 manifest 出现任何产品 release 都已经越过本单元合同。
+M11 是普通课程单元，不创建产品 release。`matching-0.8.0` 属于其他单元的产品决策；M11 manifest 若出现任何产品 release，就已经越过本单元合同。
 
 ## 22 个 fixed scenario 要覆盖机制，不是堆 smoke
 
@@ -127,7 +118,7 @@ CURRENT_READS_PREVIOUS_SNAPSHOT
 CURRENT_DOWN_ENCODES_PREVIOUS_RESPONSE
 ```
 
-它们按机制可以归为五组：codec fail-closed、真实 runtime、identity/response、Direct/Cluster equality、Snapshot/restart。报告应保留 scenario ID、实际执行状态、关键 observation 与失败 fingerprint，不能只写 `22/22`。
+它们按机制可以归为五组：codec fail-closed、真实 runtime、identity/response、Direct/Cluster equality、Snapshot/restart。fixed 报告观察为 22/22 PASS，同时保留每个 scenario ID、执行状态，以及 assertion ID、observed value、observation SHA-256 与 witness SHA-256，因而不是一个没有过程的总计数。
 
 例如 `SNAPSHOT_STATE_EXACT_AFTER_RESTART` 与 `SNAPSHOT_IDENTITY_RESULT_SURVIVES` 必须分开：前者关心完整业务状态，后者关心 duplicate/conflict 的 original result。只验证订单簿会漏掉后一类错误。
 
@@ -175,7 +166,7 @@ M11-DOUBLE-WRITE-LOCAL-WAL
 M11-ACCEPT-UNSUPPORTED-VERSION
 ```
 
-每个 candidate 必须产生可重放 counterexample，并以 `STUDENT_FAILURE` 结束。裁判自身抛异常、Cluster 没启动、deadline 超时或端口冲突只能是 `SYSTEM_ERROR`，永不计 kill。
+每个 candidate 都产生了可重放 counterexample，并以 `STUDENT_FAILURE` 结束。完成结果是 10/10 个由真实 production 组件派生的单故障 candidate、10 份 fresh persisted replay 与 10 次 one-delete audit；这些 candidate replay 使用 production codec、Direct runtime 和 completion boundary，但不启动真实 Aeron。裁判自身抛异常、Cluster 没启动、deadline 超时或端口冲突只能是 `SYSTEM_ERROR`，永不计 kill；8,192 次真实 Cluster ingress 与 Snapshot/restart 由另外两项 runtime claim 证明。
 
 `one-minimal` 仍只表示删除任一单项就不再复现同一 fingerprint，不是全局最短证明。若缩小历史造成非法前置条件，应标为 `INVALID_HISTORY`，同样不能计 kill。
 
@@ -183,29 +174,30 @@ M11-ACCEPT-UNSUPPORTED-VERSION
 
 manifest 的 artifact SHA-256 能证明公开文件未被改写，却不能阻止一整套失败报告被同步改写后重新计算 hash。博客侧 `evidenceContract.reportFacts` 因此要绑定权威 JSON 中的关键字段。
 
-完成时至少应冻结这些类别，具体路径和值以真实 writer 为准：
+公开 `reportFacts` 已将下列语义事实冻结为 manifest 验收合同：
 
-| 报告            | 需要绑定的语义事实                                                                                           |
-| --------------- | ------------------------------------------------------------------------------------------------------------ |
-| top-level check | schema、status、contractPlanVersion、inherited M10 status                                                    |
-| runtime         | member count/id、appointed leader、real component identity、actual ingress count                             |
-| apply/response  | offerIsSuccess=false、apply-only mutation、bind-before-response、session/correlation identity=false          |
-| differential    | generation/count、runtimeMetadataExcluded、events/results/final digest equality                              |
-| codec           | request v1→response v1、v2 只协商 1/2、全部 outcome 可降 v1、optional commandId、两 binding Snapshot Golden  |
-| restart         | cut=2048、Admin accepted 与 counter/toggle/RecordingLog/written digest 完成、non-null Image 同 digest loaded |
-| mutants         | required/killed/classification、systemErrorCountedAsKill=false                                               |
-| architecture    | coreInfrastructureFree、Aeron confined、standaloneWalDualWrite=false、serviceExternalSideEffects=false       |
-| publication     | artifact count/bytes、containsAeronArchive=false、source clean、productRelease=null                          |
+| 报告            | 已绑定的语义事实                                                                                                      |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| top-level check | schema、`PASS`、contractPlanVersion、inherited M10 status，以及 12 份 child report inventory                          |
+| runtime         | member count/id、appointed leader 0、actual role `LEADER`、Aeron/Agrona 版本、8,192 次 ingress、teardown 无 component error |
+| apply/response  | offerIsSuccess=false、apply-only mutation、bind-before-response、session/correlation identity=false                             |
+| differential    | fresh generation byte-exact、4,096/4,096 action、runtimeMetadataExcluded、events/results/final digest equality                   |
+| codec           | request v1→response v1、v2 只协商 1/2、全部 outcome 可降 v1、optional commandId、两 binding Snapshot Golden                     |
+| restart         | cut=2048、1,536 NEW+512 duplicate、first sequence=1537、512 跨 Snapshot duplicate、1,024 conflict                     |
+| coverage        | 28/28 obligation、32 条 assertion fact、三个 `SYSTEM_ERROR` control 不计 kill                                              |
+| mutants/replay  | 10/10 production-component-derived single-fault candidate、10 份 fresh persisted replay、10 次 one-delete audit；不冒充 Aeron fault path |
+| architecture    | coreInfrastructureFree、Aeron confined、callback-reachable source graph 无 standalone-WAL/API reference、serviceExternalSideEffects=false |
+| publication     | 27 个 artifact、containsAeronArchive=false、source clean、productRelease=null                                               |
 
 带 `claimId/observationField` 的 fact 还要与 manifest claim observation 交叉核对。一个 artifact 在 manifest 中只能归属一个 claim，不能为了复用而在多个 claim 重复登记同一路径。
 
-当前没有这些完成报告，所以草稿只写字段责任，不填 `PASS`、digest 或实际数值。
+这些字段由 manifest 中的 artifact hash 与 claim observation 双重绑定；读者仍应打开对应 child report 查看数据，不应只读本文的摘要数字。
 
 ## Public evidence 应小而完整
 
 M10 为环境绑定性能资格保留了大量压缩 raw，公开目录约 460 MiB。M11 没有性能 raw 或长稳态时间序列，不应照搬这个体积。
 
-建议公开包遵守：
+公开包遵守以下上界：
 
 ```text
 target total size   <= 5 MiB
@@ -216,7 +208,7 @@ Aeron archive files = 0
 term/cluster-dir     = 0
 ```
 
-适合公开的内容包括：
+manifest 绑定的 27 个 payload artifact 覆盖：
 
 - content-addressed workload profile；
 - 六份小型 binary Golden 及可读 inventory；
@@ -224,30 +216,29 @@ term/cluster-dir     = 0
 - generated canonical request/transcript 的压缩摘要与 digest；
 - Direct/Cluster/restart comparison 报告；
 - coverage、mutant、counterexample、replay；
-- architecture、environment、publication inventory；
-- manifest。
+- architecture 与 environment 报告。
+
+公开目录还包含 manifest 本身，因此磁盘上共 28 个文件；“27”只表示由 manifest 绑定的 payload artifact 数。
 
 不应提交：
 
 - Aeron Archive recording；
 - term buffer、mark file、driver/cluster 工作目录；
 - 可由 fixture 重生的巨大逐 poll 日志；
-- 端口、临时绝对路径或机器私有数据；
+- runtime 目录内容、密钥、token 或其他 secret；报告会保留端口块、本机临时路径、FileStore 和系统环境字段，用来限定这一次观察，而不是提供可移植配置；
 - 与 claim 无关的 debug dump。
 
-完整临时目录可以留在 `build/tmp/m11` 供本次诊断，测试结束后不进入 Git。公开报告应保存足够的 seed、input hash、comparison count、digest 和首个差异，使读者能在本地重跑，而不是把 runtime 文件系统本身当作证据。
+完整临时目录可以留在 `build/tmp/m11` 供本次诊断，测试结束后不进入 Git。公开报告保存 seed、input hash、comparison count、关键 digest 和等价判定；它没有声称保存首个差异位置，失败定位仍需本地重跑，也不能把 runtime 文件系统本身当作证据。
 
 ## 起点与完成态的命令必须给出不同预期
 
-完成实现的固定阅读坐标包括：
+通过实现的固定阅读坐标包括：
 
-```text
-course/m11-complete:matching-testkit/src/main/java/io/github/lchareln/cex/matching/testkit/M11CheckRunner.java
-course/m11-complete:matching-testkit/src/main/java/io/github/lchareln/cex/matching/testkit/M11MutantSuite.java
-course/m11-complete:matching-testkit/src/main/java/io/github/lchareln/cex/matching/testkit/M11EvidenceWriter.java
-```
+- [`M11CheckRunner.java`](https://github.com/lcha-reln/cex-matching/blob/course/m11-complete/matching-testkit/src/main/java/io/github/lchareln/cex/matching/testkit/M11CheckRunner.java)
+- [`M11MutantSuite.java`](https://github.com/lcha-reln/cex-matching/blob/course/m11-complete/matching-testkit/src/main/java/io/github/lchareln/cex/matching/testkit/M11MutantSuite.java)
+- [`M11EvidenceWriter.java`](https://github.com/lcha-reln/cex-matching/blob/course/m11-complete/matching-testkit/src/main/java/io/github/lchareln/cex/matching/testkit/M11EvidenceWriter.java)
 
-这些坐标是待创建、推送并验证的 complete ref；`IN_PROGRESS` 阶段只记录路径，进入 `CODE_VERIFIED` 后才转换成固定源码链接，不能把它们写成当前发布证明。
+这三个链接锁定 annotated complete tag，分别对应顶层裁判编排、由 production 组件派生的单故障 candidate 与发布证据身份；第二项不是实际 Aeron fault path。
 
 在 `course/m11-start`：
 
@@ -259,9 +250,9 @@ course/m11-complete:matching-testkit/src/main/java/io/github/lchareln/cex/matchi
 # 预期：写出 schema-valid GOAL_NOT_IMPLEMENTED，然后非零退出
 ```
 
-显式 M11 RED 不应让默认 root build 变红。这样读者能区分“仓库坏了”和“新能力尚未实现”。
+显式 M11 RED 不会让默认 root build 变红。这样读者能区分“仓库坏了”和“当时的新能力存在实现缺口”。
 
-未来完成态才允许要求：
+在 `course/m11-complete` 运行：
 
 ```bash
 ./gradlew clean build --no-daemon
@@ -269,16 +260,16 @@ course/m11-complete:matching-testkit/src/main/java/io/github/lchareln/cex/matchi
 ./gradlew m11Evidence -Pm11.unitTag=course/m11-complete --no-daemon
 ```
 
-第二组命令现在不是通过声明。只有 clean complete source、实际 tag、manifest 和全部报告形成后，教程才能把预期改为 PASS。
+这组命令已在 clean complete source 上 PASS，并产生 12 份 child report 与 27 个 manifest artifact。结论仍以报告内容为准，不用终端最后一行代替业务观察。
 
 运行时按文件检查事实，而不是只保留终端最后一行：
 
 - 起点的 `build/reports/m11/check.json` 应保持 `matching.m11.check.v1 / GOAL_NOT_IMPLEMENTED`，且 `m11Check` 非零退出；
-- 完成候选的 `build/reports/m11/check.json` 必须升级为 v2，并同时生成 fixed、generated、Cluster runtime、protocol、coverage、mutant/counterexample、architecture 与 environment 报告；实际 status 只能照录本次运行结果；
+- complete tag 的 `build/reports/m11/check.json` 为 v2/PASS，并同时生成 fixed、generated、Cluster runtime、protocol、coverage、mutant/counterexample/replay、architecture 与 environment 报告；
 - `m11Evidence` 只有在 clean HEAD 与 annotated `course/m11-complete` 精确一致时，才有资格创建 `build/lab-evidence/M11/manifest.json`；tag、源码、报告或 artifact 任一漂移都必须失败关闭；
 - 整套命令只在读者本地运行 Java 与 Aeron，不上传源码、不调用远程 Judge 或外部服务。
 
-## 发布仍要经过三个独立门禁
+## 发布通过三个独立门禁
 
 代码完成不自动等于教程可发布：
 
@@ -294,10 +285,10 @@ PUBLISHED
     + blog verifier + deploy + live route/hash verification
 ```
 
-M11 五篇当前都必须保持 `draft: true`。发布时每篇正文都要引用 fixed `course/m11-complete`，不能继续只指向 start，也不能链接 `main`、`unit/m11` 或其他浮动分支。M12 必须等 M11 生产路由与 manifest hash 在线验证后才打开。
+五篇教程已一次性切换为 `draft: false`，每篇都引用 fixed `course/m11-complete`，不使用 `main`、`unit/m11` 或其他浮动分支作为发布证明。M11 只有在生产路由和 manifest hash 线上验证通过时，才为下一单元打开实施窗口。
 
 ## Evidence 可以支持的最终结论仍然很窄
 
-如果未来七项 claim 全部通过，M11 能支持的结论是：真实单节点 Aeron Cluster Adapter 在健康 apply、application request/response/snapshot version 1/2、受控 Snapshot/restart 和规范化业务语义上与 Direct runner 一致，并且没有双写 standalone WAL。
+M11 的七项 claim 已全部通过。它能支持的结论是：真实单节点 Aeron Cluster Adapter 在健康 apply、application request/response/snapshot version 1/2、受控 Snapshot/restart 和规范化业务语义上与 Direct runner 一致；callback 可达 production source graph 中不存在 standalone-WAL/API reference。后一句严格限定在源码图观察域，不是运行时 write counter。
 
-它仍不能支持三节点 quorum、leader failover、fencing、`UNKNOWN`、Cluster Backup、Cluster TPS/p99、外部 exactly-once、rolling upgrade 或 production-readiness。保留这些限制，才能让当前候选 M12 在未来签约后增加一个可检验的新复杂度，而不是替前一章补交遗漏的边界。
+它仍不能支持三节点 quorum、leader failover、fencing、`UNKNOWN`、Cluster Backup、Cluster TPS/p99、外部 exactly-once、rolling upgrade 或 production-readiness。它也不是性能证据，更不是生产就绪声明。保留这些限制，才能让下一单元只增加一个可检验的新复杂度，而不是替 M11 补交遗漏的边界。

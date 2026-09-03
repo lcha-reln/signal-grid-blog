@@ -12,10 +12,10 @@ tags:
   - Java
   - 撮合系统
   - 单节点恢复
-draft: true
+draft: false
 ---
 
-> 当前状态：M11 处于 `IN_PROGRESS`。annotated [`course/m11-start`](https://github.com/lcha-reln/cex-matching/tree/course/m11-start) 冻结了 [PLAN v0.14 合同](https://github.com/lcha-reln/cex-matching/blob/course/m11-start/docs/specs/m11.md)、结构化 RED、六份 application codec Golden 与五篇教程地址；当前没有 complete ref、公开 evidence、产品 release 或高可用结论。
+> 发布状态：annotated [`course/m11-start`](https://github.com/lcha-reln/cex-matching/tree/course/m11-start) 保留历史结构化 RED 与 [PLAN v0.14 合同](https://github.com/lcha-reln/cex-matching/blob/course/m11-start/docs/specs/m11.md)；annotated [`course/m11-complete`](https://github.com/lcha-reln/cex-matching/tree/course/m11-complete) 固定了通过实现与 PASS 报告。公开 evidence 路径为 `/practice/high-availability-cex/m11/evidence/manifest.json`，可在 [manifest](/signal-grid-blog/practice/high-availability-cex/m11/evidence/manifest.json) 逐项复核。
 
 M10 已经给出一个可恢复、有界准入且有环境绑定容量证据的单机撮合服务。最自然、也最危险的下一步，是把这个服务原封不动塞进 `ClusteredService`，继续写自己的 WAL，再让 Aeron Cluster 也记录一份日志。表面上看，这是“多一层保险”；实际上它让系统在崩溃后拥有两个都自称权威、却可能停在不同位置的恢复源。
 
@@ -80,11 +80,12 @@ local WAL force(C)
 这不是多写一份文件就能解决的问题。两套日志之间没有共同原子提交点，也没有一个合法规则能在所有窗口中选择“较新的一份”。所以 M11 的架构事实必须是：
 
 ```text
-Cluster mode durability authority = Aeron Cluster log + Cluster snapshot
-standalone application WAL writes = 0
+Cluster mode recovery authority = Aeron Cluster log + Cluster snapshot
+callback-reachable production source graph:
+  standalone WAL / standalone recovery API references = 0
 ```
 
-M08W1 与 M09S1 没有被废弃；它们继续证明 standalone runtime。只是进入 Cluster 模式后，恢复所有权已经转移，不能把两个时代的机制拼成一个未经证明的协议。
+M08W1 与 M09S1 没有被废弃；它们继续证明 standalone runtime。只是进入 Cluster 模式后，恢复所有权已经转移，不能把两个时代的机制拼成一个未经证明的协议。这里的证据是 callback 可达的 production source graph 扫描，不是“运行时 WAL 写入计数器”；它支持依赖边界结论，不应被夸大为对所有反射、动态加载或外部进程的穷尽证明。
 
 ## 业务只能从 log callback 推进
 
@@ -170,7 +171,7 @@ M11 的 Service 只产生两类内部结果：
 - 给当前调用方的 bounded application response；
 - 供裁判读取、但不影响状态的完整业务 observation。
 
-当前候选地图把可续接的 Execution/Market output、sequence、cursor 和 publisher fencing 暂列在 M14，最终边界仍以 M14 进入 `CONTRACTED` 时的合同为准。现在提前把 event list 推给外部消费者，会在还没有 outbox/replay 协议时制造一个无法恢复的半成品接口。
+当前候选地图把可续接的 Execution/Market output、sequence、cursor 和 publisher fencing 暂列在 M14，最终边界仍以 M14 进入 `CONTRACTED` 时的合同为准。现在提前把 event list 推给外部消费者，会因缺少 outbox/replay 协议而制造一个无法恢复的半成品接口。
 
 ## 如何证明边界没有被注释掩盖
 
@@ -180,23 +181,21 @@ M11 的 Service 只产生两类内部结果：
 | ------------------- | -------------------------------------------------- | ----------------------------------- |
 | Aeron 泄入 core     | 依赖/class-tree 扫描为零违规                       | core import Aeron buffer/session    |
 | offer 被当作成功    | response 只在 log apply 和 result bind 后出现      | publication position 直接映射成功   |
-| 两份恢复真相        | Cluster 路径 standalone WAL write count 为 0       | Adapter 构造 `LocalMatchingRuntime` |
+| 两份恢复真相        | callback 可达 production source graph 无 standalone-WAL/API reference | Adapter 构造 `LocalMatchingRuntime` |
 | session 成为身份    | 换 session、同 command identity 仍 replay 原结果   | session ID 参与 dedup key           |
 | 外部 I/O 污染 apply | Service 的 DB/HTTP/application file-store 依赖为零 | replay 再次调用外部系统             |
 
-起点已经为这些风险注册了固定场景与 candidate identity；当前阶段只冻结问题和 RED，不能把尚未生成的完成报告写成 PASS。
+完成裁判已将这些风险落成可执行证据：22/22 个 fixed scenario、28/28 项 proof obligation 全部通过，fixed/coverage assertion ledger 记录了 32 条 assertion fact；架构报告则负责可达源码图和依赖事实。其中 WAL 边界始终按上述可达源码图解释，不转述成不存在的运行时计数。
 
 ## 本篇实作：先让依赖边界可执行
 
-本篇先完成最小但不可跳过的一步：创建独立 Cluster runtime 模块，并用架构测试证明依赖只能朝 core 方向流动。完成后的固定阅读坐标将是：
+本篇实作的最小但不可跳过一步，是创建独立 Cluster runtime 模块，并用架构测试证明依赖只能朝 core 方向流动。固定阅读坐标为：
 
-```text
-course/m11-complete:matching-cluster-runtime/build.gradle.kts
-course/m11-complete:matching-cluster-runtime/src/test/java/io/github/lchareln/cex/matching/cluster/M11ArchitectureBoundaryTest.java
-course/m11-complete:matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11ClusteredMatchingService.java
-```
+- [`matching-cluster-runtime/build.gradle.kts`](https://github.com/lcha-reln/cex-matching/blob/course/m11-complete/matching-cluster-runtime/build.gradle.kts)
+- [`M11ArchitectureBoundaryTest.java`](https://github.com/lcha-reln/cex-matching/blob/course/m11-complete/matching-cluster-runtime/src/test/java/io/github/lchareln/cex/matching/cluster/M11ArchitectureBoundaryTest.java)
+- [`M11ClusteredMatchingService.java`](https://github.com/lcha-reln/cex-matching/blob/course/m11-complete/matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11ClusteredMatchingService.java)
 
-`IN_PROGRESS` 治理禁止把尚未登记的 complete ref 预先做成超链接；进入 `CODE_VERIFIED`、创建并推送该 tag 后，发布步骤才把这些坐标转换为固定源码链接。当前不能据此声称实现已经完成。
+这些链接都锁定 annotated `course/m11-complete`，不依赖 `main` 或 `unit/m11` 的浮动位置。
 
 在自己的实现分支运行局部门禁：
 
@@ -206,7 +205,7 @@ course/m11-complete:matching-cluster-runtime/src/main/java/io/github/lchareln/ce
   --no-daemon
 ```
 
-这里先核对事实，不预设当前草稿已经 PASS：
+该局部门禁在 complete tag 上 PASS，并且与公开 architecture report 的可达源码图和依赖事实一致。复核时应同时看到：
 
 - `matching-core` 的依赖和 class tree 中没有 Aeron、文件、网络或 runtime metadata；
 - Aeron 依赖只出现在 `matching-cluster-runtime`；
@@ -215,8 +214,8 @@ course/m11-complete:matching-cluster-runtime/src/main/java/io/github/lchareln/ce
 
 这条局部门禁只证明静态所有权，没有证明真实 ingress、Snapshot 或 restart；后四篇分别补上这些动态事实。
 
-## 这一章为候选 M12 压实了什么地基
+## 这一章为 M12 压实了什么地基
 
-M11 完成后能保证的只是：在一个真实单 member Cluster 中，Adapter 不改变业务语义，业务只从 log apply 推进，Cluster log/snapshot 是唯一恢复源。它没有冗余副本；唯一 member 停止，服务就停止。组件是否同进程部署不改变这个事实。
+M11 证据能保证的只是：在一个真实单 member Cluster 中，Adapter 不改变业务语义，业务只从 log apply 推进，Cluster log/snapshot 是唯一恢复源。它没有冗余副本；唯一 member 停止，服务就停止。组件是否同进程部署不改变这个事实，更不构成高可用、性能或生产就绪声明。
 
-下一篇将把 application request、bounded response 与 Cluster snapshot 的版本合同拆开。只有 bytes 本身可重放、旧 Snapshot 不丢 identity、未知版本失败关闭，所谓“重启后等价”才不是同一套 Java 对象在内存里自我比较。
+下一篇把 application request、bounded response 与 Cluster snapshot 的版本合同拆开。只有 bytes 本身可重放、旧 Snapshot 不丢 identity、未知版本失败关闭，所谓“重启后等价”才不是同一套 Java 对象在内存里自我比较。

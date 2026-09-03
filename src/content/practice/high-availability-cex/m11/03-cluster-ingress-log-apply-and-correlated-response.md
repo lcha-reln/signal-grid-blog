@@ -12,10 +12,10 @@ tags:
   - 幂等
   - 提交语义
   - 撮合系统
-draft: true
+draft: false
 ---
 
-> 当前状态：M11 处于结构化 RED 之后的实施阶段。annotated [`course/m11-start`](https://github.com/lcha-reln/cex-matching/tree/course/m11-start) 冻结了 [ingress、identity、correlation 与 response 合同](https://github.com/lcha-reln/cex-matching/blob/course/m11-start/docs/specs/m11.md)；本文不声称尚未生成的完成 evidence 已通过。
+> 发布状态：annotated [`course/m11-start`](https://github.com/lcha-reln/cex-matching/tree/course/m11-start) 保留历史结构化 RED，并冻结 [ingress、identity、correlation 与 response 合同](https://github.com/lcha-reln/cex-matching/blob/course/m11-start/docs/specs/m11.md)；annotated [`course/m11-complete`](https://github.com/lcha-reln/cex-matching/tree/course/m11-complete) 固定了通过实现与 PASS 报告。公开 evidence 路径为 `/practice/high-availability-cex/m11/evidence/manifest.json`，可在 [manifest](/signal-grid-blog/practice/high-availability-cex/m11/evidence/manifest.json) 逐项复核。
 
 客户端把 bytes 成功写入 Aeron ingress 后，最容易犯的错误是立刻返回“下单成功”。这个错误把传输层接受、Cluster 排序、Service apply、业务结果绑定和响应送达压成了一个布尔值。一旦进程在任意两步之间停止，客户端和状态机就会对同一命令得出不同结论。
 
@@ -94,7 +94,7 @@ retry after reconnect:
 
 `AeronCluster.offer` 的正数结果只说明 Publication 在当前时刻接收了 bytes。随后仍可能发生：
 
-- 消息尚未交给 Service；
+- 消息仍停留在 Service callback 之前；
 - request codec 拒绝格式；
 - canonical envelope 业务校验失败；
 - command identity 被判定为 duplicate 或 conflict；
@@ -102,7 +102,7 @@ retry after reconnect:
 - Service 已 apply，但 response publication 暂时失败；
 - 测试环境卡住并触发有界 deadline。
 
-如果客户端把 offer position 当作业务成功，`M11-OFFER-AS-SUCCESS` candidate 就会在“请求被 transport 接受、但尚未 apply”的窗口产生虚假结果。
+如果客户端把 offer position 当作业务成功，`M11-OFFER-AS-SUCCESS` candidate 就可能在“请求被 transport 接受、但仍处于 apply 之前”的窗口产生虚假结果。
 
 健康路径必须等待同 correlation 的 decoded application response。注意，这仍没有实现结果 `UNKNOWN` 协议；当前候选地图暂把它列入 M12，最终以 M12 签约合同为准。M11 只有单节点、受控本地环境；若健康场景在 deadline 内收不到响应，harness 报 `SYSTEM_ERROR`，不能凭空合成业务失败，也不能把超时算作 candidate kill。
 
@@ -188,7 +188,7 @@ RUNTIME_METADATA_EXCLUDED
 NO_STANDALONE_WAL_WRITE
 ```
 
-它们不是十二个布尔断言的清单，而是一条因果链：真实 member 接收请求，offer 不代表成功，log callback 才允许处理业务；New 在 response 前绑定 original result，Duplicate 读取既有 binding，conflict 不修改状态或新增 binding；response 最后关联到 invocation。换 session/correlation 不改变 duplicate，Direct/Cluster 只在业务观察上相等。
+它们不是十二个布尔断言的清单，而是一条因果链：真实 member 接收请求，offer 不代表成功，log callback 才允许处理业务；New 在 response 前绑定 original result，Duplicate 读取既有 binding，conflict 不修改状态或新增 binding；response 最后关联到 invocation。换 session/correlation 不改变 duplicate，Direct/Cluster 只在业务观察上相等。完成报告把整条链落成 22/22 个 fixed scenario 和 28/28 项 obligation，而不是只记一个总 PASS。
 
 生成 differential 又用 seed `6111` 产生一个连续的 32 segment×128=4,096 action corpus。顺序不是从 lane 枚举推导，而是冻结为一张显式段表：
 
@@ -206,17 +206,15 @@ segment 之间不重置 state、ApplicationSequence 或 producer cursor。两次
 
 ## 本篇实作：先把三类 Identity 结果跑通
 
-完成实现的固定阅读坐标包括：
+通过实现的固定阅读坐标包括：
 
-```text
-course/m11-complete:matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11IdentityTable.java
-course/m11-complete:matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/DirectM11MatchingRuntime.java
-course/m11-complete:matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11ClusteredMatchingService.java
-course/m11-complete:matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11MatchingClusterClient.java
-course/m11-complete:matching-cluster-runtime/src/test/java/io/github/lchareln/cex/matching/cluster/M11ProtocolCompatibilityTest.java
-```
+- [`M11IdentityTable.java`](https://github.com/lcha-reln/cex-matching/blob/course/m11-complete/matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11IdentityTable.java)
+- [`DirectM11MatchingRuntime.java`](https://github.com/lcha-reln/cex-matching/blob/course/m11-complete/matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/DirectM11MatchingRuntime.java)
+- [`M11ClusteredMatchingService.java`](https://github.com/lcha-reln/cex-matching/blob/course/m11-complete/matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11ClusteredMatchingService.java)
+- [`M11MatchingClusterClient.java`](https://github.com/lcha-reln/cex-matching/blob/course/m11-complete/matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11MatchingClusterClient.java)
+- [`M11ProtocolCompatibilityTest.java`](https://github.com/lcha-reln/cex-matching/blob/course/m11-complete/matching-cluster-runtime/src/test/java/io/github/lchareln/cex/matching/cluster/M11ProtocolCompatibilityTest.java)
 
-这些坐标只有在 `CODE_VERIFIED` 登记并推送 complete ref 后才能转换为固定链接；当前不可把可访问性或结果当成既成事实。
+这些链接全部锁定 annotated complete tag，与 manifest 的 source identity 一致。
 
 先运行只聚焦 identity/correlation 的局部测试：
 
@@ -226,7 +224,7 @@ course/m11-complete:matching-cluster-runtime/src/test/java/io/github/lchareln/ce
   --no-daemon
 ```
 
-核对同一组输入是否真的走出三条不同路径：New 只增加一条 binding，换 correlation 的 Duplicate 返回同一 ApplicationSequence/result digest，commandId 或 Slot conflict 保持 semantic digest 与 binding 数不变。这个局部测试不经过真实 Aeron log，因此只能证明 identity seam；真实 callback、response 和 session 观察必须由下一篇的 Cluster 集成与最终 `m11Check` 补齐。
+该局部测试已跑通三条不同路径：New 只增加一条 binding，换 correlation 的 Duplicate 返回同一 ApplicationSequence/result digest，commandId 或 Slot conflict 保持 semantic digest 与 binding 数不变。它本身不经过真实 Aeron log，因此只证明 identity seam；真实 callback、response 和 session 观察则由 Cluster 集成与最终 `m11Check` 补齐。两个真实 Cluster path 各消费 4,096 条 action，共记录 8,192 次 ingress；实际运行身份为 Aeron `1.52.2` / Agrona `2.5.0`、member 0 / `LEADER`。
 
 ## SYSTEM_ERROR 与业务 rejection 必须隔离
 
@@ -240,7 +238,7 @@ course/m11-complete:matching-cluster-runtime/src/test/java/io/github/lchareln/ce
 
 它们不能被转写成 `ORDER_REJECTED`、`UNKNOWN_COMMAND` 或其他业务 rejection。业务 rejection 必须来自已经进入 log apply 的 canonical command 和既有状态机规则；环境错误则说明本次试验没有产生可解释证据。
 
-这也是为什么 M11 起点冻结三个 `SYSTEM_ERROR` control，并明确它们永不计 mutant kill。
+这也是为什么 M11 起点冻结三个 `SYSTEM_ERROR` control，并明确它们永不计 mutant kill。完成裁判中三个 control 全部保持 `SYSTEM_ERROR`，而 10/10 个由 production 组件派生的单故障 candidate 都由 `STUDENT_FAILURE` 反例杀死。candidate replay 不经过真实 Aeron；真正的 Cluster ingress/apply/response 顺序由独立的 8,192 次真实 ingress 证据承担。
 
 ## 这条提交链为重启留下了什么
 

@@ -12,10 +12,10 @@ tags:
   - Snapshot
   - 差分测试
   - 受控重启
-draft: true
+draft: false
 ---
 
-> 当前状态：本文描述 annotated [`course/m11-start`](https://github.com/lcha-reln/cex-matching/tree/course/m11-start) 冻结的 [Snapshot/restart 与差分合同](https://github.com/lcha-reln/cex-matching/blob/course/m11-start/docs/specs/m11.md)。M11 尚未形成 complete ref 或完成 evidence，下面的数字是已冻结试验规模，不是通过结果。
+> 发布状态：annotated [`course/m11-start`](https://github.com/lcha-reln/cex-matching/tree/course/m11-start) 保留历史结构化 RED，并冻结 [Snapshot/restart 与差分合同](https://github.com/lcha-reln/cex-matching/blob/course/m11-start/docs/specs/m11.md)；annotated [`course/m11-complete`](https://github.com/lcha-reln/cex-matching/tree/course/m11-complete) 固定了通过实现与 PASS 报告。公开 evidence 路径为 `/practice/high-availability-cex/m11/evidence/manifest.json`，可在 [manifest](/signal-grid-blog/practice/high-availability-cex/m11/evidence/manifest.json) 逐项复核。
 
 一个 Cluster adapter 可以在正常请求上看起来正确，却在第一次 Snapshot 后丢失幂等表、重置 ApplicationSequence，或者把 session/log position 写进业务状态。只测“重启后进程能启动”发现不了这些问题；只把 Snapshot decode 后的对象和自身比较，也证明不了 Cluster 路径与 Direct 业务语义相同。
 
@@ -121,11 +121,11 @@ load(S1) + suffix → same business result as Direct
 load(S2) + suffix → same business result as Direct
 ```
 
-如果 S1 缺字段，只在 decoder 中补空表，测试也许能启动，却会在 duplicate/conflict/next-sequence 场景中失败。`CURRENT_READS_PREVIOUS_SNAPSHOT` 不是单纯的 decode smoke，而必须延伸到恢复后的业务行为。
+如果 S1 缺字段，只在 decoder 中补空表，测试也许能启动，却必然在 duplicate/conflict/next-sequence 场景中失败。`CURRENT_READS_PREVIOUS_SNAPSHOT` 不是单纯的 decode smoke，而必须延伸到恢复后的业务行为。
 
 ## Snapshot transport 要有有界 framing
 
-application Snapshot bytes 通过 Aeron 提供的 snapshot Publication 写出，并由 Image 读取。一次 Snapshot 可能跨多个 frame；application format 不能把 runtime fragmentation 当成记录边界。M11 完成门禁要求经真实 Publication/Image 路径验证这些 bytes，并证明格式不依赖本次运行的 fragmentation；合同没有冻结 MTU，也不要求刻意触发某个特定碎片数量。当前是否满足要求仍以后续 evidence 为准。
+application Snapshot bytes 通过 Aeron 提供的 snapshot Publication 写出，并由 Image 读取。一次 Snapshot 可能跨多个 frame；application format 不能把 runtime fragmentation 当成记录边界。M11 完成门禁已经真实 Publication/Image 路径验证这些 bytes，并证明格式不依赖本次运行的 fragmentation；合同没有冻结 MTU，也不要求刻意触发某个特定碎片数量。
 
 M11 冻结的格式要求包括：
 
@@ -180,7 +180,7 @@ snapshot prefix    = 1536 NEW + 512 duplicate
 snapshot sequence  = 1536; next = 1537
 ```
 
-32 段按冻结的显式表连接，段间不重置 state、ApplicationSequence 或 producer cursor；NEW 另用连续 `newOrdinal=1..2048`。两次 fresh generation 必须产生 byte-exact ordered requests。uninterrupted 与 restart 使用不同 owned root 和不重叠的本地端口块，各自完整消费同一 4,096-action corpus。受控 restart 流程是：
+32 段按冻结的显式表连接，段间不重置 state、ApplicationSequence 或 producer cursor；NEW 另用连续 `newOrdinal=1..2048`。两次 fresh generation 产生 byte-exact ordered requests。uninterrupted 与 restart 使用不同 owned root 和不重叠的本地端口块，报告分别记录 4,096/4,096 条 action，合计 8,192 次真实 Cluster ingress。受控 restart 流程是：
 
 1. 执行前 2,048 个真实 Cluster ingress action；
 2. 暂停新 ingress，并等待已发送命令得到完整响应；
@@ -209,21 +209,19 @@ snapshot sequence  = 1536; next = 1537
 - 每条规范化 event batch 与 Direct 对应项一致；
 - final semantic digest 相同。
 
-对 `D(H)`、`C(H)`、`R(H)` 保存 canonical transcript digest，可以快速定位差异；但摘要不能替代逐条 comparison count 和首个差异报告。完成 evidence 需要同时给出数量、摘要与反例位置，当前草稿不预写这些未来结果。
+裁判在运行中逐条比较 `D(H)`、`C(H)`、`R(H)`，但本次公开 PASS 报告只保存输入 `canonicalSha256`、comparison count、三路等价判定和切点事实，并不声称保存三份 transcript digest 或首个差异位置。报告确认两条 Cluster 路径分别完成 4,096 条 action，Snapshot 前缀为 1,536 个 NEW 加 512 个 duplicate，恢复后首条 NEW 的 sequence 为 1537，之后继续覆盖 512 个跨 Snapshot duplicate 和 1,024 个 conflict；若未来出现不一致，精确失败定位仍依赖本地重跑断言。
 
 ## 本篇实作：运行真实 Snapshot/Restart 切点
 
-固定完成坐标中的实现链是：
+固定实现链是：
 
-```text
-course/m11-complete:matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11SnapshotCodec.java
-course/m11-complete:matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11AeronSnapshotTransport.java
-course/m11-complete:matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11ClusteredMatchingService.java
-course/m11-complete:matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11SingleNodeHarness.java
-course/m11-complete:matching-cluster-runtime/src/test/java/io/github/lchareln/cex/matching/cluster/M11AeronClusterIntegrationTest.java
-```
+- [`M11SnapshotCodec.java`](https://github.com/lcha-reln/cex-matching/blob/course/m11-complete/matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11SnapshotCodec.java)
+- [`M11AeronSnapshotTransport.java`](https://github.com/lcha-reln/cex-matching/blob/course/m11-complete/matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11AeronSnapshotTransport.java)
+- [`M11ClusteredMatchingService.java`](https://github.com/lcha-reln/cex-matching/blob/course/m11-complete/matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11ClusteredMatchingService.java)
+- [`M11SingleNodeHarness.java`](https://github.com/lcha-reln/cex-matching/blob/course/m11-complete/matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11SingleNodeHarness.java)
+- [`M11AeronClusterIntegrationTest.java`](https://github.com/lcha-reln/cex-matching/blob/course/m11-complete/matching-cluster-runtime/src/test/java/io/github/lchareln/cex/matching/cluster/M11AeronClusterIntegrationTest.java)
 
-这些坐标在 `CODE_VERIFIED` 登记、创建并推送 complete tag 后才转换为可访问的固定教学链接。
+这些固定教学链接都指向 annotated complete tag。
 
 运行该篇最小真实 Cluster 试验：
 
@@ -233,23 +231,23 @@ course/m11-complete:matching-cluster-runtime/src/test/java/io/github/lchareln/ce
   --no-daemon
 ```
 
-这个命令会在本机启动 Aeron 组件并写入仓库自有的 `build/tmp/m11`，不连接外部服务，也不要求 Docker。验收时不要只看测试进程退出码，应在测试观察中依次找到三个不同阶段：
+这个命令在本机启动 Aeron 组件并写入仓库自有的 `build/tmp/m11`，不连接外部服务，也不要求 Docker。complete 报告已在 Aeron `1.52.2` / Agrona `2.5.0`、member 0 / `LEADER` 上闭合下列三个阶段：
 
 1. **Acceptance**：Admin response 为 `OK`，仅表示 Snapshot 请求被接受；
 2. **Completion**：counter 增量、toggle 回到 `NEUTRAL`、Recording Log 新的 `-1/0` 条目同 term/position 且 recording ID 更新，Service 同时记录 written payload digest/application sequence；
 3. **Load**：重启 `onStart` 收到 non-null Image，loaded digest/application sequence 与已完成 Snapshot 完全一致。
 
-任一阶段缺失都应让本篇停止；即使最终盘口相等，也不能用完整 log replay 掩盖 Snapshot 未完成或未装载。
+任一阶段缺失都应让本篇停止；即使最终盘口相等，也不能用完整 log replay 掩盖 Snapshot 未完成或未装载。本次观察还记录了按所有权顺序 teardown 后无 component error，但这仍只是本次受控运行的证据。
 
 ## 真实 Cluster 环境失败不能归类成业务反例
 
 restart 试验可能因为端口占用、目录未关闭、driver error 或 readiness deadline 失败。这些都是 `SYSTEM_ERROR`。正确处理是保存 runtime diagnostics、判整次试验无资格，而不是把最后一条命令标成 `REJECTED`。
 
-同理，一个 corrupt-harness control 如果破坏了测试自身而不是 production Snapshot，也不能算杀死 candidate。M11 冻结三个 `SYSTEM_ERROR` controls，目的正是验证裁判不会为了全绿而吞掉环境错误。
+同理，一个 corrupt-harness control 如果破坏了测试自身而不是 production Snapshot，也不能算杀死 candidate。M11 冻结的三个 `SYSTEM_ERROR` control 在完成裁判中全部保持该分类，没有为了全绿而吞掉环境错误。
 
 ## 单节点 restart 与三节点 failover 的界线
 
-M11 restart 前停止唯一 member，期间没有服务；重启后仍是同一个 member 0。完成 evidence 需要证明 application Snapshot、Archive/log suffix 和 Adapter 在这个受控恢复范围内兼容，但即使通过也不能证明：
+M11 restart 前停止唯一 member，期间没有服务；重启后仍是同一个 member 0。complete evidence 证明 application Snapshot、Archive/log suffix 和 Adapter 在这个受控恢复范围内兼容，但它不能证明：
 
 - quorum 在 leader 丢失时如何决定 committed prefix；
 - follower 如何 catch up；
@@ -262,6 +260,6 @@ M11 restart 前停止唯一 member，期间没有服务；重启后仍是同一�
 
 ## 等价成立后，M11 仍只是一个普通停止点
 
-若三条路径最终通过，M11 可以证明真实单节点 Cluster 的健康 apply、application codec 与 Snapshot/restart 没有改变既有业务语义。它不会发布 `matching-0.8.0`，也不会继承 M10 的 QOP。
+M11 的三条路径已通过，证明真实单节点 Cluster 的健康 apply、application codec 与 Snapshot/restart 没有改变既有业务语义。它不发布 `matching-0.8.0`，也不继承 M10 的 QOP；它仍是单 member、非高可用、非性能证据、非生产就绪结论。
 
-最后一篇将设计如何把 22 个固定场景、两个真实 Cluster path 合计 8,192 次 ingress、28 项 obligation、十个 semantic candidate、三个 `SYSTEM_ERROR` control、架构边界和紧凑 public bundle 组织为可复核 evidence，同时明确当前 RED 阶段还不能填写哪些数字。
+最后一篇会把 22/22 个固定场景、8,192 次真实 Cluster ingress、28/28 项 obligation、10/10 个 semantic candidate、3 个 `SYSTEM_ERROR` control、架构边界与 public bundle 放进同一套可复核证据链。

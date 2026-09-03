@@ -1,0 +1,245 @@
+{
+  "schemaVersion" : "matching.m11.counterexamples.v1",
+  "seed" : "6111",
+  "required" : 10,
+  "persisted" : 10,
+  "replayInterpreter" : "M11_TYPED_STEP_INTERPRETER_V2",
+  "minimalityScope" : "ONE_MINIMAL_WITHIN_TYPED_STEP_DELETION_GRAMMAR",
+  "globalMinimumClaim" : false,
+  "invalidHistoryCountedAsKill" : false,
+  "systemErrorCountedAsKill" : false,
+  "serializedFreshReplay" : true,
+  "serializedReplayCount" : 10,
+  "serializedReplayFingerprintsExact" : true,
+  "oneDeleteAudits" : 10,
+  "witnesses" : [ {
+    "id" : "cex-m11-offer-as-success",
+    "mutant" : "M11-OFFER-AS-SUCCESS",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "INGRESS_OFFER_UPGRADED_TO_BUSINESS_SUCCESS",
+    "rawActions" : 3,
+    "minimalActions" : 1,
+    "shrinkTrials" : 4,
+    "actualMutationActions" : 1,
+    "oneMinimal" : true,
+    "stepCountMatchesMinimalActions" : true,
+    "strictFreshReplay" : true,
+    "serializedReplayFingerprintExact" : true,
+    "minimalityScope" : "ONE_MINIMAL_WITHIN_TYPED_STEP_DELETION_GRAMMAR",
+    "globalMinimumClaim" : false,
+    "steps" : [ {
+      "kind" : "OFFER",
+      "encoded" : "OFFER:request-1"
+    } ]
+  }, {
+    "id" : "cex-m11-session-as-identity",
+    "mutant" : "M11-SESSION-AS-IDENTITY",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "SESSION_CHANGED_BUSINESS_IDENTITY",
+    "rawActions" : 4,
+    "minimalActions" : 2,
+    "shrinkTrials" : 6,
+    "actualMutationActions" : 2,
+    "oneMinimal" : true,
+    "stepCountMatchesMinimalActions" : true,
+    "strictFreshReplay" : true,
+    "serializedReplayFingerprintExact" : true,
+    "minimalityScope" : "ONE_MINIMAL_WITHIN_TYPED_STEP_DELETION_GRAMMAR",
+    "globalMinimumClaim" : false,
+    "steps" : [ {
+      "kind" : "SUBMIT_SESSION",
+      "encoded" : "SUBMIT_SESSION:session-a"
+    }, {
+      "kind" : "SUBMIT_SESSION",
+      "encoded" : "SUBMIT_SESSION:session-b"
+    } ]
+  }, {
+    "id" : "cex-m11-correlation-as-identity",
+    "mutant" : "M11-CORRELATION-AS-IDENTITY",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "CORRELATION_CHANGED_BUSINESS_IDENTITY",
+    "rawActions" : 4,
+    "minimalActions" : 2,
+    "shrinkTrials" : 6,
+    "actualMutationActions" : 2,
+    "oneMinimal" : true,
+    "stepCountMatchesMinimalActions" : true,
+    "strictFreshReplay" : true,
+    "serializedReplayFingerprintExact" : true,
+    "minimalityScope" : "ONE_MINIMAL_WITHIN_TYPED_STEP_DELETION_GRAMMAR",
+    "globalMinimumClaim" : false,
+    "steps" : [ {
+      "kind" : "SUBMIT_CORRELATION",
+      "encoded" : "SUBMIT_CORRELATION:correlation-a"
+    }, {
+      "kind" : "SUBMIT_CORRELATION",
+      "encoded" : "SUBMIT_CORRELATION:correlation-b"
+    } ]
+  }, {
+    "id" : "cex-m11-respond-before-bind",
+    "mutant" : "M11-RESPOND-BEFORE-BIND",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "RESPONSE_OBSERVED_BEFORE_RESULT_BIND",
+    "rawActions" : 5,
+    "minimalActions" : 3,
+    "shrinkTrials" : 8,
+    "actualMutationActions" : 2,
+    "oneMinimal" : true,
+    "stepCountMatchesMinimalActions" : true,
+    "strictFreshReplay" : true,
+    "serializedReplayFingerprintExact" : true,
+    "minimalityScope" : "ONE_MINIMAL_WITHIN_TYPED_STEP_DELETION_GRAMMAR",
+    "globalMinimumClaim" : false,
+    "steps" : [ {
+      "kind" : "BEGIN_SUBMIT",
+      "encoded" : "BEGIN_SUBMIT:request-1"
+    }, {
+      "kind" : "CRASH",
+      "encoded" : "CRASH:node-1"
+    }, {
+      "kind" : "RETRY",
+      "encoded" : "RETRY:request-1"
+    } ]
+  }, {
+    "id" : "cex-m11-drop-identity-from-snapshot",
+    "mutant" : "M11-DROP-IDENTITY-FROM-SNAPSHOT",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "SNAPSHOT_LOST_IDEMPOTENCY_TABLE",
+    "rawActions" : 6,
+    "minimalActions" : 4,
+    "shrinkTrials" : 10,
+    "actualMutationActions" : 1,
+    "oneMinimal" : true,
+    "stepCountMatchesMinimalActions" : true,
+    "strictFreshReplay" : true,
+    "serializedReplayFingerprintExact" : true,
+    "minimalityScope" : "ONE_MINIMAL_WITHIN_TYPED_STEP_DELETION_GRAMMAR",
+    "globalMinimumClaim" : false,
+    "steps" : [ {
+      "kind" : "SUBMIT",
+      "encoded" : "SUBMIT:request-1"
+    }, {
+      "kind" : "TAKE_SNAPSHOT",
+      "encoded" : "TAKE_SNAPSHOT:snapshot-1"
+    }, {
+      "kind" : "RESTART",
+      "encoded" : "RESTART:node-1"
+    }, {
+      "kind" : "RETRY",
+      "encoded" : "RETRY:request-1"
+    } ]
+  }, {
+    "id" : "cex-m11-corrupt-snapshot-to-genesis",
+    "mutant" : "M11-CORRUPT-SNAPSHOT-TO-GENESIS",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "CORRUPT_SNAPSHOT_SILENTLY_BECAME_GENESIS",
+    "rawActions" : 7,
+    "minimalActions" : 5,
+    "shrinkTrials" : 12,
+    "actualMutationActions" : 1,
+    "oneMinimal" : true,
+    "stepCountMatchesMinimalActions" : true,
+    "strictFreshReplay" : true,
+    "serializedReplayFingerprintExact" : true,
+    "minimalityScope" : "ONE_MINIMAL_WITHIN_TYPED_STEP_DELETION_GRAMMAR",
+    "globalMinimumClaim" : false,
+    "steps" : [ {
+      "kind" : "SUBMIT",
+      "encoded" : "SUBMIT:request-1"
+    }, {
+      "kind" : "TAKE_SNAPSHOT",
+      "encoded" : "TAKE_SNAPSHOT:snapshot-1"
+    }, {
+      "kind" : "CORRUPT_SNAPSHOT",
+      "encoded" : "CORRUPT_SNAPSHOT:middle-byte"
+    }, {
+      "kind" : "RESTART",
+      "encoded" : "RESTART:node-1"
+    }, {
+      "kind" : "RETRY",
+      "encoded" : "RETRY:request-1"
+    } ]
+  }, {
+    "id" : "cex-m11-reject-n-minus-one",
+    "mutant" : "M11-REJECT-N-MINUS-ONE",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "N_MINUS_ONE_COMPATIBILITY_REJECTED",
+    "rawActions" : 5,
+    "minimalActions" : 1,
+    "shrinkTrials" : 6,
+    "actualMutationActions" : 1,
+    "oneMinimal" : true,
+    "stepCountMatchesMinimalActions" : true,
+    "strictFreshReplay" : true,
+    "serializedReplayFingerprintExact" : true,
+    "minimalityScope" : "ONE_MINIMAL_WITHIN_TYPED_STEP_DELETION_GRAMMAR",
+    "globalMinimumClaim" : false,
+    "steps" : [ {
+      "kind" : "DECODE_SNAPSHOT_V1",
+      "encoded" : "DECODE_SNAPSHOT_V1:snapshot-v1"
+    } ]
+  }, {
+    "id" : "cex-m11-include-runtime-metadata-in-digest",
+    "mutant" : "M11-INCLUDE-RUNTIME-METADATA-IN-DIGEST",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "RUNTIME_METADATA_CHANGED_BUSINESS_DIGEST",
+    "rawActions" : 5,
+    "minimalActions" : 3,
+    "shrinkTrials" : 8,
+    "actualMutationActions" : 2,
+    "oneMinimal" : true,
+    "stepCountMatchesMinimalActions" : true,
+    "strictFreshReplay" : true,
+    "serializedReplayFingerprintExact" : true,
+    "minimalityScope" : "ONE_MINIMAL_WITHIN_TYPED_STEP_DELETION_GRAMMAR",
+    "globalMinimumClaim" : false,
+    "steps" : [ {
+      "kind" : "READ_DIGEST",
+      "encoded" : "READ_DIGEST:before"
+    }, {
+      "kind" : "SET_SESSION",
+      "encoded" : "SET_SESSION:session-b"
+    }, {
+      "kind" : "READ_DIGEST",
+      "encoded" : "READ_DIGEST:after"
+    } ]
+  }, {
+    "id" : "cex-m11-double-write-local-wal",
+    "mutant" : "M11-DOUBLE-WRITE-LOCAL-WAL",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "CLUSTER_SERVICE_WROTE_STANDALONE_WAL",
+    "rawActions" : 3,
+    "minimalActions" : 1,
+    "shrinkTrials" : 4,
+    "actualMutationActions" : 1,
+    "oneMinimal" : true,
+    "stepCountMatchesMinimalActions" : true,
+    "strictFreshReplay" : true,
+    "serializedReplayFingerprintExact" : true,
+    "minimalityScope" : "ONE_MINIMAL_WITHIN_TYPED_STEP_DELETION_GRAMMAR",
+    "globalMinimumClaim" : false,
+    "steps" : [ {
+      "kind" : "SUBMIT",
+      "encoded" : "SUBMIT:request-1"
+    } ]
+  }, {
+    "id" : "cex-m11-accept-unsupported-version",
+    "mutant" : "M11-ACCEPT-UNSUPPORTED-VERSION",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "UNSUPPORTED_VERSION_ACCEPTED",
+    "rawActions" : 3,
+    "minimalActions" : 1,
+    "shrinkTrials" : 4,
+    "actualMutationActions" : 1,
+    "oneMinimal" : true,
+    "stepCountMatchesMinimalActions" : true,
+    "strictFreshReplay" : true,
+    "serializedReplayFingerprintExact" : true,
+    "minimalityScope" : "ONE_MINIMAL_WITHIN_TYPED_STEP_DELETION_GRAMMAR",
+    "globalMinimumClaim" : false,
+    "steps" : [ {
+      "kind" : "DECODE_REQUEST_V3",
+      "encoded" : "DECODE_REQUEST_V3:request-v3"
+    } ]
+  } ]
+}
