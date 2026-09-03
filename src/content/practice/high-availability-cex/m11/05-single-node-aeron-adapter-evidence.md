@@ -133,14 +133,17 @@ CURRENT_DOWN_ENCODES_PREVIOUS_RESPONSE
 
 ## Generated differential 必须真的走 8,192 次 Cluster ingress
 
-生成器使用 seed `6111`，把 32 个 128-action segment 连接成一个连续 4,096-action corpus；它们不是 32 个 fresh-state history。四组各八段，按 lane-major 顺序排列：
+生成器使用 seed `6111`，把 32 个 128-action segment 连接成一个连续 4,096-action corpus；它们不是 32 个 fresh-state history。顺序由合同中的显式段表冻结：
 
 ```text
-CURRENT_NEW
-PREVIOUS_NEW
-DUPLICATE_REPLAY
-IDENTITY_CONFLICT
+CURRENT_NEW[0..7]
+→ DUPLICATE_REPLAY[0..3]
+→ PREVIOUS_NEW[0..7]
+→ DUPLICATE_REPLAY[4..7]
+→ IDENTITY_CONFLICT[0..7]
 ```
+
+这让 Snapshot 前缀精确成为 1,536 个 NEW 加 512 个 duplicate，保存 `applicationSequence=1536/next=1537`；恢复后的第一条真实 ingress 是 NEW，而不是仅靠读取 Snapshot 字段推断“sequence 会继续”。suffix 中随后还有 512 个跨 Snapshot duplicate 和 1,024 个 conflict，必须逐条核对完整 original result 与零状态变化。
 
 证据至少要回答：
 
@@ -150,7 +153,7 @@ IDENTITY_CONFLICT
 4. 一个 fresh uninterrupted Cluster 和另一个 fresh snapshot/restart Cluster 是否各实际接收 4,096 条，总计 8,192 条真实 ingress；
 5. 每条 normalized result/event comparison 是否相等；
 6. 全局 action 2,048 的 cut 前是否完成响应，且 Snapshot acceptance、completion 与 restart load witness 是否全闭合；
-7. restart 后 suffix 是否从正确位置继续；
+7. restart 后第一条真实 NEW 是否得到 application/producer sequence 1537，随后 512 个跨 Snapshot duplicate 是否完整复现原结果；
 8. final state digest 是否三路闭合。
 
 如果只把 generator 输出喂给 Direct，再从中抽样十条走 Cluster，就不满足 `totalActualClusterIngress=8192`。相反，若所有请求都走 Cluster，却只比较 final digest，也无法定位中途 event/result 分叉。

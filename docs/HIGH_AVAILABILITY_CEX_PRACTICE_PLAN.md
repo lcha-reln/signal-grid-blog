@@ -1836,7 +1836,7 @@ M10 已形成 `matching-0.5.0`：一个单进程、单 shard、可恢复的本�
 >
 > 唯一新增复杂度：真实单节点 Aeron Cluster 的日志与 Snapshot 运行时适配
 >
-> 当前边界：annotated `course/m11-start` 冻结结构化 RED、22 fixed、seed 6111 的连续 32 segment×128 action corpus、两个 fresh Cluster run 共 8,192 actual ingress、全局 action 2,048 后 snapshot/restart、28 obligation、10 candidate、3 SYSTEM_ERROR control、六份 Golden 与五篇 permalink；没有 complete ref、完成提交、公开 evidence、产品 release 或通过数字
+> 当前边界：annotated `course/m11-start` 冻结结构化 RED、22 fixed、seed 6111 的连续 32 segment×128 action corpus、两个 fresh Cluster run 共 8,192 actual ingress，以及 `CURRENT_NEW[0..7] → DUPLICATE_REPLAY[0..3] → PREVIOUS_NEW[0..7] → DUPLICATE_REPLAY[4..7] → IDENTITY_CONFLICT[0..7]` 的显式段表；全局 action 2,048 后 snapshot/restart 必须让第一条恢复后输入成为真实 NEW。另有 28 obligation、10 candidate、3 SYSTEM_ERROR control、六份 Golden 与五篇 permalink；没有 complete ref、完成提交、公开 evidence、产品 release 或通过数字
 
 M11 不是把 M10 的 `LocalMatchingService` 换一个启动类，也不是提前做一套缩水的三节点高可用。它只回答一个更窄但必须先回答的问题：同一个已经证明过的确定性业务状态机，怎样在真实单 member Aeron Cluster 的 ingress、Cluster log、`ClusteredService` apply 和 Cluster snapshot 生命周期里运行，同时不产生第二套业务语义或第二份恢复真相？单 member 没有冗余副本，M11 不宣称复制高可用。
 
@@ -1925,11 +1925,11 @@ restart 路径必须真实装载 Cluster snapshot，并从其后的连续 log su
 - 默认 build 与 M00～M10 累计回归保持 GREEN，M10 的环境绑定容量数字不复制到 Cluster；
 - Aeron 1.52.2 / Agrona 2.5.0 / Java 25 下必须启动真实 localhost 单节点 Media Driver、Archive、Consensus Module 与 ClusteredService，member 0 成为 appointed Leader；使用 `build/tmp/m11` 独占目录、`maxWorkers=1`、有界 poll 与 error/counter capture，不能用 fake transport、直接调用 callback、固定 sleep 或普通内存队列冒充 Cluster；
 - architecture 报告证明 core 无 Aeron、Aeron 依赖被限制在 adapter/codec、ClusteredService 无外部业务副作用（Aeron 自身仍拥有网络和文件 I/O）、Cluster runtime 不双写 standalone WAL；
-- 22 个 fixed scenario 全部执行；seed 6111 生成一个连续的 32 segment × 128 action = 4,096 action corpus，不在 segment 间重置状态。segment 按 `CURRENT_NEW[0..7] → PREVIOUS_NEW[0..7] → DUPLICATE_REPLAY[0..7] → IDENTITY_CONFLICT[0..7]` lane-major 排列，application sequence 与 producer cursor 跨段连续；两次 fresh generation byte-exact；
+- 22 个 fixed scenario 全部执行；seed 6111 生成一个连续的 32 segment × 128 action = 4,096 action corpus，不在 segment 间重置状态。32 段的顺序是冻结数据而不是由 lane 枚举顺序推导：`CURRENT_NEW[0..7] → DUPLICATE_REPLAY[0..3] → PREVIOUS_NEW[0..7] → DUPLICATE_REPLAY[4..7] → IDENTITY_CONFLICT[0..7]`。NEW 使用独立 `newOrdinal=1..2048`，application sequence 与 producer cursor 只随 NEW 连续推进；两次 fresh generation byte-exact；
 - 同一份 4,096-action corpus 完整经过 Direct、独立 fresh uninterrupted Cluster 和第二个独立 fresh snapshot/restart Cluster；两个 Cluster 使用不同 owned root 与不重叠端口块，共产生 8,192 次真实 Cluster ingress；
 - Direct/Cluster fresh-state 路径产生相同的规范化 disposition、完整 business events 和 semantic digest；runtime metadata 另行记录，不得通过删除业务字段制造假等价；
 - application request/response/snapshot 的六份 version 1/2 Golden byte-exact，范围外版本、noncanonical 或 trailing bytes 在 apply 前失败关闭；
-- 全局 generated action 2,048 后暂停新 ingress。Admin snapshot `OK` 只证明请求被接受；关闭前还必须在有界期限内同时观察 snapshot counter 增量、control toggle 回到 `NEUTRAL`、Recording Log 新增 service ID `-1` 与 `0` 的同 term/同 log-position 且 recording ID 均为新值、以及 Service 记录的 application snapshot payload SHA。fresh reopen 后 `onStart` 必须消费 non-null snapshot Image，loaded digest 与 application sequence 精确匹配该已完成 Snapshot；然后才验证 identity/result/next sequence、连续 suffix 和三路径一致；
+- 全局 generated action 2,048 后暂停新 ingress；此时前缀必须实际得到 1,536 个 NEW 与 512 个 duplicate，Snapshot 保存 `applicationSequence=1536`、`nextApplicationSequence=1537`。Admin snapshot `OK` 只证明请求被接受；关闭前还必须在有界期限内同时观察 snapshot counter 增量、control toggle 回到 `NEUTRAL`、Recording Log 新增 service ID `-1` 与 `0` 的同 term/同 log-position 且 recording ID 均为新值、以及 Service 记录的 application snapshot payload SHA。fresh reopen 后 `onStart` 必须消费 non-null snapshot Image，loaded digest 与 application sequence 精确匹配该已完成 Snapshot；第一条真实 suffix ingress 必须是 `PREVIOUS_NEW` 且返回 `NEW_APPLIED/applicationSequence=1537`，其后还要逐条核对 512 个跨 Snapshot duplicate 的完整 original result、1,024 个 conflict 的零状态变化、连续 cursor 与三路径一致；
 - 28/28 obligation 必须有 executed witness；十个 executable candidate 只有 `STUDENT_FAILURE` 才计 kill并保存 one-minimal replay，三个 `SYSTEM_ERROR` control、环境启动失败、端口冲突或超时不能冒充业务反例；
 - 完成阶段才允许写入精确测试数量、digest、complete commit、manifest、claim、limitation 和 artifact hash；当前合同不预写通过数字。
 

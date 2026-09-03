@@ -190,12 +190,17 @@ NO_STANDALONE_WAL_WRITE
 
 它们不是十二个布尔断言的清单，而是一条因果链：真实 member 接收请求，offer 不代表成功，log callback 才允许处理业务；New 在 response 前绑定 original result，Duplicate 读取既有 binding，conflict 不修改状态或新增 binding；response 最后关联到 invocation。换 session/correlation 不改变 duplicate，Direct/Cluster 只在业务观察上相等。
 
-生成 differential 又用 seed `6111` 产生一个连续的 32 segment×128=4,096 action corpus。四组 lane 各八段，并按下列 lane-major 顺序拼接：
+生成 differential 又用 seed `6111` 产生一个连续的 32 segment×128=4,096 action corpus。顺序不是从 lane 枚举推导，而是冻结为一张显式段表：
 
-- `CURRENT_NEW`；
-- `PREVIOUS_NEW`；
-- `DUPLICATE_REPLAY`；
-- `IDENTITY_CONFLICT`。
+```text
+CURRENT_NEW[0..7]
+→ DUPLICATE_REPLAY[0..3]
+→ PREVIOUS_NEW[0..7]
+→ DUPLICATE_REPLAY[4..7]
+→ IDENTITY_CONFLICT[0..7]
+```
+
+这样全局 action 2,048 的 Snapshot 前缀恰好包含 1,536 个 NEW 与 512 个 duplicate；恢复后的第一条真实输入仍是 `PREVIOUS_NEW`，必须得到 `NEW_APPLIED/applicationSequence=1537`。NEW 使用独立 `newOrdinal=1..2048`，不能把混合历史的 global action index 冒充 producer sequence。
 
 segment 之间不重置 state、ApplicationSequence 或 producer cursor。两次 fresh generation 必须 byte-exact。同一 corpus 完整经过一个 uninterrupted Cluster 和另一个 snapshot/restart Cluster，各 4,096 条，合计 8,192 次真实 Cluster ingress；不能先用模型计算结果，再只抽几条真实 ingress 就宣称集成通过。
 

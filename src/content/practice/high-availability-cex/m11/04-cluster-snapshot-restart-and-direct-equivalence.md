@@ -173,11 +173,14 @@ segments           = 32 (one continuous state)
 actions/segment    = 128
 cluster runs       = 2 × 4096 actual ingress = 8192
 snapshot cut       = global boundary after action 2048
-lanes              = CURRENT_NEW / PREVIOUS_NEW /
-                     DUPLICATE_REPLAY / IDENTITY_CONFLICT
+segment schedule   = CURRENT_NEW[0..7] → DUPLICATE_REPLAY[0..3]
+                     → PREVIOUS_NEW[0..7] → DUPLICATE_REPLAY[4..7]
+                     → IDENTITY_CONFLICT[0..7]
+snapshot prefix    = 1536 NEW + 512 duplicate
+snapshot sequence  = 1536; next = 1537
 ```
 
-32 段按 lane-major 顺序连接，段间不重置 state、ApplicationSequence 或 producer cursor。两次 fresh generation 必须产生 byte-exact ordered requests。uninterrupted 与 restart 使用不同 owned root 和不重叠的本地端口块，各自完整消费同一 4,096-action corpus。受控 restart 流程是：
+32 段按冻结的显式表连接，段间不重置 state、ApplicationSequence 或 producer cursor；NEW 另用连续 `newOrdinal=1..2048`。两次 fresh generation 必须产生 byte-exact ordered requests。uninterrupted 与 restart 使用不同 owned root 和不重叠的本地端口块，各自完整消费同一 4,096-action corpus。受控 restart 流程是：
 
 1. 执行前 2,048 个真实 Cluster ingress action；
 2. 暂停新 ingress，并等待已发送命令得到完整响应；
@@ -188,8 +191,9 @@ lanes              = CURRENT_NEW / PREVIOUS_NEW /
 7. 只有上述完成屏障闭合后，才按 client → service/container → consensus → Archive → driver 的所有权顺序关闭；
 8. 保留 Cluster 与 Archive 目录，重新打开同一 member 0，并等待有界 readiness；
 9. 要求 `onStart` 消费 non-null snapshot Image，loaded payload digest 与 application sequence 精确等于步骤 6；
-10. 在发送 suffix 前验证恢复后的 state、identity table、original result 与 next sequence；
-11. 提交剩余 2,048 个 action，并与 Direct 和另一个 fresh uninterrupted Cluster 对账。
+10. 在发送 suffix 前验证恢复后的 state、identity table、original result、`applicationSequence=1536` 与 `nextApplicationSequence=1537`；
+11. 提交第一条 `PREVIOUS_NEW`，要求真实响应为 `NEW_APPLIED/applicationSequence=1537`，并观察 next sequence 变为 1538；
+12. 继续剩余 suffix，逐条比较其后的 512 个跨 Snapshot duplicate 的完整 original result，以及 1,024 个 conflict 前后的 semantic state、identity table 与 producer cursor 零变化；最后与 Direct 和另一个 fresh uninterrupted Cluster 对账。
 
 这是 controlled restart，不是 kill leader。关闭顺序本身属于 harness 所有权，不应进入业务 equality。最终状态相等也不能替代步骤 5、6、9：没有这些 witness，完整 log replay 可能掩盖 Snapshot 从未完成或从未装载。
 
