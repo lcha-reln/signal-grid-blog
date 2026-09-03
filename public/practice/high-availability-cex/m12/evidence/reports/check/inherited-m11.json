@@ -1,0 +1,16 @@
+{
+  "schemaVersion" : "matching.m12.inherited-m11.v1",
+  "status" : "PASS",
+  "unit" : "M11",
+  "completeRef" : "course/m11-complete",
+  "baselineCommit" : "6997e05cea81cb93b883e882c8d75887d0622a22",
+  "matchingCoreTree" : "58ce86179251a5a8cceba47ff41b1b2657a5d100",
+  "matchingCoreByteIdentical" : true,
+  "goldensTree" : "3c8cc050be368b7e76ddcbd488a9e06c9d055cc8",
+  "goldensByteIdentical" : true,
+  "protocolGoldens" : 6,
+  "protocolCurrentAndNMinusOnePassed" : true,
+  "currentCompiledClasses" : true,
+  "defaultGradleDependency" : "test",
+  "claimBoundary" : "M11_PROTOCOL_AND_CURRENT_COMPILED_REGRESSION_DEPENDENCY"
+}

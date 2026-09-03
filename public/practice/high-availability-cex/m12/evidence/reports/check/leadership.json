@@ -1,0 +1,42 @@
+{
+  "schemaVersion" : "matching.m12.leadership.v1",
+  "status" : "PASS",
+  "implementation" : "REAL_AERON_CHILD_PROCESSES",
+  "initialLeaderId" : 2,
+  "initialLeadershipTermId" : 0,
+  "faultTargetLeaderId" : 2,
+  "faultTargetLeadershipTermId" : 0,
+  "killedObservedCurrentLeader" : true,
+  "replacementLeaderId" : 0,
+  "replacementLeadershipTermId" : 1,
+  "leadershipTermAdvanced" : true,
+  "staleLeaderAcknowledgements" : 0,
+  "clientGenerations" : [ {
+    "clientGeneration" : 1,
+    "clusterSessionId" : 1,
+    "leadershipTermId" : 0,
+    "leaderMemberId" : 2,
+    "acceptedOffers" : 41,
+    "decodedResponses" : 41,
+    "rejectedResponses" : 0,
+    "componentErrors" : 0
+  }, {
+    "clientGeneration" : 2,
+    "clusterSessionId" : 2,
+    "leadershipTermId" : 1,
+    "leaderMemberId" : 0,
+    "acceptedOffers" : 42,
+    "decodedResponses" : 41,
+    "rejectedResponses" : 0,
+    "componentErrors" : 0
+  }, {
+    "clientGeneration" : 3,
+    "clusterSessionId" : 3,
+    "leadershipTermId" : 2,
+    "leaderMemberId" : 0,
+    "acceptedOffers" : 1,
+    "decodedResponses" : 1,
+    "rejectedResponses" : 0,
+    "componentErrors" : 0
+  } ]
+}

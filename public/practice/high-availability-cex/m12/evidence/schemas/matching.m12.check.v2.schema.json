@@ -1,0 +1,548 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/lcha-reln/cex-matching/main/schemas/matching.m12.check.v2.schema.json",
+  "oneOf": [
+    { "$ref": "#/$defs/pass" },
+    { "$ref": "#/$defs/failure" }
+  ],
+  "$defs": {
+    "pass": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion", "unit", "status", "contractPlanVersion", "objective", "source",
+        "courseDeclaration", "inheritedM11", "workloadProfile", "fixed", "commandOutcomes",
+        "clusterTopology", "contractCorrection", "leadership", "quorum", "catchup", "stateEquivalence", "coverage",
+        "mutants", "replay", "architecture", "environment", "judgeInspection",
+        "artifactBindings", "releaseTarget"
+      ],
+      "properties": {
+        "schemaVersion": { "const": "matching.m12.check.v2" },
+        "unit": { "const": "M12" },
+        "status": { "const": "PASS" },
+        "contractPlanVersion": { "const": "0.15" },
+        "objective": { "const": "Prove one business effect per durable command identity across a real static three-member Aeron Cluster Leader failure, client UNKNOWN recovery, former-Leader catch-up, and a bounded no-quorum interval." },
+        "source": { "$ref": "#/$defs/source" },
+        "courseDeclaration": { "$ref": "#/$defs/course" },
+        "inheritedM11": { "$ref": "#/$defs/inheritedM11" },
+        "workloadProfile": { "$ref": "#/$defs/workload" },
+        "fixed": { "$ref": "#/$defs/fixed" },
+        "commandOutcomes": { "$ref": "#/$defs/commandHistory" },
+        "clusterTopology": { "$ref": "#/$defs/topology" },
+        "contractCorrection": { "$ref": "#/$defs/contractCorrection" },
+        "leadership": { "$ref": "#/$defs/leadership" },
+        "quorum": { "$ref": "#/$defs/quorum" },
+        "catchup": { "$ref": "#/$defs/catchup" },
+        "stateEquivalence": { "$ref": "#/$defs/stateEquivalence" },
+        "coverage": { "$ref": "#/$defs/coverage" },
+        "mutants": { "$ref": "#/$defs/mutants" },
+        "replay": { "$ref": "#/$defs/replay" },
+        "architecture": { "$ref": "#/$defs/architecture" },
+        "environment": { "$ref": "#/$defs/environment" },
+        "judgeInspection": { "$ref": "#/$defs/inspection" },
+        "artifactBindings": {
+          "type": "array",
+          "minItems": 15,
+          "maxItems": 15,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/artifact" }
+        },
+        "releaseTarget": { "$ref": "#/$defs/release" }
+      }
+    },
+    "failure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "unit", "status", "contractPlanVersion", "failure", "releaseTarget"],
+      "properties": {
+        "schemaVersion": { "const": "matching.m12.check.v2" },
+        "unit": { "const": "M12" },
+        "status": { "enum": ["STUDENT_FAILURE", "SYSTEM_ERROR"] },
+        "contractPlanVersion": { "const": "0.15" },
+        "failure": { "type": "string", "minLength": 1, "maxLength": 4096 },
+        "releaseTarget": { "$ref": "#/$defs/release" }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["commit", "dirty"],
+      "properties": {
+        "commit": { "type": "string", "pattern": "^[a-f0-9]{40}(?:[a-f0-9]{24})?$" },
+        "dirty": { "type": "boolean" }
+      }
+    },
+    "course": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["case", "profile", "planVersion", "project", "unit", "lifecycle", "designDepth", "startRef", "completeRef", "productRelease", "m12Check.expectedStatus", "evidencePath"],
+      "properties": {
+        "case": { "const": "high-availability-cex" },
+        "profile": { "const": "SPOT-CEX-1.0" },
+        "planVersion": { "const": "0.15" },
+        "project": { "const": "matching" },
+        "unit": { "const": "M12" },
+        "lifecycle": { "const": "COMPLETE" },
+        "designDepth": { "const": "IMPLEMENTED" },
+        "startRef": { "const": "course/m12-start" },
+        "completeRef": { "const": "course/m12-complete" },
+        "productRelease": { "const": "matching-0.8.0" },
+        "m12Check.expectedStatus": { "const": "PASS" },
+        "evidencePath": { "const": "build/lab-evidence/M12/manifest.json" }
+      }
+    },
+    "inheritedM11": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "status", "unit", "completeRef", "baselineCommit", "matchingCoreTree", "matchingCoreByteIdentical", "goldensTree", "goldensByteIdentical", "protocolGoldens", "protocolCurrentAndNMinusOnePassed", "currentCompiledClasses", "defaultGradleDependency", "claimBoundary"],
+      "properties": {
+        "schemaVersion": { "const": "matching.m12.inherited-m11.v1" },
+        "status": { "const": "PASS" },
+        "unit": { "const": "M11" },
+        "completeRef": { "const": "course/m11-complete" },
+        "baselineCommit": { "const": "6997e05cea81cb93b883e882c8d75887d0622a22" },
+        "matchingCoreTree": { "$ref": "#/$defs/gitObject" },
+        "matchingCoreByteIdentical": { "const": true },
+        "goldensTree": { "$ref": "#/$defs/gitObject" },
+        "goldensByteIdentical": { "const": true },
+        "protocolGoldens": { "const": 6 },
+        "protocolCurrentAndNMinusOnePassed": { "const": true },
+        "currentCompiledClasses": { "const": true },
+        "defaultGradleDependency": { "const": "test" },
+        "claimBoundary": { "const": "M11_PROTOCOL_AND_CURRENT_COMPILED_REGRESSION_DEPENDENCY" }
+      }
+    },
+    "contractCorrection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion", "status", "frozenWorkloadSha256", "frozenField",
+        "frozenAppointedInitialLeaderId", "frozenAppointmentCompatibleWithThreeMemberHa",
+        "effectiveAeronAppointedLeaderId", "automaticElection", "initialLeaderSelection",
+        "initialLeaderId", "reason"
+      ],
+      "properties": {
+        "schemaVersion": { "const": "matching.m12.contract-correction.v1" },
+        "status": { "const": "PASS" },
+        "frozenWorkloadSha256": { "const": "20ed1e75cd3cd86dc15a7f1f64465524a5638757abe676eb51f20bc5423b89a1" },
+        "frozenField": { "const": "realClusterProfile.appointedInitialLeaderId" },
+        "frozenAppointedInitialLeaderId": { "const": 0 },
+        "frozenAppointmentCompatibleWithThreeMemberHa": { "const": false },
+        "effectiveAeronAppointedLeaderId": { "const": -1 },
+        "automaticElection": { "const": true },
+        "initialLeaderSelection": { "const": "OBSERVED_AUTOMATIC_ELECTION" },
+        "initialLeaderId": { "type": "integer", "minimum": 0, "maximum": 2 },
+        "reason": { "type": "string", "minLength": 80, "maxLength": 512 }
+      }
+    },
+    "workload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "status", "algorithm", "seed", "workloadSha256", "fixedScenarios", "coverageObligations", "requiredMutants", "systemErrorControls", "distinctBusinessCommands", "invocations", "acceptedIngressAttempts", "expectedFinalNextApplicationSequence", "corpusSha256", "expectedFinalSemanticDigest", "phaseOrder", "identities"],
+      "properties": {
+        "schemaVersion": { "const": "matching.m12.corpus.v1" },
+        "status": { "const": "PASS" },
+        "algorithm": { "const": "splitmix64-v1" },
+        "seed": { "const": "6120" },
+        "workloadSha256": { "const": "20ed1e75cd3cd86dc15a7f1f64465524a5638757abe676eb51f20bc5423b89a1" },
+        "fixedScenarios": { "const": 14 },
+        "coverageObligations": { "const": 25 },
+        "requiredMutants": { "const": 8 },
+        "systemErrorControls": { "const": 3 },
+        "distinctBusinessCommands": { "const": 66 },
+        "invocations": { "const": 85 },
+        "acceptedIngressAttempts": { "const": 84 },
+        "expectedFinalNextApplicationSequence": { "const": 67 },
+        "corpusSha256": { "$ref": "#/$defs/sha256" },
+        "expectedFinalSemanticDigest": { "$ref": "#/$defs/sha256" },
+        "phaseOrder": { "type": "array", "minItems": 14, "maxItems": 14, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+        "identities": { "type": "array", "minItems": 66, "maxItems": 66, "items": { "$ref": "#/$defs/identity" } }
+      }
+    },
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["index", "commandId", "producerId", "producerEpoch", "shardId", "producerSequence", "payloadSha256", "canonicalEnvelopeSha256", "canonicalEnvelopeBytes"],
+      "properties": {
+        "index": { "type": "integer", "minimum": 1, "maximum": 66 },
+        "commandId": { "type": "string", "format": "uuid" },
+        "producerId": { "const": "m12-producer" },
+        "producerEpoch": { "const": 12 },
+        "shardId": { "const": 1 },
+        "producerSequence": { "type": "integer", "minimum": 1, "maximum": 66 },
+        "payloadSha256": { "$ref": "#/$defs/sha256" },
+        "canonicalEnvelopeSha256": { "$ref": "#/$defs/sha256" },
+        "canonicalEnvelopeBytes": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "fixed": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "status", "scenarios", "passed", "scenarioIds"],
+      "properties": {
+        "schemaVersion": { "const": "matching.m12.fixed.v1" },
+        "status": { "const": "PASS" },
+        "scenarios": { "const": 14 },
+        "passed": { "const": 14 },
+        "scenarioIds": { "type": "array", "minItems": 14, "maxItems": 14, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } }
+      }
+    },
+    "commandHistory": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "status", "implementation", "sourceArtifact", "executionScope", "corpusSha256", "identityCount", "invocationCount", "ingressAccepted", "acknowledged", "unknown", "notSubmitted", "memberProcessStarts", "externalForceStops", "finalNextApplicationSequence", "appliedUnknownAttemptOrdinal", "appliedUnknownObservedOnAllMembersBeforeLeaderKill", "appliedUnknownExpectedNextApplicationSequence", "appliedUnknownExpectedIdentityCount", "appliedUnknownMembersBeforeLeaderKill", "attempts", "bindings"],
+      "properties": {
+        "schemaVersion": { "const": "matching.m12.command-history.v1" },
+        "status": { "const": "PASS" },
+        "implementation": { "const": "REAL_AERON_CHILD_PROCESSES" },
+        "sourceArtifact": { "const": "m12-command-history.json" },
+        "executionScope": { "const": "REAL_AERON_CHILD_PROCESSES" },
+        "corpusSha256": { "$ref": "#/$defs/sha256" },
+        "identityCount": { "const": 66 },
+        "invocationCount": { "const": 85 },
+        "ingressAccepted": { "const": 84 },
+        "acknowledged": { "const": 82 },
+        "unknown": { "const": 2 },
+        "notSubmitted": { "const": 1 },
+        "memberProcessStarts": { "const": 6 },
+        "externalForceStops": { "const": 3 },
+        "finalNextApplicationSequence": { "const": 67 },
+        "appliedUnknownAttemptOrdinal": { "const": 42 },
+        "appliedUnknownObservedOnAllMembersBeforeLeaderKill": { "const": true },
+        "appliedUnknownExpectedNextApplicationSequence": { "const": 34 },
+        "appliedUnknownExpectedIdentityCount": { "const": 33 },
+        "appliedUnknownMembersBeforeLeaderKill": { "type": "array", "minItems": 3, "maxItems": 3, "items": { "$ref": "#/$defs/appliedUnknownStatus" } },
+        "attempts": { "type": "array", "minItems": 85, "maxItems": 85, "items": { "$ref": "#/$defs/historyAttempt" } },
+        "bindings": { "type": "array", "minItems": 66, "maxItems": 66, "items": { "$ref": "#/$defs/historyBinding" } }
+      }
+    },
+    "historyAttempt": {
+      "type": "object", "additionalProperties": false,
+      "required": ["ordinal", "phase", "identityIndex", "canonicalEnvelopeSha256", "commandId", "correlationId", "ingressAccepted", "outcome", "trustedResponseObserved", "responseCorrelationId", "responseStatus", "applicationSequence", "resultDigest", "businessEffectApplied", "retryOfAttemptOrdinal", "authorityTerm", "authorityLeaderId", "responseAcceptedUnderCurrentClientAuthority", "noQuorumWindow", "timeoutClassifiedAsBusinessRejection"],
+      "properties": {
+        "ordinal": { "type": "integer", "minimum": 1, "maximum": 85 },
+        "phase": { "enum": ["PRE_OFFER_IS_NOT_SUBMITTED", "PRE_FAILOVER_ACKNOWLEDGED_NEW_32", "ACKNOWLEDGED_DUPLICATE_RETRY_8", "APPLIED_RESPONSE_UNOBSERVED_UNKNOWN_1", "SAME_IDENTITY_UNKNOWN_RETRY", "POST_FAILOVER_ACKNOWLEDGED_NEW_32", "POST_FAILOVER_DUPLICATE_RETRY_8", "NO_QUORUM_UNKNOWN_1", "RESTORE_QUORUM_AND_SAME_IDENTITY_RETRY"] },
+        "identityIndex": { "type": "integer", "minimum": 1, "maximum": 66 },
+        "canonicalEnvelopeSha256": { "$ref": "#/$defs/sha256" },
+        "commandId": { "type": "string", "format": "uuid" },
+        "correlationId": { "type": "string", "format": "uuid" },
+        "ingressAccepted": { "type": "boolean" },
+        "outcome": { "enum": ["NOT_SUBMITTED", "UNKNOWN", "ACKNOWLEDGED"] },
+        "trustedResponseObserved": { "type": "boolean" },
+        "responseCorrelationId": { "oneOf": [{ "type": "null" }, { "type": "string", "format": "uuid" }] },
+        "responseStatus": { "oneOf": [{ "type": "null" }, { "enum": ["NEW_APPLIED", "DUPLICATE_REPLAYED"] }] },
+        "applicationSequence": { "oneOf": [{ "type": "null" }, { "type": "integer", "minimum": 1, "maximum": 85 }] },
+        "resultDigest": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/sha256" }] },
+        "businessEffectApplied": { "type": "boolean" },
+        "retryOfAttemptOrdinal": { "oneOf": [{ "type": "null" }, { "type": "integer", "minimum": 1, "maximum": 85 }] },
+        "authorityTerm": { "type": "integer", "minimum": 0 },
+        "authorityLeaderId": { "$ref": "#/$defs/memberId" },
+        "responseAcceptedUnderCurrentClientAuthority": { "type": "boolean" },
+        "noQuorumWindow": { "type": "boolean" },
+        "timeoutClassifiedAsBusinessRejection": { "const": false }
+      }
+    },
+    "historyBinding": {
+      "type": "object", "additionalProperties": false,
+      "required": ["identityIndex", "canonicalEnvelopeSha256", "applicationSequence", "resultDigest", "businessEffectCount", "observedResponseAuthorityTerm"],
+      "properties": {
+        "identityIndex": { "type": "integer", "minimum": 1, "maximum": 66 },
+        "canonicalEnvelopeSha256": { "$ref": "#/$defs/sha256" },
+        "applicationSequence": { "type": "integer", "minimum": 1, "maximum": 66 },
+        "resultDigest": { "$ref": "#/$defs/sha256" },
+        "businessEffectCount": { "const": 1 },
+        "observedResponseAuthorityTerm": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "appliedUnknownStatus": {
+      "type": "object", "additionalProperties": false,
+      "required": ["memberId", "processId", "role", "electionState", "leadershipTermId", "commitPosition", "logPosition", "nextApplicationSequence", "identityCount", "semanticStateDigest", "identityResultDigest", "componentErrorCount", "diagnosticWarningCount", "droppedDiagnosticWarnings", "diagnosticWarnings"],
+      "properties": {
+        "memberId": { "$ref": "#/$defs/memberId" },
+        "processId": { "type": "integer", "minimum": 1 },
+        "role": { "$ref": "#/$defs/role" },
+        "electionState": { "const": "CLOSED" },
+        "leadershipTermId": { "type": "integer", "minimum": 0 },
+        "commitPosition": { "type": "integer", "minimum": 0 },
+        "logPosition": { "type": "integer", "minimum": 0 },
+        "nextApplicationSequence": { "const": 34 },
+        "identityCount": { "const": 33 },
+        "semanticStateDigest": { "$ref": "#/$defs/sha256" },
+        "identityResultDigest": { "$ref": "#/$defs/sha256" },
+        "componentErrorCount": { "const": 0 },
+        "diagnosticWarningCount": { "const": 0 },
+        "droppedDiagnosticWarnings": { "const": 0 },
+        "diagnosticWarnings": { "type": "array", "maxItems": 0 }
+      }
+    },
+    "topology": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schemaVersion", "status", "implementation", "clusterId", "memberCount", "quorumSize", "aeronAppointedLeaderId", "automaticLeaderElection", "initialLeaderIsRuntimeObservation", "contractCorrection", "localhostOnly", "memberProcessStarts", "externalForceStops", "teardownComplete", "childProcessesAliveAfterTeardown", "ownerProcessId", "childClasspathStrategy", "archiveMarkFileLivenessTimeoutMillis", "restartSafetyPredicate", "restartSafetyReason", "restartSafetyWitnessCount", "restartSafetyWitnesses", "statusFreshnessClock", "wallClockUsedForStatusAcceptance", "stableSnapshotWitnessCount", "stableSnapshotWitnesses", "appliedUnknownAttemptOrdinal", "appliedUnknownObservedOnAllMembersBeforeLeaderKill", "appliedUnknownExpectedNextApplicationSequence", "appliedUnknownExpectedIdentityCount", "appliedUnknownMembersBeforeLeaderKill", "initialMembers", "convergedMembers", "processStarts", "forcedStops"],
+      "properties": {
+        "schemaVersion": { "const": "matching.m12.topology.v1" },
+        "status": { "const": "PASS" },
+        "implementation": { "const": "REAL_AERON_CHILD_PROCESSES" },
+        "clusterId": { "const": 12 }, "memberCount": { "const": 3 }, "quorumSize": { "const": 2 },
+        "aeronAppointedLeaderId": { "const": -1 }, "automaticLeaderElection": { "const": true }, "initialLeaderIsRuntimeObservation": { "const": true },
+        "contractCorrection": { "$ref": "#/$defs/contractCorrection" },
+        "localhostOnly": { "const": true }, "memberProcessStarts": { "const": 6 }, "externalForceStops": { "const": 3 },
+        "teardownComplete": { "const": true }, "childProcessesAliveAfterTeardown": { "const": 0 },
+        "ownerProcessId": { "type": "integer", "minimum": 1 },
+        "childClasspathStrategy": { "enum": ["INHERITED_JAVA_CLASS_PATH", "STRICT_CODE_SOURCE_FALLBACK"] },
+        "archiveMarkFileLivenessTimeoutMillis": { "const": 10000 },
+        "restartSafetyPredicate": { "const": "ARCHIVE_MARK_FILE_ACTIVITY_AGE_GT_LIVENESS_TIMEOUT" },
+        "restartSafetyReason": { "const": "A forced-stopped member is restarted only after a live ArchiveMarkFile activity-timestamp read observes age strictly greater than the dependency-pinned liveness timeout." },
+        "restartSafetyWitnessCount": { "const": 3 },
+        "restartSafetyWitnesses": { "type": "array", "minItems": 3, "maxItems": 3, "items": { "$ref": "#/$defs/restartSafetyWitness" } },
+        "statusFreshnessClock": { "const": "MONOTONIC_STATUS_SEQUENCE_ADVANCE" }, "wallClockUsedForStatusAcceptance": { "const": false },
+        "stableSnapshotWitnessCount": { "type": "integer", "minimum": 1, "maximum": 64 },
+        "stableSnapshotWitnesses": { "type": "array", "minItems": 1, "maxItems": 64, "items": { "$ref": "#/$defs/stableSnapshotWitness" } },
+        "appliedUnknownAttemptOrdinal": { "const": 42 }, "appliedUnknownObservedOnAllMembersBeforeLeaderKill": { "const": true },
+        "appliedUnknownExpectedNextApplicationSequence": { "const": 34 }, "appliedUnknownExpectedIdentityCount": { "const": 33 },
+        "appliedUnknownMembersBeforeLeaderKill": { "type": "array", "minItems": 3, "maxItems": 3, "items": { "$ref": "#/$defs/appliedUnknownStatus" } },
+        "initialMembers": { "type": "array", "minItems": 3, "maxItems": 3, "items": { "$ref": "#/$defs/topologyMember" } },
+        "convergedMembers": { "type": "array", "minItems": 3, "maxItems": 3, "items": { "$ref": "#/$defs/topologyMember" } },
+        "processStarts": { "type": "array", "minItems": 6, "maxItems": 6, "items": { "$ref": "#/$defs/processStart" } },
+        "forcedStops": { "type": "array", "minItems": 3, "maxItems": 3, "items": { "$ref": "#/$defs/forcedStop" } }
+      }
+    },
+    "topologyMember": {
+      "type": "object", "additionalProperties": false,
+      "required": ["memberId", "processId", "role", "leadershipTermId", "nextApplicationSequence", "identityCount", "semanticStateDigest", "identityResultDigest", "aeronDirectory", "archiveDirectory", "clusterDirectory", "portBlockBase", "udpPorts", "componentErrorCount"],
+      "properties": {
+        "memberId": { "$ref": "#/$defs/memberId" }, "processId": { "type": "integer", "minimum": 1 }, "role": { "$ref": "#/$defs/role" },
+        "leadershipTermId": { "type": "integer", "minimum": 0 }, "nextApplicationSequence": { "type": "integer", "minimum": 1, "maximum": 67 },
+        "identityCount": { "type": "integer", "minimum": 0, "maximum": 66 }, "semanticStateDigest": { "$ref": "#/$defs/sha256" }, "identityResultDigest": { "$ref": "#/$defs/sha256" },
+        "aeronDirectory": { "$ref": "#/$defs/nonBlank" }, "archiveDirectory": { "$ref": "#/$defs/nonBlank" }, "clusterDirectory": { "$ref": "#/$defs/nonBlank" },
+        "portBlockBase": { "$ref": "#/$defs/portBase" }, "udpPorts": { "$ref": "#/$defs/udpPorts" }, "componentErrorCount": { "const": 0 }
+      }
+    },
+    "stabilityStatus": {
+      "type": "object", "additionalProperties": false,
+      "required": ["memberId", "processId", "statusSequence", "observedAtEpochMillis", "role", "electionState", "leadershipTermId", "commitPosition", "logPosition", "nextApplicationSequence", "identityCount", "semanticStateDigest", "identityResultDigest", "componentErrorCount", "diagnosticWarningCount", "droppedDiagnosticWarnings", "diagnosticWarnings"],
+      "properties": {
+        "memberId": { "$ref": "#/$defs/memberId" }, "processId": { "type": "integer", "minimum": 1 }, "statusSequence": { "type": "integer", "minimum": 1 }, "observedAtEpochMillis": { "type": "integer", "minimum": 1 },
+        "role": { "$ref": "#/$defs/role" }, "electionState": { "const": "CLOSED" }, "leadershipTermId": { "type": "integer", "minimum": 0 },
+        "commitPosition": { "type": "integer", "minimum": 0 }, "logPosition": { "type": "integer", "minimum": 0 }, "nextApplicationSequence": { "type": "integer", "minimum": 1, "maximum": 67 },
+        "identityCount": { "type": "integer", "minimum": 0, "maximum": 66 }, "semanticStateDigest": { "$ref": "#/$defs/sha256" }, "identityResultDigest": { "$ref": "#/$defs/sha256" }, "componentErrorCount": { "const": 0 },
+        "diagnosticWarningCount": { "type": "integer", "minimum": 0, "maximum": 3 }, "droppedDiagnosticWarnings": { "const": 0 }, "diagnosticWarnings": { "$ref": "#/$defs/warnings" }
+      }
+    },
+    "stableSnapshotWitness": {
+      "type": "object", "additionalProperties": false,
+      "required": ["ordinal", "condition", "statusPublishIntervalMillis", "freshnessBoundMillis", "elapsedNanos", "allMemberStatusSequencesAdvanced", "monotonicElapsedWithinFreshnessBound", "firstSnapshot", "secondSnapshot"],
+      "properties": {
+        "ordinal": { "type": "integer", "minimum": 1, "maximum": 64 }, "condition": { "$ref": "#/$defs/nonBlank" },
+        "statusPublishIntervalMillis": { "type": "integer", "minimum": 1, "maximum": 60000 }, "freshnessBoundMillis": { "type": "integer", "minimum": 1, "maximum": 300000 }, "elapsedNanos": { "type": "integer", "minimum": 0 },
+        "allMemberStatusSequencesAdvanced": { "const": true }, "monotonicElapsedWithinFreshnessBound": { "const": true },
+        "firstSnapshot": { "type": "array", "minItems": 1, "maxItems": 3, "items": { "$ref": "#/$defs/stabilityStatus" } },
+        "secondSnapshot": { "type": "array", "minItems": 1, "maxItems": 3, "items": { "$ref": "#/$defs/stabilityStatus" } }
+      }
+    },
+    "restartSafetyWitness": {
+      "type": "object", "additionalProperties": false,
+      "required": ["ordinal", "memberId", "stoppedProcessId", "archiveMarkFile", "lastActivityTimestampMillis", "observedAtMillis", "ageMillis", "livenessTimeoutMillis", "probeCount", "waitElapsedNanos", "aeronVersion", "predicate", "activityTimestampPositive", "ageStrictlyExceedsLivenessTimeout"],
+      "properties": {
+        "ordinal": { "type": "integer", "minimum": 1, "maximum": 3 }, "memberId": { "$ref": "#/$defs/memberId" }, "stoppedProcessId": { "type": "integer", "minimum": 1 }, "archiveMarkFile": { "$ref": "#/$defs/nonBlank" },
+        "lastActivityTimestampMillis": { "type": "integer", "minimum": 1 }, "observedAtMillis": { "type": "integer", "minimum": 1 }, "ageMillis": { "type": "integer", "minimum": 10001 }, "livenessTimeoutMillis": { "const": 10000 },
+        "probeCount": { "type": "integer", "minimum": 1 }, "waitElapsedNanos": { "type": "integer", "minimum": 0 }, "aeronVersion": { "const": "1.52.2" }, "predicate": { "const": "ARCHIVE_MARK_FILE_ACTIVITY_AGE_GT_LIVENESS_TIMEOUT" },
+        "activityTimestampPositive": { "const": true }, "ageStrictlyExceedsLivenessTimeout": { "const": true }
+      }
+    },
+    "processStart": {
+      "type": "object", "additionalProperties": false,
+      "required": ["memberId", "processId", "freshStart", "aliveAfterTeardown", "portBlockBase", "udpPorts", "rootDirectory", "aeronDirectory", "archiveDirectory", "clusterDirectory"],
+      "properties": {
+        "memberId": { "$ref": "#/$defs/memberId" }, "processId": { "type": "integer", "minimum": 1 }, "freshStart": { "type": "boolean" }, "aliveAfterTeardown": { "const": false },
+        "portBlockBase": { "$ref": "#/$defs/portBase" }, "udpPorts": { "$ref": "#/$defs/udpPorts" }, "rootDirectory": { "$ref": "#/$defs/nonBlank" }, "aeronDirectory": { "$ref": "#/$defs/nonBlank" }, "archiveDirectory": { "$ref": "#/$defs/nonBlank" }, "clusterDirectory": { "$ref": "#/$defs/nonBlank" }
+      }
+    },
+    "forcedStop": {
+      "type": "object", "additionalProperties": false,
+      "required": ["memberId", "processId", "destroyForciblyRequested", "exitCode", "externalController", "roleBeforeStop", "termBeforeStop", "commitPositionBeforeStop", "logPositionBeforeStop", "componentErrorCount", "diagnosticWarningCount", "droppedDiagnosticWarnings", "diagnosticWarnings"],
+      "properties": {
+        "memberId": { "$ref": "#/$defs/memberId" }, "processId": { "type": "integer", "minimum": 1 }, "destroyForciblyRequested": { "const": true }, "exitCode": { "type": "integer", "minimum": 0, "maximum": 255 }, "externalController": { "const": true }, "roleBeforeStop": { "$ref": "#/$defs/role" },
+        "termBeforeStop": { "type": "integer", "minimum": 0 }, "commitPositionBeforeStop": { "type": "integer", "minimum": 0 }, "logPositionBeforeStop": { "type": "integer", "minimum": 0 }, "componentErrorCount": { "const": 0 },
+        "diagnosticWarningCount": { "type": "integer", "minimum": 0, "maximum": 3 }, "droppedDiagnosticWarnings": { "const": 0 }, "diagnosticWarnings": { "$ref": "#/$defs/warnings" }
+      }
+    },
+    "leadership": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schemaVersion", "status", "implementation", "initialLeaderId", "initialLeadershipTermId", "faultTargetLeaderId", "faultTargetLeadershipTermId", "killedObservedCurrentLeader", "replacementLeaderId", "replacementLeadershipTermId", "leadershipTermAdvanced", "staleLeaderAcknowledgements", "clientGenerations"],
+      "properties": {
+        "schemaVersion": { "const": "matching.m12.leadership.v1" }, "status": { "const": "PASS" }, "implementation": { "const": "REAL_AERON_CHILD_PROCESSES" },
+        "initialLeaderId": { "$ref": "#/$defs/memberId" }, "initialLeadershipTermId": { "type": "integer", "minimum": 0 }, "faultTargetLeaderId": { "$ref": "#/$defs/memberId" }, "faultTargetLeadershipTermId": { "type": "integer", "minimum": 0 }, "killedObservedCurrentLeader": { "const": true },
+        "replacementLeaderId": { "$ref": "#/$defs/memberId" }, "replacementLeadershipTermId": { "type": "integer", "minimum": 1 }, "leadershipTermAdvanced": { "const": true }, "staleLeaderAcknowledgements": { "const": 0 },
+        "clientGenerations": { "type": "array", "minItems": 3, "maxItems": 3, "items": { "$ref": "#/$defs/clientGeneration" } }
+      }
+    },
+    "clientGeneration": {
+      "type": "object", "additionalProperties": false,
+      "required": ["clientGeneration", "clusterSessionId", "leadershipTermId", "leaderMemberId", "acceptedOffers", "decodedResponses", "rejectedResponses", "componentErrors"],
+      "properties": {
+        "clientGeneration": { "type": "integer", "minimum": 1, "maximum": 3 }, "clusterSessionId": { "type": "integer" }, "leadershipTermId": { "type": "integer", "minimum": 0 }, "leaderMemberId": { "$ref": "#/$defs/memberId" },
+        "acceptedOffers": { "type": "integer", "minimum": 1, "maximum": 84 }, "decodedResponses": { "type": "integer", "minimum": 0, "maximum": 84 }, "rejectedResponses": { "const": 0 }, "componentErrors": { "const": 0 }
+      }
+    },
+    "quorum": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schemaVersion", "status", "implementation", "votingMembers", "quorumSize", "liveVotingMembersDuringMinority", "minorityAttemptOrdinal", "minorityIngressAccepted", "minorityOutcome", "minorityAcknowledgements", "quorumRestored", "restoredLeaderId", "restoredLeadershipTermId", "retryAttemptOrdinal", "retryOutcome", "retryResponseStatus"],
+      "properties": {
+        "schemaVersion": { "const": "matching.m12.quorum.v1" }, "status": { "const": "PASS" }, "implementation": { "const": "REAL_AERON_CHILD_PROCESSES" },
+        "votingMembers": { "const": 3 }, "quorumSize": { "const": 2 }, "liveVotingMembersDuringMinority": { "const": 1 }, "minorityAttemptOrdinal": { "const": 84 }, "minorityIngressAccepted": { "const": true }, "minorityOutcome": { "const": "UNKNOWN" }, "minorityAcknowledgements": { "const": 0 },
+        "quorumRestored": { "const": true }, "restoredLeaderId": { "$ref": "#/$defs/memberId" }, "restoredLeadershipTermId": { "type": "integer", "minimum": 1 }, "retryAttemptOrdinal": { "const": 85 }, "retryOutcome": { "const": "ACKNOWLEDGED" }, "retryResponseStatus": { "enum": ["NEW_APPLIED", "DUPLICATE_REPLAYED"] }
+      }
+    },
+    "catchup": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schemaVersion", "status", "implementation", "formerLeaderId", "freshStartOnReturn", "roleAfterReturn", "caughtUpBeforeMinorityFault", "catchupCommitPosition", "catchupLogPosition", "catchupNextApplicationSequence", "allThreeConvergedAfterFinalRestore", "archiveMarkFileLivenessTimeoutMillis", "restartSafetyPredicate", "firstReturnRestartSafetyWitnessOrdinal", "firstReturnRestartSafetyWitness"],
+      "properties": {
+        "schemaVersion": { "const": "matching.m12.catchup.v1" }, "status": { "const": "PASS" }, "implementation": { "const": "REAL_AERON_CHILD_PROCESSES" }, "formerLeaderId": { "$ref": "#/$defs/memberId" }, "freshStartOnReturn": { "const": false }, "roleAfterReturn": { "const": "FOLLOWER" }, "caughtUpBeforeMinorityFault": { "const": true },
+        "catchupCommitPosition": { "type": "integer", "minimum": 1 }, "catchupLogPosition": { "type": "integer", "minimum": 1 }, "catchupNextApplicationSequence": { "const": 66 }, "allThreeConvergedAfterFinalRestore": { "const": true },
+        "archiveMarkFileLivenessTimeoutMillis": { "const": 10000 }, "restartSafetyPredicate": { "const": "ARCHIVE_MARK_FILE_ACTIVITY_AGE_GT_LIVENESS_TIMEOUT" }, "firstReturnRestartSafetyWitnessOrdinal": { "type": "integer", "minimum": 1, "maximum": 3 }, "firstReturnRestartSafetyWitness": { "$ref": "#/$defs/restartSafetyWitness" }
+      }
+    },
+    "stateEquivalence": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schemaVersion", "status", "implementation", "applicationObserver", "memberCount", "nextApplicationSequence", "identityCount", "semanticStateDigest", "expectedSemanticStateDigest", "identityResultDigest", "expectedIdentityResultDigest", "allMembersIdentityResultDigestMatchDirectOracle", "allMembersIdentityCountExact", "commitPosition", "logPosition", "stateEquivalent", "componentErrorCount", "diagnosticWarningCount", "droppedDiagnosticWarnings", "members"],
+      "properties": {
+        "schemaVersion": { "const": "matching.m12.state-equivalence.v1" }, "status": { "const": "PASS" }, "implementation": { "const": "REAL_AERON_CHILD_PROCESSES" }, "applicationObserver": { "const": true }, "memberCount": { "const": 3 }, "nextApplicationSequence": { "const": 67 }, "identityCount": { "const": 66 },
+        "semanticStateDigest": { "$ref": "#/$defs/sha256" }, "expectedSemanticStateDigest": { "$ref": "#/$defs/sha256" }, "identityResultDigest": { "$ref": "#/$defs/sha256" }, "expectedIdentityResultDigest": { "$ref": "#/$defs/sha256" },
+        "allMembersIdentityResultDigestMatchDirectOracle": { "const": true }, "allMembersIdentityCountExact": { "const": true }, "commitPosition": { "type": "integer", "minimum": 1 }, "logPosition": { "type": "integer", "minimum": 1 }, "stateEquivalent": { "const": true }, "componentErrorCount": { "const": 0 }, "diagnosticWarningCount": { "type": "integer", "minimum": 0, "maximum": 9 }, "droppedDiagnosticWarnings": { "const": 0 },
+        "members": { "type": "array", "minItems": 3, "maxItems": 3, "items": { "$ref": "#/$defs/finalStatus" } }
+      }
+    },
+    "finalStatus": {
+      "type": "object", "additionalProperties": false,
+      "required": ["memberId", "processId", "role", "electionState", "leadershipTermId", "commitPosition", "logPosition", "nextApplicationSequence", "identityCount", "semanticStateDigest", "identityResultDigest", "componentErrorCount", "diagnosticWarningCount", "droppedDiagnosticWarnings", "diagnosticWarnings"],
+      "properties": {
+        "memberId": { "$ref": "#/$defs/memberId" }, "processId": { "type": "integer", "minimum": 1 }, "role": { "$ref": "#/$defs/role" }, "electionState": { "const": "CLOSED" }, "leadershipTermId": { "type": "integer", "minimum": 0 }, "commitPosition": { "type": "integer", "minimum": 1 }, "logPosition": { "type": "integer", "minimum": 1 },
+        "nextApplicationSequence": { "const": 67 }, "identityCount": { "const": 66 }, "semanticStateDigest": { "$ref": "#/$defs/sha256" }, "identityResultDigest": { "$ref": "#/$defs/sha256" }, "componentErrorCount": { "const": 0 }, "diagnosticWarningCount": { "type": "integer", "minimum": 0, "maximum": 3 }, "droppedDiagnosticWarnings": { "const": 0 }, "diagnosticWarnings": { "$ref": "#/$defs/warnings" }
+      }
+    },
+    "architecture": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schemaVersion", "status", "m11BaselineCommit", "m11CoreTree", "headCoreTree", "matchingCoreByteIdentical", "m11GoldensTree", "headGoldensTree", "m11GoldensByteIdentical", "m11WireSourcesByteIdentical", "m11WireSourceSha256", "m11ClusteredServiceAdapterByteIdentical", "m11ClusteredServiceAdapterBaselineSha256", "m12ClusteredServiceAdapterSha256", "transportAdapterCorrection", "transportAdapterCorrectionPresent", "transportAdapterCorrectionBehaviorTests", "aeronProductionModule", "coreInfrastructureFree", "callbackReachableStandaloneWalReferences", "callbackReachableExternalIoReferences", "logCallbackBusinessApplyCalls", "nonLogCallbackBusinessApplyCalls", "runtimeMetadataDigestStable", "memberChildMainCount", "externalFaultControllerSites", "clusteredServiceFaultControllerSites", "externalServices", "standaloneApplicationWal", "violations"],
+      "properties": {
+        "schemaVersion": { "const": "matching.m12.architecture.v1" }, "status": { "const": "PASS" }, "m11BaselineCommit": { "const": "6997e05cea81cb93b883e882c8d75887d0622a22" },
+        "m11CoreTree": { "$ref": "#/$defs/gitObject" }, "headCoreTree": { "$ref": "#/$defs/gitObject" }, "matchingCoreByteIdentical": { "const": true }, "m11GoldensTree": { "$ref": "#/$defs/gitObject" }, "headGoldensTree": { "$ref": "#/$defs/gitObject" }, "m11GoldensByteIdentical": { "const": true }, "m11WireSourcesByteIdentical": { "const": true },
+        "m11WireSourceSha256": { "$ref": "#/$defs/wireSourceHashes" }, "m11ClusteredServiceAdapterByteIdentical": { "const": false }, "m11ClusteredServiceAdapterBaselineSha256": { "$ref": "#/$defs/sha256" }, "m12ClusteredServiceAdapterSha256": { "$ref": "#/$defs/sha256" },
+        "transportAdapterCorrection": { "const": "COMMITTED_RESULT_EGRESS_FAILURE_RECORDED_NOT_THROWN" }, "transportAdapterCorrectionPresent": { "const": true }, "transportAdapterCorrectionBehaviorTests": { "const": 5 }, "aeronProductionModule": { "const": "matching-cluster-runtime" }, "coreInfrastructureFree": { "const": true },
+        "callbackReachableStandaloneWalReferences": { "const": 0 }, "callbackReachableExternalIoReferences": { "const": 0 }, "logCallbackBusinessApplyCalls": { "const": 1 }, "nonLogCallbackBusinessApplyCalls": { "const": 0 }, "runtimeMetadataDigestStable": { "const": true }, "memberChildMainCount": { "const": 1 }, "externalFaultControllerSites": { "type": "integer", "minimum": 1 }, "clusteredServiceFaultControllerSites": { "const": 0 }, "externalServices": { "const": false }, "standaloneApplicationWal": { "const": false }, "violations": { "type": "array", "maxItems": 0 }
+      }
+    },
+    "wireSourceHashes": {
+      "type": "object", "additionalProperties": false,
+      "required": ["matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11CommandRequest.java", "matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11CommandResponse.java", "matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11RequestCodec.java", "matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11ResponseCodec.java", "matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11Snapshot.java", "matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11SnapshotCodec.java"],
+      "properties": {
+        "matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11CommandRequest.java": { "$ref": "#/$defs/sha256" }, "matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11CommandResponse.java": { "$ref": "#/$defs/sha256" }, "matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11RequestCodec.java": { "$ref": "#/$defs/sha256" }, "matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11ResponseCodec.java": { "$ref": "#/$defs/sha256" }, "matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11Snapshot.java": { "$ref": "#/$defs/sha256" }, "matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11SnapshotCodec.java": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "coverage": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schemaVersion", "status", "executionScope", "clusterEvidenceQualified", "scopeDisclosure", "source", "witnessContract", "labelsAcceptedWithoutWitness", "required", "observed", "assertionsExecuted", "allAssertionsPassed", "systemErrorsEvaluatedAfterControls", "ledgerVerifiedAgainstExecutionReplay", "semanticDigest", "ledgerSha256", "factLedger", "witnesses"],
+      "properties": {
+        "schemaVersion": { "const": "matching.m12.coverage.v1" }, "status": { "const": "PASS" }, "executionScope": { "const": "REAL_AERON_CHILD_PROCESSES" }, "clusterEvidenceQualified": { "const": true }, "scopeDisclosure": { "const": "ASSERTIONS_RECOMPUTED_FROM_REAL_AERON_CHILD_PROCESS_TRACE" }, "source": { "const": "EXECUTED_ASSERTION_WITNESS_LEDGER" }, "witnessContract": { "const": "M12_EXECUTED_ASSERTION_WITNESS_V1" }, "labelsAcceptedWithoutWitness": { "const": false },
+        "required": { "const": 25 }, "observed": { "const": 25 }, "assertionsExecuted": { "const": 25 }, "allAssertionsPassed": { "const": true }, "systemErrorsEvaluatedAfterControls": { "const": true }, "ledgerVerifiedAgainstExecutionReplay": { "const": true }, "semanticDigest": { "$ref": "#/$defs/sha256" }, "ledgerSha256": { "$ref": "#/$defs/sha256" },
+        "factLedger": { "type": "array", "minItems": 25, "maxItems": 25, "items": { "$ref": "#/$defs/coverageFact" } }, "witnesses": { "type": "array", "minItems": 25, "maxItems": 25, "items": { "$ref": "#/$defs/coverageWitness" } }
+      }
+    },
+    "coverageFact": {
+      "type": "object", "additionalProperties": false,
+      "required": ["obligation", "scenarioId", "sourceArtifact", "assertionId", "producer", "assertion", "observedValue", "observationSha256", "witnessSha256", "executed", "passed"],
+      "properties": { "obligation": { "$ref": "#/$defs/nonBlank" }, "scenarioId": { "$ref": "#/$defs/nonBlank" }, "sourceArtifact": { "$ref": "#/$defs/nonBlank" }, "assertionId": { "type": "string", "pattern": "^M12\\.[A-Z0-9_]+\\.[A-Z0-9_]+\\.V1$" }, "producer": { "$ref": "#/$defs/nonBlank" }, "assertion": { "$ref": "#/$defs/nonBlank" }, "observedValue": { "$ref": "#/$defs/nonBlank" }, "observationSha256": { "$ref": "#/$defs/sha256" }, "witnessSha256": { "$ref": "#/$defs/sha256" }, "executed": { "const": true }, "passed": { "const": true } }
+    },
+    "coverageWitness": {
+      "type": "object", "additionalProperties": false,
+      "required": ["obligation", "scenarioId", "assertionId", "witnessSha256", "executed", "passed"],
+      "properties": { "obligation": { "$ref": "#/$defs/nonBlank" }, "scenarioId": { "$ref": "#/$defs/nonBlank" }, "assertionId": { "$ref": "#/$defs/nonBlank" }, "witnessSha256": { "$ref": "#/$defs/sha256" }, "executed": { "const": true }, "passed": { "const": true } }
+    },
+    "mutants": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schemaVersion", "status", "required", "killed", "productionControlsPassed", "singleFaultCandidates", "systemErrorCountedAsKill", "systemErrorControls", "shrinkTrials", "observer", "classifier", "semanticModelOnly", "realClusterExecuted", "eligibleAsClusterEvidence", "candidates", "controls"],
+      "properties": {
+        "schemaVersion": { "const": "matching.m12.mutants.v1" }, "status": { "const": "PASS" }, "required": { "const": 8 }, "killed": { "const": 8 }, "productionControlsPassed": { "const": 8 }, "singleFaultCandidates": { "const": true }, "systemErrorCountedAsKill": { "const": false }, "systemErrorControls": { "const": 3 }, "shrinkTrials": { "type": "integer", "minimum": 8 }, "observer": { "const": "M12_PURE_DATA_HISTORY_OBSERVER_V1" }, "classifier": { "const": "M12_SHARED_FAILURE_CLASSIFIER_V1" }, "semanticModelOnly": { "const": true }, "realClusterExecuted": { "const": false }, "eligibleAsClusterEvidence": { "const": false },
+        "candidates": { "type": "array", "minItems": 8, "maxItems": 8, "items": { "$ref": "#/$defs/mutantCandidate" } }, "controls": { "type": "array", "minItems": 3, "maxItems": 3, "items": { "$ref": "#/$defs/systemControl" } }
+      }
+    },
+    "mutantCandidate": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "productionClassification", "classification", "fingerprint", "singleFaultMode", "actualMutationActions", "observer", "systemErrorCountedAsKill", "counterexampleId", "semanticModelOnly", "realClusterExecuted", "eligibleAsClusterEvidence"],
+      "properties": { "id": { "type": "string", "pattern": "^M12-[A-Z0-9-]+$" }, "productionClassification": { "const": "PASS" }, "classification": { "const": "STUDENT_FAILURE" }, "fingerprint": { "type": "string", "pattern": "^[A-Z0-9_]+$" }, "singleFaultMode": { "$ref": "#/$defs/nonBlank" }, "actualMutationActions": { "const": 1 }, "observer": { "const": "M12_PURE_DATA_HISTORY_OBSERVER_V1" }, "systemErrorCountedAsKill": { "const": false }, "counterexampleId": { "type": "string", "pattern": "^cex-m12-[a-z0-9-]+$" }, "semanticModelOnly": { "const": true }, "realClusterExecuted": { "const": false }, "eligibleAsClusterEvidence": { "const": false } }
+    },
+    "systemControl": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "classification", "classifier", "countedAsKill", "executedPath", "failureType"],
+      "properties": { "id": { "type": "string", "pattern": "^M12-[A-Z0-9-]+-CONTROL$" }, "classification": { "const": "SYSTEM_ERROR" }, "classifier": { "const": "M12_SHARED_FAILURE_CLASSIFIER_V1" }, "countedAsKill": { "const": false }, "executedPath": { "$ref": "#/$defs/nonBlank" }, "failureType": { "$ref": "#/$defs/nonBlank" } }
+    },
+    "replay": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schemaVersion", "status", "replayed", "productionControlsPassed", "studentFailuresReproduced", "fingerprintsExact", "oneDeleteAudits", "oneMinimal", "systemErrorCountedAsKill", "semanticModelOnly", "audits"],
+      "properties": { "schemaVersion": { "const": "matching.m12.replay.v1" }, "status": { "const": "PASS" }, "replayed": { "const": 8 }, "productionControlsPassed": { "const": 8 }, "studentFailuresReproduced": { "const": 8 }, "fingerprintsExact": { "const": true }, "oneDeleteAudits": { "const": 8 }, "oneMinimal": { "const": true }, "systemErrorCountedAsKill": { "const": false }, "semanticModelOnly": { "const": true }, "audits": { "type": "array", "minItems": 8, "maxItems": 8, "items": { "$ref": "#/$defs/replayAudit" } } }
+    },
+    "replayAudit": {
+      "type": "object", "additionalProperties": false,
+      "required": ["mutant", "classification", "fingerprint", "productionControl", "oneMinimal", "exact"],
+      "properties": { "mutant": { "type": "string", "pattern": "^M12-[A-Z0-9-]+$" }, "classification": { "const": "STUDENT_FAILURE" }, "fingerprint": { "type": "string", "pattern": "^[A-Z0-9_]+$" }, "productionControl": { "const": "PASS" }, "oneMinimal": { "const": true }, "exact": { "const": true } }
+    },
+    "environment": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schemaVersion", "status", "javaRuntime", "javaVersion", "javaVendor", "vmName", "jvmArguments", "osName", "osVersion", "osArchitecture", "availableProcessors", "physicalMemoryBytes", "maximumHeapBytes", "garbageCollectorNames", "cpuModel", "storageDevice", "filesystem", "powerPolicy", "walRoot", "walRootUri", "walFileStoreName", "walFileStoreType", "walFileStoreTotalSpaceBytes", "walFileStoreUsableSpaceBytes", "walFileStoreUnallocatedSpaceBytes", "runStartedAt", "runFinishedAt", "correctnessOnly", "performanceQualified", "singleHost"],
+      "properties": {
+        "schemaVersion": { "const": "matching.m12.environment.v1" }, "status": { "const": "PASS" }, "javaRuntime": { "$ref": "#/$defs/nonBlank" }, "javaVersion": { "$ref": "#/$defs/nonBlank" }, "javaVendor": { "$ref": "#/$defs/nonBlank" }, "vmName": { "$ref": "#/$defs/nonBlank" }, "jvmArguments": { "type": "array", "maxItems": 256, "items": { "type": "string", "maxLength": 4096 } },
+        "osName": { "$ref": "#/$defs/nonBlank" }, "osVersion": { "$ref": "#/$defs/nonBlank" }, "osArchitecture": { "$ref": "#/$defs/nonBlank" }, "availableProcessors": { "type": "integer", "minimum": 1 }, "physicalMemoryBytes": { "type": "integer", "minimum": 1 }, "maximumHeapBytes": { "type": "integer", "minimum": 1 }, "garbageCollectorNames": { "type": "array", "minItems": 1, "maxItems": 32, "uniqueItems": true, "items": { "$ref": "#/$defs/nonBlank" } },
+        "cpuModel": { "$ref": "#/$defs/nonBlank" }, "storageDevice": { "$ref": "#/$defs/nonBlank" }, "filesystem": { "$ref": "#/$defs/nonBlank" }, "powerPolicy": { "$ref": "#/$defs/nonBlank" }, "walRoot": { "$ref": "#/$defs/nonBlank" }, "walRootUri": { "type": "string", "format": "uri", "minLength": 1, "maxLength": 4096 }, "walFileStoreName": { "$ref": "#/$defs/nonBlank" }, "walFileStoreType": { "$ref": "#/$defs/nonBlank" }, "walFileStoreTotalSpaceBytes": { "type": "integer", "minimum": 1 }, "walFileStoreUsableSpaceBytes": { "type": "integer", "minimum": 0 }, "walFileStoreUnallocatedSpaceBytes": { "type": "integer", "minimum": 0 }, "runStartedAt": { "type": "string", "format": "date-time" }, "runFinishedAt": { "type": "string", "format": "date-time" }, "correctnessOnly": { "const": true }, "performanceQualified": { "const": false }, "singleHost": { "const": true }
+      }
+    },
+    "inspection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "status", "realAeronChildProcesses", "assertions", "semanticDigest", "acknowledged", "unknown", "notSubmitted", "sameIdentityRetries", "duplicateReplays", "noQuorumRetryStatus"],
+      "properties": {
+        "schemaVersion": { "const": "matching.m12.judge-inspection.v1" },
+        "status": { "const": "PASS" },
+        "realAeronChildProcesses": { "const": true },
+        "assertions": { "const": 24 },
+        "semanticDigest": { "$ref": "#/$defs/sha256" },
+        "acknowledged": { "const": 82 },
+        "unknown": { "const": 2 },
+        "notSubmitted": { "const": 1 },
+        "sameIdentityRetries": { "const": 18 },
+        "duplicateReplays": { "type": "integer", "minimum": 17, "maximum": 18 },
+        "noQuorumRetryStatus": { "enum": ["NEW_APPLIED", "DUPLICATE_REPLAYED"] }
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "bytes", "sha256"],
+      "properties": {
+        "path": { "type": "string", "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$" },
+        "bytes": { "type": "integer", "minimum": 1 },
+        "sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "release": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["unitTag", "productRelease", "verification", "singleShard", "performanceQualified", "backupRestoreQualified", "externalServices"],
+      "properties": {
+        "unitTag": { "const": "course/m12-complete" },
+        "productRelease": { "const": "matching-0.8.0" },
+        "verification": { "const": "THREE_MEMBER_FAILOVER_PROFILE_AND_CLEAN_TREE_EVIDENCE" },
+        "singleShard": { "const": true },
+        "performanceQualified": { "const": false },
+        "backupRestoreQualified": { "const": false },
+        "externalServices": { "const": false }
+      }
+    },
+    "memberId": { "type": "integer", "minimum": 0, "maximum": 2 },
+    "role": { "enum": ["LEADER", "FOLLOWER"] },
+    "nonBlank": { "type": "string", "minLength": 1, "maxLength": 4096 },
+    "gitObject": { "type": "string", "pattern": "^[a-f0-9]{40}(?:[a-f0-9]{24})?$" },
+    "portBase": { "type": "integer", "minimum": 1024, "maximum": 65530 },
+    "udpPorts": { "type": "array", "minItems": 5, "maxItems": 5, "uniqueItems": true, "items": { "type": "integer", "minimum": 1, "maximum": 65535 } },
+    "warnings": { "type": "array", "maxItems": 3, "items": { "type": "string", "pattern": "^io\\.aeron\\.cluster\\.client\\.ClusterEvent: WARN - (leader heartbeat timeout|inactive follower quorum|quorum position went backwards: leaderCommitPosition=[0-9]+ quorumPosition=[0-9]+)$" } },
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+  }
+}

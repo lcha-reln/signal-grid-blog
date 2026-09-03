@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/lcha-reln/cex-matching/main/schemas/matching.m12.counterexamples.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "seed", "required", "persisted", "semanticModelOnly", "realClusterEvidence", "invalidHistoryCountedAsKill", "systemErrorCountedAsKill", "minimalityScope", "globalMinimumClaim", "witnesses"],
+  "properties": {
+    "schemaVersion": { "const": "matching.m12.counterexamples.v1" },
+    "seed": { "const": "6120" },
+    "required": { "const": 8 },
+    "persisted": { "const": 8 },
+    "semanticModelOnly": { "const": true },
+    "realClusterEvidence": { "const": false },
+    "invalidHistoryCountedAsKill": { "const": false },
+    "systemErrorCountedAsKill": { "const": false },
+    "minimalityScope": { "const": "ONE_MINIMAL_WITHIN_TYPED_STEP_DELETION_GRAMMAR" },
+    "globalMinimumClaim": { "const": false },
+    "witnesses": { "type": "array", "minItems": 8, "maxItems": 8, "items": { "$ref": "#/$defs/witness" } }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "witness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "mutant", "classification", "fingerprint", "rawActions", "minimalActions", "shrinkTrials", "actualMutationActions", "oneMinimal", "minimalityScope", "globalMinimumClaim", "strictFreshReplay", "semanticModelOnly", "steps", "replaySha256"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^cex-m12-[a-z0-9-]+$" },
+        "mutant": { "type": "string", "pattern": "^M12-[A-Z0-9-]+$" },
+        "classification": { "const": "STUDENT_FAILURE" },
+        "fingerprint": { "type": "string", "pattern": "^[A-Z0-9_]+$" },
+        "rawActions": { "const": 3 },
+        "minimalActions": { "const": 1 },
+        "shrinkTrials": { "type": "integer", "minimum": 2 },
+        "actualMutationActions": { "const": 1 },
+        "oneMinimal": { "const": true },
+        "minimalityScope": { "const": "ONE_MINIMAL_WITHIN_TYPED_STEP_DELETION_GRAMMAR" },
+        "globalMinimumClaim": { "const": false },
+        "strictFreshReplay": { "const": true },
+        "semanticModelOnly": { "const": true },
+        "steps": { "type": "array", "minItems": 1, "maxItems": 1, "items": { "$ref": "#/$defs/step" } },
+        "replaySha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "step": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "token"],
+      "properties": {
+        "kind": { "const": "APPLY_SINGLE_FAULT" },
+        "token": { "type": "string", "pattern": "^M12-[A-Z0-9-]+$" }
+      }
+    }
+  }
+}

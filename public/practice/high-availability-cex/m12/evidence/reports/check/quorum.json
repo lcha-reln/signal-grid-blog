@@ -1,0 +1,18 @@
+{
+  "schemaVersion" : "matching.m12.quorum.v1",
+  "status" : "PASS",
+  "implementation" : "REAL_AERON_CHILD_PROCESSES",
+  "votingMembers" : 3,
+  "quorumSize" : 2,
+  "liveVotingMembersDuringMinority" : 1,
+  "minorityAttemptOrdinal" : 84,
+  "minorityIngressAccepted" : true,
+  "minorityOutcome" : "UNKNOWN",
+  "minorityAcknowledgements" : 0,
+  "quorumRestored" : true,
+  "restoredLeaderId" : 0,
+  "restoredLeadershipTermId" : 2,
+  "retryAttemptOrdinal" : 85,
+  "retryOutcome" : "ACKNOWLEDGED",
+  "retryResponseStatus" : "DUPLICATE_REPLAYED"
+}

@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/lcha-reln/cex-matching/main/schemas/matching.m12.mutants.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "status", "required", "killed", "productionControlsPassed", "singleFaultCandidates", "systemErrorCountedAsKill", "systemErrorControls", "shrinkTrials", "observer", "classifier", "semanticModelOnly", "realClusterExecuted", "eligibleAsClusterEvidence", "candidates", "controls"],
+  "properties": {
+    "schemaVersion": { "const": "matching.m12.mutants.v1" },
+    "status": { "const": "PASS" },
+    "required": { "const": 8 },
+    "killed": { "const": 8 },
+    "productionControlsPassed": { "const": 8 },
+    "singleFaultCandidates": { "const": true },
+    "systemErrorCountedAsKill": { "const": false },
+    "systemErrorControls": { "const": 3 },
+    "shrinkTrials": { "type": "integer", "minimum": 8 },
+    "observer": { "const": "M12_PURE_DATA_HISTORY_OBSERVER_V1" },
+    "classifier": { "const": "M12_SHARED_FAILURE_CLASSIFIER_V1" },
+    "semanticModelOnly": { "const": true },
+    "realClusterExecuted": { "const": false },
+    "eligibleAsClusterEvidence": { "const": false },
+    "candidates": { "type": "array", "minItems": 8, "maxItems": 8, "items": { "$ref": "#/$defs/candidate" } },
+    "controls": { "type": "array", "minItems": 3, "maxItems": 3, "items": { "$ref": "#/$defs/control" } }
+  },
+  "$defs": {
+    "candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "productionClassification", "classification", "fingerprint", "singleFaultMode", "actualMutationActions", "observer", "systemErrorCountedAsKill", "counterexampleId", "semanticModelOnly", "realClusterExecuted", "eligibleAsClusterEvidence"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^M12-[A-Z0-9-]+$" },
+        "productionClassification": { "const": "PASS" },
+        "classification": { "const": "STUDENT_FAILURE" },
+        "fingerprint": { "type": "string", "pattern": "^[A-Z0-9_]+$" },
+        "singleFaultMode": { "type": "string", "minLength": 1 },
+        "actualMutationActions": { "const": 1 },
+        "observer": { "const": "M12_PURE_DATA_HISTORY_OBSERVER_V1" },
+        "systemErrorCountedAsKill": { "const": false },
+        "counterexampleId": { "type": "string", "pattern": "^cex-m12-[a-z0-9-]+$" },
+        "semanticModelOnly": { "const": true },
+        "realClusterExecuted": { "const": false },
+        "eligibleAsClusterEvidence": { "const": false }
+      }
+    },
+    "control": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "classification", "classifier", "countedAsKill", "executedPath", "failureType"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^M12-[A-Z0-9-]+-CONTROL$" },
+        "classification": { "const": "SYSTEM_ERROR" },
+        "classifier": { "const": "M12_SHARED_FAILURE_CLASSIFIER_V1" },
+        "countedAsKill": { "const": false },
+        "executedPath": { "type": "string", "minLength": 1 },
+        "failureType": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

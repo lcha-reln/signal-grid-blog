@@ -1,0 +1,495 @@
+{
+  "schemaVersion" : "matching.m12.coverage.v1",
+  "status" : "PASS",
+  "executionScope" : "REAL_AERON_CHILD_PROCESSES",
+  "clusterEvidenceQualified" : true,
+  "scopeDisclosure" : "ASSERTIONS_RECOMPUTED_FROM_REAL_AERON_CHILD_PROCESS_TRACE",
+  "source" : "EXECUTED_ASSERTION_WITNESS_LEDGER",
+  "witnessContract" : "M12_EXECUTED_ASSERTION_WITNESS_V1",
+  "labelsAcceptedWithoutWitness" : false,
+  "required" : 25,
+  "observed" : 25,
+  "assertionsExecuted" : 25,
+  "allAssertionsPassed" : true,
+  "systemErrorsEvaluatedAfterControls" : true,
+  "ledgerVerifiedAgainstExecutionReplay" : true,
+  "semanticDigest" : "a94bccba4baee2339ddaf525c4251c051f7ad3e48021fd50ceb2ed59f4ffe4df",
+  "ledgerSha256" : "ba8539bde54ed32e79106691c3b811f3474b890df769531063c1492d9369712a",
+  "factLedger" : [ {
+    "obligation" : "THREE_REAL_MEMBERS",
+    "scenarioId" : "THREE_REAL_MEMBERS_INITIAL_ELECTION",
+    "sourceArtifact" : "m12-command-history.json",
+    "assertionId" : "M12.THREE_REAL_MEMBERS_INITIAL_ELECTION.THREE_REAL_MEMBERS.V1",
+    "producer" : "M12HistoryJudge#assertObligation(THREE_REAL_MEMBERS)",
+    "assertion" : "three independently owned member observations with distinct positive PIDs",
+    "observedValue" : "scope=REAL_AERON_CHILD_PROCESSES,memberIds=[0, 1, 2],pids=[38707, 38708, 38709]",
+    "observationSha256" : "980cbc7feb2bc73d06ecd7e1c039dfc1b0911addc22671eb7ae9a7bac4d285fa",
+    "witnessSha256" : "fd94b543782f2f79eacfda34fd163f689d5f491f3b11c52d4cbb64129f3ef4d4",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "SINGLE_INITIAL_LEADER",
+    "scenarioId" : "THREE_REAL_MEMBERS_INITIAL_ELECTION",
+    "sourceArtifact" : "m12-command-history.json",
+    "assertionId" : "M12.THREE_REAL_MEMBERS_INITIAL_ELECTION.SINGLE_INITIAL_LEADER.V1",
+    "producer" : "M12HistoryJudge#assertObligation(SINGLE_INITIAL_LEADER)",
+    "assertion" : "the initial topology has exactly one Leader and two Followers",
+    "observedValue" : "leader=2,term=0",
+    "observationSha256" : "f5a0c7bb514749f986419001bfe1e577720f1c66d94833ea643657869158a3ed",
+    "witnessSha256" : "c35f5ec44563109c5a75fc2db9d554276eb6be6531402f16353e3397014ae24a",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "DISJOINT_MEMBER_OWNERSHIP",
+    "scenarioId" : "THREE_REAL_MEMBERS_INITIAL_ELECTION",
+    "sourceArtifact" : "m12-command-history.json",
+    "assertionId" : "M12.THREE_REAL_MEMBERS_INITIAL_ELECTION.DISJOINT_MEMBER_OWNERSHIP.V1",
+    "producer" : "M12HistoryJudge#assertObligation(DISJOINT_MEMBER_OWNERSHIP)",
+    "assertion" : "member directories and five-port blocks are pairwise disjoint",
+    "observedValue" : "0@base=52100:ports=[52101, 52102, 52103, 52104, 52105],1@base=52110:ports=[52111, 52112, 52113, 52114, 52115],2@base=52120:ports=[52121, 52122, 52123, 52124, 52125]",
+    "observationSha256" : "153a5314b088f3e977c72ad52aa231e645088c8223cec4d7e56df38aa822782a",
+    "witnessSha256" : "73946ad7bb5770548efbd037dbc2adc3667024f982b5bb043a52037082c99948",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "CORRELATED_APPLY_ACK",
+    "scenarioId" : "CORRELATED_RESPONSE_IS_ACK",
+    "sourceArtifact" : "m12-command-history.json",
+    "assertionId" : "M12.CORRELATED_RESPONSE_IS_ACK.CORRELATED_APPLY_ACK.V1",
+    "producer" : "M12HistoryJudge#assertObligation(CORRELATED_APPLY_ACK)",
+    "assertion" : "every acknowledgement is ingress-accepted and carries its invocation correlation",
+    "observedValue" : "acknowledged=82,correlationsExact=true",
+    "observationSha256" : "5d6f228e3e8328258980e52a2190cbe0449ec2e3a30b5ed2ee500dd8c7593400",
+    "witnessSha256" : "0669e32b9438ef4f3678c1322934b00df871756e3973234d456e4670ee29ba12",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "M11_PROTOCOL_UNCHANGED",
+    "scenarioId" : "CORRELATED_RESPONSE_IS_ACK",
+    "sourceArtifact" : "m12-command-history.json",
+    "assertionId" : "M12.CORRELATED_RESPONSE_IS_ACK.M11_PROTOCOL_UNCHANGED.V1",
+    "producer" : "M12HistoryJudge#assertObligation(M11_PROTOCOL_UNCHANGED)",
+    "assertion" : "the harness reports the frozen M11 request and response protocol unchanged",
+    "observedValue" : "m11ProtocolUnchanged=true",
+    "observationSha256" : "4f57de29b70b361aecea9f77101c7ef743067f73449e4b5b7c4121ac8af97f42",
+    "witnessSha256" : "8cea7ac1050779de115cd201bfc16de96fbbbf3f84206102d6bbe94176acc006",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "INGRESS_OFFER_NOT_ACK",
+    "scenarioId" : "INGRESS_OFFER_IS_NOT_ACK",
+    "sourceArtifact" : "m12-command-history.json",
+    "assertionId" : "M12.INGRESS_OFFER_IS_NOT_ACK.INGRESS_OFFER_NOT_ACK.V1",
+    "producer" : "M12HistoryJudge#assertObligation(INGRESS_OFFER_NOT_ACK)",
+    "assertion" : "an accepted ingress offer without a trusted response remains UNKNOWN",
+    "observedValue" : "acceptedUnknown=2",
+    "observationSha256" : "d3ccb8ad345ef85854d640b5f89f19c55ed876b48c8615248946a6b47e1340ab",
+    "witnessSha256" : "0dede143337cbc359729f28cb51ebb305402898ecb594043b18bd72bc428f223",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "PRE_OFFER_NOT_SUBMITTED",
+    "scenarioId" : "PRE_OFFER_IS_NOT_SUBMITTED",
+    "sourceArtifact" : "m12-command-history.json",
+    "assertionId" : "M12.PRE_OFFER_IS_NOT_SUBMITTED.PRE_OFFER_NOT_SUBMITTED.V1",
+    "producer" : "M12HistoryJudge#assertObligation(PRE_OFFER_NOT_SUBMITTED)",
+    "assertion" : "a command not accepted by ingress is NOT_SUBMITTED",
+    "observedValue" : "notSubmitted=1",
+    "observationSha256" : "acb3eac6c5c0aa891b8399e7e89903ddb9b298951c88239339e5f48f8947c51b",
+    "witnessSha256" : "8a787b06aaf75e4997551a011cabb9b66a0db3b7e75da0b84670369efb015504",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "AFTER_OFFER_UNKNOWN",
+    "scenarioId" : "APPLIED_RESPONSE_UNOBSERVED_IS_UNKNOWN",
+    "sourceArtifact" : "m12-command-history.json",
+    "assertionId" : "M12.APPLIED_RESPONSE_UNOBSERVED_IS_UNKNOWN.AFTER_OFFER_UNKNOWN.V1",
+    "producer" : "M12HistoryJudge#assertObligation(AFTER_OFFER_UNKNOWN)",
+    "assertion" : "accepted invocations without trusted responses are UNKNOWN and not rejected",
+    "observedValue" : "acceptedUnknown=2,timeoutRejected=false",
+    "observationSha256" : "c7739658f1add9192a687f5dbb9bafab343b099d3f153ed4ea5bce8a17eb7529",
+    "witnessSha256" : "cbd465495ea1b013c7af33213e29a4075aeded9e209071b0aa2f8183bc8d8db4",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "SAME_IDENTITY_RETRY",
+    "scenarioId" : "UNKNOWN_RETRY_SAME_IDENTITY",
+    "sourceArtifact" : "m12-command-history.json",
+    "assertionId" : "M12.UNKNOWN_RETRY_SAME_IDENTITY.SAME_IDENTITY_RETRY.V1",
+    "producer" : "M12HistoryJudge#assertObligation(SAME_IDENTITY_RETRY)",
+    "assertion" : "every retry preserves exact canonical envelope bytes and uses a fresh correlation",
+    "observedValue" : "retries=18,byteExact=true,freshCorrelations=true",
+    "observationSha256" : "16003cb4c078323648a63a1ba532c0ed6d4b39672d2f6452e81c947672e3155a",
+    "witnessSha256" : "2362baa5eb9f3d4cdd3c8eb7072949046f9d3ba9db6d96b76d5a36d13d9cb0c6",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "ORIGINAL_RESULT_REPLAY",
+    "scenarioId" : "UNKNOWN_RETRY_SAME_IDENTITY",
+    "sourceArtifact" : "m12-command-history.json",
+    "assertionId" : "M12.UNKNOWN_RETRY_SAME_IDENTITY.ORIGINAL_RESULT_REPLAY.V1",
+    "producer" : "M12HistoryJudge#assertObligation(ORIGINAL_RESULT_REPLAY)",
+    "assertion" : "duplicate acknowledgements replay the originally bound sequence and result digest",
+    "observedValue" : "duplicateReplays=18,noQuorumBranch=DUPLICATE_REPLAYED,exact=true",
+    "observationSha256" : "4547b58bfa5f866a749a0d5a5adf2847eb80a72d795dca0c3c78d1c1a7495771",
+    "witnessSha256" : "0788589901fc3d50237f22fddfa4df2809de70fe4623ea9634ca8245b41a322b",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "ONE_EFFECT_PER_IDENTITY",
+    "scenarioId" : "UNKNOWN_RETRY_SAME_IDENTITY",
+    "sourceArtifact" : "m12-command-history.json",
+    "assertionId" : "M12.UNKNOWN_RETRY_SAME_IDENTITY.ONE_EFFECT_PER_IDENTITY.V1",
+    "producer" : "M12HistoryJudge#assertObligation(ONE_EFFECT_PER_IDENTITY)",
+    "assertion" : "all 66 durable identities bind exactly one application sequence and one business effect",
+    "observedValue" : "identities=66,bindings=66,effectCount=66,nextApplicationSequence=67",
+    "observationSha256" : "cd1451c1c5baa12a35cbc44aa4bcd382c683e675aecf09fe0cf85f916af0f170",
+    "witnessSha256" : "9485a48c213989d46b026f9aca3c7d4530085dda15b94155adb7f411c3ddce31",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "EXTERNAL_LEADER_KILL",
+    "scenarioId" : "LEADER_KILL_AND_REPLACEMENT_ELECTION",
+    "sourceArtifact" : "m12-command-history.json",
+    "assertionId" : "M12.LEADER_KILL_AND_REPLACEMENT_ELECTION.EXTERNAL_LEADER_KILL.V1",
+    "producer" : "M12HistoryJudge#assertObligation(EXTERNAL_LEADER_KILL)",
+    "assertion" : "the selected fault target was the observed current Leader and the controller was external",
+    "observedValue" : "killedMember=2,external=true",
+    "observationSha256" : "077a3831f14430c47cf28bff4fa2d6d0066beff1bcd9cb1f83f7198734c23f76",
+    "witnessSha256" : "67a0f76097a69623f8b894d9e433d9195030dad01757f048d146ee077557be27",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "NEW_LEADER_ELECTED",
+    "scenarioId" : "LEADER_KILL_AND_REPLACEMENT_ELECTION",
+    "sourceArtifact" : "m12-command-history.json",
+    "assertionId" : "M12.LEADER_KILL_AND_REPLACEMENT_ELECTION.NEW_LEADER_ELECTED.V1",
+    "producer" : "M12HistoryJudge#assertObligation(NEW_LEADER_ELECTED)",
+    "assertion" : "a different voting member became the replacement Leader",
+    "observedValue" : "initial=2,replacement=0",
+    "observationSha256" : "dc378a0ecf24f675ba217c2402bda6f40228cdbe844330cda0341c3957b760d9",
+    "witnessSha256" : "357062912c80d8ec62e21fe6b0d9d5d52aeda2d671f8732b9f081e3b268826ab",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "LEADERSHIP_TERM_ADVANCES",
+    "scenarioId" : "LEADER_KILL_AND_REPLACEMENT_ELECTION",
+    "sourceArtifact" : "m12-command-history.json",
+    "assertionId" : "M12.LEADER_KILL_AND_REPLACEMENT_ELECTION.LEADERSHIP_TERM_ADVANCES.V1",
+    "producer" : "M12HistoryJudge#assertObligation(LEADERSHIP_TERM_ADVANCES)",
+    "assertion" : "replacement leadership term is greater than the latest stable pre-kill authority term",
+    "observedValue" : "preKillAuthorityTerm=0,replacementTerm=1",
+    "observationSha256" : "6beb14338a650cf8acc1cde332052a846631da6cb559e818b63f6bccab1c08f8",
+    "witnessSha256" : "43f92e67e553aad1546362f1bc69c4915d0d7bebae7bc3367363f71ff86f3cbf",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "CLIENT_CURRENT_LEADER_AUTHORITY",
+    "scenarioId" : "CLIENT_RECONNECTS_TO_REPLACEMENT",
+    "sourceArtifact" : "m12-command-history.json",
+    "assertionId" : "M12.CLIENT_RECONNECTS_TO_REPLACEMENT.CLIENT_CURRENT_LEADER_AUTHORITY.V1",
+    "producer" : "M12HistoryJudge#assertObligation(CLIENT_CURRENT_LEADER_AUTHORITY)",
+    "assertion" : "post-failure acknowledgements are accepted under the replacement client authority observation",
+    "observedValue" : "clientLeader=0,clientTerm=1",
+    "observationSha256" : "6bfdcbe67dfef63d43eb48bea76c0169ee38af915f7384a7d1049ea4ab04bf93",
+    "witnessSha256" : "22030f4b1a7d848928a31e930cb3f99aab0fa75d94c3bf0d032953f4a2a4283a",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "STALE_LEADER_NOT_ACKNOWLEDGED",
+    "scenarioId" : "CLIENT_RECONNECTS_TO_REPLACEMENT",
+    "sourceArtifact" : "m12-command-history.json",
+    "assertionId" : "M12.CLIENT_RECONNECTS_TO_REPLACEMENT.STALE_LEADER_NOT_ACKNOWLEDGED.V1",
+    "producer" : "M12HistoryJudge#assertObligation(STALE_LEADER_NOT_ACKNOWLEDGED)",
+    "assertion" : "in this fail-stop schedule, post-failure acknowledgements do not record the old client authority",
+    "observedValue" : "oldClientAuthorityAcknowledgements=0,scope=FAIL_STOP_SCHEDULE",
+    "observationSha256" : "d4ea92987ac2a0193890adbb5e2f95ec80b75e097a030ea5ff3450c59b466c69",
+    "witnessSha256" : "9bba311a31bf04a8ede050cc3fb00f185ce805c7206eb802fb8509d82b8fcc81",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "APPLICATION_SEQUENCE_CONTINUES",
+    "scenarioId" : "POST_FAILOVER_CONTINUITY",
+    "sourceArtifact" : "m12-command-history.json",
+    "assertionId" : "M12.POST_FAILOVER_CONTINUITY.APPLICATION_SEQUENCE_CONTINUES.V1",
+    "producer" : "M12HistoryJudge#assertObligation(APPLICATION_SEQUENCE_CONTINUES)",
+    "assertion" : "application sequences remain contiguous across the Leader replacement",
+    "observedValue" : "preMax=32,unknownApplied=33,postRange=34..65,final=66",
+    "observationSha256" : "ec1115572ebdb986cfaf33d8282300c06a2e56e86c10221b5a2e074faadf2221",
+    "witnessSha256" : "042e066b44b2677ea1b965ff46e20f678bffd9c03c4415bfb938f276c0893132",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "FORMER_LEADER_RETURNS_AS_FOLLOWER",
+    "scenarioId" : "FORMER_LEADER_RESTART_CATCH_UP",
+    "sourceArtifact" : "m12-command-history.json",
+    "assertionId" : "M12.FORMER_LEADER_RESTART_CATCH_UP.FORMER_LEADER_RETURNS_AS_FOLLOWER.V1",
+    "producer" : "M12HistoryJudge#assertObligation(FORMER_LEADER_RETURNS_AS_FOLLOWER)",
+    "assertion" : "the failed former Leader restarted as a Follower",
+    "observedValue" : "member=2,role=FOLLOWER",
+    "observationSha256" : "cf3737c0e186f0f89409ebaedb08109d44f7f60a422baff8aa2f90af58caf51a",
+    "witnessSha256" : "def7b2c97532b543804b28c37a5c3c1461e76d32954105089fa7d3c9f9f18161",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "FOLLOWER_CATCH_UP",
+    "scenarioId" : "FORMER_LEADER_RESTART_CATCH_UP",
+    "sourceArtifact" : "m12-command-history.json",
+    "assertionId" : "M12.FORMER_LEADER_RESTART_CATCH_UP.FOLLOWER_CATCH_UP.V1",
+    "producer" : "M12HistoryJudge#assertObligation(FOLLOWER_CATCH_UP)",
+    "assertion" : "the restarted member caught up through the application observer",
+    "observedValue" : "caughtUp=true,observer=true",
+    "observationSha256" : "26abaecacfac09f1d31bbadc1abea1bf1e5f0569a616d188fd7365e9e14918b5",
+    "witnessSha256" : "59f96f69074abedb4299d0880ecfd8b818a77a327cba448bfcebabf2d91a8f90",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "MEMBER_STATE_EQUIVALENCE",
+    "scenarioId" : "ALL_MEMBER_STATE_EQUIVALENCE",
+    "sourceArtifact" : "m12-command-history.json",
+    "assertionId" : "M12.ALL_MEMBER_STATE_EQUIVALENCE.MEMBER_STATE_EQUIVALENCE.V1",
+    "producer" : "M12HistoryJudge#assertObligation(MEMBER_STATE_EQUIVALENCE)",
+    "assertion" : "all three member observations agree on sequence, identity table, and semantic digest",
+    "observedValue" : "members=3,nextApplicationSequence=67,identityCount=66,identityResultDigest=139efc2b815dc044a71ad05d40fea12c071943e6955f1f1702b29b80aa40e73e,semantic=a94bccba4baee2339ddaf525c4251c051f7ad3e48021fd50ceb2ed59f4ffe4df",
+    "observationSha256" : "9cec7df2b5429febde0a411ee8a12a0860d8ebf803fc30dc15897978085acd64",
+    "witnessSha256" : "70a69659604987ef6656d824988bda3feb66651498e9b66227e6920cfef2f0b9",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "RUNTIME_METADATA_EXCLUDED",
+    "scenarioId" : "ALL_MEMBER_STATE_EQUIVALENCE",
+    "sourceArtifact" : "m12-command-history.json",
+    "assertionId" : "M12.ALL_MEMBER_STATE_EQUIVALENCE.RUNTIME_METADATA_EXCLUDED.V1",
+    "producer" : "M12HistoryJudge#assertObligation(RUNTIME_METADATA_EXCLUDED)",
+    "assertion" : "the semantic state digest is recomputed solely from durable business bindings",
+    "observedValue" : "businessDigest=a94bccba4baee2339ddaf525c4251c051f7ad3e48021fd50ceb2ed59f4ffe4df,termFieldsExcluded=true",
+    "observationSha256" : "53b1859288ea50881c7394f3f10713b44ce987cc7c64d7a1e09213bd41f8df00",
+    "witnessSha256" : "d089499fc9d30363878ef897c27d61e9b543f8eaf28b262588d6e52655593fda",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "NO_QUORUM_NO_ACK",
+    "scenarioId" : "MINORITY_CANNOT_ACK",
+    "sourceArtifact" : "m12-command-history.json",
+    "assertionId" : "M12.MINORITY_CANNOT_ACK.NO_QUORUM_NO_ACK.V1",
+    "producer" : "M12HistoryJudge#assertObligation(NO_QUORUM_NO_ACK)",
+    "assertion" : "the one-of-three interval produced UNKNOWN and no acknowledgement",
+    "observedValue" : "liveVotingMembers=1,minorityAcknowledgements=0",
+    "observationSha256" : "aa232abcea4a55ddf82effe0860a0232d5cd048dfede1bb70ee7ab6c07fb5661",
+    "witnessSha256" : "8f1a3dffee2a6476f44a6a41f41c01e39073e64a982bc368a409becba151bac6",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "QUORUM_RESTORE_CONVERGENCE",
+    "scenarioId" : "QUORUM_RESTORE_CONVERGES_UNKNOWN",
+    "sourceArtifact" : "m12-command-history.json",
+    "assertionId" : "M12.QUORUM_RESTORE_CONVERGES_UNKNOWN.QUORUM_RESTORE_CONVERGENCE.V1",
+    "producer" : "M12HistoryJudge#assertObligation(QUORUM_RESTORE_CONVERGENCE)",
+    "assertion" : "same-identity retry after quorum restoration converged to one bound effect",
+    "observedValue" : "noQuorumRetries=1,finalStatus=DUPLICATE_REPLAYED,quorumRestored=true",
+    "observationSha256" : "88c33c80103ad5c5fd80500e00029b02dfea1f820bea9b129d41c45a51c18db8",
+    "witnessSha256" : "9ed1508e8aac317372ee12434e19ba1ee48c4d98ca57352508d83164bb62aa2e",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "CORE_UNCHANGED",
+    "scenarioId" : "INHERITED_BOUNDARIES_REMAIN",
+    "sourceArtifact" : "m12-command-history.json",
+    "assertionId" : "M12.INHERITED_BOUNDARIES_REMAIN.CORE_UNCHANGED.V1",
+    "producer" : "M12HistoryJudge#assertObligation(CORE_UNCHANGED)",
+    "assertion" : "the runtime harness reports matching-core unchanged from M11",
+    "observedValue" : "matchingCoreUnchanged=true",
+    "observationSha256" : "62bda25659e40416828dae994e22be6fa44ed8df749189359c5a3ca04fc36a9c",
+    "witnessSha256" : "df6a3edb4dc7d16b6f80d0e86d7b484c05dddf27f209792b7e9bdda71116f794",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "SYSTEM_ERROR_NEVER_SEMANTIC",
+    "scenarioId" : "INHERITED_BOUNDARIES_REMAIN",
+    "sourceArtifact" : "m12-system-controls.json",
+    "assertionId" : "M12.INHERITED_BOUNDARIES_REMAIN.SYSTEM_ERROR_NEVER_SEMANTIC.V1",
+    "producer" : "M12CoverageLedger#assertSystemControls(SYSTEM_ERROR_NEVER_SEMANTIC)",
+    "assertion" : "all three executable infrastructure controls classify as SYSTEM_ERROR and none counts as a semantic mutant kill",
+    "observedValue" : "controls=3;M12-NON-LEADER-FAULT-TARGET-CONTROL=SYSTEM_ERROR,countedAsKill=false,path=M12InfrastructurePreconditions#requireCurrentLeaderFaultTarget,failureType=IllegalStateException;M12-CLUSTER-STARTUP-CONTROL=SYSTEM_ERROR,countedAsKill=false,path=M12InfrastructurePreconditions#requireStaticLaunchTopology,failureType=IllegalStateException;M12-CORRUPT-HISTORY-OUTPUT-CONTROL=SYSTEM_ERROR,countedAsKill=false,path=M12InfrastructurePreconditions#parseHistory,failureType=FixtureSchemaException",
+    "observationSha256" : "efd42ceb3794fbc082ae88729a195a363a24010321394d02bdacd4f9fc697298",
+    "witnessSha256" : "05f782d16f5cf6763d4722fa2baa615f83a3ef20ebc849902fbfb9194220bd69",
+    "executed" : true,
+    "passed" : true
+  } ],
+  "witnesses" : [ {
+    "obligation" : "THREE_REAL_MEMBERS",
+    "scenarioId" : "THREE_REAL_MEMBERS_INITIAL_ELECTION",
+    "assertionId" : "M12.THREE_REAL_MEMBERS_INITIAL_ELECTION.THREE_REAL_MEMBERS.V1",
+    "witnessSha256" : "fd94b543782f2f79eacfda34fd163f689d5f491f3b11c52d4cbb64129f3ef4d4",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "SINGLE_INITIAL_LEADER",
+    "scenarioId" : "THREE_REAL_MEMBERS_INITIAL_ELECTION",
+    "assertionId" : "M12.THREE_REAL_MEMBERS_INITIAL_ELECTION.SINGLE_INITIAL_LEADER.V1",
+    "witnessSha256" : "c35f5ec44563109c5a75fc2db9d554276eb6be6531402f16353e3397014ae24a",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "DISJOINT_MEMBER_OWNERSHIP",
+    "scenarioId" : "THREE_REAL_MEMBERS_INITIAL_ELECTION",
+    "assertionId" : "M12.THREE_REAL_MEMBERS_INITIAL_ELECTION.DISJOINT_MEMBER_OWNERSHIP.V1",
+    "witnessSha256" : "73946ad7bb5770548efbd037dbc2adc3667024f982b5bb043a52037082c99948",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "CORRELATED_APPLY_ACK",
+    "scenarioId" : "CORRELATED_RESPONSE_IS_ACK",
+    "assertionId" : "M12.CORRELATED_RESPONSE_IS_ACK.CORRELATED_APPLY_ACK.V1",
+    "witnessSha256" : "0669e32b9438ef4f3678c1322934b00df871756e3973234d456e4670ee29ba12",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "M11_PROTOCOL_UNCHANGED",
+    "scenarioId" : "CORRELATED_RESPONSE_IS_ACK",
+    "assertionId" : "M12.CORRELATED_RESPONSE_IS_ACK.M11_PROTOCOL_UNCHANGED.V1",
+    "witnessSha256" : "8cea7ac1050779de115cd201bfc16de96fbbbf3f84206102d6bbe94176acc006",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "INGRESS_OFFER_NOT_ACK",
+    "scenarioId" : "INGRESS_OFFER_IS_NOT_ACK",
+    "assertionId" : "M12.INGRESS_OFFER_IS_NOT_ACK.INGRESS_OFFER_NOT_ACK.V1",
+    "witnessSha256" : "0dede143337cbc359729f28cb51ebb305402898ecb594043b18bd72bc428f223",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "PRE_OFFER_NOT_SUBMITTED",
+    "scenarioId" : "PRE_OFFER_IS_NOT_SUBMITTED",
+    "assertionId" : "M12.PRE_OFFER_IS_NOT_SUBMITTED.PRE_OFFER_NOT_SUBMITTED.V1",
+    "witnessSha256" : "8a787b06aaf75e4997551a011cabb9b66a0db3b7e75da0b84670369efb015504",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "AFTER_OFFER_UNKNOWN",
+    "scenarioId" : "APPLIED_RESPONSE_UNOBSERVED_IS_UNKNOWN",
+    "assertionId" : "M12.APPLIED_RESPONSE_UNOBSERVED_IS_UNKNOWN.AFTER_OFFER_UNKNOWN.V1",
+    "witnessSha256" : "cbd465495ea1b013c7af33213e29a4075aeded9e209071b0aa2f8183bc8d8db4",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "SAME_IDENTITY_RETRY",
+    "scenarioId" : "UNKNOWN_RETRY_SAME_IDENTITY",
+    "assertionId" : "M12.UNKNOWN_RETRY_SAME_IDENTITY.SAME_IDENTITY_RETRY.V1",
+    "witnessSha256" : "2362baa5eb9f3d4cdd3c8eb7072949046f9d3ba9db6d96b76d5a36d13d9cb0c6",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "ORIGINAL_RESULT_REPLAY",
+    "scenarioId" : "UNKNOWN_RETRY_SAME_IDENTITY",
+    "assertionId" : "M12.UNKNOWN_RETRY_SAME_IDENTITY.ORIGINAL_RESULT_REPLAY.V1",
+    "witnessSha256" : "0788589901fc3d50237f22fddfa4df2809de70fe4623ea9634ca8245b41a322b",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "ONE_EFFECT_PER_IDENTITY",
+    "scenarioId" : "UNKNOWN_RETRY_SAME_IDENTITY",
+    "assertionId" : "M12.UNKNOWN_RETRY_SAME_IDENTITY.ONE_EFFECT_PER_IDENTITY.V1",
+    "witnessSha256" : "9485a48c213989d46b026f9aca3c7d4530085dda15b94155adb7f411c3ddce31",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "EXTERNAL_LEADER_KILL",
+    "scenarioId" : "LEADER_KILL_AND_REPLACEMENT_ELECTION",
+    "assertionId" : "M12.LEADER_KILL_AND_REPLACEMENT_ELECTION.EXTERNAL_LEADER_KILL.V1",
+    "witnessSha256" : "67a0f76097a69623f8b894d9e433d9195030dad01757f048d146ee077557be27",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "NEW_LEADER_ELECTED",
+    "scenarioId" : "LEADER_KILL_AND_REPLACEMENT_ELECTION",
+    "assertionId" : "M12.LEADER_KILL_AND_REPLACEMENT_ELECTION.NEW_LEADER_ELECTED.V1",
+    "witnessSha256" : "357062912c80d8ec62e21fe6b0d9d5d52aeda2d671f8732b9f081e3b268826ab",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "LEADERSHIP_TERM_ADVANCES",
+    "scenarioId" : "LEADER_KILL_AND_REPLACEMENT_ELECTION",
+    "assertionId" : "M12.LEADER_KILL_AND_REPLACEMENT_ELECTION.LEADERSHIP_TERM_ADVANCES.V1",
+    "witnessSha256" : "43f92e67e553aad1546362f1bc69c4915d0d7bebae7bc3367363f71ff86f3cbf",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "CLIENT_CURRENT_LEADER_AUTHORITY",
+    "scenarioId" : "CLIENT_RECONNECTS_TO_REPLACEMENT",
+    "assertionId" : "M12.CLIENT_RECONNECTS_TO_REPLACEMENT.CLIENT_CURRENT_LEADER_AUTHORITY.V1",
+    "witnessSha256" : "22030f4b1a7d848928a31e930cb3f99aab0fa75d94c3bf0d032953f4a2a4283a",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "STALE_LEADER_NOT_ACKNOWLEDGED",
+    "scenarioId" : "CLIENT_RECONNECTS_TO_REPLACEMENT",
+    "assertionId" : "M12.CLIENT_RECONNECTS_TO_REPLACEMENT.STALE_LEADER_NOT_ACKNOWLEDGED.V1",
+    "witnessSha256" : "9bba311a31bf04a8ede050cc3fb00f185ce805c7206eb802fb8509d82b8fcc81",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "APPLICATION_SEQUENCE_CONTINUES",
+    "scenarioId" : "POST_FAILOVER_CONTINUITY",
+    "assertionId" : "M12.POST_FAILOVER_CONTINUITY.APPLICATION_SEQUENCE_CONTINUES.V1",
+    "witnessSha256" : "042e066b44b2677ea1b965ff46e20f678bffd9c03c4415bfb938f276c0893132",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "FORMER_LEADER_RETURNS_AS_FOLLOWER",
+    "scenarioId" : "FORMER_LEADER_RESTART_CATCH_UP",
+    "assertionId" : "M12.FORMER_LEADER_RESTART_CATCH_UP.FORMER_LEADER_RETURNS_AS_FOLLOWER.V1",
+    "witnessSha256" : "def7b2c97532b543804b28c37a5c3c1461e76d32954105089fa7d3c9f9f18161",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "FOLLOWER_CATCH_UP",
+    "scenarioId" : "FORMER_LEADER_RESTART_CATCH_UP",
+    "assertionId" : "M12.FORMER_LEADER_RESTART_CATCH_UP.FOLLOWER_CATCH_UP.V1",
+    "witnessSha256" : "59f96f69074abedb4299d0880ecfd8b818a77a327cba448bfcebabf2d91a8f90",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "MEMBER_STATE_EQUIVALENCE",
+    "scenarioId" : "ALL_MEMBER_STATE_EQUIVALENCE",
+    "assertionId" : "M12.ALL_MEMBER_STATE_EQUIVALENCE.MEMBER_STATE_EQUIVALENCE.V1",
+    "witnessSha256" : "70a69659604987ef6656d824988bda3feb66651498e9b66227e6920cfef2f0b9",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "RUNTIME_METADATA_EXCLUDED",
+    "scenarioId" : "ALL_MEMBER_STATE_EQUIVALENCE",
+    "assertionId" : "M12.ALL_MEMBER_STATE_EQUIVALENCE.RUNTIME_METADATA_EXCLUDED.V1",
+    "witnessSha256" : "d089499fc9d30363878ef897c27d61e9b543f8eaf28b262588d6e52655593fda",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "NO_QUORUM_NO_ACK",
+    "scenarioId" : "MINORITY_CANNOT_ACK",
+    "assertionId" : "M12.MINORITY_CANNOT_ACK.NO_QUORUM_NO_ACK.V1",
+    "witnessSha256" : "8f1a3dffee2a6476f44a6a41f41c01e39073e64a982bc368a409becba151bac6",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "QUORUM_RESTORE_CONVERGENCE",
+    "scenarioId" : "QUORUM_RESTORE_CONVERGES_UNKNOWN",
+    "assertionId" : "M12.QUORUM_RESTORE_CONVERGES_UNKNOWN.QUORUM_RESTORE_CONVERGENCE.V1",
+    "witnessSha256" : "9ed1508e8aac317372ee12434e19ba1ee48c4d98ca57352508d83164bb62aa2e",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "CORE_UNCHANGED",
+    "scenarioId" : "INHERITED_BOUNDARIES_REMAIN",
+    "assertionId" : "M12.INHERITED_BOUNDARIES_REMAIN.CORE_UNCHANGED.V1",
+    "witnessSha256" : "df6a3edb4dc7d16b6f80d0e86d7b484c05dddf27f209792b7e9bdda71116f794",
+    "executed" : true,
+    "passed" : true
+  }, {
+    "obligation" : "SYSTEM_ERROR_NEVER_SEMANTIC",
+    "scenarioId" : "INHERITED_BOUNDARIES_REMAIN",
+    "assertionId" : "M12.INHERITED_BOUNDARIES_REMAIN.SYSTEM_ERROR_NEVER_SEMANTIC.V1",
+    "witnessSha256" : "05f782d16f5cf6763d4722fa2baa615f83a3ef20ebc849902fbfb9194220bd69",
+    "executed" : true,
+    "passed" : true
+  } ]
+}

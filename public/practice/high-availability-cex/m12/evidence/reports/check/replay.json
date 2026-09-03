@@ -1,0 +1,69 @@
+{
+  "schemaVersion" : "matching.m12.replay.v1",
+  "status" : "PASS",
+  "replayed" : 8,
+  "productionControlsPassed" : 8,
+  "studentFailuresReproduced" : 8,
+  "fingerprintsExact" : true,
+  "oneDeleteAudits" : 8,
+  "oneMinimal" : true,
+  "systemErrorCountedAsKill" : false,
+  "semanticModelOnly" : true,
+  "audits" : [ {
+    "mutant" : "M12-OFFER-AS-ACK",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "ACK_WITHOUT_TRUSTED_RESPONSE",
+    "productionControl" : "PASS",
+    "oneMinimal" : true,
+    "exact" : true
+  }, {
+    "mutant" : "M12-TIMEOUT-AS-REJECTED",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "TIMEOUT_AS_BUSINESS_REJECTION",
+    "productionControl" : "PASS",
+    "oneMinimal" : true,
+    "exact" : true
+  }, {
+    "mutant" : "M12-RETRY-WITH-NEW-IDENTITY",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "UNKNOWN_RETRY_CHANGED_DURABLE_IDENTITY",
+    "productionControl" : "PASS",
+    "oneMinimal" : true,
+    "exact" : true
+  }, {
+    "mutant" : "M12-DUPLICATE-AS-NEW-EFFECT",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "DUPLICATE_CREATED_SECOND_EFFECT",
+    "productionControl" : "PASS",
+    "oneMinimal" : true,
+    "exact" : true
+  }, {
+    "mutant" : "M12-MINORITY-ACK",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "MINORITY_ACKNOWLEDGED",
+    "productionControl" : "PASS",
+    "oneMinimal" : true,
+    "exact" : true
+  }, {
+    "mutant" : "M12-ACCEPT-STALE-LEADER-AUTHORITY",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "STALE_LEADER_ACKNOWLEDGED",
+    "productionControl" : "PASS",
+    "oneMinimal" : true,
+    "exact" : true
+  }, {
+    "mutant" : "M12-DROP-IDENTITY-DURING-CATCH-UP",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "FOLLOWER_IDENTITY_TABLE_DIVERGED",
+    "productionControl" : "PASS",
+    "oneMinimal" : true,
+    "exact" : true
+  }, {
+    "mutant" : "M12-INCLUDE-TERM-IN-SEMANTIC-DIGEST",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "RUNTIME_METADATA_CHANGED_SEMANTIC_DIGEST",
+    "productionControl" : "PASS",
+    "oneMinimal" : true,
+    "exact" : true
+  } ]
+}

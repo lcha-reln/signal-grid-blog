@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/lcha-reln/cex-matching/main/schemas/matching.m12.inherited-m11.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "status", "unit", "completeRef", "baselineCommit", "matchingCoreTree", "matchingCoreByteIdentical", "goldensTree", "goldensByteIdentical", "protocolGoldens", "protocolCurrentAndNMinusOnePassed", "currentCompiledClasses", "defaultGradleDependency", "claimBoundary"],
+  "properties": {
+    "schemaVersion": { "const": "matching.m12.inherited-m11.v1" },
+    "status": { "const": "PASS" },
+    "unit": { "const": "M11" },
+    "completeRef": { "const": "course/m11-complete" },
+    "baselineCommit": { "const": "6997e05cea81cb93b883e882c8d75887d0622a22" },
+    "matchingCoreTree": { "$ref": "#/$defs/gitObject" },
+    "matchingCoreByteIdentical": { "const": true },
+    "goldensTree": { "$ref": "#/$defs/gitObject" },
+    "goldensByteIdentical": { "const": true },
+    "protocolGoldens": { "const": 6 },
+    "protocolCurrentAndNMinusOnePassed": { "const": true },
+    "currentCompiledClasses": { "const": true },
+    "defaultGradleDependency": { "const": "test" },
+    "claimBoundary": { "const": "M11_PROTOCOL_AND_CURRENT_COMPILED_REGRESSION_DEPENDENCY" }
+  },
+  "$defs": {
+    "gitObject": { "type": "string", "pattern": "^[a-f0-9]{40}(?:[a-f0-9]{24})?$" }
+  }
+}

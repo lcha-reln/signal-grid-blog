@@ -1,0 +1,183 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/lcha-reln/cex-matching/main/schemas/cex.lab-evidence.v2.schema.json",
+  "title": "High-availability CEX lab evidence manifest v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "case",
+    "project",
+    "unit",
+    "unitTag",
+    "productRelease",
+    "planVersion",
+    "source",
+    "environment",
+    "claims",
+    "limitations",
+    "supersedes",
+    "generatedAt"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "cex.lab-evidence.v2" },
+    "case": { "const": "high-availability-cex" },
+    "project": {
+      "enum": ["matching", "counter", "rest"]
+    },
+    "unit": {
+      "type": "string",
+      "pattern": "^[MCR][0-9]{2}$"
+    },
+    "unitTag": {
+      "type": "string",
+      "pattern": "^course/[mcr][0-9]{2}(?:\\.[1-9][0-9]*)?-complete$"
+    },
+    "productRelease": {
+      "oneOf": [
+        { "type": "null" },
+        { "type": "string", "pattern": "^(?:matching|counter|rest)-[0-9]+\\.[0-9]+\\.[0-9]+$" }
+      ]
+    },
+    "planVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+$"
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["commit", "dirty"],
+      "properties": {
+        "commit": { "type": "string", "pattern": "^[a-f0-9]{40}(?:[a-f0-9]{24})?$" },
+        "dirty": { "const": false }
+      }
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "java",
+        "os",
+        "arch",
+        "javaRuntime",
+        "javaVersion",
+        "javaVendor",
+        "vmName",
+        "jvmArguments",
+        "osName",
+        "osVersion",
+        "osArchitecture",
+        "availableProcessors",
+        "physicalMemoryBytes",
+        "maximumHeapBytes",
+        "garbageCollectorNames",
+        "cpuModel",
+        "storageDevice",
+        "filesystem",
+        "powerPolicy",
+        "walRoot",
+        "walRootUri",
+        "walFileStoreName",
+        "walFileStoreType",
+        "walFileStoreTotalSpaceBytes",
+        "walFileStoreUsableSpaceBytes",
+        "walFileStoreUnallocatedSpaceBytes",
+        "runStartedAt",
+        "runFinishedAt"
+      ],
+      "properties": {
+        "java": { "type": "string", "minLength": 1 },
+        "os": { "type": "string", "minLength": 1 },
+        "arch": { "type": "string", "minLength": 1 },
+        "javaRuntime": { "type": "string", "minLength": 1 },
+        "javaVersion": { "type": "string", "minLength": 1 },
+        "javaVendor": { "type": "string", "minLength": 1 },
+        "vmName": { "type": "string", "minLength": 1 },
+        "jvmArguments": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "osName": { "type": "string", "minLength": 1 },
+        "osVersion": { "type": "string", "minLength": 1 },
+        "osArchitecture": { "type": "string", "minLength": 1 },
+        "availableProcessors": { "type": "integer", "minimum": 1 },
+        "physicalMemoryBytes": { "type": "integer", "minimum": 1 },
+        "maximumHeapBytes": { "type": "integer", "minimum": 1 },
+        "garbageCollectorNames": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "cpuModel": { "type": "string", "minLength": 1 },
+        "storageDevice": { "type": "string", "minLength": 1 },
+        "filesystem": { "type": "string", "minLength": 1 },
+        "powerPolicy": { "type": "string", "minLength": 1 },
+        "walRoot": { "type": "string", "minLength": 1 },
+        "walRootUri": { "type": "string", "format": "uri", "pattern": "^file:/" },
+        "walFileStoreName": { "type": "string", "minLength": 1 },
+        "walFileStoreType": { "type": "string", "minLength": 1 },
+        "walFileStoreTotalSpaceBytes": { "type": "integer", "minimum": 1 },
+        "walFileStoreUsableSpaceBytes": { "type": "integer", "minimum": 0 },
+        "walFileStoreUnallocatedSpaceBytes": { "type": "integer", "minimum": 0 },
+        "runStartedAt": { "type": "string", "format": "date-time" },
+        "runFinishedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "claims": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "category",
+          "statement",
+          "status",
+          "command",
+          "observations",
+          "artifacts"
+        ],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+          "category": { "type": "string", "pattern": "^[a-z]+(?:-[a-z]+)*$" },
+          "statement": { "type": "string", "minLength": 1 },
+          "status": {
+            "enum": ["pass", "fail", "system_error", "not_applicable"]
+          },
+          "command": { "type": "string", "minLength": 1 },
+          "observations": { "type": "object" },
+          "artifacts": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["path", "sha256"],
+              "properties": {
+                "path": { "type": "string", "minLength": 1 },
+                "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "limitations": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "supersedes": {
+      "oneOf": [
+        { "type": "null" },
+        { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      ]
+    },
+    "generatedAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

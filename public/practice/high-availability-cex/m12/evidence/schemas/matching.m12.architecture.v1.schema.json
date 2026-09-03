@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/lcha-reln/cex-matching/main/schemas/matching.m12.architecture.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "status", "m11BaselineCommit", "m11CoreTree", "headCoreTree", "matchingCoreByteIdentical", "m11GoldensTree", "headGoldensTree", "m11GoldensByteIdentical", "m11WireSourcesByteIdentical", "m11WireSourceSha256", "m11ClusteredServiceAdapterByteIdentical", "m11ClusteredServiceAdapterBaselineSha256", "m12ClusteredServiceAdapterSha256", "transportAdapterCorrection", "transportAdapterCorrectionPresent", "transportAdapterCorrectionBehaviorTests", "aeronProductionModule", "coreInfrastructureFree", "callbackReachableStandaloneWalReferences", "callbackReachableExternalIoReferences", "logCallbackBusinessApplyCalls", "nonLogCallbackBusinessApplyCalls", "runtimeMetadataDigestStable", "memberChildMainCount", "externalFaultControllerSites", "clusteredServiceFaultControllerSites", "externalServices", "standaloneApplicationWal", "violations"],
+  "properties": {
+    "schemaVersion": { "const": "matching.m12.architecture.v1" },
+    "status": { "const": "PASS" },
+    "m11BaselineCommit": { "const": "6997e05cea81cb93b883e882c8d75887d0622a22" },
+    "m11CoreTree": { "$ref": "#/$defs/gitObject" },
+    "headCoreTree": { "$ref": "#/$defs/gitObject" },
+    "matchingCoreByteIdentical": { "const": true },
+    "m11GoldensTree": { "$ref": "#/$defs/gitObject" },
+    "headGoldensTree": { "$ref": "#/$defs/gitObject" },
+    "m11GoldensByteIdentical": { "const": true },
+    "m11WireSourcesByteIdentical": { "const": true },
+    "m11WireSourceSha256": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11CommandRequest.java",
+        "matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11CommandResponse.java",
+        "matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11RequestCodec.java",
+        "matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11ResponseCodec.java",
+        "matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11Snapshot.java",
+        "matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11SnapshotCodec.java"
+      ],
+      "properties": {
+        "matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11CommandRequest.java": { "$ref": "#/$defs/sha256" },
+        "matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11CommandResponse.java": { "$ref": "#/$defs/sha256" },
+        "matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11RequestCodec.java": { "$ref": "#/$defs/sha256" },
+        "matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11ResponseCodec.java": { "$ref": "#/$defs/sha256" },
+        "matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11Snapshot.java": { "$ref": "#/$defs/sha256" },
+        "matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11SnapshotCodec.java": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "m11ClusteredServiceAdapterByteIdentical": { "const": false },
+    "m11ClusteredServiceAdapterBaselineSha256": { "$ref": "#/$defs/sha256" },
+    "m12ClusteredServiceAdapterSha256": { "$ref": "#/$defs/sha256" },
+    "transportAdapterCorrection": { "const": "COMMITTED_RESULT_EGRESS_FAILURE_RECORDED_NOT_THROWN" },
+    "transportAdapterCorrectionPresent": { "const": true },
+    "transportAdapterCorrectionBehaviorTests": { "const": 5 },
+    "aeronProductionModule": { "const": "matching-cluster-runtime" },
+    "coreInfrastructureFree": { "const": true },
+    "callbackReachableStandaloneWalReferences": { "const": 0 },
+    "callbackReachableExternalIoReferences": { "const": 0 },
+    "logCallbackBusinessApplyCalls": { "const": 1 },
+    "nonLogCallbackBusinessApplyCalls": { "const": 0 },
+    "runtimeMetadataDigestStable": { "const": true },
+    "memberChildMainCount": { "const": 1 },
+    "externalFaultControllerSites": { "type": "integer", "minimum": 1 },
+    "clusteredServiceFaultControllerSites": { "const": 0 },
+    "externalServices": { "const": false },
+    "standaloneApplicationWal": { "const": false },
+    "violations": { "type": "array", "maxItems": 0 }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "gitObject": { "type": "string", "pattern": "^[a-f0-9]{40}(?:[a-f0-9]{24})?$" }
+  }
+}

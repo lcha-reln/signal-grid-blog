@@ -1,0 +1,165 @@
+{
+  "schemaVersion" : "matching.m12.counterexamples.v1",
+  "seed" : "6120",
+  "required" : 8,
+  "persisted" : 8,
+  "semanticModelOnly" : true,
+  "realClusterEvidence" : false,
+  "invalidHistoryCountedAsKill" : false,
+  "systemErrorCountedAsKill" : false,
+  "minimalityScope" : "ONE_MINIMAL_WITHIN_TYPED_STEP_DELETION_GRAMMAR",
+  "globalMinimumClaim" : false,
+  "witnesses" : [ {
+    "id" : "cex-m12-offer-as-ack",
+    "mutant" : "M12-OFFER-AS-ACK",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "ACK_WITHOUT_TRUSTED_RESPONSE",
+    "rawActions" : 3,
+    "minimalActions" : 1,
+    "shrinkTrials" : 4,
+    "actualMutationActions" : 1,
+    "oneMinimal" : true,
+    "minimalityScope" : "ONE_MINIMAL_WITHIN_TYPED_STEP_DELETION_GRAMMAR",
+    "globalMinimumClaim" : false,
+    "strictFreshReplay" : true,
+    "semanticModelOnly" : true,
+    "steps" : [ {
+      "kind" : "APPLY_SINGLE_FAULT",
+      "token" : "M12-OFFER-AS-ACK"
+    } ],
+    "replaySha256" : "f44fadc487dc4595853e04ff4576718437b3c92d9032b89e87229881deb50f44"
+  }, {
+    "id" : "cex-m12-timeout-as-rejected",
+    "mutant" : "M12-TIMEOUT-AS-REJECTED",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "TIMEOUT_AS_BUSINESS_REJECTION",
+    "rawActions" : 3,
+    "minimalActions" : 1,
+    "shrinkTrials" : 4,
+    "actualMutationActions" : 1,
+    "oneMinimal" : true,
+    "minimalityScope" : "ONE_MINIMAL_WITHIN_TYPED_STEP_DELETION_GRAMMAR",
+    "globalMinimumClaim" : false,
+    "strictFreshReplay" : true,
+    "semanticModelOnly" : true,
+    "steps" : [ {
+      "kind" : "APPLY_SINGLE_FAULT",
+      "token" : "M12-TIMEOUT-AS-REJECTED"
+    } ],
+    "replaySha256" : "ac5ac2e061e78a1a0f829175318e63e45531b92902fd530e79d8a71567131e38"
+  }, {
+    "id" : "cex-m12-retry-with-new-identity",
+    "mutant" : "M12-RETRY-WITH-NEW-IDENTITY",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "UNKNOWN_RETRY_CHANGED_DURABLE_IDENTITY",
+    "rawActions" : 3,
+    "minimalActions" : 1,
+    "shrinkTrials" : 4,
+    "actualMutationActions" : 1,
+    "oneMinimal" : true,
+    "minimalityScope" : "ONE_MINIMAL_WITHIN_TYPED_STEP_DELETION_GRAMMAR",
+    "globalMinimumClaim" : false,
+    "strictFreshReplay" : true,
+    "semanticModelOnly" : true,
+    "steps" : [ {
+      "kind" : "APPLY_SINGLE_FAULT",
+      "token" : "M12-RETRY-WITH-NEW-IDENTITY"
+    } ],
+    "replaySha256" : "10b342d7f73b88ccd126d5faafc5a5cbcc9cddb0be24478e9aa1bf6d42d906f5"
+  }, {
+    "id" : "cex-m12-duplicate-as-new-effect",
+    "mutant" : "M12-DUPLICATE-AS-NEW-EFFECT",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "DUPLICATE_CREATED_SECOND_EFFECT",
+    "rawActions" : 3,
+    "minimalActions" : 1,
+    "shrinkTrials" : 4,
+    "actualMutationActions" : 1,
+    "oneMinimal" : true,
+    "minimalityScope" : "ONE_MINIMAL_WITHIN_TYPED_STEP_DELETION_GRAMMAR",
+    "globalMinimumClaim" : false,
+    "strictFreshReplay" : true,
+    "semanticModelOnly" : true,
+    "steps" : [ {
+      "kind" : "APPLY_SINGLE_FAULT",
+      "token" : "M12-DUPLICATE-AS-NEW-EFFECT"
+    } ],
+    "replaySha256" : "d54fd04353548bed1c1f54149b700705c7c38da7546cc9b81eeced925252b267"
+  }, {
+    "id" : "cex-m12-minority-ack",
+    "mutant" : "M12-MINORITY-ACK",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "MINORITY_ACKNOWLEDGED",
+    "rawActions" : 3,
+    "minimalActions" : 1,
+    "shrinkTrials" : 4,
+    "actualMutationActions" : 1,
+    "oneMinimal" : true,
+    "minimalityScope" : "ONE_MINIMAL_WITHIN_TYPED_STEP_DELETION_GRAMMAR",
+    "globalMinimumClaim" : false,
+    "strictFreshReplay" : true,
+    "semanticModelOnly" : true,
+    "steps" : [ {
+      "kind" : "APPLY_SINGLE_FAULT",
+      "token" : "M12-MINORITY-ACK"
+    } ],
+    "replaySha256" : "44866b24dafe1446d406f5e352a3968a0301c89a1592868034688286029f5f91"
+  }, {
+    "id" : "cex-m12-accept-stale-leader-authority",
+    "mutant" : "M12-ACCEPT-STALE-LEADER-AUTHORITY",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "STALE_LEADER_ACKNOWLEDGED",
+    "rawActions" : 3,
+    "minimalActions" : 1,
+    "shrinkTrials" : 4,
+    "actualMutationActions" : 1,
+    "oneMinimal" : true,
+    "minimalityScope" : "ONE_MINIMAL_WITHIN_TYPED_STEP_DELETION_GRAMMAR",
+    "globalMinimumClaim" : false,
+    "strictFreshReplay" : true,
+    "semanticModelOnly" : true,
+    "steps" : [ {
+      "kind" : "APPLY_SINGLE_FAULT",
+      "token" : "M12-ACCEPT-STALE-LEADER-AUTHORITY"
+    } ],
+    "replaySha256" : "b100a2eebb13142017a1d2b97fead8c9650dc81c4cbe1e9571c8c05f5daeb189"
+  }, {
+    "id" : "cex-m12-drop-identity-during-catch-up",
+    "mutant" : "M12-DROP-IDENTITY-DURING-CATCH-UP",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "FOLLOWER_IDENTITY_TABLE_DIVERGED",
+    "rawActions" : 3,
+    "minimalActions" : 1,
+    "shrinkTrials" : 4,
+    "actualMutationActions" : 1,
+    "oneMinimal" : true,
+    "minimalityScope" : "ONE_MINIMAL_WITHIN_TYPED_STEP_DELETION_GRAMMAR",
+    "globalMinimumClaim" : false,
+    "strictFreshReplay" : true,
+    "semanticModelOnly" : true,
+    "steps" : [ {
+      "kind" : "APPLY_SINGLE_FAULT",
+      "token" : "M12-DROP-IDENTITY-DURING-CATCH-UP"
+    } ],
+    "replaySha256" : "0fbaceb2a86a10ee12b98266e9e141549e03d7dcd3bab8b727bc9e4d1bb41107"
+  }, {
+    "id" : "cex-m12-include-term-in-semantic-digest",
+    "mutant" : "M12-INCLUDE-TERM-IN-SEMANTIC-DIGEST",
+    "classification" : "STUDENT_FAILURE",
+    "fingerprint" : "RUNTIME_METADATA_CHANGED_SEMANTIC_DIGEST",
+    "rawActions" : 3,
+    "minimalActions" : 1,
+    "shrinkTrials" : 4,
+    "actualMutationActions" : 1,
+    "oneMinimal" : true,
+    "minimalityScope" : "ONE_MINIMAL_WITHIN_TYPED_STEP_DELETION_GRAMMAR",
+    "globalMinimumClaim" : false,
+    "strictFreshReplay" : true,
+    "semanticModelOnly" : true,
+    "steps" : [ {
+      "kind" : "APPLY_SINGLE_FAULT",
+      "token" : "M12-INCLUDE-TERM-IN-SEMANTIC-DIGEST"
+    } ],
+    "replaySha256" : "9022e2585052befe7bf68b6d2f8f389dc01ae2e5b2c0066076074c56b9b57329"
+  } ]
+}

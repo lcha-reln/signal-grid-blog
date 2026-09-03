@@ -61,14 +61,14 @@ export const PRACTICE_CASES: readonly PracticeCase[] = [
   {
     slug: "high-availability-cex",
     designDocument: "docs/HIGH_AVAILABILITY_CEX_PRACTICE_PLAN.md",
-    planVersion: "0.14",
+    planVersion: "0.15",
     index: "01",
     eyebrow: "FLAGSHIP BUILD / EXCHANGE SYSTEMS",
     title: "高可用 CEX 交易核心",
     summary:
       "从单交易对限价撮合起步，先交付高可用现货核心，再按门禁演进到杠杆、永续、交割与期权。",
     status: "BUILDING",
-    statusLabel: "SPOT · M11 已发布",
+    statusLabel: "SPOT · M12 已发布",
     totalUnits: 32,
     plannedRepositories: 3,
     stack: ["Java", "Aeron Cluster", "Gradle", "Docker", "Astro Labs"],
@@ -87,10 +87,11 @@ export const PRACTICE_CASES: readonly PracticeCase[] = [
       "M09",
       "M10",
       "M11",
+      "M12",
     ],
-    currentUnitCode: "M11",
+    currentUnitCode: "M12",
     currentAction:
-      "M00～M11 已冻结发布身份；M11 已具备 clean course/m11-complete、真实单节点 Aeron Cluster evidence 与五篇完整教程，正等待本次推送、部署、生产教程路由和 manifest 哈希验证闭合。M12 三节点故障窗口仍未签约，也未登记；只有本次线上闭环全部通过后，才单独冻结 M12 合同和结构化 RED。",
+      "M00～M12 已发布。M12 的 course/m12-complete 与 matching-0.8.0 同指 clean commit d8b1b1fbb36323502495a8bc0a60042db1e9e040；真实三成员 child-process fault suite、三项 ArchiveMarkFile 活动年龄严格大于 10,000 ms 的重启 witness、85/84/82/2/1 invocation 分类、无 quorum 恢复、三副本与 Direct oracle 等价，以及 SHA-256 e25ff7069a831a56cc42b1ebd7d5aaf0cde39b6158caf1e68b8725b0f8862983 的静态 evidence 已闭合。M13 仍为候选，开启前须重新评审并签约。",
     profileRoadmapTitle: "现货是第一份完整交付，不是专题终点",
     profileRoadmapDescription:
       "只有当前 Profile 展开单元、仓库与实施设计；LOCKED 只冻结产品方向和解锁门禁，不代表已经创建单元、仓库或服务；后续优先复用已发布的 Matching、Counter 与 Rest 边界，具体仓库拓扑在解锁时评审。",

@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/lcha-reln/cex-matching/main/schemas/matching.m12.coverage.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "status", "executionScope", "clusterEvidenceQualified", "scopeDisclosure", "source", "witnessContract", "labelsAcceptedWithoutWitness", "required", "observed", "assertionsExecuted", "allAssertionsPassed", "systemErrorsEvaluatedAfterControls", "ledgerVerifiedAgainstExecutionReplay", "semanticDigest", "ledgerSha256", "factLedger", "witnesses"],
+  "properties": {
+    "schemaVersion": { "const": "matching.m12.coverage.v1" },
+    "status": { "const": "PASS" },
+    "executionScope": { "const": "REAL_AERON_CHILD_PROCESSES" },
+    "clusterEvidenceQualified": { "const": true },
+    "scopeDisclosure": { "const": "ASSERTIONS_RECOMPUTED_FROM_REAL_AERON_CHILD_PROCESS_TRACE" },
+    "source": { "const": "EXECUTED_ASSERTION_WITNESS_LEDGER" },
+    "witnessContract": { "const": "M12_EXECUTED_ASSERTION_WITNESS_V1" },
+    "labelsAcceptedWithoutWitness": { "const": false },
+    "required": { "const": 25 },
+    "observed": { "const": 25 },
+    "assertionsExecuted": { "const": 25 },
+    "allAssertionsPassed": { "const": true },
+    "systemErrorsEvaluatedAfterControls": { "const": true },
+    "ledgerVerifiedAgainstExecutionReplay": { "const": true },
+    "semanticDigest": { "$ref": "#/$defs/sha256" },
+    "ledgerSha256": { "$ref": "#/$defs/sha256" },
+    "factLedger": { "type": "array", "minItems": 25, "maxItems": 25, "items": { "$ref": "#/$defs/fact" } },
+    "witnesses": { "type": "array", "minItems": 25, "maxItems": 25, "items": { "$ref": "#/$defs/witness" } }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "fact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["obligation", "scenarioId", "sourceArtifact", "assertionId", "producer", "assertion", "observedValue", "observationSha256", "witnessSha256", "executed", "passed"],
+      "properties": {
+        "obligation": { "type": "string", "minLength": 1 },
+        "scenarioId": { "type": "string", "minLength": 1 },
+        "sourceArtifact": { "type": "string", "minLength": 1 },
+        "assertionId": { "type": "string", "pattern": "^M12\\.[A-Z0-9_]+\\.[A-Z0-9_]+\\.V1$" },
+        "producer": { "type": "string", "minLength": 1 },
+        "assertion": { "type": "string", "minLength": 1 },
+        "observedValue": { "type": "string", "minLength": 1 },
+        "observationSha256": { "$ref": "#/$defs/sha256" },
+        "witnessSha256": { "$ref": "#/$defs/sha256" },
+        "executed": { "const": true },
+        "passed": { "const": true }
+      }
+    },
+    "witness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["obligation", "scenarioId", "assertionId", "witnessSha256", "executed", "passed"],
+      "properties": {
+        "obligation": { "type": "string", "minLength": 1 },
+        "scenarioId": { "type": "string", "minLength": 1 },
+        "assertionId": { "type": "string", "minLength": 1 },
+        "witnessSha256": { "$ref": "#/$defs/sha256" },
+        "executed": { "const": true },
+        "passed": { "const": true }
+      }
+    }
+  }
+}

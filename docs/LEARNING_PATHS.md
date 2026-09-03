@@ -4,6 +4,20 @@
 
 顶层专题只表达已经形成系统课程的稳定知识主线：`aeron`、`trading`、`availability`、`performance`、`agent`、`storage`。普通产品或组件名仍使用 `tags` 表示；Aeron 因同时覆盖 Transport、Archive 与 Cluster 的完整系统栈，存储引擎因同时覆盖页式结构、版本并发、LSM、放大与长期完整性，分别形成顶层学习路径。`categories` 仅为兼容早期文章保留，不参与前台导航。
 
+## 实战案例桥接（不计入理论 Chapter）
+
+实战教程由 `src/practice/units.ts` 和单元内 `lessonOrder` 单独排序，不注册成新的理论 `series`。高可用 CEX 的 M12 五篇教程、`course/m12-complete`、`matching-0.8.0` 与静态 evidence 已完整发布；开始前建议先读 Aeron Cluster 的架构/日志提交与选举/Catch-up，再读有状态系统可靠性中的结果未知、状态所有权与故障验证。这个桥接只说明依赖，不把理论文章的广泛机制扩写成 M12 已证明范围。
+
+| M12 学习阶段               | 理论前置 permalink                                                      | 实战 permalink                                       |
+| -------------------------- | ----------------------------------------------------------------------- | ---------------------------------------------------- |
+| Quorum、commit 与 apply    | `aeron-cluster-architecture-and-log-commit`                             | `three-node-quorum-commit-and-apply-boundary`        |
+| 结果未知与稳定身份         | `cross-system-side-effects-idempotency-outbox-inbox-2pc-saga`           | `unknown-outcome-and-same-identity-retry`            |
+| 选主与旧 authority fencing | `aeron-cluster-elections-catchup-and-consistency`                       | `leader-failover-and-stale-leader-fencing`           |
+| Catch-up 与状态等价        | `state-ownership-migration-shard-catchup-handoff-fencing`               | `follower-catch-up-and-replicated-state-equivalence` |
+| 故障证据与裁判             | `recovery-protocol-verification-failpoints-simulation-history-checking` | `three-node-leader-failure-evidence`                 |
+
+五篇 M12 教程已在 `course/m12-complete`、`matching-0.8.0` 和静态 evidence 同时闭合后公开；真实 Java 编译、三个 Aeron child JVM 与故障注入始终在读者本地运行，理论页或浏览器展示不替代工程验收。“旧 authority fencing”是设计主题：真实 fault schedule 只记录本次 fail-stop 日程没有观察到旧 authority ACK，跨 generation delayed-egress 拒绝仍只由 unit/semantic-model 支持。
+
 ## Aeron 系统工程
 
 | 阶段            | Chapter | `seriesOrder` | 标题                                                                         | `permalink`                                                                           |
