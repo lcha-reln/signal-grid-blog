@@ -61,14 +61,14 @@ export const PRACTICE_CASES: readonly PracticeCase[] = [
   {
     slug: "high-availability-cex",
     designDocument: "docs/HIGH_AVAILABILITY_CEX_PRACTICE_PLAN.md",
-    planVersion: "0.13",
+    planVersion: "0.14",
     index: "01",
     eyebrow: "FLAGSHIP BUILD / EXCHANGE SYSTEMS",
     title: "高可用 CEX 交易核心",
     summary:
       "从单交易对限价撮合起步，先交付高可用现货核心，再按门禁演进到杠杆、永续、交割与期权。",
     status: "BUILDING",
-    statusLabel: "SPOT · M10 已发布",
+    statusLabel: "SPOT · M11 实施中",
     totalUnits: 32,
     plannedRepositories: 3,
     stack: ["Java", "Aeron Cluster", "Gradle", "Docker", "Astro Labs"],
@@ -86,10 +86,11 @@ export const PRACTICE_CASES: readonly PracticeCase[] = [
       "M08",
       "M09",
       "M10",
+      "M11",
     ],
-    currentUnitCode: "M10",
+    currentUnitCode: "M11",
     currentAction:
-      "M00～M10 已发布；M10 的 course/m10-complete 与 matching-0.5.0 同指 clean commit 77e80b0962cd6a74f6d8cd0ac203b3be5bdd6bdb，cex.lab-evidence.v2 记录三个 sweep 的 published knee 379、降序 231/165/82 三次完整 1800 秒 attempt（前两次 SATURATED、第三次 QUALIFIED）和只适用于所记录环境、单 producer 空簿 BUY IOC@100×1 workload 的 final QOP 82。当前没有 IN_PROGRESS 单元；下一步只做 M10 推送、Pages 部署与线上路由/manifest hash 验证，在这条发布闭环完成前不签约、不打开 M11。",
+      "M00～M10 已发布；M11 已按 PLAN v0.14 打开唯一实施窗口，只接入真实单节点 Aeron Cluster Adapter，冻结 application request/response/snapshot codec（current=2、minReadable=1、六份 Golden）、ingress→log apply→correlated response、Cluster snapshot/restart 与 Direct/Cluster 规范化业务等价。五篇教程保持草稿；在 clean complete tag、真实 evidence、内容审查、推送部署与线上验证闭合前，不公开 M11，也不打开 M12 三节点故障窗口。",
     profileRoadmapTitle: "现货是第一份完整交付，不是专题终点",
     profileRoadmapDescription:
       "只有当前 Profile 展开单元、仓库与实施设计；LOCKED 只冻结产品方向和解锁门禁，不代表已经创建单元、仓库或服务；后续优先复用已发布的 Matching、Counter 与 Rest 边界，具体仓库拓扑在解锁时评审。",

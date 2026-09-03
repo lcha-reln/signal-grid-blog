@@ -4690,7 +4690,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.1",
     planCompatibility:
-      "当前 PLAN v0.13 在 M09 之后只为 M10 冻结单机有界准入与环境绑定性能包络；M00 输入、验证、canonical history、digest 与 evidence 合同不变。因此 M00 的 `course.properties` 与不可移动起点继续记录合同 `planVersion=0.1`，网站另行公开当前计划版本和这条兼容说明，不改 tag、不回写冻结证据，也不把后续 WAL、Snapshot 或 benchmark 数据声称为 M00 canonical format。",
+      "当前 PLAN v0.14 在 M10 之后只为 M11 冻结单节点 Aeron Cluster Adapter、application request/response/snapshot codec current2/minReadable1 与 Direct/Cluster 重启等价；M00 输入、验证、canonical history、digest 与 evidence 合同不变。因此 M00 的 `course.properties` 与不可移动起点继续记录合同 `planVersion=0.1`，网站另行公开当前计划版本和这条兼容说明，不改 tag、不回写冻结证据，也不把后续 WAL、Snapshot、benchmark 或 Cluster wire bytes 声称为 M00 canonical format。",
     prerequisiteUnitCodes: [],
     startRef: "course/m00.2-start",
     supersededStartRefs: [
@@ -5076,7 +5076,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.3",
     planCompatibility:
-      "当前 PLAN v0.13 在 M09 之后只为 M10 冻结单机有界准入与环境绑定性能包络；M01 价格时间优先业务语义、冻结 event batch、Golden corpus 与 evidence 不回写，也不表示后续 Java event hierarchy、WAL/Snapshot bytes、queue 或恢复运行时与 M01 完成提交相同。因此 M01 的 `course.properties`、起点、完成 tag、教程与持久 evidence 继续保留合同 `planVersion=0.3`。",
+      "当前 PLAN v0.14 在 M10 之后只为 M11 冻结单节点 Aeron Cluster Adapter、application request/response/snapshot codec current2/minReadable1 与 Direct/Cluster 重启等价；M01 价格时间优先业务语义、冻结 event batch、Golden corpus 与 evidence 不回写，也不表示后续 Java event hierarchy、WAL/Snapshot bytes、queue、Cluster codec 或恢复运行时与 M01 完成提交相同。因此 M01 的 `course.properties`、起点、完成 tag、教程与持久 evidence 继续保留合同 `planVersion=0.3`。",
     prerequisiteUnitCodes: ["M00"],
     startRef: "course/m01-start",
     completeRef: "course/m01-complete",
@@ -5796,7 +5796,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.4",
     planCompatibility:
-      "当前 PLAN v0.13 在 M09 之后只为 M10 冻结单机有界准入与环境绑定性能包络；M02 可寻址生命周期、10/34 corpus、M02H1、complete tag 与 evidence 不回写，也不表示后续 Java event hierarchy、WAL/Snapshot record shape、queue 或 runtime 与 M02 完成提交相同。",
+      "当前 PLAN v0.14 在 M10 之后只为 M11 冻结单节点 Aeron Cluster Adapter、application request/response/snapshot codec current2/minReadable1 与 Direct/Cluster 重启等价；M02 可寻址生命周期、10/34 corpus、M02H1、complete tag 与 evidence 不回写，也不表示后续 Java event hierarchy、WAL/Snapshot record shape、queue、Cluster codec 或 runtime 与 M02 完成提交相同。",
     prerequisiteUnitCodes: ["M01"],
     startRef: "course/m02-start",
     completeRef: "course/m02-complete",
@@ -5881,7 +5881,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.5",
     planCompatibility:
-      "当前 PLAN v0.13 在 M09 之后只为 M10 冻结单机有界准入与环境绑定性能包络；M03 冻结 tag、M03G1 command canonical 身份、`matching-0.1.0` 与 evidence 不回写。后续新增 event shape、WAL/Snapshot source、queue 和 runtime 只由对应单元的架构门禁验收，不重绑 M03 证据。",
+      "当前 PLAN v0.14 在 M10 之后只为 M11 冻结单节点 Aeron Cluster Adapter、application request/response/snapshot codec current2/minReadable1 与 Direct/Cluster 重启等价；M03 冻结 tag、M03G1 command canonical 身份、`matching-0.1.0` 与 evidence 不回写。后续新增 event shape、WAL/Snapshot source、queue、Cluster codec 和 runtime 只由对应单元的架构门禁验收，不重绑 M03 证据。",
     prerequisiteUnitCodes: ["M02"],
     startRef: "course/m03-start",
     completeRef: "course/m03-complete",
@@ -5970,7 +5970,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.6",
     planCompatibility:
-      "当前 PLAN v0.13 在 M09 之后只为 M10 冻结单机有界准入与环境绑定性能包络；M04 的五字段 ExecutionPolicy、14/48 固定语料、M04F1/M04H1/M04X1、complete tag、产品停止点与 evidence 不回写，后续归因、STP 事件、WAL frame、Snapshot state 或 queue 也不表示 M04 Java event shape/event bytes 曾被冻结。",
+      "当前 PLAN v0.14 在 M10 之后只为 M11 冻结单节点 Aeron Cluster Adapter、application request/response/snapshot codec current2/minReadable1 与 Direct/Cluster 重启等价；M04 的五字段 ExecutionPolicy、14/48 固定语料、M04F1/M04H1/M04X1、complete tag、产品停止点与 evidence 不回写，后续归因、STP 事件、WAL frame、Snapshot state、queue 或 Cluster codec 也不表示 M04 Java event shape/event bytes 曾被冻结。",
     prerequisiteUnitCodes: ["M03"],
     startRef: "course/m04-start",
     completeRef: "course/m04-complete",
@@ -6065,7 +6065,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.7",
     planCompatibility:
-      "当前 PLAN v0.13 在 M09 之后只为 M10 冻结单机有界准入与环境绑定性能包络；M05 的 RuleSet/activation fence、12/54 fixed、160×64、20 项 coverage、8 项 mutant、五篇 permalink、complete tag 与公开 evidence 保持不变，不因 Snapshot 或性能资格合同回写。",
+      "当前 PLAN v0.14 在 M10 之后只为 M11 冻结单节点 Aeron Cluster Adapter、application request/response/snapshot codec current2/minReadable1 与 Direct/Cluster 重启等价；M05 的 RuleSet/activation fence、12/54 fixed、160×64、20 项 coverage、8 项 mutant、五篇 permalink、complete tag 与公开 evidence 保持不变，不因 Snapshot、性能资格或 Cluster adapter 合同回写。",
     prerequisiteUnitCodes: ["M04"],
     startRef: "course/m05-start",
     completeRef: "course/m05-complete",
@@ -6161,7 +6161,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.8",
     planCompatibility:
-      "PLAN v0.13 在 M09 之后只为 M10 冻结单机有界准入与环境绑定性能包络；M06 的 mode/Mass Cancel 语义、15/64 fixed、160×64、26 项 coverage、10 项 mutant、complete tag 与公开 evidence 不回写，Snapshot 或负载路径也不能把恢复状态默认为 OPEN。",
+      "PLAN v0.14 在 M10 之后只为 M11 冻结单节点 Aeron Cluster Adapter、application request/response/snapshot codec current2/minReadable1 与 Direct/Cluster 重启等价；M06 的 mode/Mass Cancel 语义、15/64 fixed、160×64、26 项 coverage、10 项 mutant、complete tag 与公开 evidence 不回写，Snapshot、负载或 Cluster 恢复路径也不能把状态默认为 OPEN。",
     prerequisiteUnitCodes: ["M05"],
     startRef: "course/m06-start",
     completeRef: "course/m06-complete",
@@ -6244,7 +6244,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.9",
     planCompatibility:
-      "PLAN v0.13 在 M09 之后只为 M10 冻结单机有界准入与环境绑定性能包络；M07 的 opaque participant group、taker-owned STP disposition、16/72 fixed、160×64、24 项 coverage、8 项 mutant、complete tag 与公开 evidence 不回写，Snapshot 与负载后恢复都必须完整保存其可恢复结果。",
+      "PLAN v0.14 在 M10 之后只为 M11 冻结单节点 Aeron Cluster Adapter、application request/response/snapshot codec current2/minReadable1 与 Direct/Cluster 重启等价；M07 的 opaque participant group、taker-owned STP disposition、16/72 fixed、160×64、24 项 coverage、8 项 mutant、complete tag 与公开 evidence 不回写，Snapshot、负载与 Cluster restart 都必须完整保存其可恢复结果。",
     prerequisiteUnitCodes: ["M06"],
     startRef: "course/m07-start",
     completeRef: "course/m07-complete",
@@ -6332,7 +6332,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.10",
     planCompatibility:
-      "PLAN v0.13 在 M09 之后只为 M10 冻结单机有界准入与环境绑定性能包络；M08 的 M08C1/M08W1、append→force→apply→ACK、durable identity、genesis recovery、complete tag 与公开 evidence 均不回写，M09 Snapshot 与 M10 queue 也不能被声称为 M08 WAL 格式的一部分。",
+      "PLAN v0.14 在 M10 之后只为 M11 冻结单节点 Aeron Cluster Adapter、application request/response/snapshot codec current2/minReadable1 与 Direct/Cluster 重启等价；M08 的 M08C1/M08W1、append→force→apply→ACK、durable identity、genesis recovery、complete tag 与公开 evidence 均不回写，M09 Snapshot、M10 queue 与 M11 Cluster codec 也不能被声称为 M08 WAL 格式的一部分。",
     prerequisiteUnitCodes: ["M07"],
     startRef: "course/m08-start",
     completeRef: "course/m08-complete",
@@ -6421,7 +6421,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.11",
     planCompatibility:
-      "当前 PLAN v0.13 只在 M09 之后为 M10 冻结单机有界准入与环境绑定性能包络；M09 的 M09S1、RecoveryBudget、22/88 fixed、96×40 generated、32 项 obligation、12 个 candidate、complete tag 与公开 evidence 不回写，M10 queue 或 benchmark 也不成为 M09 Snapshot/WAL 格式的一部分。",
+      "当前 PLAN v0.14 只在 M10 之后为 M11 冻结单节点 Aeron Cluster Adapter、application request/response/snapshot codec current2/minReadable1 与 Direct/Cluster 重启等价；M09 的 M09S1、RecoveryBudget、22/88 fixed、96×40 generated、32 项 obligation、12 个 candidate、complete tag 与公开 evidence 不回写，M10 queue、benchmark 或 M11 Cluster snapshot/codec 都不成为 M09 Snapshot/WAL 格式的一部分。",
     prerequisiteUnitCodes: ["M08"],
     startRef: "course/m09-start",
     completeRef: "course/m09-complete",
@@ -6510,6 +6510,8 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     order: 110,
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.13",
+    planCompatibility:
+      "当前 PLAN v0.14 只在 M10 之后为 M11 冻结单节点 Aeron Cluster Adapter、application request/response/snapshot codec current2/minReadable1 与 Direct/Cluster 重启等价；M10 的 M10Q2 workload、环境绑定 knee/QOP、降序长稳态晋级、matching-0.5.0、complete tag 与公开 evidence 不回写，M11 也不继承或重命名单机容量数字。",
     prerequisiteUnitCodes: ["M09"],
     startRef: "course/m10-start",
     completeRef: "course/m10-complete",
@@ -6602,6 +6604,102 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
       "./gradlew clean build --no-daemon",
       "./gradlew m10Check --no-daemon",
       "./gradlew m10ReleaseQualification --no-daemon",
+    ],
+  },
+  {
+    projectSlug: "high-availability-cex",
+    profileVersion: "SPOT-CEX-1.0",
+    code: "M11",
+    trackCode: "M",
+    title: "单节点 Aeron Cluster Adapter",
+    summary:
+      "在保持 matching-core 确定且无基础设施依赖、Cluster runtime 不双写 standalone WAL 的前提下，接入真实单节点 Aeron Cluster，冻结 application request/response/snapshot codec current=2、minReadable=1 与六份 Golden，以及 ingress→log apply→response、Cluster snapshot/restart 和 Direct/Cluster 规范化业务等价。",
+    objective:
+      "让同一组规范化命令经 Direct runner、单节点 Cluster 和 Cluster snapshot/restart 三条路径得到相同业务结果、事件批次与 semantic digest，同时把 Aeron session、term、position 等运行时元数据挡在持久业务身份之外。",
+    order: 120,
+    lifecycle: "IN_PROGRESS",
+    contractPlanVersion: "0.14",
+    prerequisiteUnitCodes: ["M10"],
+    startRef: "course/m11-start",
+    expectedLessons: [
+      {
+        lessonOrder: 10,
+        permalink: "aeron-cluster-adapter-and-single-recovery-truth",
+      },
+      {
+        lessonOrder: 20,
+        permalink: "cluster-codec-golden-bytes-and-compatibility",
+      },
+      {
+        lessonOrder: 30,
+        permalink: "cluster-ingress-log-apply-and-correlated-response",
+      },
+      {
+        lessonOrder: 40,
+        permalink: "cluster-snapshot-restart-and-direct-equivalence",
+      },
+      {
+        lessonOrder: 50,
+        permalink: "single-node-aeron-adapter-evidence",
+      },
+    ],
+    adds: [
+      "唯一新增复杂度是 Cluster 运行时适配：用真实单 member Aeron Cluster 替代本地运行时作为命令排序与恢复载体，同时保持既有业务状态机和单机性能证据的适用边界不变；单 member 没有冗余副本，不宣称复制高可用。",
+    ],
+    delivers: [
+      "新增 Cluster runtime/codec 边界，只有 adapter 依赖 Aeron；matching-core 继续无 Aeron、文件、网络、数据库、线程调度和 runtime metadata 依赖",
+      "单节点 Cluster 的 ingress 只提交 canonical command bytes；业务状态只能在 ClusteredService 按 Cluster log 顺序回调时 apply，不能从客户端 offer 路径直接修改 core",
+      "每条 apply 产生与 stable command identity 绑定的规范化业务结果和事件批次；Aeron session/correlation 只负责把本次响应送回当前连接，不成为 durable idempotency key、order identity 或业务顺序",
+      "Cluster runtime 只以 Aeron log 与 Cluster snapshot 恢复，不再双写 M08W1 standalone WAL 或 M09S1 本地 Snapshot，避免两套恢复真相在 crash 后分叉",
+      "application request、application response 与 Cluster snapshot codec 的 currentVersion=2、minimumReadableVersion=1；version 1/2 各一份 request/response/snapshot，共六份 Golden。request v1 固定选择 response v1；request v2 只允许请求 response 1/2；request/Snapshot 默认 writer 写 2，response 按协商写 1/2，所有有效业务 outcome 均可降到 v1；非法协商、范围外版本与非 canonical length/field/enum/trailing bytes 一律在 apply 前失败关闭",
+      "Direct runner、连续运行的单节点 Cluster 与 snapshot/restart 后继续执行的 Cluster 使用同一输入历史，比较规范化业务 disposition、event batch 和 semantic state digest，并显式排除 session、leadership term、log position、timestamp 等 runtime metadata",
+      "M11 只形成 course/m11-complete 对应的普通课程停止点，不创建产品 release；matching-0.8.0 仍由 M12 三节点 HA 门禁发布",
+    ],
+    freezes: [
+      "annotated course/m11-start 冻结 matching.m11.check.v1 / GOAL_NOT_IMPLEMENTED、Aeron 1.52.2、Agrona 2.5.0、Java 25、22 个 fixed scenario、SplitMix64 seed 6111 的一个连续 32 segment×128=4096 action corpus、四组各八 segment 的 lane-major 顺序、两个各完整消费 4096 action 的 fresh Cluster run（共 8192 actual ingress）、全局 action 2048 后受控 snapshot/restart、28 个 obligation、10 个 semantic candidate、3 个 SYSTEM_ERROR control、六份 codec Golden 与五篇 permalink；完成实现不得回写起点",
+      "matching-core 必须相对 course/m10-complete 保持 byte-identical；M11 只在 matching-cluster-runtime 复用既有 M08C1 codec 与 core applier seam，不修改 core 或重写 M03 撮合算法",
+      "Cluster log apply 是唯一业务命令 transition 入口；onStart 只可安装严格验证过的恢复状态，ingress offer、session open/close、leader role 通知和 response correlation 都不能直接推进 matching state",
+      "stable command identity=commandId+Slot+payloadHash 与业务结果属于 Snapshot 可恢复状态；payloadHash 只覆盖 canonical M08 command-payload bytes 并在 apply 前重算。Snapshot identity table 按 original applicationSequence 严格 1..N 排列，commandId/Slot 唯一且 producer epoch/sequence 连续；两份 Snapshot Golden 都含两条 binding。Aeron session id、correlation id、term、log/apply position 和墙钟只属于运行时观察",
+      "当前 reader 只承诺读取 application request/response/snapshot version 1/2；request v1 固定返回 response v1，request v2 只允许协商 1/2，非法值在 apply 前失败且不伪造业务响应；response v2 只回显 optional commandId 与 semantic digest，不携带完整 identity。该单向兼容合同不等于 version 1 程序能读取 version 2，也不等于 rolling upgrade 已通过",
+      "M11 Cluster runtime 不调用 standalone WAL/Snapshot writer；M08/M09 继续作为本地运行时已发布证据，不能与 Aeron log 拼成双重 ACK 或 fallback 恢复路径",
+      "M10 的环境绑定 QOP、latency 与 queue/resource 结论只属于 matching-0.5.0 的本地运行时；M11 不继承、不换算，也不发布 Cluster TPS、p99 或容量 SLA",
+      "单节点启动、snapshot、停止与 fresh restart 只验证 adapter/recovery compatibility；不得写成 quorum、leader failover、catch-up、fencing 或高可用证明",
+    ],
+    excludes: [
+      "三节点 topology、quorum/election、leader kill、follower catch-up、网络分区、fencing、结果 UNKNOWN 与 same-identity failover retry；这些全部属于 M12",
+      "Cluster Backup/restore、跨机器灾备、真实断电、设备缓存、物理介质 crash consistency、在线 rolling upgrade 与 N-2 migration",
+      "多 shard、多 instrument 路由、跨 shard 命令、静态分片、外部 Execution/Market stream 和 Counter 消费；这些由 M13/M14 及下游项目处理",
+      "Rest、WebSocket、TLS、认证、数据库、HTTP、外部副作用、账户、资产、仓位、手续费、结算和风险；ClusteredService 不访问这些系统",
+      "Cluster 性能资格、吞吐/延迟/RTO SLA、M10 数字复用、Aeron 调优大全、远程 Java 执行、浏览器 Aeron 模拟和 production-readiness 认证",
+    ],
+    gate: [
+      "course/m11-start 必须在 M00～M10 全部 GREEN 的基线上保存 schema-valid matching.m11.check.v1 / GOAL_NOT_IMPLEMENTED；历史 start workflow 不依赖未来 complete tag",
+      "默认 build、M00～M10 累计语义与 matching-0.5.0 已发布门禁保持 GREEN；architecture report 证明 core 无 Aeron，Aeron 只存在于 Cluster runtime/codec 允许边界，且不存在 standalone storage 双写",
+      "Aeron 1.52.2 / Agrona 2.5.0 / Java 25 下真实启动 localhost 单节点 Media Driver、Archive、Consensus Module 与 ClusteredService，member 0 成为 appointed Leader；两个 Cluster run 使用不同 owned root 和不重叠端口块，maxWorkers=1、有界 poll 与 error/counter capture，不能用 fake transport、直接调用 onSessionMessage、固定 sleep 或内存队列替代 Cluster 集成证据",
+      "22 个 fixed scenario、seed 6111 的连续 32 segment×128=4096 action corpus 和四组各八 segment 的 CURRENT_NEW/PREVIOUS_NEW/DUPLICATE_REPLAY/IDENTITY_CONFLICT lane-major 顺序完整执行；segment 间不重置 state/sequence/cursor，两次 fresh generation byte-exact；Direct 与两个各执行 4096 条的真实 Cluster path（共 8192 ingress）的规范化 disposition、完整事件、业务字段与 terminal semantic digest 完全一致",
+      "application request/response/snapshot 的六份 version 1/2 Golden byte-exact；request/Snapshot current writer 写 v2，response 按冻结协商写 v1/v2；Snapshot Golden 各有两条有序 identity binding；版本范围外、非法 response 协商、noncanonical 或 trailing bytes 在 apply 前失败关闭，不能静默填默认业务值",
+      "全局 generated action 2048 后暂停新 ingress；Admin snapshot OK 只证明请求被接受，关闭前必须同时观察 snapshot counter 增量、toggle 回到 NEUTRAL、Recording Log 新增 service -1/0 的同 term/position 且新 recording ID、Service 写出 payload SHA。fresh reopen 的 onStart 必须消费 non-null Image 并报告相同 digest/application sequence，再验证 identity/result/next sequence 与三路径一致；最终 state equality 不能替代这些 witness",
+      "28/28 obligation 必须有 executed witness，10/10 executable candidate 只能以 STUDENT_FAILURE 计 kill并保存 one-minimal replay；三个 SYSTEM_ERROR control、环境启动失败、端口冲突或超时不能冒充业务反例。完成态再绑定 clean complete tag、source SHA、null productRelease、七项冻结 claim、精确 limitation/reportFacts 和全部 artifact SHA-256",
+    ],
+    interaction: [
+      "先判断某个依赖或字段属于 core、codec、Cluster adapter 还是 runtime metadata，再揭示把 Aeron 类型泄入 core、把 session 当业务 ID、把 local WAL 与 Cluster log 双写会怎样产生两个权威来源",
+      "沿 client offer→Cluster ingress→Cluster log→ClusteredService apply→business result→correlated response 排序关键动作，预测在哪个点之前都不能声称业务成功",
+      "给定 application request/response/snapshot version 1/2 bytes 与 current2/minReadable1 compatibility matrix，先决定 accept、upgrade-to-current 或 fail-closed，再对照本地 Java codec Golden 结果",
+      "比较 Direct、连续 Cluster 与 snapshot/restart Cluster 的规范化事件和 digest；网页只讲合同与展示静态 evidence，真实 Aeron 进程、Java 编译和 restart 由读者本地执行",
+    ],
+    evidence: [
+      "结构化 RED、Aeron 1.52.2/Agrona 2.5.0/Java 25 单 member topology/codec profile、22 fixed、seed 6111 的连续 32 segment×128 generated input、两个 fresh Cluster run 合计 8192 ingress、28 obligation、10 candidate、3 SYSTEM_ERROR control、六份 Golden，以及 M00～M10 累计语义回归",
+      "core/adapter/codec 架构扫描、真实 Aeron component 启动身份、Cluster log-only apply witness、response-after-apply 与 session-not-business-identity 账本",
+      "同一连续 4,096-action corpus 的 Direct 结果与两次各 4,096 条、合计 8,192 条 actual Cluster ingress 的规范化 disposition/full-event/state-digest 对照，以及全局 action 2,048 后 snapshot acceptance/completion、Recording Log、written/loaded digest、identity/result/sequence 与 suffix continuity 报告；实际 digest 和通过状态只从真实裁判读取",
+      "application request/response/snapshot current2/minReadable1 compatibility matrix、六份 byte-exact Golden、response down-encode、范围外版本/noncanonical negative corpus，以及十个 one-minimal semantic counterexample/replay",
+      "完成 manifest 的 claim 顺序固定为 m00-m10-semantic-regression、single-node-clustered-service、correlated-apply-response、direct-cluster-business-equivalence、cluster-snapshot-restart、protocol-compatibility-and-mutants、architecture-and-unit-identity；另绑定环境、public bundle 尺寸、clean complete identity、null productRelease 和 artifact hashes，未知完成 digest 在 evidence 产生前保持未声明",
+    ],
+    stopPoint:
+      "目标停止点是一个真实但仅单节点的 Aeron Cluster Adapter：业务只在 log apply 时推进，Aeron log/Cluster snapshot 是唯一恢复真相，当前 reader 可读取冻结的 application request/response/snapshot version 1/2，Direct、连续 Cluster 与 snapshot/restart Cluster 的规范化业务结果等价；仍无三节点 quorum、切主、fencing、UNKNOWN、Cluster Backup、Cluster 性能或高可用保证。",
+    localCommands: [
+      "git switch -c unit/m11 course/m11-start",
+      "./gradlew clean build --no-daemon",
+      "./gradlew m11Check --no-daemon",
     ],
   },
 ];
