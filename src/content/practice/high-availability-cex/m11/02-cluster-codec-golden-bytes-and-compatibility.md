@@ -92,7 +92,7 @@ M11 把它定义为：
 boundedResponse = RESULT_COMMITMENT_WITHOUT_UNBOUNDED_EVENT_STREAM
 ```
 
-状态机仍在 identity table 中保留完整 canonical result，裁判也能通过不影响业务的 observation seam 比较完整 events。只是这份观察不是对 Counter 或 Rest 发布的协议。可续接 Execution/Market stream、sequence、cursor 与 gap recovery 要到 M14 才建立。
+状态机仍在 identity table 中保留完整 canonical result，裁判也能通过不影响业务的 observation seam 比较完整 events。只是这份观察不是对 Counter 或 Rest 发布的协议。当前候选地图把可续接 Execution/Market stream、sequence、cursor 与 gap recovery 暂列在 M14，最终范围仍要等该单元签约。
 
 这一区分避免了一个常见偷换：能在测试里看到完整事件，不等于系统已经拥有可恢复的下游事件流。
 
@@ -131,16 +131,16 @@ S2 不扩大业务状态覆盖，只新增：
 
 ## 六份 Golden 冻结的不是 JSON 长相
 
-M11 起点生成且固定以下六份 binary fixture：
+M11 起点生成且固定以下六份 binary fixture；精确目录、版本矩阵和生成规模由 fixed tag 下的 [`workload-v1.json`](https://github.com/lcha-reln/cex-matching/blob/course/m11-start/matching-testkit/src/test/resources/m11/workload-v1.json) 共同约束：
 
-| Golden      | 主要证明                                                  |
-| ----------- | --------------------------------------------------------- |
-| request v1  | 当前 reader 能提取 correlation 与完整 M08C1 envelope      |
-| request v2  | response version request 不改变 durable command identity  |
-| response v1 | 有界结果承诺的旧布局可复现、可读取                        |
-| response v2 | 可选 commandId echo 与 semantic digest 的当前布局可复现   |
-| snapshot S1 | 两条有序 binding 证明旧格式完整携带 identity/result table |
-| snapshot S2 | 两条有序 binding 与当前 bounds/integrity 字段 byte-exact  |
+| Golden                                                                                                                                            | bytes | SHA-256                                                           | 主要证明                                                  |
+| ------------------------------------------------------------------------------------------------------------------------------------------------- | ----: | ----------------------------------------------------------------- | --------------------------------------------------------- |
+| [`request-v1.bin`](https://github.com/lcha-reln/cex-matching/blob/course/m11-start/matching-testkit/src/test/resources/m11/goldens/request-v1.bin)   |   203 | `30e8cde285dcbefcd3bf7a3ffafb2a6e2ec09b039db7d793a792d6ceb01fa609` | 当前 reader 能提取 correlation 与完整 M08C1 envelope      |
+| [`request-v2.bin`](https://github.com/lcha-reln/cex-matching/blob/course/m11-start/matching-testkit/src/test/resources/m11/goldens/request-v2.bin)   |   207 | `4c109a796e18aa628ee95184497bd9dc819e48a3f11fb7411d2440b6442ee409` | response version request 不改变 durable command identity  |
+| [`response-v1.bin`](https://github.com/lcha-reln/cex-matching/blob/course/m11-start/matching-testkit/src/test/resources/m11/goldens/response-v1.bin) |    72 | `64eca820223db940aa7499d727b351ac0df1dfdcbfe0aefea2f591ae194ccfec` | 有界结果承诺的旧布局可读取，并可被显式 down-encode        |
+| [`response-v2.bin`](https://github.com/lcha-reln/cex-matching/blob/course/m11-start/matching-testkit/src/test/resources/m11/goldens/response-v2.bin) |   121 | `3956d17420c85f95842d913b8e923f4e376b6743369e6d055e164c5ced8eee4b` | 可选 commandId echo 与 semantic digest 的当前布局可复现   |
+| [`snapshot-v1.bin`](https://github.com/lcha-reln/cex-matching/blob/course/m11-start/matching-testkit/src/test/resources/m11/goldens/snapshot-v1.bin) | 3,595 | `3bdd0490d0c0e8943eb67a573ff84c97eb6d2a93ab5438b2960011e49c5a6d67` | 两条有序 binding 证明旧格式完整携带 identity/result table |
+| [`snapshot-v2.bin`](https://github.com/lcha-reln/cex-matching/blob/course/m11-start/matching-testkit/src/test/resources/m11/goldens/snapshot-v2.bin) | 3,667 | `1df85f21c8ea4bc1ff483d220e5794d2e770393d3252e2150426c169b769a044` | 两条有序 binding 与当前 bounds/integrity 字段 byte-exact  |
 
 每份 Golden 至少要绑定：
 
@@ -151,12 +151,35 @@ encoded length
 exact bytes
 sha256
 decoded semantic observation
-re-encoded current bytes
+explicitly versioned re-encoding when that writer mode is supported
 ```
 
-当前 request 与 Snapshot encoder 必须逐字节复现 version 2 Golden；当前 response encoder 则必须按冻结协商逐字节复现 v1 或 v2。decoder 读取 version 1 后可以进入同一内部表示，但 response v1 仍是合法输出，不能用“current writer 只写 2”抹掉 down-encode 合同。
+这里不能把“能读取 v1”偷换成“生产 writer 仍默认写 v1”。当前 request 与 Snapshot 的生产写入路径选择 v2；当前 reader 读取 v1 后必须恢复完整语义。测试 oracle 可以显式指定旧版本重编码来核对 v1 Golden，但这不构成生产默认、rollback 或旧 binary 写入承诺。response 是例外：它有显式协商路径，encoder 必须按请求逐字节复现 v1 或 v2，不能用“current writer 是 2”抹掉 down-encode 合同。
 
 Golden 的意义是阻止“代码和期望一起改”。若测试每次运行都用当前 encoder 生成输入、再用当前 decoder 读取，错误的字段顺序、端序或默认值可以在两端同步漂移而仍然通过。不可变 bytes 把协议历史放在代码之外。
+
+## 本篇实作：从 Golden 反推三套 Codec
+
+完成实现的固定阅读坐标是：
+
+```text
+course/m11-complete:matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11RequestCodec.java
+course/m11-complete:matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11ResponseCodec.java
+course/m11-complete:matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11SnapshotCodec.java
+course/m11-complete:matching-cluster-runtime/src/test/java/io/github/lchareln/cex/matching/cluster/M11ProtocolCompatibilityTest.java
+```
+
+当前 `IN_PROGRESS` 页面只记录坐标；等 complete ref 在 `CODE_VERIFIED` 注册并推送后，发布步骤再转换成固定链接，不能假定远端现在已经存在该 tag。
+
+在实现分支只运行协议门禁：
+
+```bash
+./gradlew :matching-cluster-runtime:test \
+  --tests 'io.github.lchareln.cex.matching.cluster.M11ProtocolCompatibilityTest' \
+  --no-daemon
+```
+
+不要只看 Gradle 是否退出零；逐项核对测试是否真的观察到：v2 request/Snapshot 写入与上表 bytes 完全一致，v1 request/response/Snapshot 可读且不丢 identity/original result，response v1/v2 都能按显式协商写出，非法 response version 和伪造 payload hash 在 apply 前保持零状态修改。任何一项缺失，都不能进入真实 Cluster 集成。
 
 ## Canonical 约束必须先于业务 apply
 
@@ -217,7 +240,7 @@ Aeron 可能把 Snapshot bytes 分成多个 publication frame。M11 的 applicat
 
 ## 六份 Golden 能保证什么，仍不能保证什么
 
-这套合同能证明当前程序读取 version 1/2 request、response、snapshot，并按冻结规则写 version 2 或 down-encode response。它还能杀死“拒绝 N-1”和“接受 unsupported version”这类候选。
+完成门禁需要证明当前程序读取 version 1/2 request、response、snapshot，并按冻结规则写 version 2 或 down-encode response；对应反例还必须杀死“拒绝 N-1”和“接受 unsupported version”这类候选。当前草稿只陈述这项责任，实际结论以后续 complete-tag evidence 为准。
 
 它不能证明：
 

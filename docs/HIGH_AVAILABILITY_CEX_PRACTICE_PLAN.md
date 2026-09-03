@@ -491,7 +491,7 @@ Matching 是唯一优先启动的项目。它先证明业务语义，再证明�
 | M08 WAL 与确认边界             | 单机持久确认和 durable idempotency                      | 单写者本地运行时在 append/force/apply 后 ACK，可从 genesis WAL 重建命令结果与幂等索引        | `PUBLISHED / CONTRACT`   |
 | M09 Snapshot 检查点与有界恢复  | checkpointed bounded recovery                           | 完整已 apply Snapshot cut + 连续受限 WAL suffix 等价于全量重放，前缀只在可恢复集合持久后回收 | `PUBLISHED / CONTRACT`   |
 | M10 性能与过载资格             | 容量和背压                                              | 已发布 `matching-0.5.0`                                                                      | `PUBLISHED / CONTRACT`   |
-| M11 Aeron Cluster Adapter      | 复制运行时适配                                          | 单节点 Cluster 与 direct runner 业务等价                                                     | `IN_PROGRESS / CONTRACT` |
+| M11 Aeron Cluster Adapter      | 单成员 Cluster 日志与 Snapshot 运行时适配              | 单节点 Cluster 与 direct runner 业务等价                                                     | `IN_PROGRESS / CONTRACT` |
 | M12 三节点 HA                  | 切主、fencing 和结果未知                                | 发布 `matching-0.8.0`                                                                        | `CANDIDATE / RISK_MAP`   |
 | M13 多交易对静态分片           | instrument 到 shard 的权威路由                          | 多订单簿故障域和容量可解释                                                                   | `CANDIDATE / RISK_MAP`   |
 | M14 可续接业务输出             | 下游连续消费                                            | 发布 `matching-1.0.0`                                                                        | `CANDIDATE / RISK_MAP`   |
@@ -1834,7 +1834,7 @@ M10 已形成 `matching-0.5.0`：一个单进程、单 shard、可恢复的本�
 >
 > 当前生命周期：`IN_PROGRESS`
 >
-> 唯一新增复杂度：真实单节点 Aeron Cluster 的复制运行时适配
+> 唯一新增复杂度：真实单节点 Aeron Cluster 的日志与 Snapshot 运行时适配
 >
 > 当前边界：annotated `course/m11-start` 冻结结构化 RED、22 fixed、seed 6111 的连续 32 segment×128 action corpus、两个 fresh Cluster run 共 8,192 actual ingress、全局 action 2,048 后 snapshot/restart、28 obligation、10 candidate、3 SYSTEM_ERROR control、六份 Golden 与五篇 permalink；没有 complete ref、完成提交、公开 evidence、产品 release 或通过数字
 

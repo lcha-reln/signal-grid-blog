@@ -11,7 +11,7 @@ tags:
   - Aeron Cluster
   - Snapshot
   - 差分测试
-  - 故障恢复
+  - 受控重启
 draft: true
 ---
 
@@ -125,7 +125,7 @@ load(S2) + suffix → same business result as Direct
 
 ## Snapshot transport 要有有界 framing
 
-application Snapshot bytes 通过 Aeron 提供的 snapshot Publication 写出，并由 Image 读取。一次 Snapshot 可能跨多个 frame；application format 不能把 runtime fragmentation 当成记录边界。M11 证明 bytes 经真实 Publication/Image 路径传输并且格式不依赖 fragmentation，但没有冻结 MTU，也不声称刻意触发了某个特定碎片数量。
+application Snapshot bytes 通过 Aeron 提供的 snapshot Publication 写出，并由 Image 读取。一次 Snapshot 可能跨多个 frame；application format 不能把 runtime fragmentation 当成记录边界。M11 完成门禁要求经真实 Publication/Image 路径验证这些 bytes，并证明格式不依赖本次运行的 fragmentation；合同没有冻结 MTU，也不要求刻意触发某个特定碎片数量。当前是否满足要求仍以后续 evidence 为准。
 
 M11 冻结的格式要求包括：
 
@@ -193,7 +193,7 @@ lanes              = CURRENT_NEW / PREVIOUS_NEW /
 
 这是 controlled restart，不是 kill leader。关闭顺序本身属于 harness 所有权，不应进入业务 equality。最终状态相等也不能替代步骤 5、6、9：没有这些 witness，完整 log replay 可能掩盖 Snapshot 从未完成或从未装载。
 
-## Exactly-once apply 要靠业务观察证明
+## 如何证明连续 suffix 没有重复 apply
 
 仅检查“suffix 收到了 2,048 条”不够。重复 apply 一条后又覆盖部分状态，最终数量甚至可能碰巧相等。M11 要同时核对：
 
@@ -207,6 +207,36 @@ lanes              = CURRENT_NEW / PREVIOUS_NEW /
 
 对 `D(H)`、`C(H)`、`R(H)` 保存 canonical transcript digest，可以快速定位差异；但摘要不能替代逐条 comparison count 和首个差异报告。完成 evidence 需要同时给出数量、摘要与反例位置，当前草稿不预写这些未来结果。
 
+## 本篇实作：运行真实 Snapshot/Restart 切点
+
+固定完成坐标中的实现链是：
+
+```text
+course/m11-complete:matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11SnapshotCodec.java
+course/m11-complete:matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11AeronSnapshotTransport.java
+course/m11-complete:matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11ClusteredMatchingService.java
+course/m11-complete:matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11SingleNodeHarness.java
+course/m11-complete:matching-cluster-runtime/src/test/java/io/github/lchareln/cex/matching/cluster/M11AeronClusterIntegrationTest.java
+```
+
+这些坐标在 `CODE_VERIFIED` 登记、创建并推送 complete tag 后才转换为可访问的固定教学链接。
+
+运行该篇最小真实 Cluster 试验：
+
+```bash
+./gradlew :matching-cluster-runtime:test \
+  --tests 'io.github.lchareln.cex.matching.cluster.M11AeronClusterIntegrationTest.realSingleMemberSnapshotCompletesAndExactSnapshotIsLoadedOnRestart' \
+  --no-daemon
+```
+
+这个命令会在本机启动 Aeron 组件并写入仓库自有的 `build/tmp/m11`，不连接外部服务，也不要求 Docker。验收时不要只看测试进程退出码，应在测试观察中依次找到三个不同阶段：
+
+1. **Acceptance**：Admin response 为 `OK`，仅表示 Snapshot 请求被接受；
+2. **Completion**：counter 增量、toggle 回到 `NEUTRAL`、Recording Log 新的 `-1/0` 条目同 term/position 且 recording ID 更新，Service 同时记录 written payload digest/application sequence；
+3. **Load**：重启 `onStart` 收到 non-null Image，loaded digest/application sequence 与已完成 Snapshot 完全一致。
+
+任一阶段缺失都应让本篇停止；即使最终盘口相等，也不能用完整 log replay 掩盖 Snapshot 未完成或未装载。
+
 ## 真实 Cluster 环境失败不能归类成业务反例
 
 restart 试验可能因为端口占用、目录未关闭、driver error 或 readiness deadline 失败。这些都是 `SYSTEM_ERROR`。正确处理是保存 runtime diagnostics、判整次试验无资格，而不是把最后一条命令标成 `REJECTED`。
@@ -215,7 +245,7 @@ restart 试验可能因为端口占用、目录未关闭、driver error 或 read
 
 ## 单节点 restart 与三节点 failover 的界线
 
-M11 restart 前停止唯一 member，期间没有服务；重启后仍是同一个 member 0。它证明 application Snapshot、Archive/log suffix 和 Adapter 兼容，不证明：
+M11 restart 前停止唯一 member，期间没有服务；重启后仍是同一个 member 0。完成 evidence 需要证明 application Snapshot、Archive/log suffix 和 Adapter 在这个受控恢复范围内兼容，但即使通过也不能证明：
 
 - quorum 在 leader 丢失时如何决定 committed prefix；
 - follower 如何 catch up；
@@ -224,7 +254,7 @@ M11 restart 前停止唯一 member，期间没有服务；重启后仍是同一�
 - Cluster Backup 如何恢复到另一组节点；
 - failover under load 的吞吐和延迟。
 
-这些都是 M12 的新增复杂度。把它们留在下一单元，不是降低商用目标，而是确保我们能先判断“Adapter 是否忠实”，再判断“复制故障是否安全”。
+当前候选地图暂把这些能力放在 M12，最终可以在签约评审时拆分或调整。把它们留在后续单元，不是降低商用目标，而是确保我们能先判断“Adapter 是否忠实”，再判断“复制故障是否安全”。
 
 ## 等价成立后，M11 仍只是一个普通停止点
 

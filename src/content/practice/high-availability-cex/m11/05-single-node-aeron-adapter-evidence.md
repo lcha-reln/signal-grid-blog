@@ -96,7 +96,7 @@ architecture-and-unit-identity
 
 `architecture-and-unit-identity` 最终绑定 core 无 Aeron、Cluster runtime 无 standalone WAL、ClusteredService 无外部业务副作用、依赖版本、Java/OS/arch、clean source、complete tag、`productRelease=null` 与全部 artifact hash。Aeron runtime 自身的网络/文件 I/O 不是这里的禁止项。
 
-M11 是普通课程单元，不创建 `matching-0.8.0`。若 manifest 出现产品 release，就已经越过 M12 门禁。
+M11 是普通课程单元，不创建产品 release。当前候选地图把 `matching-0.8.0` 暂列为 M12 的目标；M12 尚未签约时，这只是后续评审坐标。无论未来如何调整，M11 manifest 出现任何产品 release 都已经越过本单元合同。
 
 ## 22 个 fixed scenario 要覆盖机制，不是堆 smoke
 
@@ -236,6 +236,16 @@ term/cluster-dir     = 0
 
 ## 起点与完成态的命令必须给出不同预期
 
+完成实现的固定阅读坐标包括：
+
+```text
+course/m11-complete:matching-testkit/src/main/java/io/github/lchareln/cex/matching/testkit/M11CheckRunner.java
+course/m11-complete:matching-testkit/src/main/java/io/github/lchareln/cex/matching/testkit/M11MutantSuite.java
+course/m11-complete:matching-testkit/src/main/java/io/github/lchareln/cex/matching/testkit/M11EvidenceWriter.java
+```
+
+这些坐标是待创建、推送并验证的 complete ref；`IN_PROGRESS` 阶段只记录路径，进入 `CODE_VERIFIED` 后才转换成固定源码链接，不能把它们写成当前发布证明。
+
 在 `course/m11-start`：
 
 ```bash
@@ -257,6 +267,13 @@ term/cluster-dir     = 0
 ```
 
 第二组命令现在不是通过声明。只有 clean complete source、实际 tag、manifest 和全部报告形成后，教程才能把预期改为 PASS。
+
+运行时按文件检查事实，而不是只保留终端最后一行：
+
+- 起点的 `build/reports/m11/check.json` 应保持 `matching.m11.check.v1 / GOAL_NOT_IMPLEMENTED`，且 `m11Check` 非零退出；
+- 完成候选的 `build/reports/m11/check.json` 必须升级为 v2，并同时生成 fixed、generated、Cluster runtime、protocol、coverage、mutant/counterexample、architecture 与 environment 报告；实际 status 只能照录本次运行结果；
+- `m11Evidence` 只有在 clean HEAD 与 annotated `course/m11-complete` 精确一致时，才有资格创建 `build/lab-evidence/M11/manifest.json`；tag、源码、报告或 artifact 任一漂移都必须失败关闭；
+- 整套命令只在读者本地运行 Java 与 Aeron，不上传源码、不调用远程 Judge 或外部服务。
 
 ## 发布仍要经过三个独立门禁
 
@@ -280,4 +297,4 @@ M11 五篇当前都必须保持 `draft: true`。发布时每篇正文都要引�
 
 如果未来七项 claim 全部通过，M11 能支持的结论是：真实单节点 Aeron Cluster Adapter 在健康 apply、application request/response/snapshot version 1/2、受控 Snapshot/restart 和规范化业务语义上与 Direct runner 一致，并且没有双写 standalone WAL。
 
-它仍不能支持三节点 quorum、leader failover、fencing、`UNKNOWN`、Cluster Backup、Cluster TPS/p99、外部 exactly-once、rolling upgrade 或 production-readiness。保留这些限制，才让 M12 真正增加一个可检验的新复杂度，而不是替前一章补交遗漏的边界。
+它仍不能支持三节点 quorum、leader failover、fencing、`UNKNOWN`、Cluster Backup、Cluster TPS/p99、外部 exactly-once、rolling upgrade 或 production-readiness。保留这些限制，才能让当前候选 M12 在未来签约后增加一个可检验的新复杂度，而不是替前一章补交遗漏的边界。

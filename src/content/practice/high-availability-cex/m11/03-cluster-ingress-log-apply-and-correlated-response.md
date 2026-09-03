@@ -10,7 +10,7 @@ permalink: cluster-ingress-log-apply-and-correlated-response
 tags:
   - Aeron Cluster
   - 幂等
-  - 结果未知
+  - 提交语义
   - 撮合系统
 draft: true
 ---
@@ -104,22 +104,23 @@ retry after reconnect:
 
 如果客户端把 offer position 当作业务成功，`M11-OFFER-AS-SUCCESS` candidate 就会在“请求被 transport 接受、但尚未 apply”的窗口产生虚假结果。
 
-健康路径必须等待同 correlation 的 decoded application response。注意，这仍不是 M12 的 `UNKNOWN` 协议。M11 只有单节点、受控本地环境；若健康场景在 deadline 内收不到响应，harness 报 `SYSTEM_ERROR`，不能凭空合成业务失败，也不能把超时算作 candidate kill。
+健康路径必须等待同 correlation 的 decoded application response。注意，这仍没有实现结果 `UNKNOWN` 协议；当前候选地图暂把它列入 M12，最终以 M12 签约合同为准。M11 只有单节点、受控本地环境；若健康场景在 deadline 内收不到响应，harness 报 `SYSTEM_ERROR`，不能凭空合成业务失败，也不能把超时算作 candidate kill。
 
 ## Result 必须先绑定，再尝试响应
 
-Service 从 log apply 命令后，状态机先完成两件事：
+消息进入 log callback 后，identity preflight 必须先把输入分成三个互斥分支；“bind before response”只对需要或已经拥有 binding 的分支成立，不能误写成所有 rejection 都创建新 binding：
 
-1. 修改或拒绝业务状态；
-2. 把完整 canonical original result 与 durable command identity 绑定。
+1. **New**：调用 core 完成一次确定性 transition；即使 core 给出业务 rejection，它仍是这条新业务命令的 canonical original result，随后与 `commandId + Slot + payloadHash` 绑定。
+2. **Duplicate**：不再调用 core，也不创建第二条 binding；直接读取既有 binding 中的 exact original result。
+3. **Identity/producer rejected**：commandId/Slot conflict、epoch fence、sequence gap/stale 等保持零业务修改、零新增 binding，只形成稳定 rejection code。
 
-然后 Adapter 才编码 bounded response 并调用 `ClientSession.offer`。顺序不能反过来：
+application request 版本或 payload hash 等协议错误更早失败：它们发生在业务 apply 前，而且不能伪造 business response。上述三类合法 application 处理结果确定后，Adapter 才编码 bounded response 并调用 `ClientSession.offer`。New 分支的顺序尤其不能反过来：
 
 ```text
 wrong:
   apply partial state
   → send response
-  → bind result
+  → bind original result
 
 correct:
   apply deterministic transition
@@ -127,9 +128,9 @@ correct:
   → attempt response publication
 ```
 
-如果响应先发、结果后绑，进程在两者之间停止，客户端可能已经看到成功，但重启后的 identity table 不知道 original result。相同命令重试时，它可能再次执行或返回另一个结果。
+如果 New 分支响应先发、结果后绑，进程在两者之间停止，客户端可能已经看到结果，但重启后的 identity table 不知道 original result。相同命令重试时，它可能再次执行或返回另一个结果。
 
-相反，若结果已经绑定而 response publication 失败，业务状态不能回滚、重复或因传输结果改变。稍后同 command identity 的重试仍能取回 original result。这条性质是 M12 处理 `UNKNOWN` 的前提，但 M11 只证明单节点 Adapter 的内部顺序。
+相反，若 New 的结果已经绑定，或 Duplicate 已经找到原 binding，而 response publication 失败，业务状态都不能回滚、重复或因传输结果改变；稍后同 command identity 的重试仍能取回 original result。当前候选地图把跨 failover 的 `UNKNOWN` 收敛暂列为 M12，M11 只要求证明单节点 Adapter 的内部顺序。
 
 ## Bounded Response 为什么不返回完整事件列表
 
@@ -142,7 +143,7 @@ bounded response != resumable event stream
 test observation != downstream publication contract
 ```
 
-M14 才会定义 Execution/Market sequence、cursor、gap recovery 与 publisher fencing。M11 不能把一次请求响应冒充下游 changefeed。
+当前候选地图暂把 Execution/Market sequence、cursor、gap recovery 与 publisher fencing 放在 M14，具体协议仍须在该单元签约时冻结。M11 不能把一次请求响应冒充下游 changefeed。
 
 ## Runtime metadata 可以记录，但不能决定业务
 
@@ -187,7 +188,7 @@ RUNTIME_METADATA_EXCLUDED
 NO_STANDALONE_WAL_WRITE
 ```
 
-它们不是十二个布尔断言的清单，而是一条因果链：真实 member 接收请求，offer 不代表成功，log apply 创建业务结果，identity 先绑定，response 再关联到 invocation；换 session/correlation 不改变 duplicate，conflict 不修改状态，最后 Direct/Cluster 只在业务观察上相等。
+它们不是十二个布尔断言的清单，而是一条因果链：真实 member 接收请求，offer 不代表成功，log callback 才允许处理业务；New 在 response 前绑定 original result，Duplicate 读取既有 binding，conflict 不修改状态或新增 binding；response 最后关联到 invocation。换 session/correlation 不改变 duplicate，Direct/Cluster 只在业务观察上相等。
 
 生成 differential 又用 seed `6111` 产生一个连续的 32 segment×128=4,096 action corpus。四组 lane 各八段，并按下列 lane-major 顺序拼接：
 
@@ -197,6 +198,30 @@ NO_STANDALONE_WAL_WRITE
 - `IDENTITY_CONFLICT`。
 
 segment 之间不重置 state、ApplicationSequence 或 producer cursor。两次 fresh generation 必须 byte-exact。同一 corpus 完整经过一个 uninterrupted Cluster 和另一个 snapshot/restart Cluster，各 4,096 条，合计 8,192 次真实 Cluster ingress；不能先用模型计算结果，再只抽几条真实 ingress 就宣称集成通过。
+
+## 本篇实作：先把三类 Identity 结果跑通
+
+完成实现的固定阅读坐标包括：
+
+```text
+course/m11-complete:matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11IdentityTable.java
+course/m11-complete:matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/DirectM11MatchingRuntime.java
+course/m11-complete:matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11ClusteredMatchingService.java
+course/m11-complete:matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11MatchingClusterClient.java
+course/m11-complete:matching-cluster-runtime/src/test/java/io/github/lchareln/cex/matching/cluster/M11ProtocolCompatibilityTest.java
+```
+
+这些坐标只有在 `CODE_VERIFIED` 登记并推送 complete ref 后才能转换为固定链接；当前不可把可访问性或结果当成既成事实。
+
+先运行只聚焦 identity/correlation 的局部测试：
+
+```bash
+./gradlew :matching-cluster-runtime:test \
+  --tests 'io.github.lchareln.cex.matching.cluster.M11ProtocolCompatibilityTest.identityConflictsAndCorrelationRetriesDoNotMutateBusinessState' \
+  --no-daemon
+```
+
+核对同一组输入是否真的走出三条不同路径：New 只增加一条 binding，换 correlation 的 Duplicate 返回同一 ApplicationSequence/result digest，commandId 或 Slot conflict 保持 semantic digest 与 binding 数不变。这个局部测试不经过真实 Aeron log，因此只能证明 identity seam；真实 callback、response 和 session 观察必须由下一篇的 Cluster 集成与最终 `m11Check` 补齐。
 
 ## SYSTEM_ERROR 与业务 rejection 必须隔离
 

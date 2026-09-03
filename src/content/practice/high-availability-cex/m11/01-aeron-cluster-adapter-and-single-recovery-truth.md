@@ -11,7 +11,7 @@ tags:
   - Aeron Cluster
   - Java
   - 撮合系统
-  - 高可用
+  - 单节点恢复
 draft: true
 ---
 
@@ -19,7 +19,7 @@ draft: true
 
 M10 已经给出一个可恢复、有界准入且有环境绑定容量证据的单机撮合服务。最自然、也最危险的下一步，是把这个服务原封不动塞进 `ClusteredService`，继续写自己的 WAL，再让 Aeron Cluster 也记录一份日志。表面上看，这是“多一层保险”；实际上它让系统在崩溃后拥有两个都自称权威、却可能停在不同位置的恢复源。
 
-M11 的论点很窄：**Aeron 只属于 Adapter 外层；业务状态仍只属于确定性 matching state machine；Cluster 模式只允许 Aeron log 与 Cluster snapshot 成为恢复真相。** 单节点尚不能容忍节点故障，但先把这条边界做对，M12 才有资格讨论三节点复制和切主。
+M11 的论点很窄：**Aeron 只属于 Adapter 外层；业务状态仍只属于确定性 matching state machine；Cluster 模式只允许 Aeron log 与 Cluster snapshot 成为恢复真相。** 单节点尚不能容忍节点故障，但先把这条边界做对，后续单元才有资格讨论三节点复制和切主；当前路线图暂把这项能力列为候选 M12，仍要经过独立签约。
 
 ## 先区分业务状态机与 Cluster 运行时
 
@@ -170,7 +170,7 @@ M11 的 Service 只产生两类内部结果：
 - 给当前调用方的 bounded application response；
 - 供裁判读取、但不影响状态的完整业务 observation。
 
-可续接的 Execution/Market output、sequence、cursor 和 publisher fencing 属于 M14。现在提前把 event list 推给外部消费者，会在还没有 outbox/replay 协议时制造一个无法恢复的半成品接口。
+当前候选地图把可续接的 Execution/Market output、sequence、cursor 和 publisher fencing 暂列在 M14，最终边界仍以 M14 进入 `CONTRACTED` 时的合同为准。现在提前把 event list 推给外部消费者，会在还没有 outbox/replay 协议时制造一个无法恢复的半成品接口。
 
 ## 如何证明边界没有被注释掩盖
 
@@ -186,7 +186,36 @@ M11 的 Service 只产生两类内部结果：
 
 起点已经为这些风险注册了固定场景与 candidate identity；当前阶段只冻结问题和 RED，不能把尚未生成的完成报告写成 PASS。
 
-## 这一章把 M12 的地基压实了什么
+## 本篇实作：先让依赖边界可执行
+
+本篇先完成最小但不可跳过的一步：创建独立 Cluster runtime 模块，并用架构测试证明依赖只能朝 core 方向流动。完成后的固定阅读坐标将是：
+
+```text
+course/m11-complete:matching-cluster-runtime/build.gradle.kts
+course/m11-complete:matching-cluster-runtime/src/test/java/io/github/lchareln/cex/matching/cluster/M11ArchitectureBoundaryTest.java
+course/m11-complete:matching-cluster-runtime/src/main/java/io/github/lchareln/cex/matching/cluster/M11ClusteredMatchingService.java
+```
+
+`IN_PROGRESS` 治理禁止把尚未登记的 complete ref 预先做成超链接；进入 `CODE_VERIFIED`、创建并推送该 tag 后，发布步骤才把这些坐标转换为固定源码链接。当前不能据此声称实现已经完成。
+
+在自己的实现分支运行局部门禁：
+
+```bash
+./gradlew :matching-cluster-runtime:test \
+  --tests 'io.github.lchareln.cex.matching.cluster.M11ArchitectureBoundaryTest' \
+  --no-daemon
+```
+
+这里先核对事实，不预设当前草稿已经 PASS：
+
+- `matching-core` 的依赖和 class tree 中没有 Aeron、文件、网络或 runtime metadata；
+- Aeron 依赖只出现在 `matching-cluster-runtime`；
+- Cluster service 不构造 standalone WAL/Snapshot runtime，也不访问 Counter、Rest、数据库或 HTTP；
+- 测试失败时先停在本篇边界，不进入 codec 或真实 Cluster 启动。
+
+这条局部门禁只证明静态所有权，没有证明真实 ingress、Snapshot 或 restart；后四篇分别补上这些动态事实。
+
+## 这一章为候选 M12 压实了什么地基
 
 M11 完成后能保证的只是：在一个真实单 member Cluster 中，Adapter 不改变业务语义，业务只从 log apply 推进，Cluster log/snapshot 是唯一恢复源。它没有冗余副本；唯一 member 停止，服务就停止。组件是否同进程部署不改变这个事实。
 
