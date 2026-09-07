@@ -1,0 +1,174 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://signal-grid.example/schemas/matching.m12.workload.v1.schema.json",
+  "title": "Matching M12 frozen three-member failover workload",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "unit",
+    "contractPlanVersion",
+    "objective",
+    "dependencyBaseline",
+    "clientOutcomeModel",
+    "realClusterProfile",
+    "faultSchedule",
+    "fixedScenarios",
+    "coverageRequirements",
+    "requiredMutants",
+    "systemErrorControls",
+    "tutorialPermalinks",
+    "exclusions",
+    "releaseTarget",
+    "stopPoint"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "matching.m12.workload.v1" },
+    "unit": { "const": "M12" },
+    "contractPlanVersion": { "const": "0.15" },
+    "objective": { "type": "string", "minLength": 80 },
+    "dependencyBaseline": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sourceRef", "sourceCommit", "aeronVersion", "agronaVersion", "javaRelease", "m11GoldenCount"],
+      "properties": {
+        "sourceRef": { "const": "course/m11-complete" },
+        "sourceCommit": { "$ref": "#/$defs/gitCommit" },
+        "aeronVersion": { "const": "1.52.2" },
+        "agronaVersion": { "const": "2.5.0" },
+        "javaRelease": { "const": 25 },
+        "m11GoldenCount": { "const": 6 }
+      }
+    },
+    "clientOutcomeModel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["beforeIngressAcceptance", "afterIngressAcceptanceWithoutTrustedResponse", "correlatedCurrentLeaderResponse", "unknownRecovery", "allowedConvergedResponseStatuses", "timeoutIsBusinessRejection"],
+      "properties": {
+        "beforeIngressAcceptance": { "const": "NOT_SUBMITTED" },
+        "afterIngressAcceptanceWithoutTrustedResponse": { "const": "UNKNOWN" },
+        "correlatedCurrentLeaderResponse": { "const": "ACKNOWLEDGED" },
+        "unknownRecovery": { "const": "SAME_DURABLE_COMMAND_IDENTITY_FRESH_CORRELATION" },
+        "allowedConvergedResponseStatuses": {
+          "const": ["NEW_APPLIED", "DUPLICATE_REPLAYED"]
+        },
+        "timeoutIsBusinessRejection": { "const": false }
+      }
+    },
+    "realClusterProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["memberCount", "staticMemberIds", "appointedInitialLeaderId", "clusterId", "transport", "lifecycleIsolation", "processIsolationClaim", "faultController", "externalServices", "dockerRequired", "ownedRoot", "portsPerMember", "maxWorkers", "deadlinePolicy"],
+      "properties": {
+        "memberCount": { "const": 3 },
+        "staticMemberIds": { "const": [0, 1, 2] },
+        "appointedInitialLeaderId": { "const": 0 },
+        "clusterId": { "const": 12 },
+        "transport": { "const": "LOCALHOST_REAL_AERON_CHILD_PROCESSES" },
+        "lifecycleIsolation": { "const": "INDEPENDENT_COMPONENTS_DIRECTORIES_PORTS_AND_HANDLES" },
+        "processIsolationClaim": { "const": true },
+        "faultController": { "const": "OUTSIDE_CLUSTERED_SERVICE" },
+        "externalServices": { "const": false },
+        "dockerRequired": { "const": false },
+        "ownedRoot": { "const": "build/tmp/m12/three-member-failover" },
+        "portsPerMember": { "const": 5 },
+        "maxWorkers": { "const": 1 },
+        "deadlinePolicy": { "const": "BOUNDED_POLL_WITH_COMPONENT_ERROR_CAPTURE_NO_FIXED_SLEEP" }
+      }
+    },
+    "faultSchedule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["algorithm", "seed", "phaseOrder", "preFailoverNew", "acknowledgedDuplicateRetries", "appliedResponseUnobservedUnknown", "postFailoverNew", "postFailoverDuplicateRetries", "noQuorumUnknown", "distinctBusinessCommands", "minimumIngressAttempts", "expectedFinalNextApplicationSequence"],
+      "properties": {
+        "algorithm": { "const": "splitmix64-v1" },
+        "seed": { "const": "6120" },
+        "phaseOrder": {
+          "type": "array",
+          "minItems": 14,
+          "maxItems": 14,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 3 }
+        },
+        "preFailoverNew": { "const": 32 },
+        "acknowledgedDuplicateRetries": { "const": 8 },
+        "appliedResponseUnobservedUnknown": { "const": 1 },
+        "postFailoverNew": { "const": 32 },
+        "postFailoverDuplicateRetries": { "const": 8 },
+        "noQuorumUnknown": { "const": 1 },
+        "distinctBusinessCommands": { "const": 66 },
+        "minimumIngressAttempts": { "const": 84 },
+        "expectedFinalNextApplicationSequence": { "const": 67 }
+      }
+    },
+    "fixedScenarios": {
+      "type": "array",
+      "minItems": 14,
+      "maxItems": 14,
+      "items": { "$ref": "#/$defs/scenario" }
+    },
+    "coverageRequirements": {
+      "type": "array",
+      "minItems": 25,
+      "maxItems": 25,
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^[A-Z0-9_]+$" }
+    },
+    "requiredMutants": {
+      "type": "array",
+      "minItems": 8,
+      "maxItems": 8,
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^M12-[A-Z0-9-]+$" }
+    },
+    "systemErrorControls": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^M12-[A-Z0-9-]+$" }
+    },
+    "tutorialPermalinks": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^[a-z0-9-]+$" }
+    },
+    "exclusions": {
+      "type": "array",
+      "minItems": 9,
+      "maxItems": 9,
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^[A-Z0-9_]+$" }
+    },
+    "releaseTarget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["unitTag", "productRelease", "meaning"],
+      "properties": {
+        "unitTag": { "const": "course/m12-complete" },
+        "productRelease": { "const": "matching-0.8.0" },
+        "meaning": { "const": "SINGLE_SHARD_THREE_MEMBER_LEADER_FAILURE_CORRECTNESS_STOP_POINT" }
+      }
+    },
+    "stopPoint": { "type": "string", "minLength": 120 }
+  },
+  "$defs": {
+    "gitCommit": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "scenario": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "proofObligations"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[A-Z0-9_]+$" },
+        "proofObligations": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^[A-Z0-9_]+$" }
+        }
+      }
+    }
+  }
+}

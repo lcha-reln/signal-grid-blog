@@ -1,0 +1,103 @@
+{
+  "schemaVersion" : "matching.m13.fixed.v1",
+  "scenarios" : [ {
+    "schemaVersion" : "matching.m13.semantic-observation.v1",
+    "id" : "ROUTE_CANONICAL_HASH_AND_OWNER",
+    "scenario" : "ROUTE_CANONICAL_HASH_AND_OWNER",
+    "candidate" : "PRODUCTION",
+    "status" : "PASS",
+    "executed" : true,
+    "submissions" : 0,
+    "assertions" : 6,
+    "failure" : "",
+    "rawFile" : "fixed-ROUTE_CANONICAL_HASH_AND_OWNER.jsonl",
+    "rawSha256" : "4482c294614ef585a288f6b95d76f1da606d89f2739fc03439efd62abcc481a7"
+  }, {
+    "schemaVersion" : "matching.m13.semantic-observation.v1",
+    "id" : "WRONG_SHARD_AND_INSTRUMENT_NO_MUTATION",
+    "scenario" : "WRONG_SHARD_AND_INSTRUMENT_NO_MUTATION",
+    "candidate" : "PRODUCTION",
+    "status" : "PASS",
+    "executed" : true,
+    "submissions" : 10,
+    "assertions" : 22,
+    "failure" : "",
+    "rawFile" : "fixed-WRONG_SHARD_AND_INSTRUMENT_NO_MUTATION.jsonl",
+    "rawSha256" : "47a58a34e558a0cb0ca8e7f4f70f33a32c3519375f5f6854eab4c5c3c644f5ab"
+  }, {
+    "schemaVersion" : "matching.m13.semantic-observation.v1",
+    "id" : "INDEPENDENT_BOOK_PRICE_TIME_AND_ORDER_IDS",
+    "scenario" : "INDEPENDENT_BOOK_PRICE_TIME_AND_ORDER_IDS",
+    "candidate" : "PRODUCTION",
+    "status" : "PASS",
+    "executed" : true,
+    "submissions" : 5,
+    "assertions" : 19,
+    "failure" : "",
+    "rawFile" : "fixed-INDEPENDENT_BOOK_PRICE_TIME_AND_ORDER_IDS.jsonl",
+    "rawSha256" : "06d2e822ea826be03c5eff9c76ba0a07888523359a61a0bac1e00275491d8ee2"
+  }, {
+    "schemaVersion" : "matching.m13.semantic-observation.v1",
+    "id" : "BOOK_LOCAL_RULES_MODES_AND_CONTROL_SEQUENCE",
+    "scenario" : "BOOK_LOCAL_RULES_MODES_AND_CONTROL_SEQUENCE",
+    "candidate" : "PRODUCTION",
+    "status" : "PASS",
+    "executed" : true,
+    "submissions" : 11,
+    "assertions" : 39,
+    "failure" : "",
+    "rawFile" : "fixed-BOOK_LOCAL_RULES_MODES_AND_CONTROL_SEQUENCE.jsonl",
+    "rawSha256" : "3a02f3a0aa8c61e1e58fb3215248497967a827aceff994ec341dfa386a80519c"
+  }, {
+    "schemaVersion" : "matching.m13.semantic-observation.v1",
+    "id" : "SHARD_IDENTITY_CONFLICT_DUPLICATE_AND_PRODUCER_FENCE",
+    "scenario" : "SHARD_IDENTITY_CONFLICT_DUPLICATE_AND_PRODUCER_FENCE",
+    "candidate" : "PRODUCTION",
+    "status" : "PASS",
+    "executed" : true,
+    "submissions" : 8,
+    "assertions" : 22,
+    "failure" : "",
+    "rawFile" : "fixed-SHARD_IDENTITY_CONFLICT_DUPLICATE_AND_PRODUCER_FENCE.jsonl",
+    "rawSha256" : "54b38f14c5783018020eeb7c3fa1fe62745b9d13631f7884c8f1ea248a5ea492"
+  }, {
+    "schemaVersion" : "matching.m13.semantic-observation.v1",
+    "id" : "APPEND_ONLY_ROUTE_ACTIVATION",
+    "scenario" : "APPEND_ONLY_ROUTE_ACTIVATION",
+    "candidate" : "PRODUCTION",
+    "status" : "PASS",
+    "executed" : true,
+    "submissions" : 7,
+    "assertions" : 18,
+    "failure" : "",
+    "rawFile" : "fixed-APPEND_ONLY_ROUTE_ACTIVATION.jsonl",
+    "rawSha256" : "6ab4091a9beb14d1a48e4d5b8b5a0f5c51e9186f61069f7ad2b081c95b45ed61"
+  }, {
+    "schemaVersion" : "matching.m13.semantic-observation.v1",
+    "id" : "MULTI_BOOK_SNAPSHOT_AND_SUFFIX_EQUIVALENCE",
+    "scenario" : "MULTI_BOOK_SNAPSHOT_AND_SUFFIX_EQUIVALENCE",
+    "candidate" : "PRODUCTION",
+    "status" : "PASS",
+    "executed" : true,
+    "submissions" : 10,
+    "assertions" : 19,
+    "failure" : "",
+    "rawFile" : "fixed-MULTI_BOOK_SNAPSHOT_AND_SUFFIX_EQUIVALENCE.jsonl",
+    "rawSha256" : "7d683a9a8ed011afcba4b20b076ea30fe162015ca35bb2a3d0be793f13b8956b"
+  }, {
+    "schemaVersion" : "matching.m13.semantic-observation.v1",
+    "id" : "MALFORMED_CODEC_AND_SNAPSHOT_FAIL_CLOSED",
+    "scenario" : "MALFORMED_CODEC_AND_SNAPSHOT_FAIL_CLOSED",
+    "candidate" : "PRODUCTION",
+    "status" : "PASS",
+    "executed" : true,
+    "submissions" : 2,
+    "assertions" : 1701,
+    "failure" : "",
+    "rawFile" : "fixed-MALFORMED_CODEC_AND_SNAPSHOT_FAIL_CLOSED.jsonl",
+    "rawSha256" : "85ffa3ca93eb8f92cd5c0a691daddeaaf8e8f3c8c2a505406b4aacbe736d4266"
+  } ],
+  "executedScenarios" : 8,
+  "passedScenarios" : 8,
+  "status" : "PASS"
+}

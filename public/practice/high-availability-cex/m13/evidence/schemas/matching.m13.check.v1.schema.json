@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "unit", "status", "contractPlanVersion", "workloadSha256", "executed", "clusterGroups", "childProcesses"],
+  "properties": {
+    "schemaVersion": {"const": "matching.m13.check.v1"},
+    "unit": {"const": "M13"},
+    "status": {"const": "GOAL_NOT_IMPLEMENTED"},
+    "contractPlanVersion": {"const": "0.16"},
+    "workloadSha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "executed": {"const": false},
+    "clusterGroups": {"const": 0},
+    "childProcesses": {"const": 0}
+  }
+}

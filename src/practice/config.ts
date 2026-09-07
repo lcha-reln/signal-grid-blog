@@ -61,15 +61,15 @@ export const PRACTICE_CASES: readonly PracticeCase[] = [
   {
     slug: "high-availability-cex",
     designDocument: "docs/HIGH_AVAILABILITY_CEX_PRACTICE_PLAN.md",
-    planVersion: "0.15",
+    planVersion: "0.16",
     index: "01",
     eyebrow: "FLAGSHIP BUILD / EXCHANGE SYSTEMS",
     title: "高可用 CEX 交易核心",
     summary:
       "从单交易对限价撮合起步，先交付高可用现货核心，再按门禁演进到杠杆、永续、交割与期权。",
     status: "BUILDING",
-    statusLabel: "SPOT · M12 已发布",
-    totalUnits: 32,
+    statusLabel: "SPOT · M13 已发布",
+    totalUnits: 33,
     plannedRepositories: 3,
     stack: ["Java", "Aeron Cluster", "Gradle", "Docker", "Astro Labs"],
     theoryPath: "series/trading/",
@@ -88,10 +88,11 @@ export const PRACTICE_CASES: readonly PracticeCase[] = [
       "M10",
       "M11",
       "M12",
+      "M13",
     ],
-    currentUnitCode: "M12",
+    currentUnitCode: "M13",
     currentAction:
-      "M00～M12 已发布。M12 的 course/m12-complete 与 matching-0.8.0 同指 clean commit d8b1b1fbb36323502495a8bc0a60042db1e9e040；真实三成员 child-process fault suite、三项 ArchiveMarkFile 活动年龄严格大于 10,000 ms 的重启 witness、85/84/82/2/1 invocation 分类、无 quorum 恢复、三副本与 Direct oracle 等价，以及 SHA-256 e25ff7069a831a56cc42b1ebd7d5aaf0cde39b6158caf1e68b8725b0f8862983 的静态 evidence 已闭合。M13 仍为候选，开启前须重新评审并签约。",
+      "M00～M13 已发布。M13 的两个独立三成员组完成静态权威路由、多订单簿、错误路由零副作用、故障隔离和恢复验收；10 个场景、seed 6313 的 64×64 生成历史与 6 个语义变异体通过，五篇教程和 204 项原始 artifact 随 course/m13-complete 公开。证据绑定 clean commit eb1b65d2ea2159ba607e3271f0bfd209ea4906ea，限定为单机进程故障与有限正确性验收。当前产品停止点仍为 matching-0.8.0；接下来评审 M14 连续业务输出，M15 完成发布制品运行资格后再发布 matching-1.0.0。",
     profileRoadmapTitle: "现货是第一份完整交付，不是专题终点",
     profileRoadmapDescription:
       "只有当前 Profile 展开单元、仓库与实施设计；LOCKED 只冻结产品方向和解锁门禁，不代表已经创建单元、仓库或服务；后续优先复用已发布的 Matching、Counter 与 Rest 边界，具体仓库拓扑在解锁时评审。",
@@ -142,7 +143,7 @@ export const PRACTICE_CASES: readonly PracticeCase[] = [
         code: "M",
         title: "Matching",
         description: "订单簿、价格时间优先、成交事实、复制执行与行情输出。",
-        units: 15,
+        units: 16,
         status: "ACTIVE",
         unlock: "当前唯一实施仓库",
         repositoryUrl: "https://github.com/lcha-reln/cex-matching",
@@ -185,7 +186,8 @@ export const PRACTICE_CASES: readonly PracticeCase[] = [
       {
         version: "matching-1.0.0",
         title: "可运营的撮合项目",
-        description: "静态分片、可续接输出、升级恢复和运行资格形成完整闭环。",
+        description:
+          "M15 完成静态分片、可续接输出、受控升级回滚、冷备恢复和环境绑定运行资格闭环。",
       },
       {
         version: "SPOT-CEX-1.0",

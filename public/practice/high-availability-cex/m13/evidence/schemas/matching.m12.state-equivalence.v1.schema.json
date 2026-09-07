@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/lcha-reln/cex-matching/main/schemas/matching.m12.state-equivalence.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "status", "implementation", "applicationObserver", "memberCount", "nextApplicationSequence", "identityCount", "semanticStateDigest", "expectedSemanticStateDigest", "identityResultDigest", "expectedIdentityResultDigest", "allMembersIdentityResultDigestMatchDirectOracle", "allMembersIdentityCountExact", "commitPosition", "logPosition", "stateEquivalent", "componentErrorCount", "diagnosticWarningCount", "droppedDiagnosticWarnings", "members"],
+  "properties": {
+    "schemaVersion": { "const": "matching.m12.state-equivalence.v1" },
+    "status": { "const": "PASS" },
+    "implementation": { "const": "REAL_AERON_CHILD_PROCESSES" },
+    "applicationObserver": { "const": true },
+    "memberCount": { "const": 3 },
+    "nextApplicationSequence": { "const": 67 },
+    "identityCount": { "const": 66 },
+    "semanticStateDigest": { "$ref": "#/$defs/sha256" },
+    "expectedSemanticStateDigest": { "$ref": "#/$defs/sha256" },
+    "identityResultDigest": { "$ref": "#/$defs/sha256" },
+    "expectedIdentityResultDigest": { "$ref": "#/$defs/sha256" },
+    "allMembersIdentityResultDigestMatchDirectOracle": { "const": true },
+    "allMembersIdentityCountExact": { "const": true },
+    "commitPosition": { "type": "integer", "minimum": 1 },
+    "logPosition": { "type": "integer", "minimum": 1 },
+    "stateEquivalent": { "const": true },
+    "componentErrorCount": { "const": 0 },
+    "diagnosticWarningCount": { "type": "integer", "minimum": 0, "maximum": 9 },
+    "droppedDiagnosticWarnings": { "const": 0 },
+    "members": { "type": "array", "minItems": 3, "maxItems": 3, "items": { "$ref": "#/$defs/member" } }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "member": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["memberId", "processId", "role", "electionState", "leadershipTermId", "commitPosition", "logPosition", "nextApplicationSequence", "identityCount", "semanticStateDigest", "identityResultDigest", "componentErrorCount", "diagnosticWarningCount", "droppedDiagnosticWarnings", "diagnosticWarnings"],
+      "properties": {
+        "memberId": { "type": "integer", "minimum": 0, "maximum": 2 },
+        "processId": { "type": "integer", "minimum": 1 },
+        "role": { "enum": ["LEADER", "FOLLOWER"] },
+        "electionState": { "const": "CLOSED" },
+        "leadershipTermId": { "type": "integer", "minimum": 0 },
+        "commitPosition": { "type": "integer", "minimum": 1 },
+        "logPosition": { "type": "integer", "minimum": 1 },
+        "nextApplicationSequence": { "const": 67 },
+        "identityCount": { "const": 66 },
+        "semanticStateDigest": { "$ref": "#/$defs/sha256" },
+        "identityResultDigest": { "$ref": "#/$defs/sha256" },
+        "componentErrorCount": { "const": 0 },
+        "diagnosticWarningCount": { "type": "integer", "minimum": 0, "maximum": 3 },
+        "droppedDiagnosticWarnings": { "const": 0 },
+        "diagnosticWarnings": { "type": "array", "maxItems": 3, "items": { "$ref": "#/$defs/aeronFailStopWarning" } }
+      }
+    },
+    "aeronFailStopWarning": { "type": "string", "pattern": "^io\\.aeron\\.cluster\\.client\\.ClusterEvent: WARN - (leader heartbeat timeout|inactive follower quorum|quorum position went backwards: leaderCommitPosition=[0-9]+ quorumPosition=[0-9]+)$" }
+  }
+}

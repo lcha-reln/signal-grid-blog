@@ -1,0 +1,278 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "status",
+    "replacementFor",
+    "matchingCoreByteIdentical",
+    "currentCoreSourceDigest",
+    "baselineCoreTree",
+    "inspectedCoreSources",
+    "coreInfrastructureFree",
+    "m11WireSourcesByteIdentical",
+    "m11WireSourceGitBlobs",
+    "m11ProtocolGoldens",
+    "m11LogCallbackBusinessApplyCalls",
+    "m11NonLogCallbackBusinessApplyCalls",
+    "m11RuntimeMetadataDigestStable",
+    "m10CurrentAlgorithmInfrastructureAndBenchmarkBoundariesPassed",
+    "m10TestkitProbeOccurrences",
+    "m10InspectedLocalRuntimeSources",
+    "m10InspectedBenchmarkSources",
+    "m10ObservedHistoricalCoreDeltaPaths",
+    "m11CurrentProductionBoundary"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "matching.m13.inherited-architecture.v1"
+    },
+    "status": {
+      "const": "PASS"
+    },
+    "replacementFor": {
+      "const": "M10_CORE_DELTA_AND_M11_M12_CORE_UNCHANGED_ONLY"
+    },
+    "matchingCoreByteIdentical": {
+      "type": "boolean"
+    },
+    "currentCoreSourceDigest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "baselineCoreTree": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "inspectedCoreSources": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "coreInfrastructureFree": {
+      "const": true
+    },
+    "m11WireSourcesByteIdentical": {
+      "const": true
+    },
+    "m11WireSourceGitBlobs": {
+      "type": "object",
+      "minProperties": 6,
+      "maxProperties": 6,
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{40}$"
+      }
+    },
+    "m11ProtocolGoldens": {
+      "const": 6
+    },
+    "m11LogCallbackBusinessApplyCalls": {
+      "const": 1
+    },
+    "m11NonLogCallbackBusinessApplyCalls": {
+      "const": 0
+    },
+    "m11RuntimeMetadataDigestStable": {
+      "const": true
+    },
+    "m10CurrentAlgorithmInfrastructureAndBenchmarkBoundariesPassed": {
+      "const": true
+    },
+    "m10TestkitProbeOccurrences": {
+      "const": 1
+    },
+    "m10InspectedLocalRuntimeSources": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "m10InspectedBenchmarkSources": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "m10ObservedHistoricalCoreDeltaPaths": {
+      "type": "array",
+      "minItems": 2,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^matching-core/"
+      }
+    },
+    "m11CurrentProductionBoundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "status",
+        "m10CoreTree",
+        "headCoreTree",
+        "matchingCoreByteIdentical",
+        "coreIdentityEvidenceMode",
+        "currentCoreSourceDigest",
+        "qualificationFaultSelectionsOutsideTestkit",
+        "normalFaultPolicy",
+        "coreInfrastructureFree",
+        "aeronProductionModule",
+        "aeronJavaImportFiles",
+        "aeronJavaImportViolations",
+        "aeronDependencyViolations",
+        "clusterServiceLocalWalViolations",
+        "clusterServiceExternalIoViolations",
+        "callbackReachableStandaloneWalReferences",
+        "callbackReachableExternalIoReferences",
+        "standaloneWalWrites",
+        "callbackModuleViolations",
+        "nonLogCallbackBusinessApplyCalls",
+        "egressStateInputViolations",
+        "standaloneWalWritesEvidenceMode",
+        "runtimeMetadataInBusinessDigest",
+        "callbackInterface",
+        "abstractProductionCallbacks",
+        "implementedProductionCallbacks",
+        "callbackReachableClasses",
+        "runtimeMetadataVariants",
+        "businessApplyCalls",
+        "logCallbackBusinessApplyCalls",
+        "configuredAeronVersion",
+        "configuredAgronaVersion",
+        "versionConfigurationExact",
+        "runtimeMetadataSpyExecuted",
+        "runtimeMetadataDigestStable",
+        "callbackReachableProductionSources",
+        "violations"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "const": "matching.m13.inherited-m11-boundary.v1"
+        },
+        "status": {
+          "const": "PASS"
+        },
+        "m10CoreTree": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "headCoreTree": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "matchingCoreByteIdentical": {
+          "const": false
+        },
+        "coreIdentityEvidenceMode": {
+          "const": "CURRENT_WORKTREE_M13_WITNESS"
+        },
+        "currentCoreSourceDigest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "qualificationFaultSelectionsOutsideTestkit": {
+          "const": 0
+        },
+        "normalFaultPolicy": {
+          "const": "NONE"
+        },
+        "coreInfrastructureFree": {
+          "const": true
+        },
+        "aeronProductionModule": {
+          "const": "matching-cluster-runtime"
+        },
+        "aeronJavaImportFiles": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "aeronJavaImportViolations": {
+          "const": 0
+        },
+        "aeronDependencyViolations": {
+          "const": 0
+        },
+        "clusterServiceLocalWalViolations": {
+          "const": 0
+        },
+        "clusterServiceExternalIoViolations": {
+          "const": 0
+        },
+        "callbackReachableStandaloneWalReferences": {
+          "const": 0
+        },
+        "callbackReachableExternalIoReferences": {
+          "const": 0
+        },
+        "standaloneWalWrites": {
+          "const": 0
+        },
+        "callbackModuleViolations": {
+          "const": 0
+        },
+        "nonLogCallbackBusinessApplyCalls": {
+          "const": 0
+        },
+        "egressStateInputViolations": {
+          "const": 0
+        },
+        "standaloneWalWritesEvidenceMode": {
+          "const": "CALLBACK_REACHABLE_SOURCE_REFERENCE_COUNT_COMPATIBILITY"
+        },
+        "runtimeMetadataInBusinessDigest": {
+          "const": false
+        },
+        "callbackInterface": {
+          "const": "io.aeron.cluster.service.ClusteredService"
+        },
+        "abstractProductionCallbacks": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "implementedProductionCallbacks": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "callbackReachableClasses": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "runtimeMetadataVariants": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "businessApplyCalls": {
+          "const": 1
+        },
+        "logCallbackBusinessApplyCalls": {
+          "const": 1
+        },
+        "configuredAeronVersion": {
+          "const": "1.52.2"
+        },
+        "configuredAgronaVersion": {
+          "const": "2.5.0"
+        },
+        "versionConfigurationExact": {
+          "const": true
+        },
+        "runtimeMetadataSpyExecuted": {
+          "const": true
+        },
+        "runtimeMetadataDigestStable": {
+          "const": true
+        },
+        "callbackReachableProductionSources": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z_$][A-Za-z0-9_$]*$"
+          }
+        },
+        "violations": {
+          "type": "array",
+          "maxItems": 0
+        }
+      }
+    }
+  }
+}

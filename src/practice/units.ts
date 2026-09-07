@@ -7107,6 +7107,8963 @@ const M12_EVIDENCE_CONTRACT: PracticeEvidenceContract = {
 // Only contracted or started units belong here. Candidate units stay in the
 // design document until their contract is frozen; this prevents empty course
 // pages from becoming an accidental public roadmap.
+const M13_EVIDENCE_CONTRACT: PracticeEvidenceContract = {
+  schemaVersion: "cex.lab-evidence.v2",
+  project: "matching",
+  publicManifestPath:
+    "practice/high-availability-cex/m13/evidence/manifest.json",
+  manifestSha256:
+    "7a1c5b677f088ccd46b9f4e523151496910aea8874683799b347d57be819ecd7",
+  claimIds: ["finite-static-shard-qualification"],
+  limitations: [
+    "Finite evidence: 10 scenarios, 64 histories of 64 actions, and six executable semantic mutants are not exhaustive exploration or formal proof.",
+    "Two three-member Aeron groups run on one host. Process fail-stop isolation does not prove host, rack, region, power-loss or arbitrary-partition isolation.",
+    "Routing is static and append-only. Existing instruments cannot migrate, disappear or rebalance; no cross-instrument or cross-shard atomic command is provided.",
+    "Mutants execute against local semantic candidates with passing production controls; they are not real Cluster executions, and infrastructure exceptions never count as kills.",
+    "No Cluster throughput, latency, capacity, RTO, RPO, SLO or production-readiness qualification is claimed; M10 single-runtime performance numbers do not transfer.",
+    "Backup, cold restore, mixed-version upgrade, rollback, resumable output, external side effects, Counter, REST, balances and settlement are outside M13.",
+    "The route owner identifies operational responsibility, not authentication. Trusted configuration and operator authorization are deployment prerequisites.",
+    "Per-shard identity and original-result history is retained without pruning. Snapshot validation replays the full retained prefix, so restore work and memory grow with history; bounded recovery and long-duration memory qualification are not established.",
+    "M11 protocol goldens and M12 behavior are rechecked on current compiled code; historical evidence and source-identity gates remain bound to their immutable tags.",
+  ],
+  reportFacts: [
+    {
+      artifactPath: "reports/check/check.json",
+      field: "schemaVersion",
+      equals: "matching.m13.check.v2",
+      claimId: "finite-static-shard-qualification",
+      observationField: "schemaVersion",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "unit",
+      equals: "M13",
+      claimId: "finite-static-shard-qualification",
+      observationField: "unit",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "contractPlanVersion",
+      equals: "0.16",
+      claimId: "finite-static-shard-qualification",
+      observationField: "contractPlanVersion",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "workloadSha256",
+      equals:
+        "1b958e3b51f922cc505a47d63090593a6aa69d80c23f2ef2365747cc96154dc3",
+      claimId: "finite-static-shard-qualification",
+      observationField: "workloadSha256",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "status",
+      equals: "PASS",
+      claimId: "finite-static-shard-qualification",
+      observationField: "status",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "executed",
+      equals: true,
+      claimId: "finite-static-shard-qualification",
+      observationField: "executed",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "sourceCommit",
+      equals: "eb1b65d2ea2159ba607e3271f0bfd209ea4906ea",
+      claimId: "finite-static-shard-qualification",
+      observationField: "sourceCommit",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "sourceDirty",
+      equals: false,
+      claimId: "finite-static-shard-qualification",
+      observationField: "sourceDirty",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "fixedScenarios",
+      equals: 10,
+      claimId: "finite-static-shard-qualification",
+      observationField: "fixedScenarios",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "generatedActions",
+      equals: 4096,
+      claimId: "finite-static-shard-qualification",
+      observationField: "generatedActions",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "semanticMutantsKilled",
+      equals: 6,
+      claimId: "finite-static-shard-qualification",
+      observationField: "semanticMutantsKilled",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "throwingControl",
+      equals: "SYSTEM_ERROR",
+      claimId: "finite-static-shard-qualification",
+      observationField: "throwingControl",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "clusterGroups",
+      equals: 2,
+      claimId: "finite-static-shard-qualification",
+      observationField: "clusterGroups",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "childProcesses",
+      equals: 6,
+      claimId: "finite-static-shard-qualification",
+      observationField: "childProcesses",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "inheritedStatus",
+      equals: "PASS",
+      claimId: "finite-static-shard-qualification",
+      observationField: "inheritedStatus",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "singleHost",
+      equals: true,
+      claimId: "finite-static-shard-qualification",
+      observationField: "singleHost",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "performanceQualified",
+      equals: false,
+      claimId: "finite-static-shard-qualification",
+      observationField: "performanceQualified",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "productRelease",
+      equals: null,
+      claimId: "finite-static-shard-qualification",
+      observationField: "productRelease",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "scenarios.length",
+      equals: 10,
+      claimId: "finite-static-shard-qualification",
+      observationField: "scenarios.length",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "scenarios.0",
+      equals: "ROUTE_CANONICAL_HASH_AND_OWNER",
+      claimId: "finite-static-shard-qualification",
+      observationField: "scenarios.0",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "scenarios.1",
+      equals: "WRONG_SHARD_AND_INSTRUMENT_NO_MUTATION",
+      claimId: "finite-static-shard-qualification",
+      observationField: "scenarios.1",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "scenarios.2",
+      equals: "INDEPENDENT_BOOK_PRICE_TIME_AND_ORDER_IDS",
+      claimId: "finite-static-shard-qualification",
+      observationField: "scenarios.2",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "scenarios.3",
+      equals: "BOOK_LOCAL_RULES_MODES_AND_CONTROL_SEQUENCE",
+      claimId: "finite-static-shard-qualification",
+      observationField: "scenarios.3",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "scenarios.4",
+      equals: "SHARD_IDENTITY_CONFLICT_DUPLICATE_AND_PRODUCER_FENCE",
+      claimId: "finite-static-shard-qualification",
+      observationField: "scenarios.4",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "scenarios.5",
+      equals: "APPEND_ONLY_ROUTE_ACTIVATION",
+      claimId: "finite-static-shard-qualification",
+      observationField: "scenarios.5",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "scenarios.6",
+      equals: "MULTI_BOOK_SNAPSHOT_AND_SUFFIX_EQUIVALENCE",
+      claimId: "finite-static-shard-qualification",
+      observationField: "scenarios.6",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "scenarios.7",
+      equals: "MALFORMED_CODEC_AND_SNAPSHOT_FAIL_CLOSED",
+      claimId: "finite-static-shard-qualification",
+      observationField: "scenarios.7",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "scenarios.8",
+      equals: "TWO_REAL_GROUPS_LEADER_FAILURE_ISOLATION",
+      claimId: "finite-static-shard-qualification",
+      observationField: "scenarios.8",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "scenarios.9",
+      equals: "RESTART_REPLICA_EQUIVALENCE_AND_TEARDOWN",
+      claimId: "finite-static-shard-qualification",
+      observationField: "scenarios.9",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "schemaVersion",
+      equals: "matching.m13.fixed.v1",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.length",
+      equals: 8,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.0.schemaVersion",
+      equals: "matching.m13.semantic-observation.v1",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.0.id",
+      equals: "ROUTE_CANONICAL_HASH_AND_OWNER",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.0.scenario",
+      equals: "ROUTE_CANONICAL_HASH_AND_OWNER",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.0.candidate",
+      equals: "PRODUCTION",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.0.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.0.executed",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.0.submissions",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.0.assertions",
+      equals: 6,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.0.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.0.rawFile",
+      equals: "fixed-ROUTE_CANONICAL_HASH_AND_OWNER.jsonl",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.0.rawSha256",
+      equals:
+        "4482c294614ef585a288f6b95d76f1da606d89f2739fc03439efd62abcc481a7",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.1.schemaVersion",
+      equals: "matching.m13.semantic-observation.v1",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.1.id",
+      equals: "WRONG_SHARD_AND_INSTRUMENT_NO_MUTATION",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.1.scenario",
+      equals: "WRONG_SHARD_AND_INSTRUMENT_NO_MUTATION",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.1.candidate",
+      equals: "PRODUCTION",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.1.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.1.executed",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.1.submissions",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.1.assertions",
+      equals: 22,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.1.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.1.rawFile",
+      equals: "fixed-WRONG_SHARD_AND_INSTRUMENT_NO_MUTATION.jsonl",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.1.rawSha256",
+      equals:
+        "47a58a34e558a0cb0ca8e7f4f70f33a32c3519375f5f6854eab4c5c3c644f5ab",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.2.schemaVersion",
+      equals: "matching.m13.semantic-observation.v1",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.2.id",
+      equals: "INDEPENDENT_BOOK_PRICE_TIME_AND_ORDER_IDS",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.2.scenario",
+      equals: "INDEPENDENT_BOOK_PRICE_TIME_AND_ORDER_IDS",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.2.candidate",
+      equals: "PRODUCTION",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.2.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.2.executed",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.2.submissions",
+      equals: 5,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.2.assertions",
+      equals: 19,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.2.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.2.rawFile",
+      equals: "fixed-INDEPENDENT_BOOK_PRICE_TIME_AND_ORDER_IDS.jsonl",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.2.rawSha256",
+      equals:
+        "06d2e822ea826be03c5eff9c76ba0a07888523359a61a0bac1e00275491d8ee2",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.3.schemaVersion",
+      equals: "matching.m13.semantic-observation.v1",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.3.id",
+      equals: "BOOK_LOCAL_RULES_MODES_AND_CONTROL_SEQUENCE",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.3.scenario",
+      equals: "BOOK_LOCAL_RULES_MODES_AND_CONTROL_SEQUENCE",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.3.candidate",
+      equals: "PRODUCTION",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.3.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.3.executed",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.3.submissions",
+      equals: 11,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.3.assertions",
+      equals: 39,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.3.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.3.rawFile",
+      equals: "fixed-BOOK_LOCAL_RULES_MODES_AND_CONTROL_SEQUENCE.jsonl",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.3.rawSha256",
+      equals:
+        "3a02f3a0aa8c61e1e58fb3215248497967a827aceff994ec341dfa386a80519c",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.4.schemaVersion",
+      equals: "matching.m13.semantic-observation.v1",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.4.id",
+      equals: "SHARD_IDENTITY_CONFLICT_DUPLICATE_AND_PRODUCER_FENCE",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.4.scenario",
+      equals: "SHARD_IDENTITY_CONFLICT_DUPLICATE_AND_PRODUCER_FENCE",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.4.candidate",
+      equals: "PRODUCTION",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.4.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.4.executed",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.4.submissions",
+      equals: 8,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.4.assertions",
+      equals: 22,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.4.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.4.rawFile",
+      equals:
+        "fixed-SHARD_IDENTITY_CONFLICT_DUPLICATE_AND_PRODUCER_FENCE.jsonl",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.4.rawSha256",
+      equals:
+        "54b38f14c5783018020eeb7c3fa1fe62745b9d13631f7884c8f1ea248a5ea492",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.5.schemaVersion",
+      equals: "matching.m13.semantic-observation.v1",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.5.id",
+      equals: "APPEND_ONLY_ROUTE_ACTIVATION",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.5.scenario",
+      equals: "APPEND_ONLY_ROUTE_ACTIVATION",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.5.candidate",
+      equals: "PRODUCTION",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.5.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.5.executed",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.5.submissions",
+      equals: 7,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.5.assertions",
+      equals: 18,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.5.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.5.rawFile",
+      equals: "fixed-APPEND_ONLY_ROUTE_ACTIVATION.jsonl",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.5.rawSha256",
+      equals:
+        "6ab4091a9beb14d1a48e4d5b8b5a0f5c51e9186f61069f7ad2b081c95b45ed61",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.6.schemaVersion",
+      equals: "matching.m13.semantic-observation.v1",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.6.id",
+      equals: "MULTI_BOOK_SNAPSHOT_AND_SUFFIX_EQUIVALENCE",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.6.scenario",
+      equals: "MULTI_BOOK_SNAPSHOT_AND_SUFFIX_EQUIVALENCE",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.6.candidate",
+      equals: "PRODUCTION",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.6.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.6.executed",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.6.submissions",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.6.assertions",
+      equals: 19,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.6.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.6.rawFile",
+      equals: "fixed-MULTI_BOOK_SNAPSHOT_AND_SUFFIX_EQUIVALENCE.jsonl",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.6.rawSha256",
+      equals:
+        "7d683a9a8ed011afcba4b20b076ea30fe162015ca35bb2a3d0be793f13b8956b",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.7.schemaVersion",
+      equals: "matching.m13.semantic-observation.v1",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.7.id",
+      equals: "MALFORMED_CODEC_AND_SNAPSHOT_FAIL_CLOSED",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.7.scenario",
+      equals: "MALFORMED_CODEC_AND_SNAPSHOT_FAIL_CLOSED",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.7.candidate",
+      equals: "PRODUCTION",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.7.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.7.executed",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.7.submissions",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.7.assertions",
+      equals: 1701,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.7.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.7.rawFile",
+      equals: "fixed-MALFORMED_CODEC_AND_SNAPSHOT_FAIL_CLOSED.jsonl",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.7.rawSha256",
+      equals:
+        "85ffa3ca93eb8f92cd5c0a691daddeaaf8e8f3c8c2a505406b4aacbe736d4266",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "executedScenarios",
+      equals: 8,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "passedScenarios",
+      equals: 8,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "schemaVersion",
+      equals: "matching.m13.generated.v1",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "seed",
+      equals: 6313,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "actionsPerHistory",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "algorithm",
+      equals: "splitmix64-v1",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "reference",
+      equals:
+        "M07LinearReferenceModel: one independent flat-list model per instrument",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "comparison",
+      equals:
+        "full ordered business events and all three book/control state projections at each action; full original results on retry",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.length",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.0.history",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.0.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.0.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.0.rawFile",
+      equals: "generated-history-00.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.0.rawSha256",
+      equals:
+        "779cd2c2d8290d0cce39fae53e420b6dc05cc696f4acbbf892d7450c3e350140",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.1.history",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.1.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.1.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.1.rawFile",
+      equals: "generated-history-01.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.1.rawSha256",
+      equals:
+        "a19342bc1be50f333e9e49aee1ade12f4912b13fdff885ba3d64197f4b4e2120",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.2.history",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.2.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.2.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.2.rawFile",
+      equals: "generated-history-02.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.2.rawSha256",
+      equals:
+        "3eb918d43d1c079120f85285298402e28fd0793e702872f6373342c75841940b",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.3.history",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.3.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.3.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.3.rawFile",
+      equals: "generated-history-03.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.3.rawSha256",
+      equals:
+        "87545136963bd0c10110b92280bb945ee1c8172f4ee5090f33a25fe8611f1cbd",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.4.history",
+      equals: 4,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.4.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.4.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.4.rawFile",
+      equals: "generated-history-04.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.4.rawSha256",
+      equals:
+        "e3ff286ba0bee092b165654349386d6abc3daa1c848eaaa6b3e918601ddc0347",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.5.history",
+      equals: 5,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.5.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.5.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.5.rawFile",
+      equals: "generated-history-05.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.5.rawSha256",
+      equals:
+        "c4a114845de853abfa488679862293873d38ce870f794dcde24781c3a49115a0",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.6.history",
+      equals: 6,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.6.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.6.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.6.rawFile",
+      equals: "generated-history-06.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.6.rawSha256",
+      equals:
+        "2f700b45da2e5f7b9703fd6f0b671cc1f006dfd06a6c362c477c4528caae7f49",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.7.history",
+      equals: 7,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.7.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.7.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.7.rawFile",
+      equals: "generated-history-07.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.7.rawSha256",
+      equals:
+        "0be8a377c67aa11a9becc2d7812be0e191eaab1c051332757a11e7fdca18011c",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.8.history",
+      equals: 8,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.8.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.8.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.8.rawFile",
+      equals: "generated-history-08.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.8.rawSha256",
+      equals:
+        "ada9861d073b4c514e0cb0c5224561f90afcf5d5299cde703e3b50578b8551a2",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.9.history",
+      equals: 9,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.9.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.9.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.9.rawFile",
+      equals: "generated-history-09.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.9.rawSha256",
+      equals:
+        "5dc15d4294fb743e1adbf4092c270241acd88054a2a796f4a3b7803b6b62a564",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.10.history",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.10.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.10.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.10.rawFile",
+      equals: "generated-history-10.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.10.rawSha256",
+      equals:
+        "11627d45e76fb6f441cf009eb9b6a3b11bf86f9ba64847fa8652bc867c198a5c",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.11.history",
+      equals: 11,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.11.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.11.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.11.rawFile",
+      equals: "generated-history-11.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.11.rawSha256",
+      equals:
+        "0c97e47eeca8191282ced617ab5e431ed6dc2002f935a7c26583939cd3630f21",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.12.history",
+      equals: 12,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.12.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.12.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.12.rawFile",
+      equals: "generated-history-12.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.12.rawSha256",
+      equals:
+        "39e1b980f7c0d418507512dac783f68791c9da1d55a13a48bba918239d450a70",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.13.history",
+      equals: 13,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.13.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.13.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.13.rawFile",
+      equals: "generated-history-13.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.13.rawSha256",
+      equals:
+        "8efc5036ff236c9373d9b07c9246c92e8bc7f07c24d15f4f8320e1af34fe4519",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.14.history",
+      equals: 14,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.14.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.14.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.14.rawFile",
+      equals: "generated-history-14.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.14.rawSha256",
+      equals:
+        "426378cd6d48750d3bf8a544948c383cf468273fdc79192a5101ccdee76bd429",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.15.history",
+      equals: 15,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.15.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.15.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.15.rawFile",
+      equals: "generated-history-15.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.15.rawSha256",
+      equals:
+        "fa9d768bf4c17c363970fa048c19db7ca1ff5d63bf72b129c3c99e7c5a3ed51c",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.16.history",
+      equals: 16,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.16.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.16.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.16.rawFile",
+      equals: "generated-history-16.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.16.rawSha256",
+      equals:
+        "863d288685ecae3c8fbd6c35623ad2eb5c71dcd58b12a39708c85410b55adfba",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.17.history",
+      equals: 17,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.17.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.17.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.17.rawFile",
+      equals: "generated-history-17.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.17.rawSha256",
+      equals:
+        "08fb3e141bd649a97536e2528c1a78219f38ef35703e1adcf08ce816ee90918a",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.18.history",
+      equals: 18,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.18.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.18.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.18.rawFile",
+      equals: "generated-history-18.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.18.rawSha256",
+      equals:
+        "f48a8cd6a459144087cd0c4908179f817f86ca6e94bedf190268be0fc4a7a198",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.19.history",
+      equals: 19,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.19.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.19.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.19.rawFile",
+      equals: "generated-history-19.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.19.rawSha256",
+      equals:
+        "49b4b21e672cc13fe4f66c5cb698517dd7e34e5fed2920bb55036e4e57b1e00a",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.20.history",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.20.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.20.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.20.rawFile",
+      equals: "generated-history-20.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.20.rawSha256",
+      equals:
+        "0ee0afdb6ce79605ea27ad021b46ef7059feac67461ed27bec00cde55b46e4ee",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.21.history",
+      equals: 21,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.21.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.21.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.21.rawFile",
+      equals: "generated-history-21.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.21.rawSha256",
+      equals:
+        "4617c0120655e71c6b58e02eb14e14afc3d87ae664d3a24648ae61e5951159d3",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.22.history",
+      equals: 22,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.22.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.22.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.22.rawFile",
+      equals: "generated-history-22.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.22.rawSha256",
+      equals:
+        "cbc101bbe558339f5a5ad729ffd3e26ca09fca1f4b55babe773ef00e67968d51",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.23.history",
+      equals: 23,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.23.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.23.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.23.rawFile",
+      equals: "generated-history-23.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.23.rawSha256",
+      equals:
+        "cceb17a3c59636fc02bf3d934a612be05ba4ab8dc597fc901442a26b4174d8b2",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.24.history",
+      equals: 24,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.24.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.24.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.24.rawFile",
+      equals: "generated-history-24.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.24.rawSha256",
+      equals:
+        "ccd193fb36e796be1c781a59f3218e63aa5c78bd1d7da37ff7746a54d551c61e",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.25.history",
+      equals: 25,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.25.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.25.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.25.rawFile",
+      equals: "generated-history-25.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.25.rawSha256",
+      equals:
+        "06fb3ae7e0847146cd7be789e12cfb86f4598505b698e4608e91f57dab5086ac",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.26.history",
+      equals: 26,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.26.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.26.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.26.rawFile",
+      equals: "generated-history-26.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.26.rawSha256",
+      equals:
+        "64892f851a5bbce20b63de1450aa0d564be9fc87dce8faaf41953ed87ebf6888",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.27.history",
+      equals: 27,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.27.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.27.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.27.rawFile",
+      equals: "generated-history-27.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.27.rawSha256",
+      equals:
+        "d1cc1b8186db509ef2f0767eb6834316a8c00da8b6f370ec28b3f18713612455",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.28.history",
+      equals: 28,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.28.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.28.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.28.rawFile",
+      equals: "generated-history-28.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.28.rawSha256",
+      equals:
+        "7d05b902aeeba5923b50bedb02c05921af7ff74b17f0d319076e3afc83b2dd86",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.29.history",
+      equals: 29,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.29.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.29.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.29.rawFile",
+      equals: "generated-history-29.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.29.rawSha256",
+      equals:
+        "e2ff724b876241c97ee8bc0aa895fbc4cdfb86b42f157cea7526f95c25bd63ae",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.30.history",
+      equals: 30,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.30.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.30.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.30.rawFile",
+      equals: "generated-history-30.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.30.rawSha256",
+      equals:
+        "b8723e164f8cc4aac4a0ae66da89a66ba9864067febcdeabbb5faa10e3eaf487",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.31.history",
+      equals: 31,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.31.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.31.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.31.rawFile",
+      equals: "generated-history-31.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.31.rawSha256",
+      equals:
+        "11cc4678dbbbd18d0fbe1a04ef3ed83efad3fcfd42f0bb7248cf8b2d5e750b8c",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.32.history",
+      equals: 32,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.32.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.32.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.32.rawFile",
+      equals: "generated-history-32.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.32.rawSha256",
+      equals:
+        "8c76b31c81648d840862149b36fa28866750d5be83d53b6ddcc4f2b5732054cd",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.33.history",
+      equals: 33,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.33.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.33.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.33.rawFile",
+      equals: "generated-history-33.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.33.rawSha256",
+      equals:
+        "f4e855239fde479166e43f2670562197d4fc68d2ddbea22a9758f21762acce1a",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.34.history",
+      equals: 34,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.34.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.34.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.34.rawFile",
+      equals: "generated-history-34.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.34.rawSha256",
+      equals:
+        "25e92b148cbf8c0ba85db4c4ac5413355b795fd1939211140c71c93a6472998a",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.35.history",
+      equals: 35,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.35.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.35.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.35.rawFile",
+      equals: "generated-history-35.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.35.rawSha256",
+      equals:
+        "d6a39019c727c817d11049133f0841c586f80441ea60697b2d29f30275ce3b6b",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.36.history",
+      equals: 36,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.36.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.36.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.36.rawFile",
+      equals: "generated-history-36.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.36.rawSha256",
+      equals:
+        "22616b55601092bc4483a14b8f4b686055850e148dfdf1c8254761f5ab72bd34",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.37.history",
+      equals: 37,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.37.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.37.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.37.rawFile",
+      equals: "generated-history-37.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.37.rawSha256",
+      equals:
+        "7b98e708702b28a96623f69cca28eac5a1b52e7a0f67256b597e27fb2f22633d",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.38.history",
+      equals: 38,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.38.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.38.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.38.rawFile",
+      equals: "generated-history-38.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.38.rawSha256",
+      equals:
+        "0a128a7eb7ee29fc5edd7697f80b01ff8fb641b9f4306d658458ac3c57b54663",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.39.history",
+      equals: 39,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.39.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.39.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.39.rawFile",
+      equals: "generated-history-39.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.39.rawSha256",
+      equals:
+        "2a6ce04f2449dc9099560245f24a1fdd313fdfb5d331bf522ff80b07e638e7b2",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.40.history",
+      equals: 40,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.40.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.40.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.40.rawFile",
+      equals: "generated-history-40.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.40.rawSha256",
+      equals:
+        "e5576e113c78c833adc6d27bd0d8f7c553ab832c2ce1e47c3eaaa093310c30a8",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.41.history",
+      equals: 41,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.41.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.41.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.41.rawFile",
+      equals: "generated-history-41.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.41.rawSha256",
+      equals:
+        "e86c0cfe2efb6d0a16ca278a299d453a82426731235ebea40b8b4421ff5205d1",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.42.history",
+      equals: 42,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.42.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.42.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.42.rawFile",
+      equals: "generated-history-42.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.42.rawSha256",
+      equals:
+        "bce6b15320bbfe90870a916d874184064eb9075680c3e67ac1445f63e7b66c76",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.43.history",
+      equals: 43,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.43.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.43.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.43.rawFile",
+      equals: "generated-history-43.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.43.rawSha256",
+      equals:
+        "1c257375b7d8e10aca2e4eccba18d74885c2da188804e8b020cf7bfb8faf96ce",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.44.history",
+      equals: 44,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.44.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.44.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.44.rawFile",
+      equals: "generated-history-44.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.44.rawSha256",
+      equals:
+        "237d03456414b8264aff50b75377d4ed1ea81fcd42d730adc49a5307c3892563",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.45.history",
+      equals: 45,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.45.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.45.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.45.rawFile",
+      equals: "generated-history-45.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.45.rawSha256",
+      equals:
+        "60f8f1a45aa97e1bc36791d1720f8dcfb37951d65412c347c6fa5787d3c9ea93",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.46.history",
+      equals: 46,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.46.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.46.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.46.rawFile",
+      equals: "generated-history-46.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.46.rawSha256",
+      equals:
+        "9a359296e1411247adac9dd96f00d7085947fb96fee27793884875020ed9ddd4",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.47.history",
+      equals: 47,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.47.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.47.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.47.rawFile",
+      equals: "generated-history-47.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.47.rawSha256",
+      equals:
+        "24ae3bc3eb425b9082863aa631a2cd853a9ed70d038b54619a28f84c86ff432d",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.48.history",
+      equals: 48,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.48.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.48.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.48.rawFile",
+      equals: "generated-history-48.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.48.rawSha256",
+      equals:
+        "f90c1b51018d6e64e22f35089760fc9ff04ca3d1c2f516e5432588c1b3c20cad",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.49.history",
+      equals: 49,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.49.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.49.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.49.rawFile",
+      equals: "generated-history-49.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.49.rawSha256",
+      equals:
+        "34bff9562e709de397ba621042cc298d25430fd888949ff62b80215dc047ff61",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.50.history",
+      equals: 50,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.50.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.50.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.50.rawFile",
+      equals: "generated-history-50.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.50.rawSha256",
+      equals:
+        "df84d93bcc6c4c0ec04bd7c7b85f04339124fb952f31bfe1284db360353fbfed",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.51.history",
+      equals: 51,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.51.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.51.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.51.rawFile",
+      equals: "generated-history-51.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.51.rawSha256",
+      equals:
+        "93eb09a28791c0ea903311e3b1cfddd2552fdfbe9878b8403ff8078aae7854ee",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.52.history",
+      equals: 52,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.52.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.52.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.52.rawFile",
+      equals: "generated-history-52.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.52.rawSha256",
+      equals:
+        "3ef862a38a4f68b6d3cf8dfa18ff6bce81730f9cfa3e003721e6ec5c7c84cc1d",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.53.history",
+      equals: 53,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.53.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.53.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.53.rawFile",
+      equals: "generated-history-53.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.53.rawSha256",
+      equals:
+        "b655f8acdaaa53ad47120e1f21ba505d8b535cfa09d62412bce703a936b9675e",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.54.history",
+      equals: 54,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.54.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.54.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.54.rawFile",
+      equals: "generated-history-54.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.54.rawSha256",
+      equals:
+        "3ea99b9e5145ea896a788882ffd5e2c9ccc2b55553f6622481004a9b04c78d95",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.55.history",
+      equals: 55,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.55.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.55.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.55.rawFile",
+      equals: "generated-history-55.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.55.rawSha256",
+      equals:
+        "79e4818757ff28bdc916527b4666a9fb23b14b9b806e70889cfb3cf34bd3a9af",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.56.history",
+      equals: 56,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.56.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.56.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.56.rawFile",
+      equals: "generated-history-56.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.56.rawSha256",
+      equals:
+        "07e736e0c5dd3d892b6515016ae51103ef53d15f764ce812a797d512fc57cff8",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.57.history",
+      equals: 57,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.57.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.57.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.57.rawFile",
+      equals: "generated-history-57.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.57.rawSha256",
+      equals:
+        "c6642ae93a95806af0795f617afbab1732700d0f08dfca6cfd1ffa6ffb14ef06",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.58.history",
+      equals: 58,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.58.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.58.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.58.rawFile",
+      equals: "generated-history-58.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.58.rawSha256",
+      equals:
+        "8330194ef58e690a18162e0dc13dec866c5713f58b8573b21119f4416953d9a6",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.59.history",
+      equals: 59,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.59.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.59.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.59.rawFile",
+      equals: "generated-history-59.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.59.rawSha256",
+      equals:
+        "0be63c9deeb9183ccd26f9697f363d2ab59b4916db7b819a203d74eb882688a3",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.60.history",
+      equals: 60,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.60.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.60.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.60.rawFile",
+      equals: "generated-history-60.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.60.rawSha256",
+      equals:
+        "9c5eb450d620214087b3a1c6c6dd037816264eaf6ae905a8f9b7fe4ec7df9a9f",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.61.history",
+      equals: 61,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.61.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.61.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.61.rawFile",
+      equals: "generated-history-61.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.61.rawSha256",
+      equals:
+        "440999db72aaa9edde3989445237507fe8c827ee6a7ba4f910fa60a51c646fab",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.62.history",
+      equals: 62,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.62.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.62.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.62.rawFile",
+      equals: "generated-history-62.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.62.rawSha256",
+      equals:
+        "c80c02c4f5c10a3a7b99956f5268a0bd17e68575c221148a959a84860d63b364",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.63.history",
+      equals: 63,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.63.executedActions",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.63.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.63.rawFile",
+      equals: "generated-history-63.jsonl",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "observations.63.rawSha256",
+      equals:
+        "ed3cdd07e49610a449a401a9e0567f3291560266e70039b2a09cabc1792f55a0",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "corpusSha256",
+      equals:
+        "d6c4341dfc90330fae96cab6628dec850ae2912593ef9e8a7b593cce6f9d17d1",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "byteExactRegeneration",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "executedActions",
+      equals: 4096,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "completedHistories",
+      equals: 64,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "newApplied",
+      equals: 3328,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "duplicateReplayed",
+      equals: 256,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "preflightRejected",
+      equals: 512,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "perBookStateComparisons",
+      equals: 12288,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "fullEventComparisons",
+      equals: 3328,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "snapshotsRestored",
+      equals: 128,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "schemaVersion",
+      equals: "matching.m13.mutants.v1",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "mutationBoundary",
+      equals:
+        "TESTKIT_REQUEST_AND_RECOVERY_ADAPTER_USING_REAL_DIRECT_M13_RUNTIME",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.length",
+      equals: 6,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.0.id",
+      equals: "IGNORE_SHARD_ROUTE",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.0.classification",
+      equals: "STUDENT_FAILURE",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.0.countedAsKill",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.0.scenario",
+      equals: "WRONG_SHARD_AND_INSTRUMENT_NO_MUTATION",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.0.productionControl.schemaVersion",
+      equals: "matching.m13.semantic-observation.v1",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.0.productionControl.id",
+      equals: "WRONG_SHARD_AND_INSTRUMENT_NO_MUTATION",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.0.productionControl.scenario",
+      equals: "WRONG_SHARD_AND_INSTRUMENT_NO_MUTATION",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.0.productionControl.candidate",
+      equals: "PRODUCTION",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.0.productionControl.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.0.productionControl.executed",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.0.productionControl.submissions",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.0.productionControl.assertions",
+      equals: 22,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.0.productionControl.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.0.productionControl.rawFile",
+      equals: "mutant-IGNORE_SHARD_ROUTE-control.jsonl",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.0.productionControl.rawSha256",
+      equals:
+        "47a58a34e558a0cb0ca8e7f4f70f33a32c3519375f5f6854eab4c5c3c644f5ab",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.0.candidateObservation.schemaVersion",
+      equals: "matching.m13.semantic-observation.v1",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.0.candidateObservation.id",
+      equals: "WRONG_SHARD_AND_INSTRUMENT_NO_MUTATION",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.0.candidateObservation.scenario",
+      equals: "WRONG_SHARD_AND_INSTRUMENT_NO_MUTATION",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.0.candidateObservation.candidate",
+      equals: "IGNORE_SHARD_ROUTE",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.0.candidateObservation.status",
+      equals: "STUDENT_FAILURE",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.0.candidateObservation.executed",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.0.candidateObservation.submissions",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.0.candidateObservation.assertions",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.0.candidateObservation.failure",
+      equals:
+        "preflight expected WRONG_SHARD but observed NEW_APPLIED/Optional.empty",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.0.candidateObservation.rawFile",
+      equals: "mutant-IGNORE_SHARD_ROUTE-candidate.jsonl",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.0.candidateObservation.rawSha256",
+      equals:
+        "49af05ef75bea57a57dc59e426fcb6a2fdfbc71ec4fae156a6ed891f43ee0a3d",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.1.id",
+      equals: "SHARE_BOOK_STATE",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.1.classification",
+      equals: "STUDENT_FAILURE",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.1.countedAsKill",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.1.scenario",
+      equals: "INDEPENDENT_BOOK_PRICE_TIME_AND_ORDER_IDS",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.1.productionControl.schemaVersion",
+      equals: "matching.m13.semantic-observation.v1",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.1.productionControl.id",
+      equals: "INDEPENDENT_BOOK_PRICE_TIME_AND_ORDER_IDS",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.1.productionControl.scenario",
+      equals: "INDEPENDENT_BOOK_PRICE_TIME_AND_ORDER_IDS",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.1.productionControl.candidate",
+      equals: "PRODUCTION",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.1.productionControl.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.1.productionControl.executed",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.1.productionControl.submissions",
+      equals: 5,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.1.productionControl.assertions",
+      equals: 19,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.1.productionControl.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.1.productionControl.rawFile",
+      equals: "mutant-SHARE_BOOK_STATE-control.jsonl",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.1.productionControl.rawSha256",
+      equals:
+        "06d2e822ea826be03c5eff9c76ba0a07888523359a61a0bac1e00275491d8ee2",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.1.candidateObservation.schemaVersion",
+      equals: "matching.m13.semantic-observation.v1",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.1.candidateObservation.id",
+      equals: "INDEPENDENT_BOOK_PRICE_TIME_AND_ORDER_IDS",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.1.candidateObservation.scenario",
+      equals: "INDEPENDENT_BOOK_PRICE_TIME_AND_ORDER_IDS",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.1.candidateObservation.candidate",
+      equals: "SHARE_BOOK_STATE",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.1.candidateObservation.status",
+      equals: "STUDENT_FAILURE",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.1.candidateObservation.executed",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.1.candidateObservation.submissions",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.1.candidateObservation.assertions",
+      equals: 6,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.1.candidateObservation.failure",
+      equals: "book application sequence diverged",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.1.candidateObservation.rawFile",
+      equals: "mutant-SHARE_BOOK_STATE-candidate.jsonl",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.1.candidateObservation.rawSha256",
+      equals:
+        "f25bca0156eff2aaaa7bc5029dbfa69829a0eeb434b23dc95eb04ea8456c3a4d",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.2.id",
+      equals: "OMIT_INSTRUMENT_FROM_IDENTITY",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.2.classification",
+      equals: "STUDENT_FAILURE",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.2.countedAsKill",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.2.scenario",
+      equals: "SHARD_IDENTITY_CONFLICT_DUPLICATE_AND_PRODUCER_FENCE",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.2.productionControl.schemaVersion",
+      equals: "matching.m13.semantic-observation.v1",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.2.productionControl.id",
+      equals: "SHARD_IDENTITY_CONFLICT_DUPLICATE_AND_PRODUCER_FENCE",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.2.productionControl.scenario",
+      equals: "SHARD_IDENTITY_CONFLICT_DUPLICATE_AND_PRODUCER_FENCE",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.2.productionControl.candidate",
+      equals: "PRODUCTION",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.2.productionControl.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.2.productionControl.executed",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.2.productionControl.submissions",
+      equals: 8,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.2.productionControl.assertions",
+      equals: 22,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.2.productionControl.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.2.productionControl.rawFile",
+      equals: "mutant-OMIT_INSTRUMENT_FROM_IDENTITY-control.jsonl",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.2.productionControl.rawSha256",
+      equals:
+        "54b38f14c5783018020eeb7c3fa1fe62745b9d13631f7884c8f1ea248a5ea492",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.2.candidateObservation.schemaVersion",
+      equals: "matching.m13.semantic-observation.v1",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.2.candidateObservation.id",
+      equals: "SHARD_IDENTITY_CONFLICT_DUPLICATE_AND_PRODUCER_FENCE",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.2.candidateObservation.scenario",
+      equals: "SHARD_IDENTITY_CONFLICT_DUPLICATE_AND_PRODUCER_FENCE",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.2.candidateObservation.candidate",
+      equals: "OMIT_INSTRUMENT_FROM_IDENTITY",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.2.candidateObservation.status",
+      equals: "STUDENT_FAILURE",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.2.candidateObservation.executed",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.2.candidateObservation.submissions",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.2.candidateObservation.assertions",
+      equals: 4,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.2.candidateObservation.failure",
+      equals:
+        "preflight expected COMMAND_ID_PAYLOAD_CONFLICT but observed DUPLICATE_REPLAYED/Optional.empty",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.2.candidateObservation.rawFile",
+      equals: "mutant-OMIT_INSTRUMENT_FROM_IDENTITY-candidate.jsonl",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.2.candidateObservation.rawSha256",
+      equals:
+        "c587043bdf59e0fdb5565a30c1dbf269770ca3034b0888041645deb2aafb9f87",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.3.id",
+      equals: "ALLOW_EXISTING_ROUTE_MOVE",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.3.classification",
+      equals: "STUDENT_FAILURE",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.3.countedAsKill",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.3.scenario",
+      equals: "APPEND_ONLY_ROUTE_ACTIVATION",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.3.productionControl.schemaVersion",
+      equals: "matching.m13.semantic-observation.v1",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.3.productionControl.id",
+      equals: "APPEND_ONLY_ROUTE_ACTIVATION",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.3.productionControl.scenario",
+      equals: "APPEND_ONLY_ROUTE_ACTIVATION",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.3.productionControl.candidate",
+      equals: "PRODUCTION",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.3.productionControl.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.3.productionControl.executed",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.3.productionControl.submissions",
+      equals: 7,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.3.productionControl.assertions",
+      equals: 18,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.3.productionControl.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.3.productionControl.rawFile",
+      equals: "mutant-ALLOW_EXISTING_ROUTE_MOVE-control.jsonl",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.3.productionControl.rawSha256",
+      equals:
+        "6ab4091a9beb14d1a48e4d5b8b5a0f5c51e9186f61069f7ad2b081c95b45ed61",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.3.candidateObservation.schemaVersion",
+      equals: "matching.m13.semantic-observation.v1",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.3.candidateObservation.id",
+      equals: "APPEND_ONLY_ROUTE_ACTIVATION",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.3.candidateObservation.scenario",
+      equals: "APPEND_ONLY_ROUTE_ACTIVATION",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.3.candidateObservation.candidate",
+      equals: "ALLOW_EXISTING_ROUTE_MOVE",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.3.candidateObservation.status",
+      equals: "STUDENT_FAILURE",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.3.candidateObservation.executed",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.3.candidateObservation.submissions",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.3.candidateObservation.assertions",
+      equals: 4,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.3.candidateObservation.failure",
+      equals:
+        "preflight expected INVALID_ROUTE_SUCCESSOR but observed NEW_APPLIED/Optional.empty",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.3.candidateObservation.rawFile",
+      equals: "mutant-ALLOW_EXISTING_ROUTE_MOVE-candidate.jsonl",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.3.candidateObservation.rawSha256",
+      equals:
+        "4aab1e5a8536b9f6ebd8529e357a75e7453293f89c469276067bfedffc785f88",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.4.id",
+      equals: "DROP_SNAPSHOT_IDENTITY",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.4.classification",
+      equals: "STUDENT_FAILURE",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.4.countedAsKill",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.4.scenario",
+      equals: "MULTI_BOOK_SNAPSHOT_AND_SUFFIX_EQUIVALENCE",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.4.productionControl.schemaVersion",
+      equals: "matching.m13.semantic-observation.v1",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.4.productionControl.id",
+      equals: "MULTI_BOOK_SNAPSHOT_AND_SUFFIX_EQUIVALENCE",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.4.productionControl.scenario",
+      equals: "MULTI_BOOK_SNAPSHOT_AND_SUFFIX_EQUIVALENCE",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.4.productionControl.candidate",
+      equals: "PRODUCTION",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.4.productionControl.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.4.productionControl.executed",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.4.productionControl.submissions",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.4.productionControl.assertions",
+      equals: 19,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.4.productionControl.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.4.productionControl.rawFile",
+      equals: "mutant-DROP_SNAPSHOT_IDENTITY-control.jsonl",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.4.productionControl.rawSha256",
+      equals:
+        "7d683a9a8ed011afcba4b20b076ea30fe162015ca35bb2a3d0be793f13b8956b",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.4.candidateObservation.schemaVersion",
+      equals: "matching.m13.semantic-observation.v1",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.4.candidateObservation.id",
+      equals: "MULTI_BOOK_SNAPSHOT_AND_SUFFIX_EQUIVALENCE",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.4.candidateObservation.scenario",
+      equals: "MULTI_BOOK_SNAPSHOT_AND_SUFFIX_EQUIVALENCE",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.4.candidateObservation.candidate",
+      equals: "DROP_SNAPSHOT_IDENTITY",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.4.candidateObservation.status",
+      equals: "STUDENT_FAILURE",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.4.candidateObservation.executed",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.4.candidateObservation.submissions",
+      equals: 4,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.4.candidateObservation.assertions",
+      equals: 8,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.4.candidateObservation.failure",
+      equals: "durable retry did not replay original result",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.4.candidateObservation.rawFile",
+      equals: "mutant-DROP_SNAPSHOT_IDENTITY-candidate.jsonl",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.4.candidateObservation.rawSha256",
+      equals:
+        "20a9259fe138f4dba4edffb939a7d9e256e8bf5452edaac6991b4ce0d0b3564e",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.5.id",
+      equals: "USE_SHARD_SEQUENCE_FOR_BOOK_CONTROL",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.5.classification",
+      equals: "STUDENT_FAILURE",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.5.countedAsKill",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.5.scenario",
+      equals: "BOOK_LOCAL_RULES_MODES_AND_CONTROL_SEQUENCE",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.5.productionControl.schemaVersion",
+      equals: "matching.m13.semantic-observation.v1",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.5.productionControl.id",
+      equals: "BOOK_LOCAL_RULES_MODES_AND_CONTROL_SEQUENCE",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.5.productionControl.scenario",
+      equals: "BOOK_LOCAL_RULES_MODES_AND_CONTROL_SEQUENCE",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.5.productionControl.candidate",
+      equals: "PRODUCTION",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.5.productionControl.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.5.productionControl.executed",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.5.productionControl.submissions",
+      equals: 11,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.5.productionControl.assertions",
+      equals: 39,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.5.productionControl.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.5.productionControl.rawFile",
+      equals: "mutant-USE_SHARD_SEQUENCE_FOR_BOOK_CONTROL-control.jsonl",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.5.productionControl.rawSha256",
+      equals:
+        "3a02f3a0aa8c61e1e58fb3215248497967a827aceff994ec341dfa386a80519c",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.5.candidateObservation.schemaVersion",
+      equals: "matching.m13.semantic-observation.v1",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.5.candidateObservation.id",
+      equals: "BOOK_LOCAL_RULES_MODES_AND_CONTROL_SEQUENCE",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.5.candidateObservation.scenario",
+      equals: "BOOK_LOCAL_RULES_MODES_AND_CONTROL_SEQUENCE",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.5.candidateObservation.candidate",
+      equals: "USE_SHARD_SEQUENCE_FOR_BOOK_CONTROL",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.5.candidateObservation.status",
+      equals: "STUDENT_FAILURE",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.5.candidateObservation.executed",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.5.candidateObservation.submissions",
+      equals: 4,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.5.candidateObservation.assertions",
+      equals: 13,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.5.candidateObservation.failure",
+      equals:
+        "control expectedApplicationSequence used shard sequence instead of book sequence",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.5.candidateObservation.rawFile",
+      equals: "mutant-USE_SHARD_SEQUENCE_FOR_BOOK_CONTROL-candidate.jsonl",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.5.candidateObservation.rawSha256",
+      equals:
+        "4a5b5aae5785e63a4e02ffe94e1aeba8492be03c73963affb8572fe3be85558c",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "throwingControl.classification",
+      equals: "SYSTEM_ERROR",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "throwingControl.countedAsKill",
+      equals: false,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "throwingControl.observation.schemaVersion",
+      equals: "matching.m13.semantic-observation.v1",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "throwingControl.observation.id",
+      equals: "WRONG_SHARD_AND_INSTRUMENT_NO_MUTATION",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "throwingControl.observation.scenario",
+      equals: "WRONG_SHARD_AND_INSTRUMENT_NO_MUTATION",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "throwingControl.observation.candidate",
+      equals: "THROWING_CONTROL",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "throwingControl.observation.status",
+      equals: "SYSTEM_ERROR",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "throwingControl.observation.executed",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "throwingControl.observation.submissions",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "throwingControl.observation.assertions",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "throwingControl.observation.failure",
+      equals:
+        "java.lang.IllegalStateException: deliberate infrastructure control",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "throwingControl.observation.rawFile",
+      equals: "mutant-throwing-control.jsonl",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "throwingControl.observation.rawSha256",
+      equals:
+        "f947c21c3ed187b26308116af2cd794b7ba27acaa750468e40c44450a52176ab",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "executedCandidates",
+      equals: 6,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "killed",
+      equals: 6,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/inherited.json",
+      field: "schemaVersion",
+      equals: "matching.m13.inherited.v1",
+    },
+    {
+      artifactPath: "reports/check/inherited.json",
+      field: "status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/inherited.json",
+      field: "baselineCommit",
+      equals: "d8b1b1fbb36323502495a8bc0a60042db1e9e040",
+    },
+    {
+      artifactPath: "reports/check/inherited.json",
+      field: "protocolGoldens",
+      equals: 6,
+    },
+    {
+      artifactPath: "reports/check/inherited.json",
+      field: "m12RealProcessHistoryPassed",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/inherited.json",
+      field: "currentCompiledClasses",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/inherited.json",
+      field: "matchingCoreUnchanged",
+      equals: false,
+    },
+    {
+      artifactPath: "reports/check/inherited.json",
+      field: "coreEvolution",
+      equals: "CONFIGURED_INSTRUMENT_WITH_LEGACY_BTC_DEFAULT",
+    },
+    {
+      artifactPath: "reports/check/inherited.json",
+      field: "historicalEvidenceRebound",
+      equals: false,
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "schemaVersion",
+      equals: "matching.m11.protocol-goldens.v1",
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "goldens",
+      equals: 6,
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "requestV1Readable",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "requestV1FixesResponseV1",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "requestV2Current",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "requestV2ResponseBounds",
+      equals: "ONE_OR_TWO_ONLY_PRE_APPLY",
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "invalidRequestedResponseStateMutations",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "fabricatedBusinessResults",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "responseV1DownEncoded",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "responseV1OutcomesCovered",
+      equals: 4,
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "payloadHashOuterInvariant",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "payloadHashOuterFieldProbes",
+      equals: 8,
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "payloadHashPayloadMutationProbes",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "payloadHashPayloadSensitive",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "forgedPayloadHashPreApplyRejected",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "forgedPayloadHashStateMutations",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "responseV2Current",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "snapshotS1ReadableAndRestorable",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "snapshotS2Current",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "snapshotIdentityBindingsMinimum",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "snapshotIdentityOrder",
+      equals: "ORIGINAL_APPLICATION_SEQUENCE_1_TO_N",
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "snapshotProducerCursorContinuityValidated",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "nMinusOneIdempotencyPreserved",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "malformedFailsClosed",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "unsupportedFailsClosed",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "boundedResponse",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "fullEventStreamInResponse",
+      equals: false,
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "fixtures.length",
+      equals: 6,
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "fixtures.0.id",
+      equals: "REQUEST_V1",
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "fixtures.0.kind",
+      equals: "REQUEST",
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "fixtures.0.schemaVersion",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "fixtures.0.path",
+      equals: "matching-testkit/src/test/resources/m11/goldens/request-v1.bin",
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "fixtures.0.bytes",
+      equals: 203,
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "fixtures.0.sha256",
+      equals:
+        "30e8cde285dcbefcd3bf7a3ffafb2a6e2ec09b039db7d793a792d6ceb01fa609",
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "fixtures.0.decoded",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "fixtures.0.reencodedByteExact",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "fixtures.1.id",
+      equals: "REQUEST_V2",
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "fixtures.1.kind",
+      equals: "REQUEST",
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "fixtures.1.schemaVersion",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "fixtures.1.path",
+      equals: "matching-testkit/src/test/resources/m11/goldens/request-v2.bin",
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "fixtures.1.bytes",
+      equals: 207,
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "fixtures.1.sha256",
+      equals:
+        "4c109a796e18aa628ee95184497bd9dc819e48a3f11fb7411d2440b6442ee409",
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "fixtures.1.decoded",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "fixtures.1.reencodedByteExact",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "fixtures.2.id",
+      equals: "RESPONSE_V1",
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "fixtures.2.kind",
+      equals: "RESPONSE",
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "fixtures.2.schemaVersion",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "fixtures.2.path",
+      equals: "matching-testkit/src/test/resources/m11/goldens/response-v1.bin",
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "fixtures.2.bytes",
+      equals: 72,
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "fixtures.2.sha256",
+      equals:
+        "64eca820223db940aa7499d727b351ac0df1dfdcbfe0aefea2f591ae194ccfec",
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "fixtures.2.decoded",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "fixtures.2.reencodedByteExact",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "fixtures.3.id",
+      equals: "RESPONSE_V2",
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "fixtures.3.kind",
+      equals: "RESPONSE",
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "fixtures.3.schemaVersion",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "fixtures.3.path",
+      equals: "matching-testkit/src/test/resources/m11/goldens/response-v2.bin",
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "fixtures.3.bytes",
+      equals: 121,
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "fixtures.3.sha256",
+      equals:
+        "3956d17420c85f95842d913b8e923f4e376b6743369e6d055e164c5ced8eee4b",
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "fixtures.3.decoded",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "fixtures.3.reencodedByteExact",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "fixtures.4.id",
+      equals: "SNAPSHOT_V1",
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "fixtures.4.kind",
+      equals: "SNAPSHOT",
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "fixtures.4.schemaVersion",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "fixtures.4.path",
+      equals: "matching-testkit/src/test/resources/m11/goldens/snapshot-v1.bin",
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "fixtures.4.bytes",
+      equals: 3595,
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "fixtures.4.sha256",
+      equals:
+        "3bdd0490d0c0e8943eb67a573ff84c97eb6d2a93ab5438b2960011e49c5a6d67",
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "fixtures.4.decoded",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "fixtures.4.reencodedByteExact",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "fixtures.5.id",
+      equals: "SNAPSHOT_V2",
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "fixtures.5.kind",
+      equals: "SNAPSHOT",
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "fixtures.5.schemaVersion",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "fixtures.5.path",
+      equals: "matching-testkit/src/test/resources/m11/goldens/snapshot-v2.bin",
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "fixtures.5.bytes",
+      equals: 3667,
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "fixtures.5.sha256",
+      equals:
+        "1df85f21c8ea4bc1ff483d220e5794d2e770393d3252e2150426c169b769a044",
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "fixtures.5.decoded",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m11-protocol.json",
+      field: "fixtures.5.reencodedByteExact",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "schemaVersion",
+      equals: "matching.m13.inherited-architecture.v1",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "replacementFor",
+      equals: "M10_CORE_DELTA_AND_M11_M12_CORE_UNCHANGED_ONLY",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "matchingCoreByteIdentical",
+      equals: false,
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "currentCoreSourceDigest",
+      equals:
+        "852db6c9f175da96847be82a544aab5ea6d5200d9a77fbc38a2555af191ba5fa",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "baselineCoreTree",
+      equals: "58ce86179251a5a8cceba47ff41b1b2657a5d100",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "inspectedCoreSources",
+      equals: 55,
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "coreInfrastructureFree",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m11WireSourcesByteIdentical",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m11ProtocolGoldens",
+      equals: 6,
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m11LogCallbackBusinessApplyCalls",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m11NonLogCallbackBusinessApplyCalls",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m11RuntimeMetadataDigestStable",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m10CurrentAlgorithmInfrastructureAndBenchmarkBoundariesPassed",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m10TestkitProbeOccurrences",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m10InspectedLocalRuntimeSources",
+      equals: 54,
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m10InspectedBenchmarkSources",
+      equals: 30,
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m10ObservedHistoricalCoreDeltaPaths.length",
+      equals: 11,
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m10ObservedHistoricalCoreDeltaPaths.0",
+      equals:
+        "matching-core/src/main/java/io/github/lchareln/cex/matching/CancelOrder.java",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m10ObservedHistoricalCoreDeltaPaths.1",
+      equals:
+        "matching-core/src/main/java/io/github/lchareln/cex/matching/CancelOrderValidator.java",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m10ObservedHistoricalCoreDeltaPaths.2",
+      equals:
+        "matching-core/src/main/java/io/github/lchareln/cex/matching/MarketControlSnapshot.java",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m10ObservedHistoricalCoreDeltaPaths.3",
+      equals:
+        "matching-core/src/main/java/io/github/lchareln/cex/matching/MarketRuleSetArtifact.java",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m10ObservedHistoricalCoreDeltaPaths.4",
+      equals:
+        "matching-core/src/main/java/io/github/lchareln/cex/matching/PlaceLimitOrder.java",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m10ObservedHistoricalCoreDeltaPaths.5",
+      equals:
+        "matching-core/src/main/java/io/github/lchareln/cex/matching/PlaceLimitOrderValidator.java",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m10ObservedHistoricalCoreDeltaPaths.6",
+      equals:
+        "matching-core/src/main/java/io/github/lchareln/cex/matching/PrepareRuleSetRejectionCode.java",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m10ObservedHistoricalCoreDeltaPaths.7",
+      equals:
+        "matching-core/src/main/java/io/github/lchareln/cex/matching/SingleInstrumentMatchingEngine.java",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m10ObservedHistoricalCoreDeltaPaths.8",
+      equals:
+        "matching-core/src/test/java/io/github/lchareln/cex/matching/CancelOrderValidatorTest.java",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m10ObservedHistoricalCoreDeltaPaths.9",
+      equals:
+        "matching-core/src/test/java/io/github/lchareln/cex/matching/ConfiguredInstrumentMatchingEngineTest.java",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m10ObservedHistoricalCoreDeltaPaths.10",
+      equals:
+        "matching-core/src/test/java/io/github/lchareln/cex/matching/SingleInstrumentTerminalHistoryGrowthTest.java",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m11CurrentProductionBoundary.schemaVersion",
+      equals: "matching.m13.inherited-m11-boundary.v1",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m11CurrentProductionBoundary.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m11CurrentProductionBoundary.m10CoreTree",
+      equals: "58ce86179251a5a8cceba47ff41b1b2657a5d100",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m11CurrentProductionBoundary.headCoreTree",
+      equals: "eec06b3567796727ada84191af72490a575c728a",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m11CurrentProductionBoundary.matchingCoreByteIdentical",
+      equals: false,
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m11CurrentProductionBoundary.coreIdentityEvidenceMode",
+      equals: "CURRENT_WORKTREE_M13_WITNESS",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m11CurrentProductionBoundary.currentCoreSourceDigest",
+      equals:
+        "852db6c9f175da96847be82a544aab5ea6d5200d9a77fbc38a2555af191ba5fa",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field:
+        "m11CurrentProductionBoundary.qualificationFaultSelectionsOutsideTestkit",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m11CurrentProductionBoundary.normalFaultPolicy",
+      equals: "NONE",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m11CurrentProductionBoundary.coreInfrastructureFree",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m11CurrentProductionBoundary.aeronProductionModule",
+      equals: "matching-cluster-runtime",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m11CurrentProductionBoundary.aeronJavaImportFiles",
+      equals: 14,
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m11CurrentProductionBoundary.aeronJavaImportViolations",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m11CurrentProductionBoundary.aeronDependencyViolations",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m11CurrentProductionBoundary.clusterServiceLocalWalViolations",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m11CurrentProductionBoundary.clusterServiceExternalIoViolations",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field:
+        "m11CurrentProductionBoundary.callbackReachableStandaloneWalReferences",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field:
+        "m11CurrentProductionBoundary.callbackReachableExternalIoReferences",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m11CurrentProductionBoundary.standaloneWalWrites",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m11CurrentProductionBoundary.standaloneWalWritesEvidenceMode",
+      equals: "CALLBACK_REACHABLE_SOURCE_REFERENCE_COUNT_COMPATIBILITY",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m11CurrentProductionBoundary.runtimeMetadataInBusinessDigest",
+      equals: false,
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m11CurrentProductionBoundary.callbackInterface",
+      equals: "io.aeron.cluster.service.ClusteredService",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m11CurrentProductionBoundary.abstractProductionCallbacks",
+      equals: 8,
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m11CurrentProductionBoundary.implementedProductionCallbacks",
+      equals: 8,
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m11CurrentProductionBoundary.callbackReachableClasses",
+      equals: 27,
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m11CurrentProductionBoundary.callbackModuleViolations",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m11CurrentProductionBoundary.businessApplyCalls",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m11CurrentProductionBoundary.logCallbackBusinessApplyCalls",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m11CurrentProductionBoundary.nonLogCallbackBusinessApplyCalls",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m11CurrentProductionBoundary.egressStateInputViolations",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m11CurrentProductionBoundary.configuredAeronVersion",
+      equals: "1.52.2",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m11CurrentProductionBoundary.configuredAgronaVersion",
+      equals: "2.5.0",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m11CurrentProductionBoundary.versionConfigurationExact",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m11CurrentProductionBoundary.runtimeMetadataSpyExecuted",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m11CurrentProductionBoundary.runtimeMetadataVariants",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m11CurrentProductionBoundary.runtimeMetadataDigestStable",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field:
+        "m11CurrentProductionBoundary.callbackReachableProductionSources.length",
+      equals: 27,
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field:
+        "m11CurrentProductionBoundary.callbackReachableProductionSources.0",
+      equals: "DirectM11MatchingRuntime",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field:
+        "m11CurrentProductionBoundary.callbackReachableProductionSources.1",
+      equals: "M11AeronSnapshotTransport",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field:
+        "m11CurrentProductionBoundary.callbackReachableProductionSources.2",
+      equals: "M11ApplicationObserver",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field:
+        "m11CurrentProductionBoundary.callbackReachableProductionSources.3",
+      equals: "M11ApplicationResult",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field:
+        "m11CurrentProductionBoundary.callbackReachableProductionSources.4",
+      equals: "M11ApplicationSnapshotWitness",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field:
+        "m11CurrentProductionBoundary.callbackReachableProductionSources.5",
+      equals: "M11Binary",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field:
+        "m11CurrentProductionBoundary.callbackReachableProductionSources.6",
+      equals: "M11BoundedProgress",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field:
+        "m11CurrentProductionBoundary.callbackReachableProductionSources.7",
+      equals: "M11ClusteredMatchingService",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field:
+        "m11CurrentProductionBoundary.callbackReachableProductionSources.8",
+      equals: "M11CommandRequest",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field:
+        "m11CurrentProductionBoundary.callbackReachableProductionSources.9",
+      equals: "M11CommandResponse",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field:
+        "m11CurrentProductionBoundary.callbackReachableProductionSources.10",
+      equals: "M11CommandStateCodec",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field:
+        "m11CurrentProductionBoundary.callbackReachableProductionSources.11",
+      equals: "M11Digests",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field:
+        "m11CurrentProductionBoundary.callbackReachableProductionSources.12",
+      equals: "M11EncodingBounds",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field:
+        "m11CurrentProductionBoundary.callbackReachableProductionSources.13",
+      equals: "M11FaultPolicy",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field:
+        "m11CurrentProductionBoundary.callbackReachableProductionSources.14",
+      equals: "M11FullResultCodec",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field:
+        "m11CurrentProductionBoundary.callbackReachableProductionSources.15",
+      equals: "M11IdentityBinding",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field:
+        "m11CurrentProductionBoundary.callbackReachableProductionSources.16",
+      equals: "M11IdentityTable",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field:
+        "m11CurrentProductionBoundary.callbackReachableProductionSources.17",
+      equals: "M11ProtocolException",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field:
+        "m11CurrentProductionBoundary.callbackReachableProductionSources.18",
+      equals: "M11RequestCodec",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field:
+        "m11CurrentProductionBoundary.callbackReachableProductionSources.19",
+      equals: "M11ResponseCodec",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field:
+        "m11CurrentProductionBoundary.callbackReachableProductionSources.20",
+      equals: "M11ResponseStatus",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field:
+        "m11CurrentProductionBoundary.callbackReachableProductionSources.21",
+      equals: "M11RuntimeState",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field:
+        "m11CurrentProductionBoundary.callbackReachableProductionSources.22",
+      equals: "M11RuntimeStateCodec",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field:
+        "m11CurrentProductionBoundary.callbackReachableProductionSources.23",
+      equals: "M11ServiceObservation",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field:
+        "m11CurrentProductionBoundary.callbackReachableProductionSources.24",
+      equals: "M11Snapshot",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field:
+        "m11CurrentProductionBoundary.callbackReachableProductionSources.25",
+      equals: "M11SnapshotCodec",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field:
+        "m11CurrentProductionBoundary.callbackReachableProductionSources.26",
+      equals: "M11SnapshotFrameCodec",
+    },
+    {
+      artifactPath: "reports/check/m13-inherited-architecture.json",
+      field: "m11CurrentProductionBoundary.violations.length",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "schemaVersion",
+      equals: "matching.m13.environment.v1",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "javaRuntime",
+      equals: "OpenJDK Runtime Environment",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "javaVersion",
+      equals: "25.0.4.1+1-LTS",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "javaVendor",
+      equals: "Eclipse Adoptium",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "vmName",
+      equals: "OpenJDK 64-Bit Server VM",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "jvmArguments.length",
+      equals: 6,
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "jvmArguments.0",
+      equals: "-Daeron.socket.so_rcvbuf=0",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "jvmArguments.1",
+      equals: "--add-opens=java.base/jdk.internal.misc=ALL-UNNAMED",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "jvmArguments.2",
+      equals: "-Dfile.encoding=UTF-8",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "jvmArguments.3",
+      equals: "-Duser.country=CN",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "jvmArguments.4",
+      equals: "-Duser.language=zh",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "jvmArguments.5",
+      equals: "-Duser.variant",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "osName",
+      equals: "Mac OS X",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "osVersion",
+      equals: "26.0.1",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "osArchitecture",
+      equals: "aarch64",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "availableProcessors",
+      equals: 8,
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "physicalMemoryBytes",
+      equals: 8589934592,
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "maximumHeapBytes",
+      equals: 2147483648,
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "garbageCollectorNames.length",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "garbageCollectorNames.0",
+      equals: "G1 Concurrent GC",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "garbageCollectorNames.1",
+      equals: "G1 Old Generation",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "garbageCollectorNames.2",
+      equals: "G1 Young Generation",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "cpuModel",
+      equals: "M13_CORRECTNESS_CPU_NOT_PROFILED",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "storageDevice",
+      equals: "M13_LOCAL_CLUSTER_STORAGE_NOT_QUALIFIED",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "filesystem",
+      equals: "M13_LOCAL_FILESYSTEM_NOT_QUALIFIED",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "powerPolicy",
+      equals: "M13_CORRECTNESS_POWER_POLICY_NOT_PROFILED",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "walRoot",
+      equals:
+        "/Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/reports/m13",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "walRootUri",
+      equals:
+        "file:///Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/reports/m13/",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "walFileStoreName",
+      equals: "/dev/disk3s5",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "walFileStoreType",
+      equals: "apfs",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "walFileStoreTotalSpaceBytes",
+      equals: 245107195904,
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "walFileStoreUsableSpaceBytes",
+      equals: 20512686080,
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "walFileStoreUnallocatedSpaceBytes",
+      equals: 20512686080,
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "runStartedAt",
+      equals: "2026-09-07T07:53:30.420525Z",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "runFinishedAt",
+      equals: "2026-09-07T07:54:34.660120Z",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "correctnessOnly",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "performanceQualified",
+      equals: false,
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "singleHost",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "schemaVersion",
+      equals: "matching.m13.cluster-faults.v1",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "ownerPid",
+      equals: 35884,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "initialRouteHash",
+      equals:
+        "e4110228cdb6269e36ebd58465157dacd9f5cf1bc94be1e407a81d5a57985e21",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "simultaneousInitialPids.length",
+      equals: 6,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "simultaneousInitialPids.0",
+      equals: 36577,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "simultaneousInitialPids.1",
+      equals: 36578,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "simultaneousInitialPids.2",
+      equals: 36579,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "simultaneousInitialPids.3",
+      equals: 36580,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "simultaneousInitialPids.4",
+      equals: 36581,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "simultaneousInitialPids.5",
+      equals: 36582,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "clusterGroups",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "childProcesses",
+      equals: 6,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "faultIsolation.elapsedNanos",
+      equals: 13018416,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "faultIsolation.shard2SequenceAfter",
+      equals: 4,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "faultIsolation.shard2SequenceBefore",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "faultIsolation.faultObservationNanos",
+      equals: 438544685834250,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "faultIsolation.stoppedLeader.memberId",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "faultIsolation.stoppedLeader.processId",
+      equals: 36578,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "faultIsolation.stoppedLeader.forcedStopRequested",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "faultIsolation.stoppedLeader.exitCode",
+      equals: 137,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "faultIsolation.stoppedLeader.externalController",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "faultIsolation.stoppedLeader.stoppedAtNanos",
+      equals: 438544685542291,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "faultIsolation.stoppedLeader.lastStatus.schema",
+      equals: "matching.m13.member-status.v1",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "faultIsolation.stoppedLeader.lastStatus.statusSequence",
+      equals: 22,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "faultIsolation.stoppedLeader.lastStatus.processId",
+      equals: 36578,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field:
+        "faultIsolation.stoppedLeader.lastStatus.processStartedAtEpochMillis",
+      equals: 1788767647132,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "faultIsolation.stoppedLeader.lastStatus.observedAtEpochMillis",
+      equals: 1788767650072,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "faultIsolation.stoppedLeader.lastStatus.clusterId",
+      equals: 131,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "faultIsolation.stoppedLeader.lastStatus.memberId",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "faultIsolation.stoppedLeader.lastStatus.memberCount",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "faultIsolation.stoppedLeader.lastStatus.quorumSize",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "faultIsolation.stoppedLeader.lastStatus.appointedLeaderId",
+      equals: -1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "faultIsolation.stoppedLeader.lastStatus.freshStart",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "faultIsolation.stoppedLeader.lastStatus.role",
+      equals: "LEADER",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "faultIsolation.stoppedLeader.lastStatus.electionState",
+      equals: "CLOSED",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "faultIsolation.stoppedLeader.lastStatus.leadershipTermId",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "faultIsolation.stoppedLeader.lastStatus.commitPosition",
+      equals: 2368,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "faultIsolation.stoppedLeader.lastStatus.logPosition",
+      equals: 2368,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "faultIsolation.stoppedLeader.lastStatus.nextShardSequence",
+      equals: 6,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "faultIsolation.stoppedLeader.lastStatus.identityResultCount",
+      equals: 5,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "faultIsolation.stoppedLeader.lastStatus.semanticStateDigest",
+      equals:
+        "9f76d846fe4c5dcca231849f09665113261e79afa1ce20e37359037f5711aa76",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "faultIsolation.stoppedLeader.lastStatus.identityResultDigest",
+      equals:
+        "8c0923eb766d40980b6180dbf0400765f45aa7d13b6999f5a986dd5268f78dd5",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "faultIsolation.stoppedLeader.lastStatus.udpPortBlockBase",
+      equals: 55110,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "faultIsolation.stoppedLeader.lastStatus.rootDirectory",
+      equals:
+        "/Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/tmp/m13/shard-1",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "faultIsolation.stoppedLeader.lastStatus.aeronDirectory",
+      equals:
+        "/Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/tmp/m13/shard-1/node-1/aeron",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "faultIsolation.stoppedLeader.lastStatus.archiveDirectory",
+      equals:
+        "/Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/tmp/m13/shard-1/node-1/archive",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "faultIsolation.stoppedLeader.lastStatus.clusterDirectory",
+      equals:
+        "/Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/tmp/m13/shard-1/node-1/cluster",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "faultIsolation.stoppedLeader.lastStatus.componentErrors.length",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field:
+        "faultIsolation.stoppedLeader.lastStatus.diagnosticWarnings.length",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field:
+        "faultIsolation.stoppedLeader.lastStatus.droppedDiagnosticWarnings",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "faultIsolation.shard2AcknowledgedNanos",
+      equals: 438544698852666,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "replacementLeader.schema",
+      equals: "matching.m13.member-status.v1",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "replacementLeader.statusSequence",
+      equals: 66,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "replacementLeader.processId",
+      equals: 36579,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "replacementLeader.processStartedAtEpochMillis",
+      equals: 1788767647135,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "replacementLeader.observedAtEpochMillis",
+      equals: 1788767655336,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "replacementLeader.clusterId",
+      equals: 131,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "replacementLeader.memberId",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "replacementLeader.memberCount",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "replacementLeader.quorumSize",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "replacementLeader.appointedLeaderId",
+      equals: -1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "replacementLeader.freshStart",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "replacementLeader.role",
+      equals: "LEADER",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "replacementLeader.electionState",
+      equals: "CLOSED",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "replacementLeader.leadershipTermId",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "replacementLeader.commitPosition",
+      equals: 2464,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "replacementLeader.logPosition",
+      equals: 2464,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "replacementLeader.nextShardSequence",
+      equals: 6,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "replacementLeader.identityResultCount",
+      equals: 5,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "replacementLeader.semanticStateDigest",
+      equals:
+        "9f76d846fe4c5dcca231849f09665113261e79afa1ce20e37359037f5711aa76",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "replacementLeader.identityResultDigest",
+      equals:
+        "8c0923eb766d40980b6180dbf0400765f45aa7d13b6999f5a986dd5268f78dd5",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "replacementLeader.udpPortBlockBase",
+      equals: 55120,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "replacementLeader.rootDirectory",
+      equals:
+        "/Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/tmp/m13/shard-1",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "replacementLeader.aeronDirectory",
+      equals:
+        "/Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/tmp/m13/shard-1/node-2/aeron",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "replacementLeader.archiveDirectory",
+      equals:
+        "/Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/tmp/m13/shard-1/node-2/archive",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "replacementLeader.clusterDirectory",
+      equals:
+        "/Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/tmp/m13/shard-1/node-2/cluster",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "replacementLeader.componentErrors.length",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "replacementLeader.diagnosticWarnings.length",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "replacementLeader.diagnosticWarnings.0",
+      equals:
+        "io.aeron.cluster.client.ClusterEvent: WARN - leader heartbeat timeout",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "replacementLeader.droppedDiagnosticWarnings",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "unknownCount",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "resolvedUnknownCount",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.length",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.0.schema",
+      equals: "matching.m13.member-status.v1",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.0.statusSequence",
+      equals: 110,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.0.processId",
+      equals: 36577,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.0.processStartedAtEpochMillis",
+      equals: 1788767647129,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.0.observedAtEpochMillis",
+      equals: 1788767660429,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.0.clusterId",
+      equals: 131,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.0.memberId",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.0.memberCount",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.0.quorumSize",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.0.appointedLeaderId",
+      equals: -1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.0.freshStart",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.0.role",
+      equals: "FOLLOWER",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.0.electionState",
+      equals: "CLOSED",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.0.leadershipTermId",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.0.commitPosition",
+      equals: 3328,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.0.logPosition",
+      equals: 3328,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.0.nextShardSequence",
+      equals: 7,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.0.identityResultCount",
+      equals: 6,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.0.semanticStateDigest",
+      equals:
+        "73734610ef8f655d8b49e68319164cb4cb6ba3371ff1e567c4e4c453db621851",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.0.identityResultDigest",
+      equals:
+        "899e0279fed45a6b0db8f53e299fd7c874bdd3ba5ee70907bdb2846cdd1799fe",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.0.udpPortBlockBase",
+      equals: 55100,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.0.rootDirectory",
+      equals:
+        "/Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/tmp/m13/shard-1",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.0.aeronDirectory",
+      equals:
+        "/Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/tmp/m13/shard-1/node-0/aeron",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.0.archiveDirectory",
+      equals:
+        "/Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/tmp/m13/shard-1/node-0/archive",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.0.clusterDirectory",
+      equals:
+        "/Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/tmp/m13/shard-1/node-0/cluster",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.0.componentErrors.length",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.0.diagnosticWarnings.length",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.0.diagnosticWarnings.0",
+      equals:
+        "io.aeron.cluster.client.ClusterEvent: WARN - leader heartbeat timeout",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.0.droppedDiagnosticWarnings",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.1.schema",
+      equals: "matching.m13.member-status.v1",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.1.statusSequence",
+      equals: 7,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.1.processId",
+      equals: 36614,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.1.processStartedAtEpochMillis",
+      equals: 1788767659446,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.1.observedAtEpochMillis",
+      equals: 1788767660431,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.1.clusterId",
+      equals: 131,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.1.memberId",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.1.memberCount",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.1.quorumSize",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.1.appointedLeaderId",
+      equals: -1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.1.freshStart",
+      equals: false,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.1.role",
+      equals: "FOLLOWER",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.1.electionState",
+      equals: "CLOSED",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.1.leadershipTermId",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.1.commitPosition",
+      equals: 3328,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.1.logPosition",
+      equals: 3328,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.1.nextShardSequence",
+      equals: 7,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.1.identityResultCount",
+      equals: 6,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.1.semanticStateDigest",
+      equals:
+        "73734610ef8f655d8b49e68319164cb4cb6ba3371ff1e567c4e4c453db621851",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.1.identityResultDigest",
+      equals:
+        "899e0279fed45a6b0db8f53e299fd7c874bdd3ba5ee70907bdb2846cdd1799fe",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.1.udpPortBlockBase",
+      equals: 55110,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.1.rootDirectory",
+      equals:
+        "/Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/tmp/m13/shard-1",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.1.aeronDirectory",
+      equals:
+        "/Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/tmp/m13/shard-1/node-1/aeron",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.1.archiveDirectory",
+      equals:
+        "/Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/tmp/m13/shard-1/node-1/archive",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.1.clusterDirectory",
+      equals:
+        "/Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/tmp/m13/shard-1/node-1/cluster",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.1.componentErrors.length",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.1.diagnosticWarnings.length",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.1.droppedDiagnosticWarnings",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.2.schema",
+      equals: "matching.m13.member-status.v1",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.2.statusSequence",
+      equals: 110,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.2.processId",
+      equals: 36579,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.2.processStartedAtEpochMillis",
+      equals: 1788767647135,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.2.observedAtEpochMillis",
+      equals: 1788767660430,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.2.clusterId",
+      equals: 131,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.2.memberId",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.2.memberCount",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.2.quorumSize",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.2.appointedLeaderId",
+      equals: -1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.2.freshStart",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.2.role",
+      equals: "LEADER",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.2.electionState",
+      equals: "CLOSED",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.2.leadershipTermId",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.2.commitPosition",
+      equals: 3328,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.2.logPosition",
+      equals: 3328,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.2.nextShardSequence",
+      equals: 7,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.2.identityResultCount",
+      equals: 6,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.2.semanticStateDigest",
+      equals:
+        "73734610ef8f655d8b49e68319164cb4cb6ba3371ff1e567c4e4c453db621851",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.2.identityResultDigest",
+      equals:
+        "899e0279fed45a6b0db8f53e299fd7c874bdd3ba5ee70907bdb2846cdd1799fe",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.2.udpPortBlockBase",
+      equals: 55120,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.2.rootDirectory",
+      equals:
+        "/Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/tmp/m13/shard-1",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.2.aeronDirectory",
+      equals:
+        "/Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/tmp/m13/shard-1/node-2/aeron",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.2.archiveDirectory",
+      equals:
+        "/Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/tmp/m13/shard-1/node-2/archive",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.2.clusterDirectory",
+      equals:
+        "/Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/tmp/m13/shard-1/node-2/cluster",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.2.componentErrors.length",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.2.diagnosticWarnings.length",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.2.diagnosticWarnings.0",
+      equals:
+        "io.aeron.cluster.client.ClusterEvent: WARN - leader heartbeat timeout",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "formerLeaderCatchup.2.droppedDiagnosticWarnings",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "producerFence.producerId",
+      equals: "m13-btc-maker",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "producerFence.sequenceAfter",
+      equals: 12,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "producerFence.staleRejectionCode",
+      equals: "PRODUCER_EPOCH_FENCED",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "producerFence.activeEpoch",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "producerFence.sequenceBefore",
+      equals: 12,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "producerFence.staleRequestCommandId",
+      equals: "8f6235da-80ff-39b1-8b76-fad4f1753528",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "producerFence.shardId",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "scenarios.length",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "scenarios.0.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "scenarios.0.id",
+      equals: "TWO_REAL_GROUPS_LEADER_FAILURE_ISOLATION",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "scenarios.1.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "scenarios.1.id",
+      equals: "RESTART_REPLICA_EQUIVALENCE_AND_TEARDOWN",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.length",
+      equals: 12,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.0.phase",
+      equals: "WRITTEN",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.0.completionBefore.snapshotCount",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.0.completionBefore.processId",
+      equals: 36577,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.0.completionBefore.serviceRecordingId",
+      equals: -1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.0.completionBefore.consensusRecordingId",
+      equals: -1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.0.completionBefore.serviceTerm",
+      equals: -1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.0.completionBefore.consensusTerm",
+      equals: -1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.0.completionBefore.serviceLogPosition",
+      equals: -1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.0.completionBefore.consensusLogPosition",
+      equals: -1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.0.memberId",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.0.bookNames.length",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.0.bookNames.0",
+      equals: "ADA-USDT",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.0.bookNames.1",
+      equals: "BTC-USDT",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.0.bookNames.2",
+      equals: "ETH-USDT",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.0.completion.snapshotCount",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.0.completion.processId",
+      equals: 36577,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.0.completion.serviceRecordingId",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.0.completion.consensusRecordingId",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.0.completion.serviceTerm",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.0.completion.consensusTerm",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.0.completion.serviceLogPosition",
+      equals: 4864,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.0.completion.consensusLogPosition",
+      equals: 4864,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.0.shardId",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.0.artifact",
+      equals: "raw/shard-1/member-0-snapshot-written.bin",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.0.snapshotDigest",
+      equals:
+        "26c33775d053c08956accc745e08f9a320543e99062ee812303a37623f64bd19",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.0.adminCorrelation",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.0.nextShardSequence",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.1.phase",
+      equals: "WRITTEN",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.1.completionBefore.snapshotCount",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.1.completionBefore.processId",
+      equals: 36614,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.1.completionBefore.serviceRecordingId",
+      equals: -1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.1.completionBefore.consensusRecordingId",
+      equals: -1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.1.completionBefore.serviceTerm",
+      equals: -1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.1.completionBefore.consensusTerm",
+      equals: -1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.1.completionBefore.serviceLogPosition",
+      equals: -1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.1.completionBefore.consensusLogPosition",
+      equals: -1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.1.memberId",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.1.bookNames.length",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.1.bookNames.0",
+      equals: "ADA-USDT",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.1.bookNames.1",
+      equals: "BTC-USDT",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.1.bookNames.2",
+      equals: "ETH-USDT",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.1.completion.snapshotCount",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.1.completion.processId",
+      equals: 36614,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.1.completion.serviceRecordingId",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.1.completion.consensusRecordingId",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.1.completion.serviceTerm",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.1.completion.consensusTerm",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.1.completion.serviceLogPosition",
+      equals: 4864,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.1.completion.consensusLogPosition",
+      equals: 4864,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.1.shardId",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.1.artifact",
+      equals: "raw/shard-1/member-1-snapshot-written.bin",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.1.snapshotDigest",
+      equals:
+        "26c33775d053c08956accc745e08f9a320543e99062ee812303a37623f64bd19",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.1.adminCorrelation",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.1.nextShardSequence",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.2.phase",
+      equals: "WRITTEN",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.2.completionBefore.snapshotCount",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.2.completionBefore.processId",
+      equals: 36579,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.2.completionBefore.serviceRecordingId",
+      equals: -1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.2.completionBefore.consensusRecordingId",
+      equals: -1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.2.completionBefore.serviceTerm",
+      equals: -1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.2.completionBefore.consensusTerm",
+      equals: -1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.2.completionBefore.serviceLogPosition",
+      equals: -1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.2.completionBefore.consensusLogPosition",
+      equals: -1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.2.memberId",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.2.bookNames.length",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.2.bookNames.0",
+      equals: "ADA-USDT",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.2.bookNames.1",
+      equals: "BTC-USDT",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.2.bookNames.2",
+      equals: "ETH-USDT",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.2.completion.snapshotCount",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.2.completion.processId",
+      equals: 36579,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.2.completion.serviceRecordingId",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.2.completion.consensusRecordingId",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.2.completion.serviceTerm",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.2.completion.consensusTerm",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.2.completion.serviceLogPosition",
+      equals: 4864,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.2.completion.consensusLogPosition",
+      equals: 4864,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.2.shardId",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.2.artifact",
+      equals: "raw/shard-1/member-2-snapshot-written.bin",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.2.snapshotDigest",
+      equals:
+        "26c33775d053c08956accc745e08f9a320543e99062ee812303a37623f64bd19",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.2.adminCorrelation",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.2.nextShardSequence",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.3.phase",
+      equals: "WRITTEN",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.3.completionBefore.snapshotCount",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.3.completionBefore.processId",
+      equals: 36580,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.3.completionBefore.serviceRecordingId",
+      equals: -1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.3.completionBefore.consensusRecordingId",
+      equals: -1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.3.completionBefore.serviceTerm",
+      equals: -1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.3.completionBefore.consensusTerm",
+      equals: -1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.3.completionBefore.serviceLogPosition",
+      equals: -1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.3.completionBefore.consensusLogPosition",
+      equals: -1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.3.memberId",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.3.bookNames.length",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.3.bookNames.0",
+      equals: "SOL-USDT",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.3.completion.snapshotCount",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.3.completion.processId",
+      equals: 36580,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.3.completion.serviceRecordingId",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.3.completion.consensusRecordingId",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.3.completion.serviceTerm",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.3.completion.consensusTerm",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.3.completion.serviceLogPosition",
+      equals: 1856,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.3.completion.consensusLogPosition",
+      equals: 1856,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.3.shardId",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.3.artifact",
+      equals: "raw/shard-2/member-0-snapshot-written.bin",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.3.snapshotDigest",
+      equals:
+        "14756669f85264ff1d178d3dd7a55115f4dbb40f8a6884583c37ff7396eda2e7",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.3.adminCorrelation",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.3.nextShardSequence",
+      equals: 5,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.4.phase",
+      equals: "WRITTEN",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.4.completionBefore.snapshotCount",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.4.completionBefore.processId",
+      equals: 36581,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.4.completionBefore.serviceRecordingId",
+      equals: -1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.4.completionBefore.consensusRecordingId",
+      equals: -1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.4.completionBefore.serviceTerm",
+      equals: -1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.4.completionBefore.consensusTerm",
+      equals: -1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.4.completionBefore.serviceLogPosition",
+      equals: -1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.4.completionBefore.consensusLogPosition",
+      equals: -1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.4.memberId",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.4.bookNames.length",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.4.bookNames.0",
+      equals: "SOL-USDT",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.4.completion.snapshotCount",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.4.completion.processId",
+      equals: 36581,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.4.completion.serviceRecordingId",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.4.completion.consensusRecordingId",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.4.completion.serviceTerm",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.4.completion.consensusTerm",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.4.completion.serviceLogPosition",
+      equals: 1856,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.4.completion.consensusLogPosition",
+      equals: 1856,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.4.shardId",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.4.artifact",
+      equals: "raw/shard-2/member-1-snapshot-written.bin",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.4.snapshotDigest",
+      equals:
+        "14756669f85264ff1d178d3dd7a55115f4dbb40f8a6884583c37ff7396eda2e7",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.4.adminCorrelation",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.4.nextShardSequence",
+      equals: 5,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.5.phase",
+      equals: "WRITTEN",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.5.completionBefore.snapshotCount",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.5.completionBefore.processId",
+      equals: 36582,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.5.completionBefore.serviceRecordingId",
+      equals: -1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.5.completionBefore.consensusRecordingId",
+      equals: -1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.5.completionBefore.serviceTerm",
+      equals: -1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.5.completionBefore.consensusTerm",
+      equals: -1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.5.completionBefore.serviceLogPosition",
+      equals: -1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.5.completionBefore.consensusLogPosition",
+      equals: -1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.5.memberId",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.5.bookNames.length",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.5.bookNames.0",
+      equals: "SOL-USDT",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.5.completion.snapshotCount",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.5.completion.processId",
+      equals: 36582,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.5.completion.serviceRecordingId",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.5.completion.consensusRecordingId",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.5.completion.serviceTerm",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.5.completion.consensusTerm",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.5.completion.serviceLogPosition",
+      equals: 1856,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.5.completion.consensusLogPosition",
+      equals: 1856,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.5.shardId",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.5.artifact",
+      equals: "raw/shard-2/member-2-snapshot-written.bin",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.5.snapshotDigest",
+      equals:
+        "14756669f85264ff1d178d3dd7a55115f4dbb40f8a6884583c37ff7396eda2e7",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.5.adminCorrelation",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.5.nextShardSequence",
+      equals: 5,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.6.bookNames.length",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.6.bookNames.0",
+      equals: "ADA-USDT",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.6.bookNames.1",
+      equals: "BTC-USDT",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.6.bookNames.2",
+      equals: "ETH-USDT",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.6.memberId",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.6.snapshotDigest",
+      equals:
+        "26c33775d053c08956accc745e08f9a320543e99062ee812303a37623f64bd19",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.6.shardId",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.6.processId",
+      equals: 36631,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.6.phase",
+      equals: "LOADED",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.6.nextShardSequence",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.6.recoveredNextShardSequence",
+      equals: 12,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.7.bookNames.length",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.7.bookNames.0",
+      equals: "ADA-USDT",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.7.bookNames.1",
+      equals: "BTC-USDT",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.7.bookNames.2",
+      equals: "ETH-USDT",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.7.memberId",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.7.snapshotDigest",
+      equals:
+        "26c33775d053c08956accc745e08f9a320543e99062ee812303a37623f64bd19",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.7.shardId",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.7.processId",
+      equals: 36632,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.7.phase",
+      equals: "LOADED",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.7.nextShardSequence",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.7.recoveredNextShardSequence",
+      equals: 12,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.8.bookNames.length",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.8.bookNames.0",
+      equals: "ADA-USDT",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.8.bookNames.1",
+      equals: "BTC-USDT",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.8.bookNames.2",
+      equals: "ETH-USDT",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.8.memberId",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.8.snapshotDigest",
+      equals:
+        "26c33775d053c08956accc745e08f9a320543e99062ee812303a37623f64bd19",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.8.shardId",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.8.processId",
+      equals: 36633,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.8.phase",
+      equals: "LOADED",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.8.nextShardSequence",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.8.recoveredNextShardSequence",
+      equals: 12,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.9.bookNames.length",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.9.bookNames.0",
+      equals: "SOL-USDT",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.9.memberId",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.9.snapshotDigest",
+      equals:
+        "14756669f85264ff1d178d3dd7a55115f4dbb40f8a6884583c37ff7396eda2e7",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.9.shardId",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.9.processId",
+      equals: 36634,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.9.phase",
+      equals: "LOADED",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.9.nextShardSequence",
+      equals: 5,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.9.recoveredNextShardSequence",
+      equals: 6,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.10.bookNames.length",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.10.bookNames.0",
+      equals: "SOL-USDT",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.10.memberId",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.10.snapshotDigest",
+      equals:
+        "14756669f85264ff1d178d3dd7a55115f4dbb40f8a6884583c37ff7396eda2e7",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.10.shardId",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.10.processId",
+      equals: 36635,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.10.phase",
+      equals: "LOADED",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.10.nextShardSequence",
+      equals: 5,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.10.recoveredNextShardSequence",
+      equals: 6,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.11.bookNames.length",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.11.bookNames.0",
+      equals: "SOL-USDT",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.11.memberId",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.11.snapshotDigest",
+      equals:
+        "14756669f85264ff1d178d3dd7a55115f4dbb40f8a6884583c37ff7396eda2e7",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.11.shardId",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.11.processId",
+      equals: 36636,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.11.phase",
+      equals: "LOADED",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.11.nextShardSequence",
+      equals: 5,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "snapshots.11.recoveredNextShardSequence",
+      equals: 6,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "teardownComplete",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "commands.length",
+      equals: 24,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.length",
+      equals: 12,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.0.label",
+      equals: "six-members-before-work",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.0.shardId",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.0.directNextShardSequence",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.0.directSemanticDigest",
+      equals:
+        "b35f621f72007d37bd9b772f0379785195d63cca5418ab848a46f2053bb57a99",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.0.directIdentityDigest",
+      equals:
+        "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.0.replicas.length",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.1.label",
+      equals: "six-members-before-work",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.1.shardId",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.1.directNextShardSequence",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.1.directSemanticDigest",
+      equals:
+        "6d161b286ef5173c5e0c313759bb1d3f490c5a780e535268ee7925d9f255005c",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.1.directIdentityDigest",
+      equals:
+        "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.1.replicas.length",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.2.label",
+      equals: "all-three-books-and-misroute",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.2.shardId",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.2.directNextShardSequence",
+      equals: 5,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.2.directSemanticDigest",
+      equals:
+        "5d7ca38b556999b99b5c729313a5149ab4ca0763636756be98903072d27dc0f2",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.2.directIdentityDigest",
+      equals:
+        "9819e0607982e5ac45f0b31dcc7b74506316e1362c424644dff44095c368b940",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.2.replicas.length",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.3.label",
+      equals: "all-three-books-and-misroute",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.3.shardId",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.3.directNextShardSequence",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.3.directSemanticDigest",
+      equals:
+        "b1d4094232e4fa7d476d7eba13253cd777d2872b485a8c5ea142b15b3ddde783",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.3.directIdentityDigest",
+      equals:
+        "55262f16cf8e6d218b4edb52c15827655dc7d75709f854a4b23b5631cba7e8ec",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.3.replicas.length",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.4.label",
+      equals: "former-leader-caught-up",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.4.shardId",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.4.directNextShardSequence",
+      equals: 7,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.4.directSemanticDigest",
+      equals:
+        "73734610ef8f655d8b49e68319164cb4cb6ba3371ff1e567c4e4c453db621851",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.4.directIdentityDigest",
+      equals:
+        "899e0279fed45a6b0db8f53e299fd7c874bdd3ba5ee70907bdb2846cdd1799fe",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.4.replicas.length",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.5.label",
+      equals: "former-leader-caught-up",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.5.shardId",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.5.directNextShardSequence",
+      equals: 4,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.5.directSemanticDigest",
+      equals:
+        "319a155720db1d3d668f9806e2f292a84abd178b20f88250aea338095eea129a",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.5.directIdentityDigest",
+      equals:
+        "25e6b63a7d8081ce5b59a01b1e61f82435831777fc9b45d5c926af581f2cb6b3",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.5.replicas.length",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.6.label",
+      equals: "append-only-route-active",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.6.shardId",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.6.directNextShardSequence",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.6.directSemanticDigest",
+      equals:
+        "3b50808ba9b367456c46ce8de77d427e076f1d757b5feeb868f5b4b60f95bd18",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.6.directIdentityDigest",
+      equals:
+        "89ce729b6a9f52b31cb6a6b641fe27c3eb46463ae901a6c21b0528ac44ef99e4",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.6.replicas.length",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.7.label",
+      equals: "append-only-route-active",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.7.shardId",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.7.directNextShardSequence",
+      equals: 5,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.7.directSemanticDigest",
+      equals:
+        "5015c8081626655b99bb9a4ebafcd347e20bdc09a721aeb233544971f33493c0",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.7.directIdentityDigest",
+      equals:
+        "8d0ec7339760c61e7d761fc85a6f72774a1451377aed6dd0587afb9144260d2d",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.7.replicas.length",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.8.label",
+      equals: "snapshot-plus-suffix-before-full-restart",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.8.shardId",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.8.directNextShardSequence",
+      equals: 12,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.8.directSemanticDigest",
+      equals:
+        "5a5a1a984632c4c4ecff059bfba629af6565e735d8be168a9f8c2b40c73fcef0",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.8.directIdentityDigest",
+      equals:
+        "22f56b27b4001fafccd2b9141ed9868cc0f1eee7ee722858819eebf30f87cda6",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.8.replicas.length",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.9.label",
+      equals: "snapshot-plus-suffix-before-full-restart",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.9.shardId",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.9.directNextShardSequence",
+      equals: 6,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.9.directSemanticDigest",
+      equals:
+        "cda8589edf273a213d8d3fba4abf091cea270186d46be29bd4869d3bd1f0e48a",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.9.directIdentityDigest",
+      equals:
+        "52fbe517296d9006420c4912a600b01fd7905d8e7a531bc7ce8fcc8cc4f5f2d8",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.9.replicas.length",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.label",
+      equals: "all-six-restored-equivalent",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.shardId",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.directNextShardSequence",
+      equals: 13,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.directSemanticDigest",
+      equals:
+        "64c588116e7fd83c5dac81a543467bc4a7db37bafd78792574590a2ae4a6a207",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.directIdentityDigest",
+      equals:
+        "9f89a58264d68a371f554f8b99f0a5d19a0f997f8378945fb2130dddcdec8706",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.length",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.0.schema",
+      equals: "matching.m13.member-status.v1",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.0.statusSequence",
+      equals: 18,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.0.processId",
+      equals: 36631,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.0.processStartedAtEpochMillis",
+      equals: 1788767671462,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.0.observedAtEpochMillis",
+      equals: 1788767674015,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.0.clusterId",
+      equals: 131,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.0.memberId",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.0.memberCount",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.0.quorumSize",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.0.appointedLeaderId",
+      equals: -1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.0.freshStart",
+      equals: false,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.0.role",
+      equals: "FOLLOWER",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.0.electionState",
+      equals: "CLOSED",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.0.leadershipTermId",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.0.commitPosition",
+      equals: 7296,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.0.logPosition",
+      equals: 7296,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.0.nextShardSequence",
+      equals: 13,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.0.identityResultCount",
+      equals: 12,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.0.semanticStateDigest",
+      equals:
+        "64c588116e7fd83c5dac81a543467bc4a7db37bafd78792574590a2ae4a6a207",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.0.identityResultDigest",
+      equals:
+        "9f89a58264d68a371f554f8b99f0a5d19a0f997f8378945fb2130dddcdec8706",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.0.udpPortBlockBase",
+      equals: 55100,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.0.rootDirectory",
+      equals:
+        "/Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/tmp/m13/shard-1",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.0.aeronDirectory",
+      equals:
+        "/Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/tmp/m13/shard-1/node-0/aeron",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.0.archiveDirectory",
+      equals:
+        "/Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/tmp/m13/shard-1/node-0/archive",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.0.clusterDirectory",
+      equals:
+        "/Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/tmp/m13/shard-1/node-0/cluster",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.0.componentErrors.length",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.0.diagnosticWarnings.length",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.0.droppedDiagnosticWarnings",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.1.schema",
+      equals: "matching.m13.member-status.v1",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.1.statusSequence",
+      equals: 16,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.1.processId",
+      equals: 36632,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.1.processStartedAtEpochMillis",
+      equals: 1788767671709,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.1.observedAtEpochMillis",
+      equals: 1788767674016,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.1.clusterId",
+      equals: 131,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.1.memberId",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.1.memberCount",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.1.quorumSize",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.1.appointedLeaderId",
+      equals: -1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.1.freshStart",
+      equals: false,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.1.role",
+      equals: "FOLLOWER",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.1.electionState",
+      equals: "CLOSED",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.1.leadershipTermId",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.1.commitPosition",
+      equals: 7296,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.1.logPosition",
+      equals: 7296,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.1.nextShardSequence",
+      equals: 13,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.1.identityResultCount",
+      equals: 12,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.1.semanticStateDigest",
+      equals:
+        "64c588116e7fd83c5dac81a543467bc4a7db37bafd78792574590a2ae4a6a207",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.1.identityResultDigest",
+      equals:
+        "9f89a58264d68a371f554f8b99f0a5d19a0f997f8378945fb2130dddcdec8706",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.1.udpPortBlockBase",
+      equals: 55110,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.1.rootDirectory",
+      equals:
+        "/Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/tmp/m13/shard-1",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.1.aeronDirectory",
+      equals:
+        "/Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/tmp/m13/shard-1/node-1/aeron",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.1.archiveDirectory",
+      equals:
+        "/Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/tmp/m13/shard-1/node-1/archive",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.1.clusterDirectory",
+      equals:
+        "/Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/tmp/m13/shard-1/node-1/cluster",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.1.componentErrors.length",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.1.diagnosticWarnings.length",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.1.droppedDiagnosticWarnings",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.2.schema",
+      equals: "matching.m13.member-status.v1",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.2.statusSequence",
+      equals: 14,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.2.processId",
+      equals: 36633,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.2.processStartedAtEpochMillis",
+      equals: 1788767671712,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.2.observedAtEpochMillis",
+      equals: 1788767674096,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.2.clusterId",
+      equals: 131,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.2.memberId",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.2.memberCount",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.2.quorumSize",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.2.appointedLeaderId",
+      equals: -1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.2.freshStart",
+      equals: false,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.2.role",
+      equals: "LEADER",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.2.electionState",
+      equals: "CLOSED",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.2.leadershipTermId",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.2.commitPosition",
+      equals: 7296,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.2.logPosition",
+      equals: 7296,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.2.nextShardSequence",
+      equals: 13,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.2.identityResultCount",
+      equals: 12,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.2.semanticStateDigest",
+      equals:
+        "64c588116e7fd83c5dac81a543467bc4a7db37bafd78792574590a2ae4a6a207",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.2.identityResultDigest",
+      equals:
+        "9f89a58264d68a371f554f8b99f0a5d19a0f997f8378945fb2130dddcdec8706",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.2.udpPortBlockBase",
+      equals: 55120,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.2.rootDirectory",
+      equals:
+        "/Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/tmp/m13/shard-1",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.2.aeronDirectory",
+      equals:
+        "/Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/tmp/m13/shard-1/node-2/aeron",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.2.archiveDirectory",
+      equals:
+        "/Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/tmp/m13/shard-1/node-2/archive",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.2.clusterDirectory",
+      equals:
+        "/Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/tmp/m13/shard-1/node-2/cluster",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.2.componentErrors.length",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.2.diagnosticWarnings.length",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.10.replicas.2.droppedDiagnosticWarnings",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.label",
+      equals: "all-six-restored-equivalent",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.shardId",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.directNextShardSequence",
+      equals: 6,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.directSemanticDigest",
+      equals:
+        "cda8589edf273a213d8d3fba4abf091cea270186d46be29bd4869d3bd1f0e48a",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.directIdentityDigest",
+      equals:
+        "52fbe517296d9006420c4912a600b01fd7905d8e7a531bc7ce8fcc8cc4f5f2d8",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.length",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.0.schema",
+      equals: "matching.m13.member-status.v1",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.0.statusSequence",
+      equals: 16,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.0.processId",
+      equals: 36634,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.0.processStartedAtEpochMillis",
+      equals: 1788767671715,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.0.observedAtEpochMillis",
+      equals: 1788767674214,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.0.clusterId",
+      equals: 132,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.0.memberId",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.0.memberCount",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.0.quorumSize",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.0.appointedLeaderId",
+      equals: -1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.0.freshStart",
+      equals: false,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.0.role",
+      equals: "FOLLOWER",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.0.electionState",
+      equals: "CLOSED",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.0.leadershipTermId",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.0.commitPosition",
+      equals: 2560,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.0.logPosition",
+      equals: 2560,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.0.nextShardSequence",
+      equals: 6,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.0.identityResultCount",
+      equals: 5,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.0.semanticStateDigest",
+      equals:
+        "cda8589edf273a213d8d3fba4abf091cea270186d46be29bd4869d3bd1f0e48a",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.0.identityResultDigest",
+      equals:
+        "52fbe517296d9006420c4912a600b01fd7905d8e7a531bc7ce8fcc8cc4f5f2d8",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.0.udpPortBlockBase",
+      equals: 55180,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.0.rootDirectory",
+      equals:
+        "/Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/tmp/m13/shard-2",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.0.aeronDirectory",
+      equals:
+        "/Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/tmp/m13/shard-2/node-0/aeron",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.0.archiveDirectory",
+      equals:
+        "/Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/tmp/m13/shard-2/node-0/archive",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.0.clusterDirectory",
+      equals:
+        "/Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/tmp/m13/shard-2/node-0/cluster",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.0.componentErrors.length",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.0.diagnosticWarnings.length",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.0.droppedDiagnosticWarnings",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.1.schema",
+      equals: "matching.m13.member-status.v1",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.1.statusSequence",
+      equals: 15,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.1.processId",
+      equals: 36635,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.1.processStartedAtEpochMillis",
+      equals: 1788767671718,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.1.observedAtEpochMillis",
+      equals: 1788767674214,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.1.clusterId",
+      equals: 132,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.1.memberId",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.1.memberCount",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.1.quorumSize",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.1.appointedLeaderId",
+      equals: -1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.1.freshStart",
+      equals: false,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.1.role",
+      equals: "FOLLOWER",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.1.electionState",
+      equals: "CLOSED",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.1.leadershipTermId",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.1.commitPosition",
+      equals: 2560,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.1.logPosition",
+      equals: 2560,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.1.nextShardSequence",
+      equals: 6,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.1.identityResultCount",
+      equals: 5,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.1.semanticStateDigest",
+      equals:
+        "cda8589edf273a213d8d3fba4abf091cea270186d46be29bd4869d3bd1f0e48a",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.1.identityResultDigest",
+      equals:
+        "52fbe517296d9006420c4912a600b01fd7905d8e7a531bc7ce8fcc8cc4f5f2d8",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.1.udpPortBlockBase",
+      equals: 55190,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.1.rootDirectory",
+      equals:
+        "/Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/tmp/m13/shard-2",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.1.aeronDirectory",
+      equals:
+        "/Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/tmp/m13/shard-2/node-1/aeron",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.1.archiveDirectory",
+      equals:
+        "/Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/tmp/m13/shard-2/node-1/archive",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.1.clusterDirectory",
+      equals:
+        "/Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/tmp/m13/shard-2/node-1/cluster",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.1.componentErrors.length",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.1.diagnosticWarnings.length",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.1.droppedDiagnosticWarnings",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.2.schema",
+      equals: "matching.m13.member-status.v1",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.2.statusSequence",
+      equals: 15,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.2.processId",
+      equals: 36636,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.2.processStartedAtEpochMillis",
+      equals: 1788767671721,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.2.observedAtEpochMillis",
+      equals: 1788767674212,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.2.clusterId",
+      equals: 132,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.2.memberId",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.2.memberCount",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.2.quorumSize",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.2.appointedLeaderId",
+      equals: -1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.2.freshStart",
+      equals: false,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.2.role",
+      equals: "LEADER",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.2.electionState",
+      equals: "CLOSED",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.2.leadershipTermId",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.2.commitPosition",
+      equals: 2560,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.2.logPosition",
+      equals: 2560,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.2.nextShardSequence",
+      equals: 6,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.2.identityResultCount",
+      equals: 5,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.2.semanticStateDigest",
+      equals:
+        "cda8589edf273a213d8d3fba4abf091cea270186d46be29bd4869d3bd1f0e48a",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.2.identityResultDigest",
+      equals:
+        "52fbe517296d9006420c4912a600b01fd7905d8e7a531bc7ce8fcc8cc4f5f2d8",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.2.udpPortBlockBase",
+      equals: 55200,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.2.rootDirectory",
+      equals:
+        "/Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/tmp/m13/shard-2",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.2.aeronDirectory",
+      equals:
+        "/Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/tmp/m13/shard-2/node-2/aeron",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.2.archiveDirectory",
+      equals:
+        "/Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/tmp/m13/shard-2/node-2/archive",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.2.clusterDirectory",
+      equals:
+        "/Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/tmp/m13/shard-2/node-2/cluster",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.2.componentErrors.length",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.2.diagnosticWarnings.length",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "checkpoints.11.replicas.2.droppedDiagnosticWarnings",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.length",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.shardId",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.clusterId",
+      equals: 131,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.rootDirectory",
+      equals:
+        "/Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/tmp/m13/shard-1",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.fixedUdpPorts.length",
+      equals: 15,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.fixedUdpPorts.0",
+      equals: 55101,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.fixedUdpPorts.1",
+      equals: 55102,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.fixedUdpPorts.2",
+      equals: 55103,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.fixedUdpPorts.3",
+      equals: 55104,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.fixedUdpPorts.4",
+      equals: 55105,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.fixedUdpPorts.5",
+      equals: 55111,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.fixedUdpPorts.6",
+      equals: 55112,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.fixedUdpPorts.7",
+      equals: 55113,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.fixedUdpPorts.8",
+      equals: 55114,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.fixedUdpPorts.9",
+      equals: 55115,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.fixedUdpPorts.10",
+      equals: 55121,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.fixedUdpPorts.11",
+      equals: 55122,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.fixedUdpPorts.12",
+      equals: 55123,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.fixedUdpPorts.13",
+      equals: 55124,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.fixedUdpPorts.14",
+      equals: 55125,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.teardownComplete",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.restartSafety.length",
+      equals: 4,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.restartSafety.0.ordinal",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.restartSafety.0.memberId",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.restartSafety.0.stoppedProcessId",
+      equals: 36578,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.restartSafety.0.archiveMarkFile",
+      equals:
+        "file:///Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/tmp/m13/shard-1/node-1/archive/archive-mark.dat",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.restartSafety.0.lastActivityTimestampMillis",
+      equals: 1788767649442,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.restartSafety.0.observedAtMillis",
+      equals: 1788767659445,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.restartSafety.0.ageMillis",
+      equals: 10003,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.restartSafety.0.livenessTimeoutMillis",
+      equals: 10000,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.restartSafety.0.probeCount",
+      equals: 1098,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.restartSafety.0.waitElapsedNanos",
+      equals: 4017944875,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.restartSafety.0.aeronVersion",
+      equals: "1.52.2",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.restartSafety.0.predicate",
+      equals: "ARCHIVE_MARK_FILE_ACTIVITY_AGE_GT_LIVENESS_TIMEOUT",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.restartSafety.1.ordinal",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.restartSafety.1.memberId",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.restartSafety.1.stoppedProcessId",
+      equals: 36577,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.restartSafety.1.archiveMarkFile",
+      equals:
+        "file:///Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/tmp/m13/shard-1/node-0/archive/archive-mark.dat",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.restartSafety.1.lastActivityTimestampMillis",
+      equals: 1788767661459,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.restartSafety.1.observedAtMillis",
+      equals: 1788767671460,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.restartSafety.1.ageMillis",
+      equals: 10001,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.restartSafety.1.livenessTimeoutMillis",
+      equals: 10000,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.restartSafety.1.probeCount",
+      equals: 7496,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.restartSafety.1.waitElapsedNanos",
+      equals: 9465990833,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.restartSafety.1.aeronVersion",
+      equals: "1.52.2",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.restartSafety.1.predicate",
+      equals: "ARCHIVE_MARK_FILE_ACTIVITY_AGE_GT_LIVENESS_TIMEOUT",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.restartSafety.2.ordinal",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.restartSafety.2.memberId",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.restartSafety.2.stoppedProcessId",
+      equals: 36614,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.restartSafety.2.archiveMarkFile",
+      equals:
+        "file:///Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/tmp/m13/shard-1/node-1/archive/archive-mark.dat",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.restartSafety.2.lastActivityTimestampMillis",
+      equals: 1788767661707,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.restartSafety.2.observedAtMillis",
+      equals: 1788767671708,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.restartSafety.2.ageMillis",
+      equals: 10001,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.restartSafety.2.livenessTimeoutMillis",
+      equals: 10000,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.restartSafety.2.probeCount",
+      equals: 190,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.restartSafety.2.waitElapsedNanos",
+      equals: 238543125,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.restartSafety.2.aeronVersion",
+      equals: "1.52.2",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.restartSafety.2.predicate",
+      equals: "ARCHIVE_MARK_FILE_ACTIVITY_AGE_GT_LIVENESS_TIMEOUT",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.restartSafety.3.ordinal",
+      equals: 4,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.restartSafety.3.memberId",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.restartSafety.3.stoppedProcessId",
+      equals: 36579,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.restartSafety.3.archiveMarkFile",
+      equals:
+        "file:///Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/tmp/m13/shard-1/node-2/archive/archive-mark.dat",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.restartSafety.3.lastActivityTimestampMillis",
+      equals: 1788767661440,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.restartSafety.3.observedAtMillis",
+      equals: 1788767671711,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.restartSafety.3.ageMillis",
+      equals: 10271,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.restartSafety.3.livenessTimeoutMillis",
+      equals: 10000,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.restartSafety.3.probeCount",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.restartSafety.3.waitElapsedNanos",
+      equals: 237000,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.restartSafety.3.aeronVersion",
+      equals: "1.52.2",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.restartSafety.3.predicate",
+      equals: "ARCHIVE_MARK_FILE_ACTIVITY_AGE_GT_LIVENESS_TIMEOUT",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.starts",
+      equals: 7,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.forcedStops",
+      equals: 4,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.memberProcesses.length",
+      equals: 7,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.0.stabilityWitnesses.length",
+      equals: 15,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.shardId",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.clusterId",
+      equals: 132,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.rootDirectory",
+      equals:
+        "/Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/tmp/m13/shard-2",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.fixedUdpPorts.length",
+      equals: 15,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.fixedUdpPorts.0",
+      equals: 55181,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.fixedUdpPorts.1",
+      equals: 55182,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.fixedUdpPorts.2",
+      equals: 55183,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.fixedUdpPorts.3",
+      equals: 55184,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.fixedUdpPorts.4",
+      equals: 55185,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.fixedUdpPorts.5",
+      equals: 55191,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.fixedUdpPorts.6",
+      equals: 55192,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.fixedUdpPorts.7",
+      equals: 55193,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.fixedUdpPorts.8",
+      equals: 55194,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.fixedUdpPorts.9",
+      equals: 55195,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.fixedUdpPorts.10",
+      equals: 55201,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.fixedUdpPorts.11",
+      equals: 55202,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.fixedUdpPorts.12",
+      equals: 55203,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.fixedUdpPorts.13",
+      equals: 55204,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.fixedUdpPorts.14",
+      equals: 55205,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.teardownComplete",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.restartSafety.length",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.restartSafety.0.ordinal",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.restartSafety.0.memberId",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.restartSafety.0.stoppedProcessId",
+      equals: 36580,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.restartSafety.0.archiveMarkFile",
+      equals:
+        "file:///Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/tmp/m13/shard-2/node-0/archive/archive-mark.dat",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.restartSafety.0.lastActivityTimestampMillis",
+      equals: 1788767661031,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.restartSafety.0.observedAtMillis",
+      equals: 1788767671715,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.restartSafety.0.ageMillis",
+      equals: 10684,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.restartSafety.0.livenessTimeoutMillis",
+      equals: 10000,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.restartSafety.0.probeCount",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.restartSafety.0.waitElapsedNanos",
+      equals: 556125,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.restartSafety.0.aeronVersion",
+      equals: "1.52.2",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.restartSafety.0.predicate",
+      equals: "ARCHIVE_MARK_FILE_ACTIVITY_AGE_GT_LIVENESS_TIMEOUT",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.restartSafety.1.ordinal",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.restartSafety.1.memberId",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.restartSafety.1.stoppedProcessId",
+      equals: 36581,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.restartSafety.1.archiveMarkFile",
+      equals:
+        "file:///Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/tmp/m13/shard-2/node-1/archive/archive-mark.dat",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.restartSafety.1.lastActivityTimestampMillis",
+      equals: 1788767661004,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.restartSafety.1.observedAtMillis",
+      equals: 1788767671717,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.restartSafety.1.ageMillis",
+      equals: 10713,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.restartSafety.1.livenessTimeoutMillis",
+      equals: 10000,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.restartSafety.1.probeCount",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.restartSafety.1.waitElapsedNanos",
+      equals: 197750,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.restartSafety.1.aeronVersion",
+      equals: "1.52.2",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.restartSafety.1.predicate",
+      equals: "ARCHIVE_MARK_FILE_ACTIVITY_AGE_GT_LIVENESS_TIMEOUT",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.restartSafety.2.ordinal",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.restartSafety.2.memberId",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.restartSafety.2.stoppedProcessId",
+      equals: 36582,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.restartSafety.2.archiveMarkFile",
+      equals:
+        "file:///Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m13-release-check-2/build/tmp/m13/shard-2/node-2/archive/archive-mark.dat",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.restartSafety.2.lastActivityTimestampMillis",
+      equals: 1788767661029,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.restartSafety.2.observedAtMillis",
+      equals: 1788767671720,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.restartSafety.2.ageMillis",
+      equals: 10691,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.restartSafety.2.livenessTimeoutMillis",
+      equals: 10000,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.restartSafety.2.probeCount",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.restartSafety.2.waitElapsedNanos",
+      equals: 196292,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.restartSafety.2.aeronVersion",
+      equals: "1.52.2",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.restartSafety.2.predicate",
+      equals: "ARCHIVE_MARK_FILE_ACTIVITY_AGE_GT_LIVENESS_TIMEOUT",
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.starts",
+      equals: 6,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.forcedStops",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.memberProcesses.length",
+      equals: 6,
+    },
+    {
+      artifactPath: "reports/check/m13-cluster-faults.json",
+      field: "groups.1.stabilityWitnesses.length",
+      equals: 11,
+    },
+    {
+      artifactPath: "reports/check/m12-topology.json",
+      field: "schemaVersion",
+      equals: "matching.m12.topology.v1",
+    },
+    {
+      artifactPath: "reports/check/m12-topology.json",
+      field: "status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/m12-topology.json",
+      field: "implementation",
+      equals: "REAL_AERON_CHILD_PROCESSES",
+    },
+    {
+      artifactPath: "reports/check/m12-topology.json",
+      field: "clusterId",
+      equals: 12,
+    },
+    {
+      artifactPath: "reports/check/m12-topology.json",
+      field: "memberCount",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/m12-topology.json",
+      field: "quorumSize",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m12-topology.json",
+      field: "aeronAppointedLeaderId",
+      equals: -1,
+    },
+    {
+      artifactPath: "reports/check/m12-topology.json",
+      field: "automaticLeaderElection",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m12-topology.json",
+      field: "initialLeaderIsRuntimeObservation",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m12-topology.json",
+      field: "localhostOnly",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m12-topology.json",
+      field: "memberProcessStarts",
+      equals: 6,
+    },
+    {
+      artifactPath: "reports/check/m12-topology.json",
+      field: "externalForceStops",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/m12-topology.json",
+      field: "teardownComplete",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m12-topology.json",
+      field: "childProcessesAliveAfterTeardown",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m12-topology.json",
+      field: "ownerProcessId",
+      equals: 35884,
+    },
+    {
+      artifactPath: "reports/check/m12-topology.json",
+      field: "childClasspathStrategy",
+      equals: "INHERITED_JAVA_CLASS_PATH",
+    },
+    {
+      artifactPath: "reports/check/m12-topology.json",
+      field: "archiveMarkFileLivenessTimeoutMillis",
+      equals: 10000,
+    },
+    {
+      artifactPath: "reports/check/m12-topology.json",
+      field: "restartSafetyPredicate",
+      equals: "ARCHIVE_MARK_FILE_ACTIVITY_AGE_GT_LIVENESS_TIMEOUT",
+    },
+    {
+      artifactPath: "reports/check/m12-topology.json",
+      field: "restartSafetyReason",
+      equals:
+        "A forced-stopped member is restarted only after a live ArchiveMarkFile activity-timestamp read observes age strictly greater than the dependency-pinned liveness timeout.",
+    },
+    {
+      artifactPath: "reports/check/m12-topology.json",
+      field: "restartSafetyWitnessCount",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/m12-topology.json",
+      field: "statusFreshnessClock",
+      equals: "MONOTONIC_STATUS_SEQUENCE_ADVANCE",
+    },
+    {
+      artifactPath: "reports/check/m12-topology.json",
+      field: "wallClockUsedForStatusAcceptance",
+      equals: false,
+    },
+    {
+      artifactPath: "reports/check/m12-topology.json",
+      field: "stableSnapshotWitnessCount",
+      equals: 9,
+    },
+    {
+      artifactPath: "reports/check/m12-topology.json",
+      field: "appliedUnknownAttemptOrdinal",
+      equals: 42,
+    },
+    {
+      artifactPath: "reports/check/m12-topology.json",
+      field: "appliedUnknownObservedOnAllMembersBeforeLeaderKill",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m12-topology.json",
+      field: "appliedUnknownExpectedNextApplicationSequence",
+      equals: 34,
+    },
+    {
+      artifactPath: "reports/check/m12-topology.json",
+      field: "appliedUnknownExpectedIdentityCount",
+      equals: 33,
+    },
+    {
+      artifactPath: "reports/check/m12-leadership.json",
+      field: "schemaVersion",
+      equals: "matching.m12.leadership.v1",
+    },
+    {
+      artifactPath: "reports/check/m12-leadership.json",
+      field: "status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/m12-leadership.json",
+      field: "implementation",
+      equals: "REAL_AERON_CHILD_PROCESSES",
+    },
+    {
+      artifactPath: "reports/check/m12-leadership.json",
+      field: "initialLeaderId",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m12-leadership.json",
+      field: "initialLeadershipTermId",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m12-leadership.json",
+      field: "faultTargetLeaderId",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m12-leadership.json",
+      field: "faultTargetLeadershipTermId",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m12-leadership.json",
+      field: "killedObservedCurrentLeader",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m12-leadership.json",
+      field: "replacementLeaderId",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m12-leadership.json",
+      field: "replacementLeadershipTermId",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m12-leadership.json",
+      field: "leadershipTermAdvanced",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m12-leadership.json",
+      field: "staleLeaderAcknowledgements",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m12-quorum.json",
+      field: "schemaVersion",
+      equals: "matching.m12.quorum.v1",
+    },
+    {
+      artifactPath: "reports/check/m12-quorum.json",
+      field: "status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/m12-quorum.json",
+      field: "implementation",
+      equals: "REAL_AERON_CHILD_PROCESSES",
+    },
+    {
+      artifactPath: "reports/check/m12-quorum.json",
+      field: "votingMembers",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/m12-quorum.json",
+      field: "quorumSize",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m12-quorum.json",
+      field: "liveVotingMembersDuringMinority",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m12-quorum.json",
+      field: "minorityAttemptOrdinal",
+      equals: 84,
+    },
+    {
+      artifactPath: "reports/check/m12-quorum.json",
+      field: "minorityIngressAccepted",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m12-quorum.json",
+      field: "minorityOutcome",
+      equals: "UNKNOWN",
+    },
+    {
+      artifactPath: "reports/check/m12-quorum.json",
+      field: "minorityAcknowledgements",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m12-quorum.json",
+      field: "quorumRestored",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m12-quorum.json",
+      field: "restoredLeaderId",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m12-quorum.json",
+      field: "restoredLeadershipTermId",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m12-quorum.json",
+      field: "retryAttemptOrdinal",
+      equals: 85,
+    },
+    {
+      artifactPath: "reports/check/m12-quorum.json",
+      field: "retryOutcome",
+      equals: "ACKNOWLEDGED",
+    },
+    {
+      artifactPath: "reports/check/m12-quorum.json",
+      field: "retryResponseStatus",
+      equals: "DUPLICATE_REPLAYED",
+    },
+    {
+      artifactPath: "reports/check/m12-catchup.json",
+      field: "schemaVersion",
+      equals: "matching.m12.catchup.v1",
+    },
+    {
+      artifactPath: "reports/check/m12-catchup.json",
+      field: "status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/m12-catchup.json",
+      field: "implementation",
+      equals: "REAL_AERON_CHILD_PROCESSES",
+    },
+    {
+      artifactPath: "reports/check/m12-catchup.json",
+      field: "formerLeaderId",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m12-catchup.json",
+      field: "freshStartOnReturn",
+      equals: false,
+    },
+    {
+      artifactPath: "reports/check/m12-catchup.json",
+      field: "roleAfterReturn",
+      equals: "FOLLOWER",
+    },
+    {
+      artifactPath: "reports/check/m12-catchup.json",
+      field: "caughtUpBeforeMinorityFault",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m12-catchup.json",
+      field: "catchupCommitPosition",
+      equals: 24128,
+    },
+    {
+      artifactPath: "reports/check/m12-catchup.json",
+      field: "catchupLogPosition",
+      equals: 24128,
+    },
+    {
+      artifactPath: "reports/check/m12-catchup.json",
+      field: "catchupNextApplicationSequence",
+      equals: 66,
+    },
+    {
+      artifactPath: "reports/check/m12-catchup.json",
+      field: "allThreeConvergedAfterFinalRestore",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m12-catchup.json",
+      field: "archiveMarkFileLivenessTimeoutMillis",
+      equals: 10000,
+    },
+    {
+      artifactPath: "reports/check/m12-catchup.json",
+      field: "restartSafetyPredicate",
+      equals: "ARCHIVE_MARK_FILE_ACTIVITY_AGE_GT_LIVENESS_TIMEOUT",
+    },
+    {
+      artifactPath: "reports/check/m12-catchup.json",
+      field: "firstReturnRestartSafetyWitnessOrdinal",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m12-state-equivalence.json",
+      field: "schemaVersion",
+      equals: "matching.m12.state-equivalence.v1",
+    },
+    {
+      artifactPath: "reports/check/m12-state-equivalence.json",
+      field: "status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/m12-state-equivalence.json",
+      field: "implementation",
+      equals: "REAL_AERON_CHILD_PROCESSES",
+    },
+    {
+      artifactPath: "reports/check/m12-state-equivalence.json",
+      field: "applicationObserver",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m12-state-equivalence.json",
+      field: "memberCount",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/m12-state-equivalence.json",
+      field: "nextApplicationSequence",
+      equals: 67,
+    },
+    {
+      artifactPath: "reports/check/m12-state-equivalence.json",
+      field: "identityCount",
+      equals: 66,
+    },
+    {
+      artifactPath: "reports/check/m12-state-equivalence.json",
+      field: "semanticStateDigest",
+      equals:
+        "a94bccba4baee2339ddaf525c4251c051f7ad3e48021fd50ceb2ed59f4ffe4df",
+    },
+    {
+      artifactPath: "reports/check/m12-state-equivalence.json",
+      field: "expectedSemanticStateDigest",
+      equals:
+        "a94bccba4baee2339ddaf525c4251c051f7ad3e48021fd50ceb2ed59f4ffe4df",
+    },
+    {
+      artifactPath: "reports/check/m12-state-equivalence.json",
+      field: "identityResultDigest",
+      equals:
+        "139efc2b815dc044a71ad05d40fea12c071943e6955f1f1702b29b80aa40e73e",
+    },
+    {
+      artifactPath: "reports/check/m12-state-equivalence.json",
+      field: "expectedIdentityResultDigest",
+      equals:
+        "139efc2b815dc044a71ad05d40fea12c071943e6955f1f1702b29b80aa40e73e",
+    },
+    {
+      artifactPath: "reports/check/m12-state-equivalence.json",
+      field: "allMembersIdentityResultDigestMatchDirectOracle",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m12-state-equivalence.json",
+      field: "allMembersIdentityCountExact",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m12-state-equivalence.json",
+      field: "commitPosition",
+      equals: 25056,
+    },
+    {
+      artifactPath: "reports/check/m12-state-equivalence.json",
+      field: "logPosition",
+      equals: 25056,
+    },
+    {
+      artifactPath: "reports/check/m12-state-equivalence.json",
+      field: "stateEquivalent",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m12-state-equivalence.json",
+      field: "componentErrorCount",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/m12-state-equivalence.json",
+      field: "diagnosticWarningCount",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/m12-state-equivalence.json",
+      field: "droppedDiagnosticWarnings",
+      equals: 0,
+    },
+  ],
+};
+
 export const PRACTICE_UNITS: readonly PracticeUnit[] = [
   {
     projectSlug: "high-availability-cex",
@@ -7121,8 +16078,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     order: 10,
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.1",
-    planCompatibility:
-      "当前 PLAN v0.15 在 M11 之后只为 M12 冻结单机三投票成员、Leader 进程故障、UNKNOWN 同身份重试、旧 Leader 追赶与无 quorum 失败关闭；M00 输入、验证、canonical history、digest 与 evidence 合同不变。因此 M00 的 `course.properties` 与不可移动起点继续记录合同 `planVersion=0.1`，网站另行公开当前计划版本和这条兼容说明，不改 tag、不回写冻结证据，也不把后续 WAL、Snapshot、benchmark 或 Cluster wire bytes 声称为 M00 canonical format。",
+    planCompatibility: "当前 PLAN v0.16 只在 M12 已发布基线上为 M13 冻结静态权威路由与 shard 内多订单簿；M00 输入、验证、canonical history、digest 与 evidence 合同不变。因此 M00 的 `course.properties` 与不可移动起点继续记录合同 `planVersion=0.1`，网站另行公开当前计划版本和这条兼容说明，不改 tag、不回写冻结证据，也不把后续 WAL、Snapshot、benchmark 或 Cluster wire bytes 声称为 M00 canonical format。",
     prerequisiteUnitCodes: [],
     startRef: "course/m00.2-start",
     supersededStartRefs: [
@@ -7507,8 +16463,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     order: 20,
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.3",
-    planCompatibility:
-      "当前 PLAN v0.15 在 M11 之后只为 M12 冻结单机三投票成员、Leader 进程故障、UNKNOWN 同身份重试、旧 Leader 追赶与无 quorum 失败关闭；M01 价格时间优先业务语义、冻结 event batch、Golden corpus 与 evidence 不回写，也不表示后续 Java event hierarchy、WAL/Snapshot bytes、queue、Cluster codec 或恢复运行时与 M01 完成提交相同。因此 M01 的 `course.properties`、起点、完成 tag、教程与持久 evidence 继续保留合同 `planVersion=0.3`。",
+    planCompatibility: "当前 PLAN v0.16 只在 M12 已发布基线上为 M13 冻结静态权威路由与 shard 内多订单簿；M01 价格时间优先业务语义、冻结 event batch、Golden corpus 与 evidence 不回写，也不表示后续 Java event hierarchy、WAL/Snapshot bytes、queue、Cluster codec 或恢复运行时与 M01 完成提交相同。因此 M01 的 `course.properties`、起点、完成 tag、教程与持久 evidence 继续保留合同 `planVersion=0.3`。",
     prerequisiteUnitCodes: ["M00"],
     startRef: "course/m01-start",
     completeRef: "course/m01-complete",
@@ -8227,8 +17182,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     order: 30,
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.4",
-    planCompatibility:
-      "当前 PLAN v0.15 在 M11 之后只为 M12 冻结单机三投票成员、Leader 进程故障、UNKNOWN 同身份重试、旧 Leader 追赶与无 quorum 失败关闭；M02 可寻址生命周期、10/34 corpus、M02H1、complete tag 与 evidence 不回写，也不表示后续 Java event hierarchy、WAL/Snapshot record shape、queue、Cluster codec 或 runtime 与 M02 完成提交相同。",
+    planCompatibility: "当前 PLAN v0.16 只在 M12 已发布基线上为 M13 冻结静态权威路由与 shard 内多订单簿；M02 可寻址生命周期、10/34 corpus、M02H1、complete tag 与 evidence 不回写，也不表示后续 Java event hierarchy、WAL/Snapshot record shape、queue、Cluster codec 或 runtime 与 M02 完成提交相同。",
     prerequisiteUnitCodes: ["M01"],
     startRef: "course/m02-start",
     completeRef: "course/m02-complete",
@@ -8312,8 +17266,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     order: 40,
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.5",
-    planCompatibility:
-      "当前 PLAN v0.15 在 M11 之后只为 M12 冻结单机三投票成员、Leader 进程故障、UNKNOWN 同身份重试、旧 Leader 追赶与无 quorum 失败关闭；M03 冻结 tag、M03G1 command canonical 身份、`matching-0.1.0` 与 evidence 不回写。后续新增 event shape、WAL/Snapshot source、queue、Cluster codec 和 runtime 只由对应单元的架构门禁验收，不重绑 M03 证据。",
+    planCompatibility: "当前 PLAN v0.16 只在 M12 已发布基线上为 M13 冻结静态权威路由与 shard 内多订单簿；M03 冻结 tag、M03G1 command canonical 身份、`matching-0.1.0` 与 evidence 不回写。后续新增 event shape、WAL/Snapshot source、queue、Cluster codec 和 runtime 只由对应单元的架构门禁验收，不重绑 M03 证据。",
     prerequisiteUnitCodes: ["M02"],
     startRef: "course/m03-start",
     completeRef: "course/m03-complete",
@@ -8401,8 +17354,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     order: 50,
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.6",
-    planCompatibility:
-      "当前 PLAN v0.15 在 M11 之后只为 M12 冻结单机三投票成员、Leader 进程故障、UNKNOWN 同身份重试、旧 Leader 追赶与无 quorum 失败关闭；M04 的五字段 ExecutionPolicy、14/48 固定语料、M04F1/M04H1/M04X1、complete tag、产品停止点与 evidence 不回写，后续归因、STP 事件、WAL frame、Snapshot state、queue 或 Cluster codec 也不表示 M04 Java event shape/event bytes 曾被冻结。",
+    planCompatibility: "当前 PLAN v0.16 只在 M12 已发布基线上为 M13 冻结静态权威路由与 shard 内多订单簿；M04 的五字段 ExecutionPolicy、14/48 固定语料、M04F1/M04H1/M04X1、complete tag、产品停止点与 evidence 不回写，后续归因、STP 事件、WAL frame、Snapshot state、queue 或 Cluster codec 也不表示 M04 Java event shape/event bytes 曾被冻结。",
     prerequisiteUnitCodes: ["M03"],
     startRef: "course/m04-start",
     completeRef: "course/m04-complete",
@@ -8496,8 +17448,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     order: 60,
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.7",
-    planCompatibility:
-      "当前 PLAN v0.15 在 M11 之后只为 M12 冻结单机三投票成员、Leader 进程故障、UNKNOWN 同身份重试、旧 Leader 追赶与无 quorum 失败关闭；M05 的 RuleSet/activation fence、12/54 fixed、160×64、20 项 coverage、8 项 mutant、五篇 permalink、complete tag 与公开 evidence 保持不变，不因 Snapshot、性能资格或 Cluster adapter 合同回写。",
+    planCompatibility: "PLAN v0.15 曾在 M11 之后为 M12 冻结单机三投票成员、Leader 进程故障、UNKNOWN 同身份重试、旧 Leader 追赶与无 quorum 失败关闭；PLAN v0.16 再单独签约 M13 静态路由。M05 的 RuleSet/activation fence、12/54 fixed、160×64、20 项 coverage、8 项 mutant、五篇 permalink、complete tag 与公开 evidence 保持不变，不因 Snapshot、性能资格、Cluster adapter 或分片合同回写。",
     prerequisiteUnitCodes: ["M04"],
     startRef: "course/m05-start",
     completeRef: "course/m05-complete",
@@ -8592,8 +17543,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     order: 70,
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.8",
-    planCompatibility:
-      "PLAN v0.15 在 M11 之后只为 M12 冻结单机三投票成员、Leader 进程故障、UNKNOWN 同身份重试、旧 Leader 追赶与无 quorum 失败关闭；M06 的 mode/Mass Cancel 语义、15/64 fixed、160×64、26 项 coverage、10 项 mutant、complete tag 与公开 evidence 不回写，Snapshot、负载或 Cluster 恢复路径也不能把状态默认为 OPEN。",
+    planCompatibility: "当前 PLAN v0.16 只在 M12 已发布基线上为 M13 冻结静态权威路由与 shard 内多订单簿；M06 的 mode/Mass Cancel 语义、15/64 fixed、160×64、26 项 coverage、10 项 mutant、complete tag 与公开 evidence 不回写，Snapshot、负载或 Cluster 恢复路径也不能把状态默认为 OPEN。",
     prerequisiteUnitCodes: ["M05"],
     startRef: "course/m06-start",
     completeRef: "course/m06-complete",
@@ -8675,8 +17625,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     order: 80,
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.9",
-    planCompatibility:
-      "PLAN v0.15 在 M11 之后只为 M12 冻结单机三投票成员、Leader 进程故障、UNKNOWN 同身份重试、旧 Leader 追赶与无 quorum 失败关闭；M07 的 opaque participant group、taker-owned STP disposition、16/72 fixed、160×64、24 项 coverage、8 项 mutant、complete tag 与公开 evidence 不回写，Snapshot、负载与 Cluster restart 都必须完整保存其可恢复结果。",
+    planCompatibility: "当前 PLAN v0.16 只在 M12 已发布基线上为 M13 冻结静态权威路由与 shard 内多订单簿；M07 的 opaque participant group、taker-owned STP disposition、16/72 fixed、160×64、24 项 coverage、8 项 mutant、complete tag 与公开 evidence 不回写，Snapshot、负载与 Cluster restart 都必须完整保存其可恢复结果。",
     prerequisiteUnitCodes: ["M06"],
     startRef: "course/m07-start",
     completeRef: "course/m07-complete",
@@ -8763,8 +17712,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     order: 90,
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.10",
-    planCompatibility:
-      "PLAN v0.15 在 M11 之后只为 M12 冻结单机三投票成员、Leader 进程故障、UNKNOWN 同身份重试、旧 Leader 追赶与无 quorum 失败关闭；M08 的 M08C1/M08W1、append→force→apply→ACK、durable identity、genesis recovery、complete tag 与公开 evidence 均不回写，M09 Snapshot、M10 queue 与 M11 Cluster codec 也不能被声称为 M08 WAL 格式的一部分。",
+    planCompatibility: "当前 PLAN v0.16 只在 M12 已发布基线上为 M13 冻结静态权威路由与 shard 内多订单簿；M08 的 M08C1/M08W1、append→force→apply→ACK、durable identity、genesis recovery、complete tag 与公开 evidence 均不回写，M09 Snapshot、M10 queue 与 M11 Cluster codec 也不能被声称为 M08 WAL 格式的一部分。",
     prerequisiteUnitCodes: ["M07"],
     startRef: "course/m08-start",
     completeRef: "course/m08-complete",
@@ -8852,8 +17800,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     order: 100,
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.11",
-    planCompatibility:
-      "当前 PLAN v0.15 只在 M11 之后为 M12 冻结单机三投票成员、Leader 进程故障、UNKNOWN 同身份重试、旧 Leader 追赶与无 quorum 失败关闭；M09 的 M09S1、RecoveryBudget、22/88 fixed、96×40 generated、32 项 obligation、12 个 candidate、complete tag 与公开 evidence 不回写，M10 queue、benchmark 或 M11 Cluster snapshot/codec 都不成为 M09 Snapshot/WAL 格式的一部分。",
+    planCompatibility: "当前 PLAN v0.16 只在 M12 已发布基线上为 M13 冻结静态权威路由与 shard 内多订单簿；M09 的 M09S1、RecoveryBudget、22/88 fixed、96×40 generated、32 项 obligation、12 个 candidate、complete tag 与公开 evidence 不回写，M10 queue、benchmark 或 M11 Cluster snapshot/codec 都不成为 M09 Snapshot/WAL 格式的一部分。",
     prerequisiteUnitCodes: ["M08"],
     startRef: "course/m09-start",
     completeRef: "course/m09-complete",
@@ -8942,8 +17889,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     order: 110,
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.13",
-    planCompatibility:
-      "当前 PLAN v0.15 只在 M11 之后为 M12 冻结单机三投票成员、Leader 进程故障、UNKNOWN 同身份重试、旧 Leader 追赶与无 quorum 失败关闭；M10 的 M10Q2 workload、环境绑定 knee/QOP、降序长稳态晋级、matching-0.5.0、complete tag 与公开 evidence 不回写，M11/M12 也不继承或重命名单机容量数字。",
+    planCompatibility: "当前 PLAN v0.16 只在 M12 已发布基线上为 M13 冻结静态权威路由与 shard 内多订单簿；M10 的 M10Q2 workload、环境绑定 knee/QOP、降序长稳态晋级、matching-0.5.0、complete tag 与公开 evidence 不回写，M11/M12 也不继承或重命名单机容量数字。",
     prerequisiteUnitCodes: ["M09"],
     startRef: "course/m10-start",
     completeRef: "course/m10-complete",
@@ -9051,8 +17997,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     order: 120,
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.14",
-    planCompatibility:
-      "当前 PLAN v0.15 只在 M11 已发布的单节点 Aeron Adapter 上增加 M12 的单机三投票成员、Leader 进程故障、UNKNOWN 同身份重试、旧 Leader 追赶与无 quorum 失败关闭；M11 的 application request/response/snapshot current2/minReadable1、六份 Golden、Direct/Cluster/restart 等价、complete tag 与公开 evidence 均保持不变，M12 不回写其协议 bytes 或单节点结论。",
+    planCompatibility: "当前 PLAN v0.16 只在 M12 已发布基线上为 M13 冻结静态权威路由与 shard 内多订单簿；M11 的 application request/response/snapshot current2/minReadable1、六份 Golden、Direct/Cluster/restart 等价、complete tag 与公开 evidence 均保持不变，M12 不回写其协议 bytes 或单节点结论。",
     prerequisiteUnitCodes: ["M10"],
     startRef: "course/m11-start",
     completeRef: "course/m11-complete",
@@ -9156,6 +18101,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     order: 130,
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.15",
+    planCompatibility: "PLAN v0.16 新签约 M13 静态分片，并将升级恢复与运行资格归入候选 M15；M12 的单机单分片 fail-stop 合同、refs 与 evidence 均保留原样。",
     prerequisiteUnitCodes: ["M11"],
     startRef: "course/m12-start",
     completeRef: "course/m12-complete",
@@ -9253,6 +18199,69 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
       "./gradlew m12Evidence --no-daemon --max-workers=1",
     ],
   },
+  {
+  projectSlug: "high-availability-cex",
+  profileVersion: "SPOT-CEX-1.0",
+  code: "M13",
+  trackCode: "M",
+  title: "多交易对静态分片",
+  summary: "用一份权威路由把多张独立订单簿交给彼此隔离的三成员 Cluster。",
+  objective:
+    "一个 instrument 只属于一个 shard；分片内命令身份统一，订单簿状态和应用序号独立。",
+  order: 140,
+  lifecycle: "PUBLISHED",
+  contractPlanVersion: "0.16",
+  prerequisiteUnitCodes: ["M12"],
+  startRef: "course/m13-start",
+  adds: ["instrument 到 shard 的版本化权威静态路由"],
+  delivers: [
+    "BTC-USDT 和 ETH-USDT 同属 shard 1，SOL-USDT 属于 shard 2；两个独立三成员 Cluster",
+  ],
+  freezes: [
+    "route owner、version、canonical hash 与已有 instrument 不可迁移；更新只允许新增",
+    "全 shard commandId/producer slot 双向身份和 shard sequence；每书独立 orderId、book sequence、规则和市场模式",
+    "wrong shard、目标不一致、stale route 和身份冲突拒绝时不改变业务状态",
+    "精确原身份重试在新增路由和 snapshot/restart 后仍返回原结果",
+    "seed 6313、64×64 有限生成历史、10 项场景与6项语义 mutant；六个真实子 JVM 运行两组 Cluster",
+  ],
+  excludes: [
+    "在线迁移、自动再均衡、跨交易对原子命令",
+    "输出流、Counter、REST、Backup、升级和集群性能资格",
+  ],
+  gate: [
+    "继承 build 与结构化 RED 起点",
+    "多书独立参考模型、反例和 snapshot 状态校验",
+    "两组真实 Cluster 同时运行、Leader fail-stop 隔离、恢复等价与进程清理",
+  ],
+  interaction: ["L0 本地 JVM 预测、运行和证据复核；无浏览器模型"],
+  evidence: [
+    "带 source identity 的严格报告、原始命令与状态摘要、6 JVM PID/term/sequence、manifest与artifact哈希",
+  ],
+  stopPoint: "具备静态分片与多订单簿的撮合 Cluster；本单元不创建产品 release。",
+  localCommands: [
+    "./gradlew clean build --no-daemon --max-workers=1",
+    "./gradlew m13Check --no-daemon --max-workers=1",
+  ],
+  completeRef: "course/m13-complete",
+  completeCommit: "eb1b65d2ea2159ba607e3271f0bfd209ea4906ea",
+  evidencePath: "build/lab-evidence/M13/manifest.json",
+  evidenceUrl:
+    "https://lcha-reln.github.io/signal-grid-blog/practice/high-availability-cex/m13/evidence/manifest.json",
+  expectedLessons: [
+    { lessonOrder: 10, permalink: "authoritative-static-route-artifact" },
+    {
+      lessonOrder: 20,
+      permalink: "independent-books-and-shard-command-identity",
+    },
+    { lessonOrder: 30, permalink: "multi-book-snapshot-and-route-addition" },
+    {
+      lessonOrder: 40,
+      permalink: "two-cluster-groups-and-shard-fault-isolation",
+    },
+    { lessonOrder: 50, permalink: "static-shard-evidence-and-runbook" },
+  ],
+  evidenceContract: M13_EVIDENCE_CONTRACT,
+},
 ];
 
 export function isPracticeUnitAtLeast(

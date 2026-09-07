@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "unit", "contractPlanVersion", "workloadSha256", "status", "executed"],
+  "properties": {
+    "schemaVersion": {"const": "matching.m13.check.v2"},
+    "unit": {"const": "M13"},
+    "contractPlanVersion": {"const": "0.16"},
+    "workloadSha256": {"const": "1b958e3b51f922cc505a47d63090593a6aa69d80c23f2ef2365747cc96154dc3"},
+    "status": {"enum": ["PASS", "STUDENT_FAILURE", "SYSTEM_ERROR"]},
+    "executed": {"type": "boolean"},
+    "sourceCommit": {"type": "string", "pattern": "^[a-f0-9]{40}$"},
+    "sourceDirty": {"type": "boolean"},
+    "fixedScenarios": {"const": 10},
+    "generatedActions": {"const": 4096},
+    "semanticMutantsKilled": {"const": 6},
+    "throwingControl": {"const": "SYSTEM_ERROR"},
+    "clusterGroups": {"const": 2},
+    "childProcesses": {"const": 6},
+    "inheritedStatus": {"const": "PASS"},
+    "singleHost": {"const": true},
+    "performanceQualified": {"const": false},
+    "productRelease": {"type": "null"},
+    "scenarios": {"type": "array", "minItems": 10, "maxItems": 10, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "artifactBindings": {"type": "array", "minItems": 12, "items": {
+      "type": "object", "additionalProperties": false, "required": ["path", "sha256"],
+      "properties": {"path": {"type": "string", "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_./-]*$"}, "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}}
+    }},
+    "error": {"type": "string", "minLength": 1}
+  },
+  "allOf": [{
+    "if": {"properties": {"status": {"const": "PASS"}}},
+    "then": {
+      "required": ["sourceCommit", "sourceDirty", "fixedScenarios", "generatedActions", "semanticMutantsKilled", "throwingControl", "clusterGroups", "childProcesses", "inheritedStatus", "singleHost", "performanceQualified", "productRelease", "scenarios", "artifactBindings"],
+      "properties": {"executed": {"const": true}}, "not": {"required": ["error"]}
+    },
+    "else": {"required": ["error"], "properties": {"executed": {"const": false}}}
+  }]
+}

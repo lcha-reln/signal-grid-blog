@@ -1,0 +1,1101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lcha-reln.github.io/cex-matching/schemas/matching.m13.cluster-faults.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "status",
+    "ownerPid",
+    "startedAtEpochMillis",
+    "finishedAtEpochMillis",
+    "commands",
+    "checkpoints",
+    "snapshots",
+    "initialRouteHash",
+    "simultaneousInitialPids",
+    "clusterGroups",
+    "childProcesses",
+    "faultIsolation",
+    "replacementLeader",
+    "unknownCount",
+    "resolvedUnknownCount",
+    "formerLeaderCatchup",
+    "producerFence",
+    "scenarios",
+    "groups",
+    "teardownComplete"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "matching.m13.cluster-faults.v1"
+    },
+    "status": {
+      "const": "PASS"
+    },
+    "ownerPid": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "startedAtEpochMillis": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "finishedAtEpochMillis": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "commands": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/command"
+      },
+      "minItems": 20,
+      "maxItems": 100
+    },
+    "checkpoints": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/checkpoint"
+      },
+      "minItems": 12,
+      "maxItems": 12
+    },
+    "snapshots": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "$ref": "#/$defs/snapshotWritten"
+          },
+          {
+            "$ref": "#/$defs/snapshotLoaded"
+          }
+        ]
+      },
+      "minItems": 12,
+      "maxItems": 12
+    },
+    "initialRouteHash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "simultaneousInitialPids": {
+      "type": "array",
+      "items": {
+        "type": "integer",
+        "minimum": 1
+      },
+      "minItems": 6,
+      "maxItems": 6,
+      "uniqueItems": true
+    },
+    "clusterGroups": {
+      "const": 2
+    },
+    "childProcesses": {
+      "const": 6
+    },
+    "faultIsolation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "stoppedLeader",
+        "shard2SequenceBefore",
+        "shard2SequenceAfter",
+        "faultObservationNanos",
+        "shard2AcknowledgedNanos",
+        "elapsedNanos"
+      ],
+      "properties": {
+        "stoppedLeader": {
+          "$ref": "#/$defs/stoppedMember"
+        },
+        "shard2SequenceBefore": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "shard2SequenceAfter": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "faultObservationNanos": {
+          "type": "integer"
+        },
+        "shard2AcknowledgedNanos": {
+          "type": "integer"
+        },
+        "elapsedNanos": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "replacementLeader": {
+      "$ref": "#/$defs/memberStatus"
+    },
+    "unknownCount": {
+      "const": 1
+    },
+    "resolvedUnknownCount": {
+      "const": 1
+    },
+    "formerLeaderCatchup": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/memberStatus"
+      },
+      "minItems": 3,
+      "maxItems": 3
+    },
+    "producerFence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "shardId",
+        "producerId",
+        "activeEpoch",
+        "staleRequestCommandId",
+        "staleRejectionCode",
+        "sequenceBefore",
+        "sequenceAfter"
+      ],
+      "properties": {
+        "shardId": {
+          "const": 1
+        },
+        "producerId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "activeEpoch": {
+          "const": 2
+        },
+        "staleRequestCommandId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "staleRejectionCode": {
+          "const": "PRODUCER_EPOCH_FENCED"
+        },
+        "sequenceBefore": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "sequenceAfter": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "scenarios": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "prefixItems": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "status"
+          ],
+          "properties": {
+            "id": {
+              "const": "TWO_REAL_GROUPS_LEADER_FAILURE_ISOLATION"
+            },
+            "status": {
+              "const": "PASS"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "status"
+          ],
+          "properties": {
+            "id": {
+              "const": "RESTART_REPLICA_EQUIVALENCE_AND_TEARDOWN"
+            },
+            "status": {
+              "const": "PASS"
+            }
+          }
+        }
+      ]
+    },
+    "groups": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/group"
+      },
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "teardownComplete": {
+      "const": true
+    }
+  },
+  "$defs": {
+    "memberStatus": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema",
+        "statusSequence",
+        "processId",
+        "processStartedAtEpochMillis",
+        "observedAtEpochMillis",
+        "clusterId",
+        "memberId",
+        "memberCount",
+        "quorumSize",
+        "appointedLeaderId",
+        "freshStart",
+        "role",
+        "electionState",
+        "leadershipTermId",
+        "commitPosition",
+        "logPosition",
+        "nextShardSequence",
+        "identityResultCount",
+        "semanticStateDigest",
+        "identityResultDigest",
+        "udpPortBlockBase",
+        "rootDirectory",
+        "aeronDirectory",
+        "archiveDirectory",
+        "clusterDirectory",
+        "componentErrors",
+        "diagnosticWarnings",
+        "droppedDiagnosticWarnings"
+      ],
+      "properties": {
+        "schema": {
+          "const": "matching.m13.member-status.v1"
+        },
+        "statusSequence": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "processId": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "processStartedAtEpochMillis": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "observedAtEpochMillis": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "clusterId": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "memberId": {
+          "enum": [
+            0,
+            1,
+            2
+          ]
+        },
+        "memberCount": {
+          "const": 3
+        },
+        "quorumSize": {
+          "const": 2
+        },
+        "appointedLeaderId": {
+          "const": -1
+        },
+        "freshStart": {
+          "type": "boolean"
+        },
+        "role": {
+          "enum": [
+            "LEADER",
+            "FOLLOWER"
+          ]
+        },
+        "electionState": {
+          "const": "CLOSED"
+        },
+        "leadershipTermId": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "commitPosition": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "logPosition": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "nextShardSequence": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "identityResultCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "semanticStateDigest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "identityResultDigest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "udpPortBlockBase": {
+          "type": "integer",
+          "minimum": 1024,
+          "maximum": 65535
+        },
+        "rootDirectory": {
+          "type": "string",
+          "minLength": 1
+        },
+        "aeronDirectory": {
+          "type": "string",
+          "minLength": 1
+        },
+        "archiveDirectory": {
+          "type": "string",
+          "minLength": 1
+        },
+        "clusterDirectory": {
+          "type": "string",
+          "minLength": 1
+        },
+        "componentErrors": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0,
+          "maxItems": 0
+        },
+        "diagnosticWarnings": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        },
+        "droppedDiagnosticWarnings": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "clientGeneration",
+        "clusterSessionId",
+        "leadershipTermId",
+        "leaderMemberId"
+      ],
+      "properties": {
+        "clientGeneration": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "clusterSessionId": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "leadershipTermId": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "leaderMemberId": {
+          "enum": [
+            0,
+            1,
+            2
+          ]
+        }
+      }
+    },
+    "command": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "shardId",
+        "ordinal",
+        "clientGeneration",
+        "phase",
+        "requestBase64",
+        "commandId",
+        "payloadHash",
+        "acceptedPosition",
+        "authority",
+        "responseBase64",
+        "shardSequence",
+        "responseStatus",
+        "observedAtNanos"
+      ],
+      "properties": {
+        "shardId": {
+          "enum": [
+            1,
+            2
+          ]
+        },
+        "ordinal": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "clientGeneration": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "phase": {
+          "enum": [
+            "BUFFERED_NOT_ACKNOWLEDGED",
+            "UNKNOWN",
+            "ACKNOWLEDGED"
+          ]
+        },
+        "requestBase64": {
+          "type": "string",
+          "minLength": 1,
+          "contentEncoding": "base64"
+        },
+        "commandId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "payloadHash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "acceptedPosition": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "authority": {
+          "$ref": "#/$defs/authority"
+        },
+        "responseBase64": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "shardSequence": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": -1
+        },
+        "responseStatus": {
+          "enum": [
+            "NEW_APPLIED",
+            "DUPLICATE_REPLAYED",
+            "REJECTED",
+            null
+          ]
+        },
+        "observedAtNanos": {
+          "type": "integer"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "phase": {
+                "const": "UNKNOWN"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "responseBase64": {
+                "const": null
+              },
+              "shardSequence": {
+                "const": null
+              },
+              "responseStatus": {
+                "const": null
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "responseBase64": {
+                "type": "string",
+                "minLength": 1,
+                "contentEncoding": "base64"
+              },
+              "shardSequence": {
+                "type": "integer",
+                "minimum": -1
+              },
+              "responseStatus": {
+                "enum": [
+                  "NEW_APPLIED",
+                  "DUPLICATE_REPLAYED",
+                  "REJECTED"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "checkpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "label",
+        "shardId",
+        "replicas",
+        "directNextShardSequence",
+        "directSemanticDigest",
+        "directIdentityDigest"
+      ],
+      "properties": {
+        "label": {
+          "enum": [
+            "six-members-before-work",
+            "all-three-books-and-misroute",
+            "former-leader-caught-up",
+            "append-only-route-active",
+            "snapshot-plus-suffix-before-full-restart",
+            "all-six-restored-equivalent"
+          ]
+        },
+        "shardId": {
+          "enum": [
+            1,
+            2
+          ]
+        },
+        "replicas": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/memberStatus"
+          },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "directNextShardSequence": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "directSemanticDigest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "directIdentityDigest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "snapshotCompletion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "snapshotCount",
+        "processId",
+        "serviceRecordingId",
+        "consensusRecordingId",
+        "serviceTerm",
+        "consensusTerm",
+        "serviceLogPosition",
+        "consensusLogPosition"
+      ],
+      "properties": {
+        "snapshotCount": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "processId": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "serviceRecordingId": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "consensusRecordingId": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "serviceTerm": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "consensusTerm": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "serviceLogPosition": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "consensusLogPosition": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "snapshotWritten": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "phase",
+        "shardId",
+        "memberId",
+        "adminCorrelation",
+        "snapshotDigest",
+        "nextShardSequence",
+        "bookNames",
+        "completion",
+        "artifact",
+        "completionBefore"
+      ],
+      "properties": {
+        "phase": {
+          "const": "WRITTEN"
+        },
+        "shardId": {
+          "enum": [
+            1,
+            2
+          ]
+        },
+        "memberId": {
+          "enum": [
+            0,
+            1,
+            2
+          ]
+        },
+        "adminCorrelation": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "snapshotDigest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "nextShardSequence": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "bookNames": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "maxItems": 3
+        },
+        "completion": {
+          "$ref": "#/$defs/snapshotCompletion"
+        },
+        "artifact": {
+          "type": "string",
+          "pattern": "^raw/shard-[12]/member-[012]-snapshot-written\\.bin$"
+        },
+        "completionBefore": {
+          "$ref": "#/$defs/snapshotBaseline"
+        }
+      }
+    },
+    "snapshotLoaded": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "phase",
+        "shardId",
+        "memberId",
+        "processId",
+        "snapshotDigest",
+        "nextShardSequence",
+        "recoveredNextShardSequence",
+        "bookNames"
+      ],
+      "properties": {
+        "phase": {
+          "const": "LOADED"
+        },
+        "shardId": {
+          "enum": [
+            1,
+            2
+          ]
+        },
+        "memberId": {
+          "enum": [
+            0,
+            1,
+            2
+          ]
+        },
+        "processId": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "snapshotDigest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "nextShardSequence": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "recoveredNextShardSequence": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "bookNames": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "maxItems": 3
+        }
+      }
+    },
+    "stoppedMember": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "memberId",
+        "processId",
+        "forcedStopRequested",
+        "exitCode",
+        "externalController",
+        "stoppedAtNanos",
+        "lastStatus"
+      ],
+      "properties": {
+        "memberId": {
+          "enum": [
+            0,
+            1,
+            2
+          ]
+        },
+        "processId": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "forcedStopRequested": {
+          "const": true
+        },
+        "exitCode": {
+          "type": "integer"
+        },
+        "externalController": {
+          "const": true
+        },
+        "stoppedAtNanos": {
+          "type": "integer"
+        },
+        "lastStatus": {
+          "$ref": "#/$defs/memberStatus"
+        }
+      }
+    },
+    "restartSafety": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ordinal",
+        "memberId",
+        "stoppedProcessId",
+        "archiveMarkFile",
+        "lastActivityTimestampMillis",
+        "observedAtMillis",
+        "ageMillis",
+        "livenessTimeoutMillis",
+        "probeCount",
+        "waitElapsedNanos",
+        "aeronVersion",
+        "predicate"
+      ],
+      "properties": {
+        "ordinal": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "memberId": {
+          "enum": [
+            0,
+            1,
+            2
+          ]
+        },
+        "stoppedProcessId": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "archiveMarkFile": {
+          "type": "string",
+          "minLength": 1
+        },
+        "lastActivityTimestampMillis": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "observedAtMillis": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "ageMillis": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "livenessTimeoutMillis": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "probeCount": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "waitElapsedNanos": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "aeronVersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "predicate": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "stableWitness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ordinal",
+        "condition",
+        "statusPublishIntervalMillis",
+        "freshnessBoundMillis",
+        "elapsedNanos",
+        "firstSnapshot",
+        "secondSnapshot"
+      ],
+      "properties": {
+        "ordinal": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "condition": {
+          "type": "string",
+          "minLength": 1
+        },
+        "statusPublishIntervalMillis": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "freshnessBoundMillis": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "elapsedNanos": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "firstSnapshot": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/memberStatus"
+          },
+          "minItems": 2,
+          "maxItems": 3
+        },
+        "secondSnapshot": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/memberStatus"
+          },
+          "minItems": 2,
+          "maxItems": 3
+        }
+      }
+    },
+    "process": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "memberId",
+        "processId",
+        "freshStart",
+        "alive"
+      ],
+      "properties": {
+        "memberId": {
+          "enum": [
+            0,
+            1,
+            2
+          ]
+        },
+        "processId": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "freshStart": {
+          "type": "boolean"
+        },
+        "alive": {
+          "const": false
+        }
+      }
+    },
+    "group": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "shardId",
+        "clusterId",
+        "rootDirectory",
+        "fixedUdpPorts",
+        "memberProcesses",
+        "starts",
+        "forcedStops",
+        "restartSafety",
+        "stabilityWitnesses",
+        "teardownComplete"
+      ],
+      "properties": {
+        "shardId": {
+          "enum": [
+            1,
+            2
+          ]
+        },
+        "clusterId": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "rootDirectory": {
+          "type": "string",
+          "minLength": 1
+        },
+        "fixedUdpPorts": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1024,
+            "maximum": 65535
+          },
+          "minItems": 15,
+          "maxItems": 15,
+          "uniqueItems": true
+        },
+        "memberProcesses": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/process"
+          },
+          "minItems": 6,
+          "maxItems": 7
+        },
+        "starts": {
+          "type": "integer",
+          "minimum": 6,
+          "maximum": 7
+        },
+        "forcedStops": {
+          "type": "integer",
+          "minimum": 3,
+          "maximum": 4
+        },
+        "restartSafety": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/restartSafety"
+          },
+          "minItems": 3,
+          "maxItems": 4
+        },
+        "stabilityWitnesses": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/stableWitness"
+          },
+          "minItems": 1
+        },
+        "teardownComplete": {
+          "const": true
+        }
+      }
+    },
+    "snapshotBaseline": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "snapshotCount",
+        "processId",
+        "serviceRecordingId",
+        "consensusRecordingId",
+        "serviceTerm",
+        "consensusTerm",
+        "serviceLogPosition",
+        "consensusLogPosition"
+      ],
+      "properties": {
+        "snapshotCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "processId": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "serviceRecordingId": {
+          "type": "integer",
+          "minimum": -1
+        },
+        "consensusRecordingId": {
+          "type": "integer",
+          "minimum": -1
+        },
+        "serviceTerm": {
+          "type": "integer",
+          "minimum": -1
+        },
+        "consensusTerm": {
+          "type": "integer",
+          "minimum": -1
+        },
+        "serviceLogPosition": {
+          "type": "integer",
+          "minimum": -1
+        },
+        "consensusLogPosition": {
+          "type": "integer",
+          "minimum": -1
+        }
+      }
+    }
+  }
+}

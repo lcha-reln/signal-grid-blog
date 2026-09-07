@@ -1,0 +1,134 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/lcha-reln/cex-matching/main/schemas/matching.m12.command-history.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion", "status", "implementation", "sourceArtifact", "executionScope",
+    "corpusSha256", "identityCount", "invocationCount", "ingressAccepted", "acknowledged",
+    "unknown", "notSubmitted", "memberProcessStarts", "externalForceStops",
+    "finalNextApplicationSequence", "appliedUnknownAttemptOrdinal",
+    "appliedUnknownObservedOnAllMembersBeforeLeaderKill",
+    "appliedUnknownExpectedNextApplicationSequence", "appliedUnknownExpectedIdentityCount",
+    "appliedUnknownMembersBeforeLeaderKill", "attempts", "bindings"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "matching.m12.command-history.v1" },
+    "status": { "const": "PASS" },
+    "implementation": { "const": "REAL_AERON_CHILD_PROCESSES" },
+    "sourceArtifact": { "const": "m12-command-history.json" },
+    "executionScope": { "const": "REAL_AERON_CHILD_PROCESSES" },
+    "corpusSha256": { "$ref": "#/$defs/sha256" },
+    "identityCount": { "const": 66 },
+    "invocationCount": { "const": 85 },
+    "ingressAccepted": { "const": 84 },
+    "acknowledged": { "const": 82 },
+    "unknown": { "const": 2 },
+    "notSubmitted": { "const": 1 },
+    "memberProcessStarts": { "const": 6 },
+    "externalForceStops": { "const": 3 },
+    "finalNextApplicationSequence": { "const": 67 },
+    "appliedUnknownAttemptOrdinal": { "const": 42 },
+    "appliedUnknownObservedOnAllMembersBeforeLeaderKill": { "const": true },
+    "appliedUnknownExpectedNextApplicationSequence": { "const": 34 },
+    "appliedUnknownExpectedIdentityCount": { "const": 33 },
+    "appliedUnknownMembersBeforeLeaderKill": {
+      "type": "array", "minItems": 3, "maxItems": 3,
+      "items": { "$ref": "#/$defs/statusMember" }
+    },
+    "attempts": {
+      "type": "array", "minItems": 85, "maxItems": 85,
+      "items": { "$ref": "#/$defs/attempt" }
+    },
+    "bindings": {
+      "type": "array", "minItems": 66, "maxItems": 66,
+      "items": { "$ref": "#/$defs/binding" }
+    }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "nullableSha256": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/sha256" }] },
+    "nullableUuid": { "oneOf": [{ "type": "null" }, { "type": "string", "format": "uuid" }] },
+    "nullablePositiveInteger": { "oneOf": [{ "type": "null" }, { "type": "integer", "minimum": 1, "maximum": 85 }] },
+    "nullableResponseStatus": { "oneOf": [{ "type": "null" }, { "enum": ["NEW_APPLIED", "DUPLICATE_REPLAYED"] }] },
+    "attempt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ordinal", "phase", "identityIndex", "canonicalEnvelopeSha256", "commandId",
+        "correlationId", "ingressAccepted", "outcome", "trustedResponseObserved",
+        "responseCorrelationId", "responseStatus", "applicationSequence", "resultDigest",
+        "businessEffectApplied", "retryOfAttemptOrdinal", "authorityTerm", "authorityLeaderId",
+        "responseAcceptedUnderCurrentClientAuthority", "noQuorumWindow", "timeoutClassifiedAsBusinessRejection"
+      ],
+      "properties": {
+        "ordinal": { "type": "integer", "minimum": 1, "maximum": 85 },
+        "phase": { "enum": [
+          "PRE_OFFER_IS_NOT_SUBMITTED", "PRE_FAILOVER_ACKNOWLEDGED_NEW_32",
+          "ACKNOWLEDGED_DUPLICATE_RETRY_8", "APPLIED_RESPONSE_UNOBSERVED_UNKNOWN_1",
+          "SAME_IDENTITY_UNKNOWN_RETRY", "POST_FAILOVER_ACKNOWLEDGED_NEW_32",
+          "POST_FAILOVER_DUPLICATE_RETRY_8", "NO_QUORUM_UNKNOWN_1",
+          "RESTORE_QUORUM_AND_SAME_IDENTITY_RETRY"
+        ] },
+        "identityIndex": { "type": "integer", "minimum": 1, "maximum": 66 },
+        "canonicalEnvelopeSha256": { "$ref": "#/$defs/sha256" },
+        "commandId": { "type": "string", "format": "uuid" },
+        "correlationId": { "type": "string", "format": "uuid" },
+        "ingressAccepted": { "type": "boolean" },
+        "outcome": { "enum": ["NOT_SUBMITTED", "UNKNOWN", "ACKNOWLEDGED"] },
+        "trustedResponseObserved": { "type": "boolean" },
+        "responseCorrelationId": { "$ref": "#/$defs/nullableUuid" },
+        "responseStatus": { "$ref": "#/$defs/nullableResponseStatus" },
+        "applicationSequence": { "$ref": "#/$defs/nullablePositiveInteger" },
+        "resultDigest": { "$ref": "#/$defs/nullableSha256" },
+        "businessEffectApplied": { "type": "boolean" },
+        "retryOfAttemptOrdinal": { "$ref": "#/$defs/nullablePositiveInteger" },
+        "authorityTerm": { "type": "integer", "minimum": 0 },
+        "authorityLeaderId": { "type": "integer", "minimum": 0, "maximum": 2 },
+        "responseAcceptedUnderCurrentClientAuthority": { "type": "boolean" },
+        "noQuorumWindow": { "type": "boolean" },
+        "timeoutClassifiedAsBusinessRejection": { "const": false }
+      }
+    },
+    "binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["identityIndex", "canonicalEnvelopeSha256", "applicationSequence", "resultDigest", "businessEffectCount", "observedResponseAuthorityTerm"],
+      "properties": {
+        "identityIndex": { "type": "integer", "minimum": 1, "maximum": 66 },
+        "canonicalEnvelopeSha256": { "$ref": "#/$defs/sha256" },
+        "applicationSequence": { "type": "integer", "minimum": 1, "maximum": 66 },
+        "resultDigest": { "$ref": "#/$defs/sha256" },
+        "businessEffectCount": { "const": 1 },
+        "observedResponseAuthorityTerm": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "statusMember": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "memberId", "processId", "role", "electionState", "leadershipTermId", "commitPosition", "logPosition",
+        "nextApplicationSequence", "identityCount", "semanticStateDigest", "identityResultDigest",
+        "componentErrorCount", "diagnosticWarningCount", "droppedDiagnosticWarnings",
+        "diagnosticWarnings"
+      ],
+      "properties": {
+        "memberId": { "type": "integer", "minimum": 0, "maximum": 2 },
+        "processId": { "type": "integer", "minimum": 1 },
+        "role": { "enum": ["LEADER", "FOLLOWER"] },
+        "electionState": { "const": "CLOSED" },
+        "leadershipTermId": { "type": "integer", "minimum": 0 },
+        "commitPosition": { "type": "integer", "minimum": 0 },
+        "logPosition": { "type": "integer", "minimum": 0 },
+        "nextApplicationSequence": { "const": 34 },
+        "identityCount": { "const": 33 },
+        "semanticStateDigest": { "$ref": "#/$defs/sha256" },
+        "identityResultDigest": { "$ref": "#/$defs/sha256" },
+        "componentErrorCount": { "const": 0 },
+        "diagnosticWarningCount": { "const": 0 },
+        "droppedDiagnosticWarnings": { "const": 0 },
+        "diagnosticWarnings": { "type": "array", "maxItems": 0 }
+      }
+    }
+  }
+}

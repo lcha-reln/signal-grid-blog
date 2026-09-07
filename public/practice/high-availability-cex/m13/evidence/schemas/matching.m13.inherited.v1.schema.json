@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "status",
+    "baselineCommit",
+    "protocolGoldens",
+    "m12RealProcessHistoryPassed",
+    "currentCompiledClasses",
+    "coreEvolution",
+    "historicalEvidenceRebound",
+    "matchingCoreUnchanged"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "matching.m13.inherited.v1"
+    },
+    "status": {
+      "const": "PASS"
+    },
+    "baselineCommit": {
+      "const": "d8b1b1fbb36323502495a8bc0a60042db1e9e040"
+    },
+    "protocolGoldens": {
+      "const": 6
+    },
+    "m12RealProcessHistoryPassed": {
+      "const": true
+    },
+    "currentCompiledClasses": {
+      "const": true
+    },
+    "coreEvolution": {
+      "const": "CONFIGURED_INSTRUMENT_WITH_LEGACY_BTC_DEFAULT"
+    },
+    "historicalEvidenceRebound": {
+      "const": false
+    },
+    "matchingCoreUnchanged": {
+      "const": false
+    }
+  }
+}

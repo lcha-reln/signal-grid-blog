@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/lcha-reln/cex-matching/main/schemas/matching.m12.quorum.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "status", "implementation", "votingMembers", "quorumSize", "liveVotingMembersDuringMinority", "minorityAttemptOrdinal", "minorityIngressAccepted", "minorityOutcome", "minorityAcknowledgements", "quorumRestored", "restoredLeaderId", "restoredLeadershipTermId", "retryAttemptOrdinal", "retryOutcome", "retryResponseStatus"],
+  "properties": {
+    "schemaVersion": { "const": "matching.m12.quorum.v1" },
+    "status": { "const": "PASS" },
+    "implementation": { "const": "REAL_AERON_CHILD_PROCESSES" },
+    "votingMembers": { "const": 3 },
+    "quorumSize": { "const": 2 },
+    "liveVotingMembersDuringMinority": { "const": 1 },
+    "minorityAttemptOrdinal": { "const": 84 },
+    "minorityIngressAccepted": { "const": true },
+    "minorityOutcome": { "const": "UNKNOWN" },
+    "minorityAcknowledgements": { "const": 0 },
+    "quorumRestored": { "const": true },
+    "restoredLeaderId": { "type": "integer", "minimum": 0, "maximum": 2 },
+    "restoredLeadershipTermId": { "type": "integer", "minimum": 1 },
+    "retryAttemptOrdinal": { "const": 85 },
+    "retryOutcome": { "const": "ACKNOWLEDGED" },
+    "retryResponseStatus": { "enum": ["NEW_APPLIED", "DUPLICATE_REPLAYED"] }
+  }
+}
