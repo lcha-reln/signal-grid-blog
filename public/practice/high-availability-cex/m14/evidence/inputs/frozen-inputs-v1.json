@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "matching.m14.frozen-inputs.v1",
+  "unit": "M14",
+  "planVersion": "0.17",
+  "files": [
+    {
+      "path": "docs/specs/m14-process-protocol.md",
+      "bytes": 24970,
+      "sha256": "c13b420f6b47386728560d7b8c5ede5dcce29d1f621033d50b57c6b42b772680"
+    },
+    {
+      "path": "docs/specs/m14.md",
+      "bytes": 41160,
+      "sha256": "d2679fa9973fd2628b0a6d1cc18023545efe4aced64e4f15cd71d85e24d092d7"
+    },
+    {
+      "path": "matching-testkit/src/test/resources/m14/generated-corpus-v1.json",
+      "bytes": 2734206,
+      "sha256": "634b17ce63eba6aeacd6cab8cc04a69786dac3a3fc15fc8fde1e942b6486e449"
+    },
+    {
+      "path": "matching-testkit/src/test/resources/m14/profile-q1.json",
+      "bytes": 1601,
+      "sha256": "02ef0ee44900e1a472fea03ed5cb406215550994826b53f4b708e33815c6be9d"
+    },
+    {
+      "path": "matching-testkit/src/test/resources/m14/workload-v1.json",
+      "bytes": 26750,
+      "sha256": "005afdabc720ab782ea092e416a7d9c1273daf09246eede1e43607ed110ad9e3"
+    },
+    {
+      "path": "schemas/matching.m14.check.v1.schema.json",
+      "bytes": 1133,
+      "sha256": "4a3511d6f264469daab0f5fef36f5221a4a0f4416f61a11528c55c5d853148cb"
+    },
+    {
+      "path": "schemas/matching.m14.profile.v1.schema.json",
+      "bytes": 6172,
+      "sha256": "c0ad0a1f9a4abe8523573e7115bdbb1eceb32d4f53ec465d000dce22840d2882"
+    },
+    {
+      "path": "schemas/matching.m14.workload.v1.schema.json",
+      "bytes": 31798,
+      "sha256": "726f9dd155ce31f867049919f4ba807d5330c780d5a04879c6fb028be4115781"
+    }
+  ]
+}

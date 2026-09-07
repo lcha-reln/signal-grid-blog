@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/lcha-reln/cex-matching/main/schemas/matching.m12.replay.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "status", "replayed", "productionControlsPassed", "studentFailuresReproduced", "fingerprintsExact", "oneDeleteAudits", "oneMinimal", "systemErrorCountedAsKill", "semanticModelOnly", "audits"],
+  "properties": {
+    "schemaVersion": { "const": "matching.m12.replay.v1" },
+    "status": { "const": "PASS" },
+    "replayed": { "const": 8 },
+    "productionControlsPassed": { "const": 8 },
+    "studentFailuresReproduced": { "const": 8 },
+    "fingerprintsExact": { "const": true },
+    "oneDeleteAudits": { "const": 8 },
+    "oneMinimal": { "const": true },
+    "systemErrorCountedAsKill": { "const": false },
+    "semanticModelOnly": { "const": true },
+    "audits": { "type": "array", "minItems": 8, "maxItems": 8, "items": { "$ref": "#/$defs/audit" } }
+  },
+  "$defs": {
+    "audit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mutant", "classification", "fingerprint", "productionControl", "oneMinimal", "exact"],
+      "properties": {
+        "mutant": { "type": "string", "pattern": "^M12-[A-Z0-9-]+$" },
+        "classification": { "const": "STUDENT_FAILURE" },
+        "fingerprint": { "type": "string", "pattern": "^[A-Z0-9_]+$" },
+        "productionControl": { "const": "PASS" },
+        "oneMinimal": { "const": true },
+        "exact": { "const": true }
+      }
+    }
+  }
+}

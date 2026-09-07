@@ -1,0 +1,382 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/lcha-reln/cex-matching/main/schemas/matching.m11.workload.v1.schema.json",
+  "title": "M11 single-member Aeron Cluster adapter workload",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "unit",
+    "contractPlanVersion",
+    "objective",
+    "dependencyBaseline",
+    "protocolCompatibility",
+    "realClusterProfile",
+    "fixedScenarios",
+    "generatedDifferential",
+    "coverageRequirements",
+    "requiredMutants",
+    "systemErrorControls",
+    "goldenFixtures",
+    "tutorialPermalinks",
+    "exclusions",
+    "stopPoint"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "matching.m11.workload.v1" },
+    "unit": { "const": "M11" },
+    "contractPlanVersion": { "const": "0.14" },
+    "objective": { "type": "string", "minLength": 1 },
+    "dependencyBaseline": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sourceRef",
+        "productRelease",
+        "aeronVersion",
+        "agronaVersion",
+        "javaRelease"
+      ],
+      "properties": {
+        "sourceRef": { "const": "course/m10-complete" },
+        "productRelease": { "const": "matching-0.5.0" },
+        "aeronVersion": { "const": "1.52.2" },
+        "agronaVersion": { "const": "2.5.0" },
+        "javaRelease": { "const": 25 }
+      }
+    },
+    "protocolCompatibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "request",
+        "response",
+        "snapshot",
+        "compatibilityClaim",
+        "previousVersionStatus",
+        "boundedResponse",
+        "requestV1ResponseVersion",
+        "requestV2AllowedResponseVersions",
+        "unsupportedRequestedResponseVersion",
+        "responseDownEncodePolicy",
+        "responseV2IdentityEcho",
+        "payloadHashDomain",
+        "snapshotStateCoverage",
+        "s2Delta",
+        "nMinusOneRestore",
+        "snapshotIdentityOrdering",
+        "snapshotIdentityValidation",
+        "goldenSnapshotBindings"
+      ],
+      "properties": {
+        "request": { "$ref": "#/$defs/versionRange" },
+        "response": { "$ref": "#/$defs/versionRange" },
+        "snapshot": { "$ref": "#/$defs/snapshotVersionRange" },
+        "compatibilityClaim": {
+          "const": "BACKWARD_READ_AND_RESPONSE_DOWN_ENCODE_ONLY"
+        },
+        "previousVersionStatus": { "const": "FIXTURE_ONLY_NEVER_PRODUCTION" },
+        "boundedResponse": {
+          "const": "RESULT_COMMITMENT_WITHOUT_UNBOUNDED_EVENT_STREAM"
+        },
+        "requestV1ResponseVersion": { "const": 1 },
+        "requestV2AllowedResponseVersions": { "const": [1, 2] },
+        "unsupportedRequestedResponseVersion": {
+          "const": "PRE_APPLY_PROTOCOL_FAILURE_NO_BUSINESS_RESPONSE_NO_STATE_MUTATION"
+        },
+        "responseDownEncodePolicy": {
+          "const": "ALL_VALID_BUSINESS_OUTCOMES_TO_V1_OMIT_V2_EXTENSION"
+        },
+        "responseV2IdentityEcho": {
+          "const": "COMMAND_ID_ONLY_SLOT_AND_PAYLOAD_HASH_NOT_PRESENT"
+        },
+        "payloadHashDomain": {
+          "const": "SHA256_CANONICAL_M08_COMMAND_PAYLOAD_BYTES"
+        },
+        "snapshotStateCoverage": {
+          "const": "S1_AND_S2_COMPLETE_CORE_IDENTITY_FULL_ORIGINAL_RESULTS"
+        },
+        "s2Delta": {
+          "const": "PROTOCOL_BOUNDS_AND_VALIDATION_FIELDS_ONLY"
+        },
+        "nMinusOneRestore": {
+          "const": "NO_IDEMPOTENCY_OR_ORIGINAL_RESULT_LOSS"
+        },
+        "snapshotIdentityOrdering": {
+          "const": "STRICT_ASCENDING_ORIGINAL_APPLICATION_SEQUENCE_1_TO_N"
+        },
+        "snapshotIdentityValidation": {
+          "const": "UNIQUE_COMMAND_ID_AND_SLOT_CONTIGUOUS_PRODUCER_EPOCH_SEQUENCE"
+        },
+        "goldenSnapshotBindings": { "const": 2 }
+      }
+    },
+    "realClusterProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "memberCount",
+        "memberId",
+        "appointedLeaderId",
+        "transport",
+        "corpusActionsPerPath",
+        "clusterRuns",
+        "totalActualClusterIngress",
+        "comparisonPaths",
+        "snapshotAfterAction",
+        "snapshotPrefixNewApplied",
+        "snapshotPrefixDuplicateReplayed",
+        "snapshotApplicationSequence",
+        "snapshotNextApplicationSequence",
+        "firstPostRestartLane",
+        "firstPostRestartExpectedStatus",
+        "postRestartCrossSnapshotDuplicates",
+        "adminSnapshotAcceptance",
+        "snapshotCompletionWitnesses",
+        "completionRequiredBeforeShutdown",
+        "controlledRestart",
+        "externalServices",
+        "dockerRequired",
+        "ownedRoot",
+        "freshClusterRoots",
+        "portAllocation",
+        "maxWorkers",
+        "deadlinePolicy"
+      ],
+      "properties": {
+        "memberCount": { "const": 1 },
+        "memberId": { "const": 0 },
+        "appointedLeaderId": { "const": 0 },
+        "transport": { "const": "LOCALHOST_REAL_AERON_COMPONENTS" },
+        "corpusActionsPerPath": { "const": 4096 },
+        "clusterRuns": { "const": 2 },
+        "totalActualClusterIngress": { "const": 8192 },
+        "comparisonPaths": {
+          "const": ["DIRECT", "UNINTERRUPTED_CLUSTER", "SNAPSHOT_RESTART_CLUSTER"]
+        },
+        "snapshotAfterAction": { "const": 2048 },
+        "snapshotPrefixNewApplied": { "const": 1536 },
+        "snapshotPrefixDuplicateReplayed": { "const": 512 },
+        "snapshotApplicationSequence": { "const": 1536 },
+        "snapshotNextApplicationSequence": { "const": 1537 },
+        "firstPostRestartLane": { "const": "PREVIOUS_NEW" },
+        "firstPostRestartExpectedStatus": { "const": "NEW_APPLIED" },
+        "postRestartCrossSnapshotDuplicates": { "const": 512 },
+        "adminSnapshotAcceptance": { "const": "OK_REQUIRED_NOT_COMPLETION" },
+        "snapshotCompletionWitnesses": {
+          "const": [
+            "SNAPSHOT_COUNTER_INCREMENTED",
+            "CONTROL_TOGGLE_RESET_TO_NEUTRAL",
+            "NEW_CONSENSUS_MINUS_ONE_AND_SERVICE_ZERO_RECORDING_LOG_ENTRIES_SAME_TERM_POSITION_NEW_RECORDING_IDS",
+            "WRITTEN_SNAPSHOT_PAYLOAD_DIGEST_CAPTURED",
+            "RESTART_LOADS_NON_NULL_SNAPSHOT_IMAGE_WITH_SAME_DIGEST_AND_SEQUENCE"
+          ]
+        },
+        "completionRequiredBeforeShutdown": { "const": true },
+        "controlledRestart": { "const": true },
+        "externalServices": { "const": false },
+        "dockerRequired": { "const": false },
+        "ownedRoot": { "const": "build/tmp/m11" },
+        "freshClusterRoots": {
+          "const": ["build/tmp/m11/uninterrupted", "build/tmp/m11/snapshot-restart"]
+        },
+        "portAllocation": { "const": "DISJOINT_LOCAL_PORT_BLOCKS" },
+        "maxWorkers": { "const": 1 },
+        "deadlinePolicy": { "const": "BOUNDED_POLL_WITH_ERROR_CAPTURE_NO_FIXED_SLEEP" }
+      }
+    },
+    "fixedScenarios": {
+      "type": "array",
+      "minItems": 22,
+      "maxItems": 22,
+      "items": { "$ref": "#/$defs/scenario" }
+    },
+    "generatedDifferential": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "algorithm",
+        "seed",
+        "histories",
+        "actionsPerHistory",
+        "totalActions",
+        "composition",
+        "segmentOrder",
+        "segmentSchedule",
+        "stateResetBetweenSegments",
+        "sequenceContinuity",
+        "snapshotCutScope",
+        "lanes",
+        "freshGenerations",
+        "byteExactRegeneration",
+        "directAndActualCluster"
+      ],
+      "properties": {
+        "algorithm": { "const": "splitmix64-v1" },
+        "seed": { "const": "6111" },
+        "histories": { "const": 32 },
+        "actionsPerHistory": { "const": 128 },
+        "totalActions": { "const": 4096 },
+        "composition": { "const": "ONE_CONTINUOUS_CORPUS_OF_32_ORDERED_SEGMENTS" },
+        "segmentOrder": { "const": "FIXED_DECLARED_32_SEGMENT_SCHEDULE" },
+        "segmentSchedule": {
+          "const": [
+            "CURRENT_NEW[0]",
+            "CURRENT_NEW[1]",
+            "CURRENT_NEW[2]",
+            "CURRENT_NEW[3]",
+            "CURRENT_NEW[4]",
+            "CURRENT_NEW[5]",
+            "CURRENT_NEW[6]",
+            "CURRENT_NEW[7]",
+            "DUPLICATE_REPLAY[0]",
+            "DUPLICATE_REPLAY[1]",
+            "DUPLICATE_REPLAY[2]",
+            "DUPLICATE_REPLAY[3]",
+            "PREVIOUS_NEW[0]",
+            "PREVIOUS_NEW[1]",
+            "PREVIOUS_NEW[2]",
+            "PREVIOUS_NEW[3]",
+            "PREVIOUS_NEW[4]",
+            "PREVIOUS_NEW[5]",
+            "PREVIOUS_NEW[6]",
+            "PREVIOUS_NEW[7]",
+            "DUPLICATE_REPLAY[4]",
+            "DUPLICATE_REPLAY[5]",
+            "DUPLICATE_REPLAY[6]",
+            "DUPLICATE_REPLAY[7]",
+            "IDENTITY_CONFLICT[0]",
+            "IDENTITY_CONFLICT[1]",
+            "IDENTITY_CONFLICT[2]",
+            "IDENTITY_CONFLICT[3]",
+            "IDENTITY_CONFLICT[4]",
+            "IDENTITY_CONFLICT[5]",
+            "IDENTITY_CONFLICT[6]",
+            "IDENTITY_CONFLICT[7]"
+          ]
+        },
+        "stateResetBetweenSegments": { "const": false },
+        "sequenceContinuity": {
+          "const": "APPLICATION_AND_PRODUCER_CURSORS_CONTINUE_ACROSS_SEGMENTS"
+        },
+        "snapshotCutScope": { "const": "GLOBAL_ACTION_BOUNDARY_AFTER_2048" },
+        "lanes": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "histories"],
+            "properties": {
+              "id": {
+                "enum": [
+                  "CURRENT_NEW",
+                  "PREVIOUS_NEW",
+                  "DUPLICATE_REPLAY",
+                  "IDENTITY_CONFLICT"
+                ]
+              },
+              "histories": { "const": 8 }
+            }
+          }
+        },
+        "freshGenerations": { "const": 2 },
+        "byteExactRegeneration": { "const": true },
+        "directAndActualCluster": { "const": true }
+      }
+    },
+    "coverageRequirements": {
+      "type": "array",
+      "minItems": 28,
+      "maxItems": 28,
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "requiredMutants": {
+      "type": "array",
+      "minItems": 10,
+      "maxItems": 10,
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^M11-[A-Z0-9-]+$" }
+    },
+    "systemErrorControls": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^M11-[A-Z0-9-]+$" }
+    },
+    "goldenFixtures": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "items": { "$ref": "#/$defs/golden" }
+    },
+    "tutorialPermalinks": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" }
+    },
+    "exclusions": {
+      "type": "array",
+      "minItems": 10,
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "stopPoint": { "type": "string", "minLength": 1 }
+  },
+  "$defs": {
+    "versionRange": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["minimumReadable", "currentWriter"],
+      "properties": {
+        "minimumReadable": { "const": 1 },
+        "currentWriter": { "const": 2 }
+      }
+    },
+    "snapshotVersionRange": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["minimumReadable", "currentWriter", "rollbackClaim"],
+      "properties": {
+        "minimumReadable": { "const": 1 },
+        "currentWriter": { "const": 2 },
+        "rollbackClaim": { "const": false }
+      }
+    },
+    "scenario": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "proofObligations"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[A-Z0-9_]+$" },
+        "proofObligations": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "golden": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "schemaVersion", "path", "bytes", "sha256"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[A-Z0-9_]+$" },
+        "kind": { "enum": ["REQUEST", "RESPONSE", "SNAPSHOT"] },
+        "schemaVersion": { "enum": [1, 2] },
+        "path": {
+          "type": "string",
+          "pattern": "^matching-testkit/src/test/resources/m11/goldens/[a-z0-9-]+\\.bin$"
+        },
+        "bytes": { "type": "integer", "minimum": 1 },
+        "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    }
+  }
+}

@@ -1017,11 +1017,17 @@
 
 .unit-contract-grid ul {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 10px;
   margin: 0;
   padding-left: 18px;
   color: var(--muted);
   line-height: 1.65;
+}
+
+.unit-contract-grid ul > li {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .unit-contract-grid dl {

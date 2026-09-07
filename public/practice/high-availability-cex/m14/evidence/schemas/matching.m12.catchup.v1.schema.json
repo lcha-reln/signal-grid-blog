@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/lcha-reln/cex-matching/main/schemas/matching.m12.catchup.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "status", "implementation", "formerLeaderId", "freshStartOnReturn", "roleAfterReturn", "caughtUpBeforeMinorityFault", "catchupCommitPosition", "catchupLogPosition", "catchupNextApplicationSequence", "allThreeConvergedAfterFinalRestore", "archiveMarkFileLivenessTimeoutMillis", "restartSafetyPredicate", "firstReturnRestartSafetyWitnessOrdinal", "firstReturnRestartSafetyWitness"],
+  "properties": {
+    "schemaVersion": { "const": "matching.m12.catchup.v1" },
+    "status": { "const": "PASS" },
+    "implementation": { "const": "REAL_AERON_CHILD_PROCESSES" },
+    "formerLeaderId": { "type": "integer", "minimum": 0, "maximum": 2 },
+    "freshStartOnReturn": { "const": false },
+    "roleAfterReturn": { "const": "FOLLOWER" },
+    "caughtUpBeforeMinorityFault": { "const": true },
+    "catchupCommitPosition": { "type": "integer", "minimum": 1 },
+    "catchupLogPosition": { "type": "integer", "minimum": 1 },
+    "catchupNextApplicationSequence": { "const": 66 },
+    "allThreeConvergedAfterFinalRestore": { "const": true },
+    "archiveMarkFileLivenessTimeoutMillis": { "const": 10000 },
+    "restartSafetyPredicate": { "const": "ARCHIVE_MARK_FILE_ACTIVITY_AGE_GT_LIVENESS_TIMEOUT" },
+    "firstReturnRestartSafetyWitnessOrdinal": { "type": "integer", "minimum": 1, "maximum": 3 },
+    "firstReturnRestartSafetyWitness": { "$ref": "#/$defs/restartSafetyWitness" }
+  },
+  "$defs": {
+    "restartSafetyWitness": {
+      "type": "object", "additionalProperties": false,
+      "required": ["ordinal", "memberId", "stoppedProcessId", "archiveMarkFile", "lastActivityTimestampMillis", "observedAtMillis", "ageMillis", "livenessTimeoutMillis", "probeCount", "waitElapsedNanos", "aeronVersion", "predicate", "activityTimestampPositive", "ageStrictlyExceedsLivenessTimeout"],
+      "properties": {
+        "ordinal": { "type": "integer", "minimum": 1, "maximum": 3 },
+        "memberId": { "type": "integer", "minimum": 0, "maximum": 2 },
+        "stoppedProcessId": { "type": "integer", "minimum": 1 },
+        "archiveMarkFile": { "type": "string", "minLength": 1, "maxLength": 4096 },
+        "lastActivityTimestampMillis": { "type": "integer", "minimum": 1 },
+        "observedAtMillis": { "type": "integer", "minimum": 1 },
+        "ageMillis": { "type": "integer", "minimum": 10001 },
+        "livenessTimeoutMillis": { "const": 10000 },
+        "probeCount": { "type": "integer", "minimum": 1 },
+        "waitElapsedNanos": { "type": "integer", "minimum": 0 },
+        "aeronVersion": { "const": "1.52.2" },
+        "predicate": { "const": "ARCHIVE_MARK_FILE_ACTIVITY_AGE_GT_LIVENESS_TIMEOUT" },
+        "activityTimestampPositive": { "const": true },
+        "ageStrictlyExceedsLivenessTimeout": { "const": true }
+      }
+    }
+  }
+}

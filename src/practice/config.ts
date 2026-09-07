@@ -61,14 +61,14 @@ export const PRACTICE_CASES: readonly PracticeCase[] = [
   {
     slug: "high-availability-cex",
     designDocument: "docs/HIGH_AVAILABILITY_CEX_PRACTICE_PLAN.md",
-    planVersion: "0.16",
+    planVersion: "0.17",
     index: "01",
     eyebrow: "FLAGSHIP BUILD / EXCHANGE SYSTEMS",
     title: "高可用 CEX 交易核心",
     summary:
       "从单交易对限价撮合起步，先交付高可用现货核心，再按门禁演进到杠杆、永续、交割与期权。",
     status: "BUILDING",
-    statusLabel: "SPOT · M13 已发布",
+    statusLabel: "SPOT · M14 已发布",
     totalUnits: 33,
     plannedRepositories: 3,
     stack: ["Java", "Aeron Cluster", "Gradle", "Docker", "Astro Labs"],
@@ -89,10 +89,11 @@ export const PRACTICE_CASES: readonly PracticeCase[] = [
       "M11",
       "M12",
       "M13",
+      "M14",
     ],
-    currentUnitCode: "M13",
+    currentUnitCode: "M14",
     currentAction:
-      "M00～M13 已发布。M13 的两个独立三成员组完成静态权威路由、多订单簿、错误路由零副作用、故障隔离和恢复验收；10 个场景、seed 6313 的 64×64 生成历史与 6 个语义变异体通过，五篇教程和 204 项原始 artifact 随 course/m13-complete 公开。证据绑定 clean commit eb1b65d2ea2159ba607e3271f0bfd209ea4906ea，限定为单机进程故障与有限正确性验收。当前产品停止点仍为 matching-0.8.0；接下来评审 M14 连续业务输出，M15 完成发布制品运行资格后再发布 matching-1.0.0。",
+      "M00～M14 已发布。M14 的 12 个固定场景、48×80 个生成动作、8 项语义 mutant 和 7 个真实进程窗口均通过。五篇教程与公开 evidence 已一起登记，可从本单元入口复验 course/m14-complete。M14 无产品 release；M15 仍为候选，完成运营资格后再发布 matching-1.0.0。",
     profileRoadmapTitle: "现货是第一份完整交付，不是专题终点",
     profileRoadmapDescription:
       "只有当前 Profile 展开单元、仓库与实施设计；LOCKED 只冻结产品方向和解锁门禁，不代表已经创建单元、仓库或服务；后续优先复用已发布的 Matching、Counter 与 Rest 边界，具体仓库拓扑在解锁时评审。",

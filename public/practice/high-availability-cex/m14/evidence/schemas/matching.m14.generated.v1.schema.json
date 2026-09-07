@@ -1,0 +1,242 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "unit",
+    "contractPlanVersion",
+    "startCommit",
+    "workloadSha256",
+    "profileSha256",
+    "status",
+    "histories",
+    "seed",
+    "executedHistories",
+    "passedHistories",
+    "logicalActions",
+    "preludeBusinessCommands",
+    "primitiveAttempts",
+    "assertions",
+    "actualTradeRecords",
+    "differentMakerTakerAccountAssertions",
+    "drawsVerified",
+    "corpusSha256",
+    "primitiveCountMeaning"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "matching.m14.generated.v1"
+    },
+    "unit": {
+      "const": "M14"
+    },
+    "contractPlanVersion": {
+      "const": "0.17"
+    },
+    "startCommit": {
+      "const": "96b749861292950749701e34a6f20796f239cd4b"
+    },
+    "workloadSha256": {
+      "const": "005afdabc720ab782ea092e416a7d9c1273daf09246eede1e43607ed110ad9e3"
+    },
+    "profileSha256": {
+      "const": "02ef0ee44900e1a472fea03ed5cb406215550994826b53f4b708e33815c6be9d"
+    },
+    "status": {
+      "enum": [
+        "PASS",
+        "STUDENT_FAILURE",
+        "SYSTEM_ERROR"
+      ]
+    },
+    "histories": {
+      "type": "array",
+      "minItems": 48,
+      "maxItems": 48,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "historyId",
+          "status",
+          "failure",
+          "logicalActions",
+          "preludeBusinessCommands",
+          "primitiveAttempts",
+          "assertions",
+          "primitiveKinds",
+          "actualTradeRecords",
+          "differentMakerTakerAccountAssertions",
+          "rawFile",
+          "rawSha256",
+          "rawBytes"
+        ],
+        "properties": {
+          "historyId": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 47
+          },
+          "status": {
+            "enum": [
+              "PASS",
+              "STUDENT_FAILURE",
+              "SYSTEM_ERROR"
+            ]
+          },
+          "failure": {
+            "type": "string"
+          },
+          "logicalActions": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 80
+          },
+          "preludeBusinessCommands": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "primitiveAttempts": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "assertions": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "primitiveKinds": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "actualTradeRecords": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "differentMakerTakerAccountAssertions": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "rawFile": {
+            "type": "string",
+            "pattern": "^generated-[0-9]{2}\\.jsonl\\.gz$"
+          },
+          "rawSha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "rawBytes": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 134217728
+          }
+        }
+      }
+    },
+    "seed": {
+      "const": 6414
+    },
+    "executedHistories": {
+      "const": 48
+    },
+    "passedHistories": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 48
+    },
+    "logicalActions": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 3840
+    },
+    "preludeBusinessCommands": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 48
+    },
+    "primitiveAttempts": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "assertions": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "actualTradeRecords": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "differentMakerTakerAccountAssertions": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "drawsVerified": {
+      "const": 15360
+    },
+    "corpusSha256": {
+      "const": "634b17ce63eba6aeacd6cab8cc04a69786dac3a3fc15fc8fde1e942b6486e449"
+    },
+    "primitiveCountMeaning": {
+      "const": "Concrete workload transition, read, capture, restore, frame and sink steps; oracle evaluation and diagnostic image reads are validation observations."
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "PASS"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "passedHistories": {
+            "const": 48
+          },
+          "logicalActions": {
+            "const": 3840
+          },
+          "preludeBusinessCommands": {
+            "const": 48
+          },
+          "actualTradeRecords": {
+            "minimum": 48
+          },
+          "differentMakerTakerAccountAssertions": {
+            "minimum": 48
+          },
+          "histories": {
+            "items": {
+              "properties": {
+                "status": {
+                  "const": "PASS"
+                },
+                "logicalActions": {
+                  "const": 80
+                },
+                "preludeBusinessCommands": {
+                  "const": 1
+                },
+                "actualTradeRecords": {
+                  "minimum": 1
+                },
+                "differentMakerTakerAccountAssertions": {
+                  "minimum": 1
+                },
+                "assertions": {
+                  "minimum": 1
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$id": "https://lcha-reln.github.io/cex-matching/schemas/matching.m14.generated.v1.schema.json"
+}

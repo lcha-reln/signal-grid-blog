@@ -1,0 +1,211 @@
+{
+  "schemaVersion" : "matching.m13.mutants.v1",
+  "mutationBoundary" : "TESTKIT_REQUEST_AND_RECOVERY_ADAPTER_USING_REAL_DIRECT_M13_RUNTIME",
+  "candidates" : [ {
+    "id" : "IGNORE_SHARD_ROUTE",
+    "classification" : "STUDENT_FAILURE",
+    "countedAsKill" : true,
+    "scenario" : "WRONG_SHARD_AND_INSTRUMENT_NO_MUTATION",
+    "productionControl" : {
+      "schemaVersion" : "matching.m13.semantic-observation.v1",
+      "id" : "WRONG_SHARD_AND_INSTRUMENT_NO_MUTATION",
+      "scenario" : "WRONG_SHARD_AND_INSTRUMENT_NO_MUTATION",
+      "candidate" : "PRODUCTION",
+      "status" : "PASS",
+      "executed" : true,
+      "submissions" : 10,
+      "assertions" : 22,
+      "failure" : "",
+      "rawFile" : "mutant-IGNORE_SHARD_ROUTE-control.jsonl",
+      "rawSha256" : "47a58a34e558a0cb0ca8e7f4f70f33a32c3519375f5f6854eab4c5c3c644f5ab"
+    },
+    "candidateObservation" : {
+      "schemaVersion" : "matching.m13.semantic-observation.v1",
+      "id" : "WRONG_SHARD_AND_INSTRUMENT_NO_MUTATION",
+      "scenario" : "WRONG_SHARD_AND_INSTRUMENT_NO_MUTATION",
+      "candidate" : "IGNORE_SHARD_ROUTE",
+      "status" : "STUDENT_FAILURE",
+      "executed" : true,
+      "submissions" : 1,
+      "assertions" : 1,
+      "failure" : "preflight expected WRONG_SHARD but observed NEW_APPLIED/Optional.empty",
+      "rawFile" : "mutant-IGNORE_SHARD_ROUTE-candidate.jsonl",
+      "rawSha256" : "49af05ef75bea57a57dc59e426fcb6a2fdfbc71ec4fae156a6ed891f43ee0a3d"
+    }
+  }, {
+    "id" : "SHARE_BOOK_STATE",
+    "classification" : "STUDENT_FAILURE",
+    "countedAsKill" : true,
+    "scenario" : "INDEPENDENT_BOOK_PRICE_TIME_AND_ORDER_IDS",
+    "productionControl" : {
+      "schemaVersion" : "matching.m13.semantic-observation.v1",
+      "id" : "INDEPENDENT_BOOK_PRICE_TIME_AND_ORDER_IDS",
+      "scenario" : "INDEPENDENT_BOOK_PRICE_TIME_AND_ORDER_IDS",
+      "candidate" : "PRODUCTION",
+      "status" : "PASS",
+      "executed" : true,
+      "submissions" : 5,
+      "assertions" : 19,
+      "failure" : "",
+      "rawFile" : "mutant-SHARE_BOOK_STATE-control.jsonl",
+      "rawSha256" : "06d2e822ea826be03c5eff9c76ba0a07888523359a61a0bac1e00275491d8ee2"
+    },
+    "candidateObservation" : {
+      "schemaVersion" : "matching.m13.semantic-observation.v1",
+      "id" : "INDEPENDENT_BOOK_PRICE_TIME_AND_ORDER_IDS",
+      "scenario" : "INDEPENDENT_BOOK_PRICE_TIME_AND_ORDER_IDS",
+      "candidate" : "SHARE_BOOK_STATE",
+      "status" : "STUDENT_FAILURE",
+      "executed" : true,
+      "submissions" : 2,
+      "assertions" : 6,
+      "failure" : "book application sequence diverged",
+      "rawFile" : "mutant-SHARE_BOOK_STATE-candidate.jsonl",
+      "rawSha256" : "f25bca0156eff2aaaa7bc5029dbfa69829a0eeb434b23dc95eb04ea8456c3a4d"
+    }
+  }, {
+    "id" : "OMIT_INSTRUMENT_FROM_IDENTITY",
+    "classification" : "STUDENT_FAILURE",
+    "countedAsKill" : true,
+    "scenario" : "SHARD_IDENTITY_CONFLICT_DUPLICATE_AND_PRODUCER_FENCE",
+    "productionControl" : {
+      "schemaVersion" : "matching.m13.semantic-observation.v1",
+      "id" : "SHARD_IDENTITY_CONFLICT_DUPLICATE_AND_PRODUCER_FENCE",
+      "scenario" : "SHARD_IDENTITY_CONFLICT_DUPLICATE_AND_PRODUCER_FENCE",
+      "candidate" : "PRODUCTION",
+      "status" : "PASS",
+      "executed" : true,
+      "submissions" : 8,
+      "assertions" : 22,
+      "failure" : "",
+      "rawFile" : "mutant-OMIT_INSTRUMENT_FROM_IDENTITY-control.jsonl",
+      "rawSha256" : "54b38f14c5783018020eeb7c3fa1fe62745b9d13631f7884c8f1ea248a5ea492"
+    },
+    "candidateObservation" : {
+      "schemaVersion" : "matching.m13.semantic-observation.v1",
+      "id" : "SHARD_IDENTITY_CONFLICT_DUPLICATE_AND_PRODUCER_FENCE",
+      "scenario" : "SHARD_IDENTITY_CONFLICT_DUPLICATE_AND_PRODUCER_FENCE",
+      "candidate" : "OMIT_INSTRUMENT_FROM_IDENTITY",
+      "status" : "STUDENT_FAILURE",
+      "executed" : true,
+      "submissions" : 2,
+      "assertions" : 4,
+      "failure" : "preflight expected COMMAND_ID_PAYLOAD_CONFLICT but observed DUPLICATE_REPLAYED/Optional.empty",
+      "rawFile" : "mutant-OMIT_INSTRUMENT_FROM_IDENTITY-candidate.jsonl",
+      "rawSha256" : "c587043bdf59e0fdb5565a30c1dbf269770ca3034b0888041645deb2aafb9f87"
+    }
+  }, {
+    "id" : "ALLOW_EXISTING_ROUTE_MOVE",
+    "classification" : "STUDENT_FAILURE",
+    "countedAsKill" : true,
+    "scenario" : "APPEND_ONLY_ROUTE_ACTIVATION",
+    "productionControl" : {
+      "schemaVersion" : "matching.m13.semantic-observation.v1",
+      "id" : "APPEND_ONLY_ROUTE_ACTIVATION",
+      "scenario" : "APPEND_ONLY_ROUTE_ACTIVATION",
+      "candidate" : "PRODUCTION",
+      "status" : "PASS",
+      "executed" : true,
+      "submissions" : 7,
+      "assertions" : 18,
+      "failure" : "",
+      "rawFile" : "mutant-ALLOW_EXISTING_ROUTE_MOVE-control.jsonl",
+      "rawSha256" : "6ab4091a9beb14d1a48e4d5b8b5a0f5c51e9186f61069f7ad2b081c95b45ed61"
+    },
+    "candidateObservation" : {
+      "schemaVersion" : "matching.m13.semantic-observation.v1",
+      "id" : "APPEND_ONLY_ROUTE_ACTIVATION",
+      "scenario" : "APPEND_ONLY_ROUTE_ACTIVATION",
+      "candidate" : "ALLOW_EXISTING_ROUTE_MOVE",
+      "status" : "STUDENT_FAILURE",
+      "executed" : true,
+      "submissions" : 2,
+      "assertions" : 4,
+      "failure" : "preflight expected INVALID_ROUTE_SUCCESSOR but observed NEW_APPLIED/Optional.empty",
+      "rawFile" : "mutant-ALLOW_EXISTING_ROUTE_MOVE-candidate.jsonl",
+      "rawSha256" : "4aab1e5a8536b9f6ebd8529e357a75e7453293f89c469276067bfedffc785f88"
+    }
+  }, {
+    "id" : "DROP_SNAPSHOT_IDENTITY",
+    "classification" : "STUDENT_FAILURE",
+    "countedAsKill" : true,
+    "scenario" : "MULTI_BOOK_SNAPSHOT_AND_SUFFIX_EQUIVALENCE",
+    "productionControl" : {
+      "schemaVersion" : "matching.m13.semantic-observation.v1",
+      "id" : "MULTI_BOOK_SNAPSHOT_AND_SUFFIX_EQUIVALENCE",
+      "scenario" : "MULTI_BOOK_SNAPSHOT_AND_SUFFIX_EQUIVALENCE",
+      "candidate" : "PRODUCTION",
+      "status" : "PASS",
+      "executed" : true,
+      "submissions" : 10,
+      "assertions" : 19,
+      "failure" : "",
+      "rawFile" : "mutant-DROP_SNAPSHOT_IDENTITY-control.jsonl",
+      "rawSha256" : "7d683a9a8ed011afcba4b20b076ea30fe162015ca35bb2a3d0be793f13b8956b"
+    },
+    "candidateObservation" : {
+      "schemaVersion" : "matching.m13.semantic-observation.v1",
+      "id" : "MULTI_BOOK_SNAPSHOT_AND_SUFFIX_EQUIVALENCE",
+      "scenario" : "MULTI_BOOK_SNAPSHOT_AND_SUFFIX_EQUIVALENCE",
+      "candidate" : "DROP_SNAPSHOT_IDENTITY",
+      "status" : "STUDENT_FAILURE",
+      "executed" : true,
+      "submissions" : 4,
+      "assertions" : 8,
+      "failure" : "durable retry did not replay original result",
+      "rawFile" : "mutant-DROP_SNAPSHOT_IDENTITY-candidate.jsonl",
+      "rawSha256" : "20a9259fe138f4dba4edffb939a7d9e256e8bf5452edaac6991b4ce0d0b3564e"
+    }
+  }, {
+    "id" : "USE_SHARD_SEQUENCE_FOR_BOOK_CONTROL",
+    "classification" : "STUDENT_FAILURE",
+    "countedAsKill" : true,
+    "scenario" : "BOOK_LOCAL_RULES_MODES_AND_CONTROL_SEQUENCE",
+    "productionControl" : {
+      "schemaVersion" : "matching.m13.semantic-observation.v1",
+      "id" : "BOOK_LOCAL_RULES_MODES_AND_CONTROL_SEQUENCE",
+      "scenario" : "BOOK_LOCAL_RULES_MODES_AND_CONTROL_SEQUENCE",
+      "candidate" : "PRODUCTION",
+      "status" : "PASS",
+      "executed" : true,
+      "submissions" : 11,
+      "assertions" : 39,
+      "failure" : "",
+      "rawFile" : "mutant-USE_SHARD_SEQUENCE_FOR_BOOK_CONTROL-control.jsonl",
+      "rawSha256" : "3a02f3a0aa8c61e1e58fb3215248497967a827aceff994ec341dfa386a80519c"
+    },
+    "candidateObservation" : {
+      "schemaVersion" : "matching.m13.semantic-observation.v1",
+      "id" : "BOOK_LOCAL_RULES_MODES_AND_CONTROL_SEQUENCE",
+      "scenario" : "BOOK_LOCAL_RULES_MODES_AND_CONTROL_SEQUENCE",
+      "candidate" : "USE_SHARD_SEQUENCE_FOR_BOOK_CONTROL",
+      "status" : "STUDENT_FAILURE",
+      "executed" : true,
+      "submissions" : 4,
+      "assertions" : 13,
+      "failure" : "control expectedApplicationSequence used shard sequence instead of book sequence",
+      "rawFile" : "mutant-USE_SHARD_SEQUENCE_FOR_BOOK_CONTROL-candidate.jsonl",
+      "rawSha256" : "4a5b5aae5785e63a4e02ffe94e1aeba8492be03c73963affb8572fe3be85558c"
+    }
+  } ],
+  "throwingControl" : {
+    "classification" : "SYSTEM_ERROR",
+    "countedAsKill" : false,
+    "observation" : {
+      "schemaVersion" : "matching.m13.semantic-observation.v1",
+      "id" : "WRONG_SHARD_AND_INSTRUMENT_NO_MUTATION",
+      "scenario" : "WRONG_SHARD_AND_INSTRUMENT_NO_MUTATION",
+      "candidate" : "THROWING_CONTROL",
+      "status" : "SYSTEM_ERROR",
+      "executed" : true,
+      "submissions" : 1,
+      "assertions" : 0,
+      "failure" : "java.lang.IllegalStateException: deliberate infrastructure control",
+      "rawFile" : "mutant-throwing-control.jsonl",
+      "rawSha256" : "f947c21c3ed187b26308116af2cd794b7ba27acaa750468e40c44450a52176ab"
+    }
+  },
+  "executedCandidates" : 6,
+  "killed" : 6,
+  "status" : "PASS"
+}

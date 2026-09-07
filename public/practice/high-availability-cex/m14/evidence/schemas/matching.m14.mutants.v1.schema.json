@@ -1,0 +1,356 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "unit",
+    "contractPlanVersion",
+    "startCommit",
+    "workloadSha256",
+    "profileSha256",
+    "status",
+    "candidates",
+    "systemErrorControls",
+    "executed",
+    "killed",
+    "systemErrorControlCount",
+    "primitiveCountMeaning"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "matching.m14.mutants.v1"
+    },
+    "unit": {
+      "const": "M14"
+    },
+    "contractPlanVersion": {
+      "const": "0.17"
+    },
+    "startCommit": {
+      "const": "96b749861292950749701e34a6f20796f239cd4b"
+    },
+    "workloadSha256": {
+      "const": "005afdabc720ab782ea092e416a7d9c1273daf09246eede1e43607ed110ad9e3"
+    },
+    "profileSha256": {
+      "const": "02ef0ee44900e1a472fea03ed5cb406215550994826b53f4b708e33815c6be9d"
+    },
+    "status": {
+      "enum": [
+        "PASS",
+        "STUDENT_FAILURE",
+        "SYSTEM_ERROR"
+      ]
+    },
+    "candidates": {
+      "type": "array",
+      "minItems": 8,
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "status",
+          "failure",
+          "actualMutationActions",
+          "primitiveAttempts",
+          "assertions",
+          "rawFile",
+          "rawSha256",
+          "proofObligations",
+          "classification",
+          "countedAsKill",
+          "control",
+          "rawBytes"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^M14-[A-Z0-9-]+$"
+          },
+          "status": {
+            "enum": [
+              "PASS",
+              "STUDENT_FAILURE",
+              "SYSTEM_ERROR"
+            ]
+          },
+          "failure": {
+            "type": "string"
+          },
+          "actualMutationActions": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "primitiveAttempts": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "assertions": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "rawFile": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9-]+\\.jsonl\\.gz$"
+          },
+          "rawSha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "proofObligations": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "classification": {
+            "enum": [
+              "PASS",
+              "STUDENT_FAILURE",
+              "SYSTEM_ERROR"
+            ]
+          },
+          "countedAsKill": {
+            "type": "boolean"
+          },
+          "control": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "status",
+              "failure",
+              "actualMutationActions",
+              "primitiveAttempts",
+              "assertions",
+              "rawFile",
+              "rawSha256",
+              "proofObligations",
+              "rawBytes"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^M14-[A-Z0-9-]+$"
+              },
+              "status": {
+                "enum": [
+                  "PASS",
+                  "STUDENT_FAILURE",
+                  "SYSTEM_ERROR"
+                ]
+              },
+              "failure": {
+                "type": "string"
+              },
+              "actualMutationActions": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "primitiveAttempts": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "assertions": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "rawFile": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9-]+\\.jsonl\\.gz$"
+              },
+              "rawSha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "proofObligations": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "rawBytes": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 134217728
+              }
+            }
+          },
+          "rawBytes": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 134217728
+          }
+        }
+      }
+    },
+    "systemErrorControls": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "status",
+          "failure",
+          "actualMutationActions",
+          "primitiveAttempts",
+          "assertions",
+          "rawFile",
+          "rawSha256",
+          "proofObligations",
+          "classification",
+          "countedAsKill",
+          "rawBytes"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^M14-[A-Z0-9-]+$"
+          },
+          "status": {
+            "enum": [
+              "PASS",
+              "STUDENT_FAILURE",
+              "SYSTEM_ERROR"
+            ]
+          },
+          "failure": {
+            "type": "string"
+          },
+          "actualMutationActions": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "primitiveAttempts": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "assertions": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "rawFile": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9-]+\\.jsonl\\.gz$"
+          },
+          "rawSha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "proofObligations": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "classification": {
+            "enum": [
+              "PASS",
+              "STUDENT_FAILURE",
+              "SYSTEM_ERROR"
+            ]
+          },
+          "countedAsKill": {
+            "const": false
+          },
+          "rawBytes": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 134217728
+          }
+        }
+      }
+    },
+    "executed": {
+      "const": 8
+    },
+    "killed": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 8
+    },
+    "systemErrorControlCount": {
+      "const": 3
+    },
+    "primitiveCountMeaning": {
+      "const": "Concrete workload transition, read, capture, restore, frame and sink steps; oracle evaluation and diagnostic image reads are validation observations."
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "PASS"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "killed": {
+            "const": 8
+          },
+          "candidates": {
+            "items": {
+              "properties": {
+                "classification": {
+                  "const": "STUDENT_FAILURE"
+                },
+                "status": {
+                  "const": "STUDENT_FAILURE"
+                },
+                "countedAsKill": {
+                  "const": true
+                },
+                "actualMutationActions": {
+                  "minimum": 1
+                },
+                "control": {
+                  "properties": {
+                    "status": {
+                      "const": "PASS"
+                    },
+                    "actualMutationActions": {
+                      "const": 0
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "systemErrorControls": {
+            "items": {
+              "properties": {
+                "status": {
+                  "const": "SYSTEM_ERROR"
+                },
+                "classification": {
+                  "const": "SYSTEM_ERROR"
+                },
+                "countedAsKill": {
+                  "const": false
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$id": "https://lcha-reln.github.io/cex-matching/schemas/matching.m14.mutants.v1.schema.json"
+}

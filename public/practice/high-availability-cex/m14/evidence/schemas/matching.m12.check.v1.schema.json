@@ -1,0 +1,164 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://signal-grid.example/schemas/matching.m12.check.v1.schema.json",
+  "title": "Matching M12 intentional start RED report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "unit",
+    "status",
+    "contractPlanVersion",
+    "objective",
+    "courseDeclaration",
+    "inheritedBaseline",
+    "workloadProfile",
+    "clientOutcomeContract",
+    "clusterContract",
+    "coverageObligations",
+    "requiredMutants",
+    "systemErrorControls",
+    "tutorialPermalinks",
+    "missingCapabilities",
+    "releaseTarget",
+    "executionContract"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "matching.m12.check.v1" },
+    "unit": { "const": "M12" },
+    "status": { "const": "GOAL_NOT_IMPLEMENTED" },
+    "contractPlanVersion": { "const": "0.15" },
+    "objective": { "type": "string", "minLength": 80 },
+    "courseDeclaration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["case", "profile", "planVersion", "project", "unit", "lifecycle", "designDepth", "startRef", "completeRef", "productRelease", "m12Check.expectedStatus", "evidencePath"],
+      "properties": {
+        "case": { "const": "high-availability-cex" },
+        "profile": { "const": "SPOT-CEX-1.0" },
+        "planVersion": { "const": "0.15" },
+        "project": { "const": "matching" },
+        "unit": { "const": "M12" },
+        "lifecycle": { "const": "READY" },
+        "designDepth": { "const": "CONTRACT" },
+        "startRef": { "const": "course/m12-start" },
+        "completeRef": { "const": "course/m12-complete" },
+        "productRelease": { "const": "matching-0.8.0" },
+        "m12Check.expectedStatus": { "const": "GOAL_NOT_IMPLEMENTED" },
+        "evidencePath": { "const": "build/lab-evidence/M12/manifest.json" }
+      }
+    },
+    "inheritedBaseline": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["unit", "completeRef", "commit", "expectedStatus", "matchingCoreTreeUnchanged", "m11ClusterRuntimeTreeUnchanged", "m11ApplicationGoldensUnchanged"],
+      "properties": {
+        "unit": { "const": "M11" },
+        "completeRef": { "const": "course/m11-complete" },
+        "commit": { "const": "6997e05cea81cb93b883e882c8d75887d0622a22" },
+        "expectedStatus": { "const": "PASS" },
+        "matchingCoreTreeUnchanged": { "const": true },
+        "m11ClusterRuntimeTreeUnchanged": { "const": true },
+        "m11ApplicationGoldensUnchanged": { "const": true }
+      }
+    },
+    "workloadProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sha256", "fixedScenarios", "coverageObligations", "requiredMutants", "systemErrorControls", "seed", "phaseOrder", "distinctBusinessCommands", "minimumIngressAttempts", "expectedFinalNextApplicationSequence"],
+      "properties": {
+        "sha256": { "const": "20ed1e75cd3cd86dc15a7f1f64465524a5638757abe676eb51f20bc5423b89a1" },
+        "fixedScenarios": { "const": 14 },
+        "coverageObligations": { "const": 25 },
+        "requiredMutants": { "const": 8 },
+        "systemErrorControls": { "const": 3 },
+        "seed": { "const": "6120" },
+        "phaseOrder": {
+          "type": "array",
+          "minItems": 14,
+          "maxItems": 14,
+          "uniqueItems": true,
+          "items": { "type": "string" }
+        },
+        "distinctBusinessCommands": { "const": 66 },
+        "minimumIngressAttempts": { "const": 84 },
+        "expectedFinalNextApplicationSequence": { "const": 67 }
+      }
+    },
+    "clientOutcomeContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["beforeAcceptance", "afterAcceptanceWithoutResponse", "trustedResponse", "unknownRetry", "timeoutIsBusinessRejection", "unknownIsBusinessOutcome"],
+      "properties": {
+        "beforeAcceptance": { "const": "NOT_SUBMITTED" },
+        "afterAcceptanceWithoutResponse": { "const": "UNKNOWN" },
+        "trustedResponse": { "const": "ACKNOWLEDGED" },
+        "unknownRetry": { "const": "SAME_DURABLE_COMMAND_IDENTITY_FRESH_CORRELATION" },
+        "timeoutIsBusinessRejection": { "const": false },
+        "unknownIsBusinessOutcome": { "const": false }
+      }
+    },
+    "clusterContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["aeronVersion", "agronaVersion", "memberCount", "memberIds", "appointedInitialLeaderId", "quorumSize", "membership", "faultController", "memberIsolation", "processIsolationClaim", "oneMemberFailureProgress", "twoMemberFailureAck", "formerLeaderCatchUp", "runtimeMetadataInBusinessIdentity", "matchingCoreChanges", "m11WireVersionChanges", "performanceClaim", "backupRestoreClaim", "externalServices"],
+      "properties": {
+        "aeronVersion": { "const": "1.52.2" },
+        "agronaVersion": { "const": "2.5.0" },
+        "memberCount": { "const": 3 },
+        "memberIds": { "const": [0, 1, 2] },
+        "appointedInitialLeaderId": { "const": 0 },
+        "quorumSize": { "const": 2 },
+        "membership": { "const": "STATIC" },
+        "faultController": { "const": "OUTSIDE_CLUSTERED_SERVICE" },
+        "memberIsolation": { "const": "INDEPENDENT_COMPONENTS_DIRECTORIES_PORTS_AND_HANDLES" },
+        "processIsolationClaim": { "const": true },
+        "oneMemberFailureProgress": { "const": true },
+        "twoMemberFailureAck": { "const": false },
+        "formerLeaderCatchUp": { "const": "FULL_BUSINESS_STATE_EQUIVALENCE" },
+        "runtimeMetadataInBusinessIdentity": { "const": false },
+        "matchingCoreChanges": { "const": 0 },
+        "m11WireVersionChanges": { "const": 0 },
+        "performanceClaim": { "const": false },
+        "backupRestoreClaim": { "const": false },
+        "externalServices": { "const": false }
+      }
+    },
+    "coverageObligations": { "$ref": "#/$defs/stringSet25" },
+    "requiredMutants": { "$ref": "#/$defs/stringSet8" },
+    "systemErrorControls": { "$ref": "#/$defs/stringSet3" },
+    "tutorialPermalinks": { "$ref": "#/$defs/stringSet5" },
+    "missingCapabilities": {
+      "type": "array",
+      "minItems": 10,
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^[A-Z0-9_]+$" }
+    },
+    "releaseTarget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["unitTag", "productRelease", "verification"],
+      "properties": {
+        "unitTag": { "const": "course/m12-complete" },
+        "productRelease": { "const": "matching-0.8.0" },
+        "verification": { "const": "THREE_MEMBER_FAILOVER_PROFILE_AND_CLEAN_TREE_EVIDENCE" }
+      }
+    },
+    "executionContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["command", "structuredRedExitCode", "defaultBuildGate"],
+      "properties": {
+        "command": { "const": "./gradlew m12Check --no-daemon --max-workers=1" },
+        "structuredRedExitCode": { "const": 1 },
+        "defaultBuildGate": { "const": "M11_PASS" }
+      }
+    }
+  },
+  "$defs": {
+    "stringSet25": { "type": "array", "minItems": 25, "maxItems": 25, "uniqueItems": true, "items": { "type": "string" } },
+    "stringSet8": { "type": "array", "minItems": 8, "maxItems": 8, "uniqueItems": true, "items": { "type": "string" } },
+    "stringSet5": { "type": "array", "minItems": 5, "maxItems": 5, "uniqueItems": true, "items": { "type": "string" } },
+    "stringSet3": { "type": "array", "minItems": 3, "maxItems": 3, "uniqueItems": true, "items": { "type": "string" } }
+  }
+}

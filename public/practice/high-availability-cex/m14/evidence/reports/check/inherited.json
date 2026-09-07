@@ -1,0 +1,21 @@
+{
+  "schemaVersion" : "matching.m14.inherited.v1",
+  "status" : "PASS",
+  "baselineRef" : "course/m13-complete",
+  "baselineCommit" : "eb1b65d2ea2159ba607e3271f0bfd209ea4906ea",
+  "sourceCommit" : "56c4ec09ddf9fcf57f1cce763ae8b451ba7f394f",
+  "sourceDirty" : false,
+  "currentCompiledClasses" : true,
+  "matchingCoreByteIdenticalToM13" : true,
+  "m13Scenarios" : 10,
+  "m13GeneratedActions" : 4096,
+  "m13SemanticMutantsKilled" : 6,
+  "m13ClusterGroups" : 2,
+  "m13MemberProcesses" : 6,
+  "m11ProtocolGoldens" : 6,
+  "m12RealProcessHistoryPassed" : true,
+  "historicalEvidenceRebound" : false,
+  "childReportRoot" : "inherited/m13",
+  "checkSha256" : "f4df000c50bc715aa519000f652c95be4a213ed15455bbe37bd23eafd51303ca",
+  "inheritedPayloads" : 177
+}

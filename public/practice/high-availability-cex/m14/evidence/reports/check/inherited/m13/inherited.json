@@ -1,0 +1,11 @@
+{
+  "schemaVersion" : "matching.m13.inherited.v1",
+  "status" : "PASS",
+  "baselineCommit" : "d8b1b1fbb36323502495a8bc0a60042db1e9e040",
+  "protocolGoldens" : 6,
+  "m12RealProcessHistoryPassed" : true,
+  "currentCompiledClasses" : true,
+  "matchingCoreUnchanged" : false,
+  "coreEvolution" : "CONFIGURED_INSTRUMENT_WITH_LEGACY_BTC_DEFAULT",
+  "historicalEvidenceRebound" : false
+}

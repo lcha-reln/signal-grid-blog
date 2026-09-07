@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/lcha-reln/cex-matching/main/schemas/matching.m14.architecture.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "status",
+    "evidenceMode",
+    "callbackInterface",
+    "callbackRoots",
+    "reachableMethods",
+    "lambdaMethodHandles",
+    "externalIoViolations",
+    "matchingCoreByteIdenticalToM13",
+    "libraryBoundary",
+    "violations",
+    "compiledClasses",
+    "roots",
+    "methods",
+    "projectEdges",
+    "libraryCalls"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "matching.m14.architecture.v1"
+    },
+    "status": {
+      "const": "PASS"
+    },
+    "evidenceMode": {
+      "const": "CURRENT_COMPILED_METHOD_CALL_GRAPH_WITH_PROJECT_VIRTUAL_DISPATCH_AND_LAMBDA_HANDLES"
+    },
+    "callbackInterface": {
+      "const": "io.aeron.cluster.service.ClusteredService"
+    },
+    "callbackRoots": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "reachableMethods": {
+      "type": "integer",
+      "minimum": 10
+    },
+    "lambdaMethodHandles": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "externalIoViolations": {
+      "const": 0
+    },
+    "matchingCoreByteIdenticalToM13": {
+      "const": true
+    },
+    "libraryBoundary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "violations": {
+      "type": "array",
+      "maxItems": 0
+    },
+    "compiledClasses": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "class",
+          "sha256"
+        ],
+        "properties": {
+          "class": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        }
+      }
+    },
+    "roots": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "methods": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "projectEdges": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "libraryCalls": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  }
+}

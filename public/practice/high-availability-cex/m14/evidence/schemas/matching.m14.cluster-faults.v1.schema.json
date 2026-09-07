@@ -1,0 +1,166 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lcha-reln.github.io/cex-matching/schemas/matching.m14.cluster-faults.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "status",
+    "ownerProcessId",
+    "startedAtEpochMillis",
+    "profileSha256",
+    "clusterGroups",
+    "memberProcesses",
+    "sinkProcesses",
+    "publisherProcesses",
+    "scenarios",
+    "rawFiles",
+    "elapsedNanos",
+    "teardownComplete",
+    "error",
+    "teardownElapsedNanos"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "matching.m14.cluster-faults.v1"
+    },
+    "status": {
+      "enum": [
+        "RUNNING",
+        "PASS",
+        "STUDENT_FAILURE",
+        "SYSTEM_ERROR"
+      ]
+    },
+    "ownerProcessId": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "startedAtEpochMillis": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "profileSha256": {
+      "const": "02ef0ee44900e1a472fea03ed5cb406215550994826b53f4b708e33815c6be9d"
+    },
+    "clusterGroups": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 2
+    },
+    "memberProcesses": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 6
+    },
+    "sinkProcesses": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "publisherProcesses": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "scenarios": {
+      "type": "array",
+      "maxItems": 7,
+      "items": {
+        "$ref": "#/$defs/scenario"
+      }
+    },
+    "rawFiles": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/raw"
+      }
+    },
+    "elapsedNanos": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "teardownComplete": {
+      "type": "boolean"
+    },
+    "error": {
+      "type": "string"
+    },
+    "teardownElapsedNanos": {
+      "type": "integer",
+      "minimum": 0
+    }
+  },
+  "$defs": {
+    "raw": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "rawFile",
+        "rawSha256",
+        "rawBytes",
+        "purpose"
+      ],
+      "properties": {
+        "rawFile": {
+          "type": "string",
+          "pattern": "^raw/m14/bundles/[A-Za-z0-9_.-]+\\.jsonl\\.gz$"
+        },
+        "rawSha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "rawBytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "purpose": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "scenario": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "status",
+        "elapsedNanos",
+        "assertions",
+        "rawFiles"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^M14-C0[1-7]-[A-Z0-9-]+$"
+        },
+        "status": {
+          "enum": [
+            "RUNNING",
+            "PASS",
+            "STUDENT_FAILURE",
+            "SYSTEM_ERROR"
+          ]
+        },
+        "elapsedNanos": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "assertions": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Z0-9_]+$"
+          }
+        },
+        "rawFiles": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/raw"
+          }
+        }
+      }
+    }
+  }
+}

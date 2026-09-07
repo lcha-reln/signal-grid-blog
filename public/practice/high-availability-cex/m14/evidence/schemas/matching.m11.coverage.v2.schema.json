@@ -1,0 +1,134 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/lcha-reln/cex-matching/main/schemas/matching.m11.coverage.v2.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "status",
+    "required",
+    "observed",
+    "allWitnessed",
+    "source",
+    "witnessContract",
+    "systemErrorEvaluatedAfterControls",
+    "assertionsExecuted",
+    "allAssertionsPassed",
+    "ledgerVerifiedAgainstExecutionReplay",
+    "obligationEvidenceRecomputed",
+    "duplicateAssertionIdsRejected",
+    "factCount",
+    "ledgerSha256",
+    "witnesses"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "matching.m11.coverage.v2" },
+    "status": { "const": "PASS" },
+    "required": { "const": 28 },
+    "observed": { "const": 28 },
+    "allWitnessed": { "const": true },
+    "source": { "const": "EXECUTED_ASSERTION_WITNESS_LEDGER" },
+    "witnessContract": { "const": "M11_EXECUTED_ASSERTION_WITNESS_V1" },
+    "systemErrorEvaluatedAfterControls": { "const": true },
+    "assertionsExecuted": { "type": "integer", "minimum": 28 },
+    "allAssertionsPassed": { "const": true },
+    "ledgerVerifiedAgainstExecutionReplay": { "const": true },
+    "obligationEvidenceRecomputed": { "const": true },
+    "duplicateAssertionIdsRejected": { "const": true },
+    "factCount": { "type": "integer", "minimum": 28 },
+    "ledgerSha256": { "$ref": "#/$defs/sha256" },
+    "witnesses": {
+      "type": "array",
+      "minItems": 28,
+      "maxItems": 28,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/witness" }
+    }
+  },
+  "$defs": {
+    "witness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["obligation", "factCount", "scenarios", "assertionIds", "witnessSha256s", "facts"],
+      "properties": {
+        "obligation": { "$ref": "#/$defs/obligation" },
+        "factCount": { "type": "integer", "minimum": 1 },
+        "scenarios": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^[A-Z0-9_]+$" }
+        },
+        "assertionIds": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^M11\\.[A-Z0-9_]+\\.[A-Z0-9_]+\\.V1$" }
+        },
+        "witnessSha256s": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/sha256" }
+        },
+        "facts": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/fact" }
+        }
+      }
+    },
+    "fact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["obligation", "scenarioId", "sourceArtifact", "assertionId", "producer", "assertion", "observedValue", "observationSha256", "witnessSha256", "executed", "passed"],
+      "properties": {
+        "obligation": { "$ref": "#/$defs/obligation" },
+        "scenarioId": { "type": "string", "pattern": "^[A-Z0-9_]+$" },
+        "sourceArtifact": { "type": "string", "pattern": "^[a-z0-9][a-z0-9+.-]*\\.json(?:\\+[a-z0-9.-]+\\.json)*$" },
+        "assertionId": { "type": "string", "pattern": "^M11\\.[A-Z0-9_]+\\.[A-Z0-9_]+\\.V1$" },
+        "producer": { "type": "string", "pattern": "^M11(?:FixedSuite#assertScenario|Coverage#verifiedSystemControlFact)\\([A-Z0-9_]+\\)$" },
+        "assertion": { "type": "string", "minLength": 1 },
+        "observedValue": { "type": "string", "minLength": 1 },
+        "observationSha256": { "$ref": "#/$defs/sha256" },
+        "witnessSha256": { "$ref": "#/$defs/sha256" },
+        "executed": { "const": true },
+        "passed": { "const": true }
+      }
+    },
+    "obligation": {
+      "enum": [
+        "AERON_VERSION_PINNED",
+        "REAL_SINGLE_MEMBER_CLUSTER",
+        "CORE_INFRASTRUCTURE_FREE",
+        "AERON_DEPENDENCY_CONFINED",
+        "NO_STANDALONE_WAL_WRITE",
+        "LOG_CALLBACK_ONLY_APPLY",
+        "INGRESS_OFFER_NOT_ACK",
+        "CORRELATION_ROUND_TRIP",
+        "COMMAND_ID_STABLE",
+        "SESSION_NOT_BUSINESS_IDENTITY",
+        "RESPONSE_AFTER_RESULT_BIND",
+        "EGRESS_OFFER_NOT_STATE_INPUT",
+        "MALFORMED_FAILS_CLOSED",
+        "UNSUPPORTED_VERSION_FAILS_CLOSED",
+        "DUPLICATE_ORIGINAL_RESULT",
+        "ID_CONFLICT_NO_MUTATION",
+        "SLOT_CONFLICT_NO_MUTATION",
+        "DIRECT_CLUSTER_EVENT_EQUIVALENCE",
+        "DIRECT_CLUSTER_RESULT_EQUIVALENCE",
+        "DIRECT_CLUSTER_STATE_EQUIVALENCE",
+        "RUNTIME_METADATA_EXCLUDED",
+        "SNAPSHOT_COMPLETION_RECORDED",
+        "SNAPSHOT_RESTART_EXACT",
+        "SNAPSHOT_IDENTITY_SURVIVES",
+        "SNAPSHOT_SEQUENCE_CONTINUES",
+        "N_MINUS_ONE_READABLE",
+        "CURRENT_GOLDEN_WRITE_EXACT",
+        "SYSTEM_ERROR_NEVER_PASS"
+      ]
+    },
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+  }
+}

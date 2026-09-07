@@ -1,0 +1,374 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/lcha-reln/cex-matching/main/schemas/matching.m11.check.v1.schema.json",
+  "title": "M11 structured start report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "unit",
+    "status",
+    "contractPlanVersion",
+    "objective",
+    "courseDeclaration",
+    "inheritedBaseline",
+    "workloadProfile",
+    "protocolContract",
+    "clusterContract",
+    "coverageObligations",
+    "requiredMutants",
+    "systemErrorControls",
+    "goldenFixtures",
+    "tutorialPermalinks",
+    "missingCapabilities",
+    "releaseTarget",
+    "executionContract"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "matching.m11.check.v1" },
+    "unit": { "const": "M11" },
+    "status": { "const": "GOAL_NOT_IMPLEMENTED" },
+    "contractPlanVersion": { "const": "0.14" },
+    "objective": { "type": "string", "minLength": 1 },
+    "courseDeclaration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "case",
+        "profile",
+        "planVersion",
+        "project",
+        "unit",
+        "lifecycle",
+        "designDepth",
+        "startRef",
+        "completeRef",
+        "m11Check.expectedStatus",
+        "evidencePath"
+      ],
+      "properties": {
+        "case": { "const": "high-availability-cex" },
+        "profile": { "const": "SPOT-CEX-1.0" },
+        "planVersion": { "const": "0.14" },
+        "project": { "const": "matching" },
+        "unit": { "const": "M11" },
+        "lifecycle": { "const": "READY" },
+        "designDepth": { "const": "CONTRACT" },
+        "startRef": { "const": "course/m11-start" },
+        "completeRef": { "const": "course/m11-complete" },
+        "m11Check.expectedStatus": { "const": "GOAL_NOT_IMPLEMENTED" },
+        "evidencePath": { "const": "build/lab-evidence/M11/manifest.json" }
+      }
+    },
+    "inheritedBaseline": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["unit", "completeRef", "productRelease", "expectedStatus"],
+      "properties": {
+        "unit": { "const": "M10" },
+        "completeRef": { "const": "course/m10-complete" },
+        "productRelease": { "const": "matching-0.5.0" },
+        "expectedStatus": { "const": "PASS" }
+      }
+    },
+    "workloadProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sha256",
+        "fixedScenarios",
+        "seed",
+        "generatedHistories",
+        "actionsPerHistory",
+        "generatedActions",
+        "composition",
+        "segmentOrder",
+        "segmentSchedule",
+        "stateResetBetweenSegments",
+        "sequenceContinuity",
+        "snapshotCutScope",
+        "lanes",
+        "snapshotAfterAction",
+        "coverageObligations",
+        "requiredMutants",
+        "systemErrorControls"
+      ],
+      "properties": {
+        "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "fixedScenarios": { "const": 22 },
+        "seed": { "const": "6111" },
+        "generatedHistories": { "const": 32 },
+        "actionsPerHistory": { "const": 128 },
+        "generatedActions": { "const": 4096 },
+        "composition": { "const": "ONE_CONTINUOUS_CORPUS_OF_32_ORDERED_SEGMENTS" },
+        "segmentOrder": { "const": "FIXED_DECLARED_32_SEGMENT_SCHEDULE" },
+        "segmentSchedule": {
+          "const": [
+            "CURRENT_NEW[0]",
+            "CURRENT_NEW[1]",
+            "CURRENT_NEW[2]",
+            "CURRENT_NEW[3]",
+            "CURRENT_NEW[4]",
+            "CURRENT_NEW[5]",
+            "CURRENT_NEW[6]",
+            "CURRENT_NEW[7]",
+            "DUPLICATE_REPLAY[0]",
+            "DUPLICATE_REPLAY[1]",
+            "DUPLICATE_REPLAY[2]",
+            "DUPLICATE_REPLAY[3]",
+            "PREVIOUS_NEW[0]",
+            "PREVIOUS_NEW[1]",
+            "PREVIOUS_NEW[2]",
+            "PREVIOUS_NEW[3]",
+            "PREVIOUS_NEW[4]",
+            "PREVIOUS_NEW[5]",
+            "PREVIOUS_NEW[6]",
+            "PREVIOUS_NEW[7]",
+            "DUPLICATE_REPLAY[4]",
+            "DUPLICATE_REPLAY[5]",
+            "DUPLICATE_REPLAY[6]",
+            "DUPLICATE_REPLAY[7]",
+            "IDENTITY_CONFLICT[0]",
+            "IDENTITY_CONFLICT[1]",
+            "IDENTITY_CONFLICT[2]",
+            "IDENTITY_CONFLICT[3]",
+            "IDENTITY_CONFLICT[4]",
+            "IDENTITY_CONFLICT[5]",
+            "IDENTITY_CONFLICT[6]",
+            "IDENTITY_CONFLICT[7]"
+          ]
+        },
+        "stateResetBetweenSegments": { "const": false },
+        "sequenceContinuity": {
+          "const": "APPLICATION_AND_PRODUCER_CURSORS_CONTINUE_ACROSS_SEGMENTS"
+        },
+        "snapshotCutScope": { "const": "GLOBAL_ACTION_BOUNDARY_AFTER_2048" },
+        "lanes": { "const": 4 },
+        "snapshotAfterAction": { "const": 2048 },
+        "coverageObligations": { "const": 28 },
+        "requiredMutants": { "const": 10 },
+        "systemErrorControls": { "const": 3 }
+      }
+    },
+    "protocolContract": { "$ref": "#/$defs/protocolContract" },
+    "clusterContract": { "$ref": "#/$defs/clusterContract" },
+    "coverageObligations": { "$ref": "#/$defs/stringArray" },
+    "requiredMutants": { "$ref": "#/$defs/stringArray" },
+    "systemErrorControls": { "$ref": "#/$defs/stringArray" },
+    "goldenFixtures": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "path", "bytes", "sha256", "byteExact"],
+        "properties": {
+          "id": { "type": "string" },
+          "path": { "type": "string" },
+          "bytes": { "type": "integer", "minimum": 1 },
+          "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "byteExact": { "const": true }
+        }
+      }
+    },
+    "tutorialPermalinks": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "uniqueItems": true,
+      "items": { "type": "string" }
+    },
+    "missingCapabilities": {
+      "type": "array",
+      "minItems": 10,
+      "uniqueItems": true,
+      "items": { "type": "string" }
+    },
+    "releaseTarget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["unitTag", "productRelease", "verification"],
+      "properties": {
+        "unitTag": { "const": "course/m11-complete" },
+        "productRelease": { "type": "null" },
+        "verification": { "const": "CLEAN_TREE_TAG_BOUND_EVIDENCE" }
+      }
+    },
+    "executionContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["command", "structuredRedExitCode", "defaultBuildGate"],
+      "properties": {
+        "command": { "const": "./gradlew m11Check --no-daemon" },
+        "structuredRedExitCode": { "const": 1 },
+        "defaultBuildGate": { "const": "M10_PASS" }
+      }
+    }
+  },
+  "$defs": {
+    "stringArray": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "protocolContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "applicationRequest",
+        "applicationResponse",
+        "clusterSnapshot",
+        "identity",
+        "correlation",
+        "sessionIdentity",
+        "offerMeaning",
+        "responseMeaning",
+        "requestV1ResponseVersion",
+        "requestV2AllowedResponseVersions",
+        "unsupportedRequestedResponseVersion",
+        "responseDownEncodePolicy",
+        "responseV2IdentityEcho",
+        "payloadHashDomain",
+        "compatibilityClaim",
+        "previousVersionStatus",
+        "rollbackClaim",
+        "fullEventStreamInResponse",
+        "snapshotStateCoverage",
+        "s2Delta",
+        "nMinusOneRestore",
+        "snapshotIdentityOrdering",
+        "snapshotIdentityValidation",
+        "goldenSnapshotBindings"
+      ],
+      "properties": {
+        "applicationRequest": { "$ref": "#/$defs/versionRange" },
+        "applicationResponse": { "$ref": "#/$defs/versionRange" },
+        "clusterSnapshot": { "$ref": "#/$defs/versionRange" },
+        "identity": { "const": "M08C1_COMMAND_ID_SLOT_PAYLOAD_HASH" },
+        "correlation": { "const": "INVOCATION_ONLY_NOT_BUSINESS_IDENTITY" },
+        "sessionIdentity": { "const": "TRANSPORT_ONLY" },
+        "offerMeaning": { "const": "INGRESS_PUBLICATION_ACCEPTED_NOT_BUSINESS_SUCCESS" },
+        "responseMeaning": { "const": "BOUND_RESULT_AFTER_APPLY" },
+        "requestV1ResponseVersion": { "const": 1 },
+        "requestV2AllowedResponseVersions": { "const": [1, 2] },
+        "unsupportedRequestedResponseVersion": {
+          "const": "PRE_APPLY_PROTOCOL_FAILURE_NO_BUSINESS_RESPONSE_NO_STATE_MUTATION"
+        },
+        "responseDownEncodePolicy": {
+          "const": "ALL_VALID_BUSINESS_OUTCOMES_TO_V1_OMIT_V2_EXTENSION"
+        },
+        "responseV2IdentityEcho": {
+          "const": "COMMAND_ID_ONLY_SLOT_AND_PAYLOAD_HASH_NOT_PRESENT"
+        },
+        "payloadHashDomain": {
+          "const": "SHA256_CANONICAL_M08_COMMAND_PAYLOAD_BYTES"
+        },
+        "compatibilityClaim": {
+          "const": "BACKWARD_READ_AND_RESPONSE_DOWN_ENCODE_ONLY"
+        },
+        "previousVersionStatus": { "const": "FIXTURE_ONLY_NEVER_PRODUCTION" },
+        "rollbackClaim": { "const": false },
+        "fullEventStreamInResponse": { "const": false },
+        "snapshotStateCoverage": {
+          "const": "S1_AND_S2_COMPLETE_CORE_IDENTITY_FULL_ORIGINAL_RESULTS"
+        },
+        "s2Delta": { "const": "PROTOCOL_BOUNDS_AND_VALIDATION_FIELDS_ONLY" },
+        "nMinusOneRestore": { "const": "NO_IDEMPOTENCY_OR_ORIGINAL_RESULT_LOSS" },
+        "snapshotIdentityOrdering": {
+          "const": "STRICT_ASCENDING_ORIGINAL_APPLICATION_SEQUENCE_1_TO_N"
+        },
+        "snapshotIdentityValidation": {
+          "const": "UNIQUE_COMMAND_ID_AND_SLOT_CONTIGUOUS_PRODUCER_EPOCH_SEQUENCE"
+        },
+        "goldenSnapshotBindings": { "const": 2 }
+      }
+    },
+    "versionRange": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["minimumReadable", "currentWriter"],
+      "properties": {
+        "minimumReadable": { "const": 1 },
+        "currentWriter": { "const": 2 }
+      }
+    },
+    "clusterContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "aeronVersion",
+        "agronaVersion",
+        "memberCount",
+        "memberId",
+        "appointedLeaderId",
+        "corpusActionsPerPath",
+        "clusterRuns",
+        "totalActualClusterIngress",
+        "comparisonPaths",
+        "snapshotAfterAction",
+        "snapshotPrefixNewApplied",
+        "snapshotPrefixDuplicateReplayed",
+        "snapshotApplicationSequence",
+        "snapshotNextApplicationSequence",
+        "firstPostRestartLane",
+        "firstPostRestartExpectedStatus",
+        "postRestartCrossSnapshotDuplicates",
+        "adminSnapshotAcceptance",
+        "snapshotCompletionWitnesses",
+        "completionRequiredBeforeShutdown",
+        "controlledRestart",
+        "directComparison",
+        "standaloneWalWrites",
+        "highAvailabilityClaim",
+        "performanceClaim",
+        "externalServices",
+        "freshClusterRoots",
+        "portAllocation"
+      ],
+      "properties": {
+        "aeronVersion": { "const": "1.52.2" },
+        "agronaVersion": { "const": "2.5.0" },
+        "memberCount": { "const": 1 },
+        "memberId": { "const": 0 },
+        "appointedLeaderId": { "const": 0 },
+        "corpusActionsPerPath": { "const": 4096 },
+        "clusterRuns": { "const": 2 },
+        "totalActualClusterIngress": { "const": 8192 },
+        "comparisonPaths": {
+          "const": ["DIRECT", "UNINTERRUPTED_CLUSTER", "SNAPSHOT_RESTART_CLUSTER"]
+        },
+        "snapshotAfterAction": { "const": 2048 },
+        "snapshotPrefixNewApplied": { "const": 1536 },
+        "snapshotPrefixDuplicateReplayed": { "const": 512 },
+        "snapshotApplicationSequence": { "const": 1536 },
+        "snapshotNextApplicationSequence": { "const": 1537 },
+        "firstPostRestartLane": { "const": "PREVIOUS_NEW" },
+        "firstPostRestartExpectedStatus": { "const": "NEW_APPLIED" },
+        "postRestartCrossSnapshotDuplicates": { "const": 512 },
+        "adminSnapshotAcceptance": { "const": "OK_REQUIRED_NOT_COMPLETION" },
+        "snapshotCompletionWitnesses": {
+          "const": [
+            "SNAPSHOT_COUNTER_INCREMENTED",
+            "CONTROL_TOGGLE_RESET_TO_NEUTRAL",
+            "NEW_CONSENSUS_MINUS_ONE_AND_SERVICE_ZERO_RECORDING_LOG_ENTRIES_SAME_TERM_POSITION_NEW_RECORDING_IDS",
+            "WRITTEN_SNAPSHOT_PAYLOAD_DIGEST_CAPTURED",
+            "RESTART_LOADS_NON_NULL_SNAPSHOT_IMAGE_WITH_SAME_DIGEST_AND_SEQUENCE"
+          ]
+        },
+        "completionRequiredBeforeShutdown": { "const": true },
+        "controlledRestart": { "const": true },
+        "directComparison": { "const": "FULL_EVENTS_RESULT_AND_SEMANTIC_DIGEST" },
+        "standaloneWalWrites": { "const": 0 },
+        "highAvailabilityClaim": { "const": false },
+        "performanceClaim": { "const": false },
+        "externalServices": { "const": false },
+        "freshClusterRoots": {
+          "const": ["build/tmp/m11/uninterrupted", "build/tmp/m11/snapshot-restart"]
+        },
+        "portAllocation": { "const": "DISJOINT_LOCAL_PORT_BLOCKS" }
+      }
+    }
+  }
+}

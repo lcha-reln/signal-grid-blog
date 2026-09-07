@@ -1,0 +1,406 @@
+{
+  "schemaVersion" : "matching.m13.generated.v1",
+  "seed" : 6313,
+  "histories" : 64,
+  "actionsPerHistory" : 64,
+  "algorithm" : "splitmix64-v1",
+  "reference" : "M07LinearReferenceModel: one independent flat-list model per instrument",
+  "comparison" : "full ordered business events and all three book/control state projections at each action; full original results on retry",
+  "observations" : [ {
+    "history" : 0,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-00.jsonl",
+    "rawSha256" : "779cd2c2d8290d0cce39fae53e420b6dc05cc696f4acbbf892d7450c3e350140"
+  }, {
+    "history" : 1,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-01.jsonl",
+    "rawSha256" : "a19342bc1be50f333e9e49aee1ade12f4912b13fdff885ba3d64197f4b4e2120"
+  }, {
+    "history" : 2,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-02.jsonl",
+    "rawSha256" : "3eb918d43d1c079120f85285298402e28fd0793e702872f6373342c75841940b"
+  }, {
+    "history" : 3,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-03.jsonl",
+    "rawSha256" : "87545136963bd0c10110b92280bb945ee1c8172f4ee5090f33a25fe8611f1cbd"
+  }, {
+    "history" : 4,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-04.jsonl",
+    "rawSha256" : "e3ff286ba0bee092b165654349386d6abc3daa1c848eaaa6b3e918601ddc0347"
+  }, {
+    "history" : 5,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-05.jsonl",
+    "rawSha256" : "c4a114845de853abfa488679862293873d38ce870f794dcde24781c3a49115a0"
+  }, {
+    "history" : 6,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-06.jsonl",
+    "rawSha256" : "2f700b45da2e5f7b9703fd6f0b671cc1f006dfd06a6c362c477c4528caae7f49"
+  }, {
+    "history" : 7,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-07.jsonl",
+    "rawSha256" : "0be8a377c67aa11a9becc2d7812be0e191eaab1c051332757a11e7fdca18011c"
+  }, {
+    "history" : 8,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-08.jsonl",
+    "rawSha256" : "ada9861d073b4c514e0cb0c5224561f90afcf5d5299cde703e3b50578b8551a2"
+  }, {
+    "history" : 9,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-09.jsonl",
+    "rawSha256" : "5dc15d4294fb743e1adbf4092c270241acd88054a2a796f4a3b7803b6b62a564"
+  }, {
+    "history" : 10,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-10.jsonl",
+    "rawSha256" : "11627d45e76fb6f441cf009eb9b6a3b11bf86f9ba64847fa8652bc867c198a5c"
+  }, {
+    "history" : 11,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-11.jsonl",
+    "rawSha256" : "0c97e47eeca8191282ced617ab5e431ed6dc2002f935a7c26583939cd3630f21"
+  }, {
+    "history" : 12,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-12.jsonl",
+    "rawSha256" : "39e1b980f7c0d418507512dac783f68791c9da1d55a13a48bba918239d450a70"
+  }, {
+    "history" : 13,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-13.jsonl",
+    "rawSha256" : "8efc5036ff236c9373d9b07c9246c92e8bc7f07c24d15f4f8320e1af34fe4519"
+  }, {
+    "history" : 14,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-14.jsonl",
+    "rawSha256" : "426378cd6d48750d3bf8a544948c383cf468273fdc79192a5101ccdee76bd429"
+  }, {
+    "history" : 15,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-15.jsonl",
+    "rawSha256" : "fa9d768bf4c17c363970fa048c19db7ca1ff5d63bf72b129c3c99e7c5a3ed51c"
+  }, {
+    "history" : 16,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-16.jsonl",
+    "rawSha256" : "863d288685ecae3c8fbd6c35623ad2eb5c71dcd58b12a39708c85410b55adfba"
+  }, {
+    "history" : 17,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-17.jsonl",
+    "rawSha256" : "08fb3e141bd649a97536e2528c1a78219f38ef35703e1adcf08ce816ee90918a"
+  }, {
+    "history" : 18,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-18.jsonl",
+    "rawSha256" : "f48a8cd6a459144087cd0c4908179f817f86ca6e94bedf190268be0fc4a7a198"
+  }, {
+    "history" : 19,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-19.jsonl",
+    "rawSha256" : "49b4b21e672cc13fe4f66c5cb698517dd7e34e5fed2920bb55036e4e57b1e00a"
+  }, {
+    "history" : 20,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-20.jsonl",
+    "rawSha256" : "0ee0afdb6ce79605ea27ad021b46ef7059feac67461ed27bec00cde55b46e4ee"
+  }, {
+    "history" : 21,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-21.jsonl",
+    "rawSha256" : "4617c0120655e71c6b58e02eb14e14afc3d87ae664d3a24648ae61e5951159d3"
+  }, {
+    "history" : 22,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-22.jsonl",
+    "rawSha256" : "cbc101bbe558339f5a5ad729ffd3e26ca09fca1f4b55babe773ef00e67968d51"
+  }, {
+    "history" : 23,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-23.jsonl",
+    "rawSha256" : "cceb17a3c59636fc02bf3d934a612be05ba4ab8dc597fc901442a26b4174d8b2"
+  }, {
+    "history" : 24,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-24.jsonl",
+    "rawSha256" : "ccd193fb36e796be1c781a59f3218e63aa5c78bd1d7da37ff7746a54d551c61e"
+  }, {
+    "history" : 25,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-25.jsonl",
+    "rawSha256" : "06fb3ae7e0847146cd7be789e12cfb86f4598505b698e4608e91f57dab5086ac"
+  }, {
+    "history" : 26,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-26.jsonl",
+    "rawSha256" : "64892f851a5bbce20b63de1450aa0d564be9fc87dce8faaf41953ed87ebf6888"
+  }, {
+    "history" : 27,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-27.jsonl",
+    "rawSha256" : "d1cc1b8186db509ef2f0767eb6834316a8c00da8b6f370ec28b3f18713612455"
+  }, {
+    "history" : 28,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-28.jsonl",
+    "rawSha256" : "7d05b902aeeba5923b50bedb02c05921af7ff74b17f0d319076e3afc83b2dd86"
+  }, {
+    "history" : 29,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-29.jsonl",
+    "rawSha256" : "e2ff724b876241c97ee8bc0aa895fbc4cdfb86b42f157cea7526f95c25bd63ae"
+  }, {
+    "history" : 30,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-30.jsonl",
+    "rawSha256" : "b8723e164f8cc4aac4a0ae66da89a66ba9864067febcdeabbb5faa10e3eaf487"
+  }, {
+    "history" : 31,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-31.jsonl",
+    "rawSha256" : "11cc4678dbbbd18d0fbe1a04ef3ed83efad3fcfd42f0bb7248cf8b2d5e750b8c"
+  }, {
+    "history" : 32,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-32.jsonl",
+    "rawSha256" : "8c76b31c81648d840862149b36fa28866750d5be83d53b6ddcc4f2b5732054cd"
+  }, {
+    "history" : 33,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-33.jsonl",
+    "rawSha256" : "f4e855239fde479166e43f2670562197d4fc68d2ddbea22a9758f21762acce1a"
+  }, {
+    "history" : 34,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-34.jsonl",
+    "rawSha256" : "25e92b148cbf8c0ba85db4c4ac5413355b795fd1939211140c71c93a6472998a"
+  }, {
+    "history" : 35,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-35.jsonl",
+    "rawSha256" : "d6a39019c727c817d11049133f0841c586f80441ea60697b2d29f30275ce3b6b"
+  }, {
+    "history" : 36,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-36.jsonl",
+    "rawSha256" : "22616b55601092bc4483a14b8f4b686055850e148dfdf1c8254761f5ab72bd34"
+  }, {
+    "history" : 37,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-37.jsonl",
+    "rawSha256" : "7b98e708702b28a96623f69cca28eac5a1b52e7a0f67256b597e27fb2f22633d"
+  }, {
+    "history" : 38,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-38.jsonl",
+    "rawSha256" : "0a128a7eb7ee29fc5edd7697f80b01ff8fb641b9f4306d658458ac3c57b54663"
+  }, {
+    "history" : 39,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-39.jsonl",
+    "rawSha256" : "2a6ce04f2449dc9099560245f24a1fdd313fdfb5d331bf522ff80b07e638e7b2"
+  }, {
+    "history" : 40,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-40.jsonl",
+    "rawSha256" : "e5576e113c78c833adc6d27bd0d8f7c553ab832c2ce1e47c3eaaa093310c30a8"
+  }, {
+    "history" : 41,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-41.jsonl",
+    "rawSha256" : "e86c0cfe2efb6d0a16ca278a299d453a82426731235ebea40b8b4421ff5205d1"
+  }, {
+    "history" : 42,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-42.jsonl",
+    "rawSha256" : "bce6b15320bbfe90870a916d874184064eb9075680c3e67ac1445f63e7b66c76"
+  }, {
+    "history" : 43,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-43.jsonl",
+    "rawSha256" : "1c257375b7d8e10aca2e4eccba18d74885c2da188804e8b020cf7bfb8faf96ce"
+  }, {
+    "history" : 44,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-44.jsonl",
+    "rawSha256" : "237d03456414b8264aff50b75377d4ed1ea81fcd42d730adc49a5307c3892563"
+  }, {
+    "history" : 45,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-45.jsonl",
+    "rawSha256" : "60f8f1a45aa97e1bc36791d1720f8dcfb37951d65412c347c6fa5787d3c9ea93"
+  }, {
+    "history" : 46,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-46.jsonl",
+    "rawSha256" : "9a359296e1411247adac9dd96f00d7085947fb96fee27793884875020ed9ddd4"
+  }, {
+    "history" : 47,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-47.jsonl",
+    "rawSha256" : "24ae3bc3eb425b9082863aa631a2cd853a9ed70d038b54619a28f84c86ff432d"
+  }, {
+    "history" : 48,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-48.jsonl",
+    "rawSha256" : "f90c1b51018d6e64e22f35089760fc9ff04ca3d1c2f516e5432588c1b3c20cad"
+  }, {
+    "history" : 49,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-49.jsonl",
+    "rawSha256" : "34bff9562e709de397ba621042cc298d25430fd888949ff62b80215dc047ff61"
+  }, {
+    "history" : 50,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-50.jsonl",
+    "rawSha256" : "df84d93bcc6c4c0ec04bd7c7b85f04339124fb952f31bfe1284db360353fbfed"
+  }, {
+    "history" : 51,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-51.jsonl",
+    "rawSha256" : "93eb09a28791c0ea903311e3b1cfddd2552fdfbe9878b8403ff8078aae7854ee"
+  }, {
+    "history" : 52,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-52.jsonl",
+    "rawSha256" : "3ef862a38a4f68b6d3cf8dfa18ff6bce81730f9cfa3e003721e6ec5c7c84cc1d"
+  }, {
+    "history" : 53,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-53.jsonl",
+    "rawSha256" : "b655f8acdaaa53ad47120e1f21ba505d8b535cfa09d62412bce703a936b9675e"
+  }, {
+    "history" : 54,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-54.jsonl",
+    "rawSha256" : "3ea99b9e5145ea896a788882ffd5e2c9ccc2b55553f6622481004a9b04c78d95"
+  }, {
+    "history" : 55,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-55.jsonl",
+    "rawSha256" : "79e4818757ff28bdc916527b4666a9fb23b14b9b806e70889cfb3cf34bd3a9af"
+  }, {
+    "history" : 56,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-56.jsonl",
+    "rawSha256" : "07e736e0c5dd3d892b6515016ae51103ef53d15f764ce812a797d512fc57cff8"
+  }, {
+    "history" : 57,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-57.jsonl",
+    "rawSha256" : "c6642ae93a95806af0795f617afbab1732700d0f08dfca6cfd1ffa6ffb14ef06"
+  }, {
+    "history" : 58,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-58.jsonl",
+    "rawSha256" : "8330194ef58e690a18162e0dc13dec866c5713f58b8573b21119f4416953d9a6"
+  }, {
+    "history" : 59,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-59.jsonl",
+    "rawSha256" : "0be63c9deeb9183ccd26f9697f363d2ab59b4916db7b819a203d74eb882688a3"
+  }, {
+    "history" : 60,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-60.jsonl",
+    "rawSha256" : "9c5eb450d620214087b3a1c6c6dd037816264eaf6ae905a8f9b7fe4ec7df9a9f"
+  }, {
+    "history" : 61,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-61.jsonl",
+    "rawSha256" : "440999db72aaa9edde3989445237507fe8c827ee6a7ba4f910fa60a51c646fab"
+  }, {
+    "history" : 62,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-62.jsonl",
+    "rawSha256" : "c80c02c4f5c10a3a7b99956f5268a0bd17e68575c221148a959a84860d63b364"
+  }, {
+    "history" : 63,
+    "executedActions" : 64,
+    "status" : "PASS",
+    "rawFile" : "generated-history-63.jsonl",
+    "rawSha256" : "ed3cdd07e49610a449a401a9e0567f3291560266e70039b2a09cabc1792f55a0"
+  } ],
+  "corpusSha256" : "d6c4341dfc90330fae96cab6628dec850ae2912593ef9e8a7b593cce6f9d17d1",
+  "byteExactRegeneration" : true,
+  "status" : "PASS",
+  "failure" : "",
+  "executedActions" : 4096,
+  "completedHistories" : 64,
+  "newApplied" : 3328,
+  "duplicateReplayed" : 256,
+  "preflightRejected" : 512,
+  "perBookStateComparisons" : 12288,
+  "fullEventComparisons" : 3328,
+  "snapshotsRestored" : 128
+}

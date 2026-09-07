@@ -1,0 +1,32 @@
+{
+  "schemaVersion" : "matching.m12.catchup.v1",
+  "status" : "PASS",
+  "implementation" : "REAL_AERON_CHILD_PROCESSES",
+  "formerLeaderId" : 0,
+  "freshStartOnReturn" : false,
+  "roleAfterReturn" : "FOLLOWER",
+  "caughtUpBeforeMinorityFault" : true,
+  "catchupCommitPosition" : 24128,
+  "catchupLogPosition" : 24128,
+  "catchupNextApplicationSequence" : 66,
+  "allThreeConvergedAfterFinalRestore" : true,
+  "archiveMarkFileLivenessTimeoutMillis" : 10000,
+  "restartSafetyPredicate" : "ARCHIVE_MARK_FILE_ACTIVITY_AGE_GT_LIVENESS_TIMEOUT",
+  "firstReturnRestartSafetyWitnessOrdinal" : 1,
+  "firstReturnRestartSafetyWitness" : {
+    "ordinal" : 1,
+    "memberId" : 0,
+    "stoppedProcessId" : 905,
+    "archiveMarkFile" : "/Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m14-release-check/build/tmp/m12/three-member-failover/node-0/archive/archive-mark.dat",
+    "lastActivityTimestampMillis" : 1788787399347,
+    "observedAtMillis" : 1788787409349,
+    "ageMillis" : 10002,
+    "livenessTimeoutMillis" : 10000,
+    "probeCount" : 2597,
+    "waitElapsedNanos" : 3753232417,
+    "aeronVersion" : "1.52.2",
+    "predicate" : "ARCHIVE_MARK_FILE_ACTIVITY_AGE_GT_LIVENESS_TIMEOUT",
+    "activityTimestampPositive" : true,
+    "ageStrictlyExceedsLivenessTimeout" : true
+  }
+}

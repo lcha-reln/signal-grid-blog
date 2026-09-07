@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "status",
+    "baselineRef",
+    "baselineCommit",
+    "sourceCommit",
+    "sourceDirty",
+    "currentCompiledClasses",
+    "matchingCoreByteIdenticalToM13",
+    "m13Scenarios",
+    "m13GeneratedActions",
+    "m13SemanticMutantsKilled",
+    "m13ClusterGroups",
+    "m13MemberProcesses",
+    "m11ProtocolGoldens",
+    "m12RealProcessHistoryPassed",
+    "historicalEvidenceRebound",
+    "childReportRoot",
+    "checkSha256",
+    "inheritedPayloads"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "matching.m14.inherited.v1"
+    },
+    "status": {
+      "const": "PASS"
+    },
+    "baselineRef": {
+      "const": "course/m13-complete"
+    },
+    "baselineCommit": {
+      "const": "eb1b65d2ea2159ba607e3271f0bfd209ea4906ea"
+    },
+    "sourceCommit": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{40}$"
+    },
+    "sourceDirty": {
+      "type": "boolean"
+    },
+    "currentCompiledClasses": {
+      "const": true
+    },
+    "matchingCoreByteIdenticalToM13": {
+      "const": true
+    },
+    "m13Scenarios": {
+      "const": 10
+    },
+    "m13GeneratedActions": {
+      "const": 4096
+    },
+    "m13SemanticMutantsKilled": {
+      "const": 6
+    },
+    "m13ClusterGroups": {
+      "const": 2
+    },
+    "m13MemberProcesses": {
+      "const": 6
+    },
+    "m11ProtocolGoldens": {
+      "const": 6
+    },
+    "m12RealProcessHistoryPassed": {
+      "const": true
+    },
+    "historicalEvidenceRebound": {
+      "const": false
+    },
+    "childReportRoot": {
+      "const": "inherited/m13"
+    },
+    "checkSha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "inheritedPayloads": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 1024
+    }
+  }
+}

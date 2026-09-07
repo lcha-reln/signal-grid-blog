@@ -1,0 +1,1155 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "seed",
+    "histories",
+    "actionsPerHistory",
+    "algorithm",
+    "reference",
+    "comparison",
+    "observations",
+    "status",
+    "failure",
+    "executedActions",
+    "completedHistories",
+    "newApplied",
+    "duplicateReplayed",
+    "preflightRejected",
+    "perBookStateComparisons",
+    "fullEventComparisons",
+    "snapshotsRestored"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "matching.m13.generated.v1"
+    },
+    "seed": {
+      "const": 6313
+    },
+    "histories": {
+      "const": 64
+    },
+    "actionsPerHistory": {
+      "const": 64
+    },
+    "algorithm": {
+      "const": "splitmix64-v1"
+    },
+    "reference": {
+      "const": "M07LinearReferenceModel: one independent flat-list model per instrument"
+    },
+    "comparison": {
+      "const": "full ordered business events and all three book/control state projections at each action; full original results on retry"
+    },
+    "observations": {
+      "type": "array",
+      "maxItems": 64,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "history",
+          "executedActions",
+          "status",
+          "rawFile",
+          "rawSha256"
+        ],
+        "properties": {
+          "history": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 63
+          },
+          "executedActions": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 64
+          },
+          "status": {
+            "enum": [
+              "PASS",
+              "STUDENT_FAILURE",
+              "SYSTEM_ERROR"
+            ]
+          },
+          "rawFile": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+[.]jsonl$"
+          },
+          "rawSha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      },
+      "prefixItems": [
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 2
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 3
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 4
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 5
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 6
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 7
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 8
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 9
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 10
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 11
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 12
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 13
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 14
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 15
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 16
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 17
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 18
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 19
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 20
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 21
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 22
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 23
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 24
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 25
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 26
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 27
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 28
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 29
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 30
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 31
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 32
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 33
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 34
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 35
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 36
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 37
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 38
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 39
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 40
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 41
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 42
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 43
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 44
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 45
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 46
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 47
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 48
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 49
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 50
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 51
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 52
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 53
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 54
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 55
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 56
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 57
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 58
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 59
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 60
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 61
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 62
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/history"
+            },
+            {
+              "properties": {
+                "history": {
+                  "const": 63
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "corpusSha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "byteExactRegeneration": {
+      "type": "boolean"
+    },
+    "status": {
+      "enum": [
+        "PASS",
+        "STUDENT_FAILURE",
+        "SYSTEM_ERROR"
+      ]
+    },
+    "failure": {
+      "type": "string"
+    },
+    "executedActions": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 4096
+    },
+    "completedHistories": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 64
+    },
+    "newApplied": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 3328
+    },
+    "duplicateReplayed": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 256
+    },
+    "preflightRejected": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 512
+    },
+    "perBookStateComparisons": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 12288
+    },
+    "fullEventComparisons": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 3328
+    },
+    "snapshotsRestored": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 128
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "PASS"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "corpusSha256",
+          "byteExactRegeneration"
+        ],
+        "properties": {
+          "failure": {
+            "const": ""
+          },
+          "byteExactRegeneration": {
+            "const": true
+          },
+          "executedActions": {
+            "const": 4096
+          },
+          "completedHistories": {
+            "const": 64
+          },
+          "newApplied": {
+            "const": 3328
+          },
+          "duplicateReplayed": {
+            "const": 256
+          },
+          "preflightRejected": {
+            "const": 512
+          },
+          "perBookStateComparisons": {
+            "const": 12288
+          },
+          "fullEventComparisons": {
+            "const": 3328
+          },
+          "snapshotsRestored": {
+            "const": 128
+          },
+          "observations": {
+            "minItems": 64,
+            "items": {
+              "properties": {
+                "status": {
+                  "const": "PASS"
+                },
+                "executedActions": {
+                  "const": 64
+                }
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "failure": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "history": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "history",
+        "executedActions",
+        "status",
+        "rawFile",
+        "rawSha256"
+      ],
+      "properties": {
+        "history": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63
+        },
+        "executedActions": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 64
+        },
+        "status": {
+          "enum": [
+            "PASS",
+            "STUDENT_FAILURE",
+            "SYSTEM_ERROR"
+          ]
+        },
+        "rawFile": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]+[.]jsonl$"
+        },
+        "rawSha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    }
+  }
+}

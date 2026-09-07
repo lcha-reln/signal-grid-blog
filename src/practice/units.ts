@@ -16064,6 +16064,8692 @@ const M13_EVIDENCE_CONTRACT: PracticeEvidenceContract = {
   ],
 };
 
+const M14_EVIDENCE_CONTRACT: PracticeEvidenceContract = {
+  schemaVersion: "cex.lab-evidence.v2",
+  project: "matching",
+  publicManifestPath:
+    "practice/high-availability-cex/m14/evidence/manifest.json",
+  manifestSha256:
+    "7eb56335954e03a6792b8f9971b922e3bd45bf5dcbd60e47f1e5cedde3fb2081",
+  claimIds: ["finite-resumable-business-output-qualification"],
+  limitations: [
+    "Finite evidence: 12 local scenarios, 7 real process witnesses, 48 histories of 80 logical actions plus explicit preludes, and eight semantic mutants are not exhaustive exploration or formal proof.",
+    "Two three-member Aeron groups, external publishers and a durable protocol-test sink run on one host. Process fail-stop does not prove host, rack, region, power-loss or arbitrary-partition isolation.",
+    "External publication is at least once. Stable identities and a durable sink frontier permit idempotent replay; transport receipt is not business settlement or distributed exactly-once effects.",
+    "M14 imports only fully verified M13 snapshots with empty resting books. Imported retries retain their old unattributed output, and no historical account bootstrap or event backfill is claimed.",
+    "Public Market snapshots restore current whole-shard book state at one cut. They do not restore missing historical trades, and Execution gaps cannot be repaired by a Market snapshot.",
+    "The external stale-publisher fence begins at the sink's forced ADMIN_OK receipt after observing the replicated grant. Cluster grant commit and remote consumer authorization are not atomic; the inherited controller pipe is trusted and is not production IAM, TLS or a signature scheme.",
+    "Q1 bounds are a finite resource contract. Execution saturation refuses new work atomically, Market retention is lossy, and neither stream provides an unbounded outage window or an archival service.",
+    "Per-shard source identities and M14 business/control history are retained without pruning. At the frozen 2,000,000 successful M14-operation guard, new business and controls, including ACK, refuse with HISTORY_LIMIT while exact retries remain readable. Outbox draining is conditional on remaining history capacity. Full-prefix snapshot validation, restore work and memory grow with history; long-duration memory or recovery-time qualification is not established.",
+    "Aeron request/response decoder safety ceilings exceed some physical publication message limits. Each client checks actual publication capacity, and failed egress preserves an already applied result as UNKNOWN; the finite Q1 transport witnesses do not qualify every possible legacy maximum-size payload.",
+    "No Cluster throughput, latency, capacity, RTO, RPO, SLO, mixed-version upgrade, backup, cold restore or production-readiness claim is made. M10 single-runtime performance numbers do not transfer.",
+    "Routing remains static and append-only. Counter, REST, balances, holds, settlement and new trading features are outside M14. Semantic mutants are local candidates with passing production controls, never process faults or parser errors counted as kills.",
+    "M13, M12, M11 protocol goldens and inherited semantic boundaries execute on current compiled classes. Historical evidence and historical source-identity gates remain bound to their immutable tags.",
+  ],
+  reportFacts: [
+    {
+      artifactPath: "reports/check/check.json",
+      field: "schemaVersion",
+      equals: "matching.m14.check.v2",
+      claimId: "finite-resumable-business-output-qualification",
+      observationField: "schemaVersion",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "unit",
+      equals: "M14",
+      claimId: "finite-resumable-business-output-qualification",
+      observationField: "unit",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "contractPlanVersion",
+      equals: "0.17",
+      claimId: "finite-resumable-business-output-qualification",
+      observationField: "contractPlanVersion",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "workloadSha256",
+      equals:
+        "005afdabc720ab782ea092e416a7d9c1273daf09246eede1e43607ed110ad9e3",
+      claimId: "finite-resumable-business-output-qualification",
+      observationField: "workloadSha256",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "profileSha256",
+      equals:
+        "02ef0ee44900e1a472fea03ed5cb406215550994826b53f4b708e33815c6be9d",
+      claimId: "finite-resumable-business-output-qualification",
+      observationField: "profileSha256",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "corpusSha256",
+      equals:
+        "634b17ce63eba6aeacd6cab8cc04a69786dac3a3fc15fc8fde1e942b6486e449",
+      claimId: "finite-resumable-business-output-qualification",
+      observationField: "corpusSha256",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "status",
+      equals: "PASS",
+      claimId: "finite-resumable-business-output-qualification",
+      observationField: "status",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "executed",
+      equals: true,
+      claimId: "finite-resumable-business-output-qualification",
+      observationField: "executed",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "sourceCommit",
+      equals: "56c4ec09ddf9fcf57f1cce763ae8b451ba7f394f",
+      claimId: "finite-resumable-business-output-qualification",
+      observationField: "sourceCommit",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "sourceDirty",
+      equals: false,
+      claimId: "finite-resumable-business-output-qualification",
+      observationField: "sourceDirty",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "localScenarios",
+      equals: 12,
+      claimId: "finite-resumable-business-output-qualification",
+      observationField: "localScenarios",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "processWitnesses",
+      equals: 7,
+      claimId: "finite-resumable-business-output-qualification",
+      observationField: "processWitnesses",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "generatedActions",
+      equals: 3840,
+      claimId: "finite-resumable-business-output-qualification",
+      observationField: "generatedActions",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "preludeBusinessCommands",
+      equals: 48,
+      claimId: "finite-resumable-business-output-qualification",
+      observationField: "preludeBusinessCommands",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "primitiveAttempts",
+      equals: 57549,
+      claimId: "finite-resumable-business-output-qualification",
+      observationField: "primitiveAttempts",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "semanticMutantsKilled",
+      equals: 8,
+      claimId: "finite-resumable-business-output-qualification",
+      observationField: "semanticMutantsKilled",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "throwingControl",
+      equals: "SYSTEM_ERROR",
+      claimId: "finite-resumable-business-output-qualification",
+      observationField: "throwingControl",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "systemErrorControls",
+      equals: 3,
+      claimId: "finite-resumable-business-output-qualification",
+      observationField: "systemErrorControls",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "clusterGroups",
+      equals: 2,
+      claimId: "finite-resumable-business-output-qualification",
+      observationField: "clusterGroups",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "memberProcesses",
+      equals: 6,
+      claimId: "finite-resumable-business-output-qualification",
+      observationField: "memberProcesses",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "sinkProcesses",
+      equals: 1,
+      claimId: "finite-resumable-business-output-qualification",
+      observationField: "sinkProcesses",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "publisherProcesses",
+      equals: 3,
+      claimId: "finite-resumable-business-output-qualification",
+      observationField: "publisherProcesses",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "inheritedStatus",
+      equals: "PASS",
+      claimId: "finite-resumable-business-output-qualification",
+      observationField: "inheritedStatus",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "architectureStatus",
+      equals: "PASS",
+      claimId: "finite-resumable-business-output-qualification",
+      observationField: "architectureStatus",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "singleHost",
+      equals: true,
+      claimId: "finite-resumable-business-output-qualification",
+      observationField: "singleHost",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "performanceQualified",
+      equals: false,
+      claimId: "finite-resumable-business-output-qualification",
+      observationField: "performanceQualified",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "productRelease",
+      equals: null,
+      claimId: "finite-resumable-business-output-qualification",
+      observationField: "productRelease",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "scenarios.length",
+      equals: 19,
+      claimId: "finite-resumable-business-output-qualification",
+      observationField: "scenarios.length",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "scenarios.0",
+      equals: "M14-L01-TYPED-ACCOUNTABLE-TRADE",
+      claimId: "finite-resumable-business-output-qualification",
+      observationField: "scenarios.0",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "scenarios.1",
+      equals: "M14-L02-TERMINAL-AND-CONTROL-OUTPUT",
+      claimId: "finite-resumable-business-output-qualification",
+      observationField: "scenarios.1",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "scenarios.2",
+      equals: "M14-L03-STP-AND-MASS-CANCEL-OWNERSHIP",
+      claimId: "finite-resumable-business-output-qualification",
+      observationField: "scenarios.2",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "scenarios.3",
+      equals: "M14-L04-IDENTITY-AND-LEGACY-REPLAY",
+      claimId: "finite-resumable-business-output-qualification",
+      observationField: "scenarios.3",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "scenarios.4",
+      equals: "M14-L05-GENESIS-AND-PROFILE-IMPORT",
+      claimId: "finite-resumable-business-output-qualification",
+      observationField: "scenarios.4",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "scenarios.5",
+      equals: "M14-L06-SAME-APPLY-CAPACITY",
+      claimId: "finite-resumable-business-output-qualification",
+      observationField: "scenarios.5",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "scenarios.6",
+      equals: "M14-L07-EXECUTION-REPLAY-AND-GAP",
+      claimId: "finite-resumable-business-output-qualification",
+      observationField: "scenarios.6",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "scenarios.7",
+      equals: "M14-L08-MARKET-SNAPSHOT-SUFFIX",
+      claimId: "finite-resumable-business-output-qualification",
+      observationField: "scenarios.7",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "scenarios.8",
+      equals: "M14-L09-FENCE-AND-CONTROL-IDENTITY",
+      claimId: "finite-resumable-business-output-qualification",
+      observationField: "scenarios.8",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "scenarios.9",
+      equals: "M14-L10-SNAPSHOT-BUSINESS-OUTPUT-CUT",
+      claimId: "finite-resumable-business-output-qualification",
+      observationField: "scenarios.9",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "scenarios.10",
+      equals: "M14-L11-SEMANTIC-SNAPSHOT-CORRUPTION",
+      claimId: "finite-resumable-business-output-qualification",
+      observationField: "scenarios.10",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "scenarios.11",
+      equals: "M14-L12-CODEC-AND-WORK-BUDGET",
+      claimId: "finite-resumable-business-output-qualification",
+      observationField: "scenarios.11",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "scenarios.12",
+      equals: "M14-C01-APPLY-BEFORE-PUBLISH",
+      claimId: "finite-resumable-business-output-qualification",
+      observationField: "scenarios.12",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "scenarios.13",
+      equals: "M14-C02-DURABLE-WRITE-BEFORE-ACK-LOSS",
+      claimId: "finite-resumable-business-output-qualification",
+      observationField: "scenarios.13",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "scenarios.14",
+      equals: "M14-C03-DURABLE-ACK-BEFORE-REPLICATION",
+      claimId: "finite-resumable-business-output-qualification",
+      observationField: "scenarios.14",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "scenarios.15",
+      equals: "M14-C04-LIVE-STALE-PUBLISHER",
+      claimId: "finite-resumable-business-output-qualification",
+      observationField: "scenarios.15",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "scenarios.16",
+      equals: "M14-C05-EXECUTION-FULL-SHARD-ISOLATION",
+      claimId: "finite-resumable-business-output-qualification",
+      observationField: "scenarios.16",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "scenarios.17",
+      equals: "M14-C06-SNAPSHOT-ALL-MEMBERS-AND-SINK-RESTART",
+      claimId: "finite-resumable-business-output-qualification",
+      observationField: "scenarios.17",
+    },
+    {
+      artifactPath: "reports/check/check.json",
+      field: "scenarios.18",
+      equals: "M14-C07-FRAGMENTED-BATCH-AND-MARKET-REBUILD",
+      claimId: "finite-resumable-business-output-qualification",
+      observationField: "scenarios.18",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "schemaVersion",
+      equals: "matching.m14.fixed.v1",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "unit",
+      equals: "M14",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "contractPlanVersion",
+      equals: "0.17",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "startCommit",
+      equals: "96b749861292950749701e34a6f20796f239cd4b",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "workloadSha256",
+      equals:
+        "005afdabc720ab782ea092e416a7d9c1273daf09246eede1e43607ed110ad9e3",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "profileSha256",
+      equals:
+        "02ef0ee44900e1a472fea03ed5cb406215550994826b53f4b708e33815c6be9d",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "primitiveCountMeaning",
+      equals:
+        "Concrete workload transition, read, capture, restore, frame and sink steps; oracle evaluation and diagnostic image reads are validation observations.",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.length",
+      equals: 12,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.0.id",
+      equals: "M14-L01-TYPED-ACCOUNTABLE-TRADE",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.0.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.0.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.0.actualMutationActions",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.0.primitiveAttempts",
+      equals: 6,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.0.assertions",
+      equals: 49,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.0.rawFile",
+      equals: "M14-L01-TYPED-ACCOUNTABLE-TRADE.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.0.rawSha256",
+      equals:
+        "0a6846708b0120276db46e59623c9cfa982f9f2b4e0d163200451ed0ededbb1f",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.0.rawBytes",
+      equals: 6292,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.0.proofObligations.length",
+      equals: 6,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.0.proofObligations.0",
+      equals: "MAKER_ACCOUNT_FROM_ORDER_101",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.0.proofObligations.1",
+      equals: "TAKER_ACCOUNT_FROM_ORDER_102",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.0.proofObligations.2",
+      equals: "TRADE_100_TICKS_2_LOTS",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.0.proofObligations.3",
+      equals: "MAKER_REMAINDER_1",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.0.proofObligations.4",
+      equals: "PUBLIC_FIELD_WHITELIST",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.0.proofObligations.5",
+      equals: "INDEPENDENT_STREAM_IDENTITIES",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.1.id",
+      equals: "M14-L02-TERMINAL-AND-CONTROL-OUTPUT",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.1.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.1.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.1.actualMutationActions",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.1.primitiveAttempts",
+      equals: 327,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.1.assertions",
+      equals: 3361,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.1.rawFile",
+      equals: "M14-L02-TERMINAL-AND-CONTROL-OUTPUT.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.1.rawSha256",
+      equals:
+        "3ed36ffe0455bd15c1457d4f70ca7a207952dfd375484c90a6e344d6b5f84c8d",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.1.rawBytes",
+      equals: 141161,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.1.proofObligations.length",
+      equals: 5,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.1.proofObligations.0",
+      equals: "ONE_EXECUTION_BATCH_PER_NEW_APPLY",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.1.proofObligations.1",
+      equals: "NO_SYNTHETIC_ACCOUNT_RELEASE",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.1.proofObligations.2",
+      equals: "MARKET_ONLY_PUBLIC_CHANGE",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.1.proofObligations.3",
+      equals: "BOOK_MODE_RULE_AND_ROUTE_OUTPUT",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.1.proofObligations.4",
+      equals: "ORIGINAL_POLICY_SEMANTICS",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.2.id",
+      equals: "M14-L03-STP-AND-MASS-CANCEL-OWNERSHIP",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.2.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.2.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.2.actualMutationActions",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.2.primitiveAttempts",
+      equals: 57,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.2.assertions",
+      equals: 584,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.2.rawFile",
+      equals: "M14-L03-STP-AND-MASS-CANCEL-OWNERSHIP.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.2.rawSha256",
+      equals:
+        "f0c8c9fda40bcbeb4ac1d176af8e5952210ceeca64e8df77e2428a5fd0a1779c",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.2.rawBytes",
+      equals: 28127,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.2.proofObligations.length",
+      equals: 4,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.2.proofObligations.0",
+      equals: "EACH_STP_DISPOSITION_EXACT",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.2.proofObligations.1",
+      equals: "NO_FICTITIOUS_TRADE",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.2.proofObligations.2",
+      equals: "CANCEL_OWNERSHIP_FROM_AFFECTED_ORDER",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.2.proofObligations.3",
+      equals: "OPERATOR_NOT_ORDER_ACCOUNT",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.3.id",
+      equals: "M14-L04-IDENTITY-AND-LEGACY-REPLAY",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.3.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.3.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.3.actualMutationActions",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.3.primitiveAttempts",
+      equals: 123,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.3.assertions",
+      equals: 1683,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.3.rawFile",
+      equals: "M14-L04-IDENTITY-AND-LEGACY-REPLAY.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.3.rawSha256",
+      equals:
+        "754e197e8a74bec44b37419437ea3b6c2bb77ceb104d631e6b63e4b46cae033d",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.3.rawBytes",
+      equals: 83165,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.3.proofObligations.length",
+      equals: 5,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.3.proofObligations.0",
+      equals: "LEGACY_RESULT_EXACT_NO_BACKFILL",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.3.proofObligations.1",
+      equals: "LEGACY_ATTRIBUTION_FORBIDDEN",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.3.proofObligations.2",
+      equals: "EXACT_NEW_RETRY_ORIGINAL_OUTPUT_ID",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.3.proofObligations.3",
+      equals: "CONFLICT_NO_MUTATION",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.3.proofObligations.4",
+      equals: "DUPLICATE_BEFORE_CAPACITY",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.4.id",
+      equals: "M14-L05-GENESIS-AND-PROFILE-IMPORT",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.4.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.4.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.4.actualMutationActions",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.4.primitiveAttempts",
+      equals: 16,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.4.assertions",
+      equals: 33,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.4.rawFile",
+      equals: "M14-L05-GENESIS-AND-PROFILE-IMPORT.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.4.rawSha256",
+      equals:
+        "be9b35bfa856f7bdb470133aa40e7ff5e99e23bea5908bacdefa54fa3052ca33",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.4.rawBytes",
+      equals: 3877,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.4.proofObligations.length",
+      equals: 4,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.4.proofObligations.0",
+      equals: "ONLY_EMPTY_RESTING_IMPORT",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.4.proofObligations.1",
+      equals: "PRESERVE_VALID_LEGACY_PREFIX",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.4.proofObligations.2",
+      equals: "REJECT_CROSS_GENESIS",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.4.proofObligations.3",
+      equals: "EXACT_Q1_PROFILE_REQUIRED",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.5.id",
+      equals: "M14-L06-SAME-APPLY-CAPACITY",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.5.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.5.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.5.actualMutationActions",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.5.primitiveAttempts",
+      equals: 16433,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.5.assertions",
+      equals: 274237,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.5.rawFile",
+      equals: "M14-L06-SAME-APPLY-CAPACITY.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.5.rawSha256",
+      equals:
+        "ba1c3c9231a066629f8660eb949091ca2983dcf3a542bd35555bdb179352203b",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.5.rawBytes",
+      equals: 6760482,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.5.proofObligations.length",
+      equals: 7,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.5.proofObligations.0",
+      equals: "COUNT_BOUND_REACHED_32",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.5.proofObligations.1",
+      equals: "BYTE_BOUND_REACHED_BEFORE_COUNT_32",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.5.proofObligations.2",
+      equals: "REFUSAL_FULL_STATE_EQUALITY",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.5.proofObligations.3",
+      equals: "CONTROL_WHILE_FULL",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.5.proofObligations.4",
+      equals: "SAME_REFUSED_ID_APPLIES_AFTER_ACK",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.5.proofObligations.5",
+      equals: "RECORD_ORDER_BOOK_PROFILE_LIMITS_ACTUAL",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.5.proofObligations.6",
+      equals: "MARKET_LEVEL_SUM_OVERFLOW_IS_PROFILE_REFUSAL",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.6.id",
+      equals: "M14-L07-EXECUTION-REPLAY-AND-GAP",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.6.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.6.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.6.actualMutationActions",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.6.primitiveAttempts",
+      equals: 35,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.6.assertions",
+      equals: 286,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.6.rawFile",
+      equals: "M14-L07-EXECUTION-REPLAY-AND-GAP.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.6.rawSha256",
+      equals:
+        "131d93d974eae0d454cc528857c9143c6e871e4f24795f89cb803e250591d2c8",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.6.rawBytes",
+      equals: 12072,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.6.proofObligations.length",
+      equals: 6,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.6.proofObligations.0",
+      equals: "WHOLE_BATCH_PAGING",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.6.proofObligations.1",
+      equals: "EXACT_REPEAT_BYTES",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.6.proofObligations.2",
+      equals: "VALID_CUMULATIVE_ACK_NOT_FALSE_GAP",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.6.proofObligations.3",
+      equals: "DURABLE_ACK_BEFORE_EVICTION",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.6.proofObligations.4",
+      equals: "EXPLICIT_UNRECOVERABLE_GAP",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.6.proofObligations.5",
+      equals: "NO_SNAPSHOT_EXECUTION_SKIP",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.7.id",
+      equals: "M14-L08-MARKET-SNAPSHOT-SUFFIX",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.7.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.7.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.7.actualMutationActions",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.7.primitiveAttempts",
+      equals: 77,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.7.assertions",
+      equals: 1344,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.7.rawFile",
+      equals: "M14-L08-MARKET-SNAPSHOT-SUFFIX.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.7.rawSha256",
+      equals:
+        "3888523f89fd82a3ab090521d6dfcdf05ca024e8b027bc321229c2bc36b3dd32",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.7.rawBytes",
+      equals: 37516,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.7.proofObligations.length",
+      equals: 5,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.7.proofObligations.0",
+      equals: "REAL_16_BATCH_RETENTION_GAP",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.7.proofObligations.1",
+      equals: "WHOLE_SHARD_ALL_BOOKS",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.7.proofObligations.2",
+      equals: "SNAPSHOT_CUT_SUFFIX_EQUALITY",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.7.proofObligations.3",
+      equals: "NO_PRIVATE_FIELDS",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.7.proofObligations.4",
+      equals: "NO_TRADE_HISTORY_RECOVERY_CLAIM",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.8.id",
+      equals: "M14-L09-FENCE-AND-CONTROL-IDENTITY",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.8.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.8.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.8.actualMutationActions",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.8.primitiveAttempts",
+      equals: 25,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.8.assertions",
+      equals: 115,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.8.rawFile",
+      equals: "M14-L09-FENCE-AND-CONTROL-IDENTITY.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.8.rawSha256",
+      equals:
+        "4a627922abd6ddd3955599021d4c3b1f9618ddd3b145f97f337045f185611999",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.8.rawBytes",
+      equals: 7179,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.8.proofObligations.length",
+      equals: 5,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.8.proofObligations.0",
+      equals: "CONTROL_ONLY_REVISION",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.8.proofObligations.1",
+      equals: "DATA_CANNOT_AUTHORIZE",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.8.proofObligations.2",
+      equals: "STALE_CONTROL_NO_EVICTION",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.8.proofObligations.3",
+      equals: "EXACT_CONTROL_RETRY_NO_MUTATION",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.8.proofObligations.4",
+      equals: "TRUSTED_ADMIN_INSTALL_ORDER",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.9.id",
+      equals: "M14-L10-SNAPSHOT-BUSINESS-OUTPUT-CUT",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.9.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.9.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.9.actualMutationActions",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.9.primitiveAttempts",
+      equals: 129,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.9.assertions",
+      equals: 1947,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.9.rawFile",
+      equals: "M14-L10-SNAPSHOT-BUSINESS-OUTPUT-CUT.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.9.rawSha256",
+      equals:
+        "2883379720991f7153829a990e5fe6dc0d7b9585430a7f0988c788dc9e2b404e",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.9.rawBytes",
+      equals: 106995,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.9.proofObligations.length",
+      equals: 4,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.9.proofObligations.0",
+      equals: "SNAPSHOT_SUFFIX_DIRECT_EQUIVALENCE",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.9.proofObligations.1",
+      equals: "FULL_OUTPUT_IDENTITY_AND_BYTES",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.9.proofObligations.2",
+      equals: "CONTROL_BUSINESS_INTERLEAVING",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.9.proofObligations.3",
+      equals: "ORIGINAL_RETRY_AFTER_RESTORE",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.10.id",
+      equals: "M14-L11-SEMANTIC-SNAPSHOT-CORRUPTION",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.10.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.10.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.10.actualMutationActions",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.10.primitiveAttempts",
+      equals: 35,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.10.assertions",
+      equals: 145,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.10.rawFile",
+      equals: "M14-L11-SEMANTIC-SNAPSHOT-CORRUPTION.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.10.rawSha256",
+      equals:
+        "710fbe9f54ca7616c286144934fdbd7c8c33234fcd776d0cf0e416e61db3bce2",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.10.rawBytes",
+      equals: 19809,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.10.proofObligations.length",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.10.proofObligations.0",
+      equals: "EVERY_MUTATED_IMAGE_REJECTED_BEFORE_INSTALL",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.10.proofObligations.1",
+      equals: "CHECKSUM_NOT_SEMANTIC_PROOF",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.10.proofObligations.2",
+      equals: "ORIGINAL_STATE_UNCHANGED",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.11.id",
+      equals: "M14-L12-CODEC-AND-WORK-BUDGET",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.11.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.11.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.11.actualMutationActions",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.11.primitiveAttempts",
+      equals: 4013,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.11.assertions",
+      equals: 57286,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.11.rawFile",
+      equals: "M14-L12-CODEC-AND-WORK-BUDGET.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.11.rawSha256",
+      equals:
+        "b352bae3e4982d3766f0121ffaf84cb10d7fd09a2a99e246a785febc3e8c6e94",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.11.rawBytes",
+      equals: 1135596,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.11.proofObligations.length",
+      equals: 4,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.11.proofObligations.0",
+      equals: "CANONICAL_TYPED_BYTES",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.11.proofObligations.1",
+      equals: "NO_UNBOUNDED_ALLOCATION",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.11.proofObligations.2",
+      equals: "ACTUAL_FRAME_AND_QUEUE_HIGH_WATER",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "scenarios.11.proofObligations.3",
+      equals: "PARTIAL_MESSAGE_NO_CURSOR_ADVANCE",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "executedScenarios",
+      equals: 12,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "passedScenarios",
+      equals: 12,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "primitiveAttempts",
+      equals: 21276,
+    },
+    {
+      artifactPath: "reports/check/fixed.json",
+      field: "assertions",
+      equals: 341070,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "schemaVersion",
+      equals: "matching.m14.generated.v1",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "unit",
+      equals: "M14",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "contractPlanVersion",
+      equals: "0.17",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "startCommit",
+      equals: "96b749861292950749701e34a6f20796f239cd4b",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "workloadSha256",
+      equals:
+        "005afdabc720ab782ea092e416a7d9c1273daf09246eede1e43607ed110ad9e3",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "profileSha256",
+      equals:
+        "02ef0ee44900e1a472fea03ed5cb406215550994826b53f4b708e33815c6be9d",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "primitiveCountMeaning",
+      equals:
+        "Concrete workload transition, read, capture, restore, frame and sink steps; oracle evaluation and diagnostic image reads are validation observations.",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.length",
+      equals: 48,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.0.primitiveAttempts",
+      equals: 1274,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.0.assertions",
+      equals: 23943,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.0.primitiveKinds.GENESIS_IMPORT",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.0.primitiveKinds.BUSINESS",
+      equals: 309,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.0.primitiveKinds.RETRY",
+      equals: 21,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.0.primitiveKinds.CONTROL",
+      equals: 198,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.0.primitiveKinds.READ",
+      equals: 340,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.0.primitiveKinds.LOCAL_DURABLE_ACCEPT",
+      equals: 354,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.0.primitiveKinds.LOCAL_SNAPSHOT_INSTALL",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.0.primitiveKinds.SNAPSHOT_CAPTURE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.0.primitiveKinds.SNAPSHOT_RESTORE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.0.historyId",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.0.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.0.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.0.logicalActions",
+      equals: 80,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.0.preludeBusinessCommands",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.0.actualTradeRecords",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.0.differentMakerTakerAccountAssertions",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.0.rawFile",
+      equals: "generated-00.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.0.rawSha256",
+      equals:
+        "e06a3052b087de3790ab0f07d49a2d9240caed7a59711cc45d36ef748d6eb44f",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.0.rawBytes",
+      equals: 1120887,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.1.primitiveAttempts",
+      equals: 1186,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.1.assertions",
+      equals: 21298,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.1.primitiveKinds.GENESIS_IMPORT",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.1.primitiveKinds.BUSINESS",
+      equals: 276,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.1.primitiveKinds.RETRY",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.1.primitiveKinds.CONTROL",
+      equals: 185,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.1.primitiveKinds.READ",
+      equals: 330,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.1.primitiveKinds.LOCAL_DURABLE_ACCEPT",
+      equals: 323,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.1.primitiveKinds.LOCAL_SNAPSHOT_INSTALL",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.1.primitiveKinds.SNAPSHOT_CAPTURE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.1.primitiveKinds.SNAPSHOT_RESTORE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.1.historyId",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.1.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.1.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.1.logicalActions",
+      equals: 80,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.1.preludeBusinessCommands",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.1.actualTradeRecords",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.1.differentMakerTakerAccountAssertions",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.1.rawFile",
+      equals: "generated-01.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.1.rawSha256",
+      equals:
+        "93618bb428690a2884f82ceedb67208a77379b100921e36ef245d269edd2ff86",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.1.rawBytes",
+      equals: 985914,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.2.primitiveAttempts",
+      equals: 1185,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.2.assertions",
+      equals: 21391,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.2.primitiveKinds.GENESIS_IMPORT",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.2.primitiveKinds.BUSINESS",
+      equals: 276,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.2.primitiveKinds.RETRY",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.2.primitiveKinds.CONTROL",
+      equals: 185,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.2.primitiveKinds.READ",
+      equals: 330,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.2.primitiveKinds.LOCAL_DURABLE_ACCEPT",
+      equals: 322,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.2.primitiveKinds.LOCAL_SNAPSHOT_INSTALL",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.2.primitiveKinds.SNAPSHOT_CAPTURE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.2.primitiveKinds.SNAPSHOT_RESTORE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.2.historyId",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.2.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.2.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.2.logicalActions",
+      equals: 80,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.2.preludeBusinessCommands",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.2.actualTradeRecords",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.2.differentMakerTakerAccountAssertions",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.2.rawFile",
+      equals: "generated-02.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.2.rawSha256",
+      equals:
+        "b263afb0b0a8ad3208b06e5a5c73b6d34107703cc09410ba0e1834a74b193223",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.2.rawBytes",
+      equals: 992675,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.3.primitiveAttempts",
+      equals: 1175,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.3.assertions",
+      equals: 21260,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.3.primitiveKinds.GENESIS_IMPORT",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.3.primitiveKinds.BUSINESS",
+      equals: 276,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.3.primitiveKinds.RETRY",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.3.primitiveKinds.CONTROL",
+      equals: 181,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.3.primitiveKinds.READ",
+      equals: 326,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.3.primitiveKinds.LOCAL_DURABLE_ACCEPT",
+      equals: 320,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.3.primitiveKinds.LOCAL_SNAPSHOT_INSTALL",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.3.primitiveKinds.SNAPSHOT_CAPTURE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.3.primitiveKinds.SNAPSHOT_RESTORE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.3.historyId",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.3.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.3.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.3.logicalActions",
+      equals: 80,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.3.preludeBusinessCommands",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.3.actualTradeRecords",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.3.differentMakerTakerAccountAssertions",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.3.rawFile",
+      equals: "generated-03.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.3.rawSha256",
+      equals:
+        "b6464ed91f92faecb757236c2952a4dd24c914abbf7421a6f894c5e427586fc7",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.3.rawBytes",
+      equals: 977431,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.4.primitiveAttempts",
+      equals: 1190,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.4.assertions",
+      equals: 21586,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.4.primitiveKinds.GENESIS_IMPORT",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.4.primitiveKinds.BUSINESS",
+      equals: 274,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.4.primitiveKinds.RETRY",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.4.primitiveKinds.CONTROL",
+      equals: 189,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.4.primitiveKinds.READ",
+      equals: 333,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.4.primitiveKinds.LOCAL_DURABLE_ACCEPT",
+      equals: 322,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.4.primitiveKinds.LOCAL_SNAPSHOT_INSTALL",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.4.primitiveKinds.SNAPSHOT_CAPTURE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.4.primitiveKinds.SNAPSHOT_RESTORE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.4.historyId",
+      equals: 4,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.4.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.4.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.4.logicalActions",
+      equals: 80,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.4.preludeBusinessCommands",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.4.actualTradeRecords",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.4.differentMakerTakerAccountAssertions",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.4.rawFile",
+      equals: "generated-04.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.4.rawSha256",
+      equals:
+        "d26bd3bb590523dc0de2fd15ea52baff0527d8b7e3b042cd7c8a54c238d98be0",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.4.rawBytes",
+      equals: 1009510,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.5.primitiveAttempts",
+      equals: 1192,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.5.assertions",
+      equals: 21285,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.5.primitiveKinds.GENESIS_IMPORT",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.5.primitiveKinds.BUSINESS",
+      equals: 276,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.5.primitiveKinds.RETRY",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.5.primitiveKinds.CONTROL",
+      equals: 187,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.5.primitiveKinds.READ",
+      equals: 332,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.5.primitiveKinds.LOCAL_DURABLE_ACCEPT",
+      equals: 325,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.5.primitiveKinds.LOCAL_SNAPSHOT_INSTALL",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.5.primitiveKinds.SNAPSHOT_CAPTURE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.5.primitiveKinds.SNAPSHOT_RESTORE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.5.historyId",
+      equals: 5,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.5.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.5.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.5.logicalActions",
+      equals: 80,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.5.preludeBusinessCommands",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.5.actualTradeRecords",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.5.differentMakerTakerAccountAssertions",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.5.rawFile",
+      equals: "generated-05.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.5.rawSha256",
+      equals:
+        "d73e1b1570026f84a8750d7bd4263b4c88b7b6b07228830816fb1e8dd9e20ad7",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.5.rawBytes",
+      equals: 997340,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.6.primitiveAttempts",
+      equals: 1190,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.6.assertions",
+      equals: 21328,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.6.primitiveKinds.GENESIS_IMPORT",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.6.primitiveKinds.BUSINESS",
+      equals: 276,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.6.primitiveKinds.RETRY",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.6.primitiveKinds.CONTROL",
+      equals: 187,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.6.primitiveKinds.READ",
+      equals: 332,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.6.primitiveKinds.LOCAL_DURABLE_ACCEPT",
+      equals: 323,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.6.primitiveKinds.LOCAL_SNAPSHOT_INSTALL",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.6.primitiveKinds.SNAPSHOT_CAPTURE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.6.primitiveKinds.SNAPSHOT_RESTORE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.6.historyId",
+      equals: 6,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.6.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.6.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.6.logicalActions",
+      equals: 80,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.6.preludeBusinessCommands",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.6.actualTradeRecords",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.6.differentMakerTakerAccountAssertions",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.6.rawFile",
+      equals: "generated-06.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.6.rawSha256",
+      equals:
+        "a69309241b74edc7e7f4f718a71fe7c7a0c981a45929d280490ff89cf79fc6b9",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.6.rawBytes",
+      equals: 994476,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.7.primitiveAttempts",
+      equals: 1196,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.7.assertions",
+      equals: 21407,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.7.primitiveKinds.GENESIS_IMPORT",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.7.primitiveKinds.BUSINESS",
+      equals: 276,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.7.primitiveKinds.RETRY",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.7.primitiveKinds.CONTROL",
+      equals: 190,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.7.primitiveKinds.READ",
+      equals: 335,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.7.primitiveKinds.LOCAL_DURABLE_ACCEPT",
+      equals: 323,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.7.primitiveKinds.LOCAL_SNAPSHOT_INSTALL",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.7.primitiveKinds.SNAPSHOT_CAPTURE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.7.primitiveKinds.SNAPSHOT_RESTORE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.7.historyId",
+      equals: 7,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.7.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.7.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.7.logicalActions",
+      equals: 80,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.7.preludeBusinessCommands",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.7.actualTradeRecords",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.7.differentMakerTakerAccountAssertions",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.7.rawFile",
+      equals: "generated-07.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.7.rawSha256",
+      equals:
+        "6d64dbda50519de0e64c353708e05f66fec5aef8760227a8d3d884811c57051e",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.7.rawBytes",
+      equals: 1051270,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.8.primitiveAttempts",
+      equals: 1273,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.8.assertions",
+      equals: 23781,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.8.primitiveKinds.GENESIS_IMPORT",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.8.primitiveKinds.BUSINESS",
+      equals: 309,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.8.primitiveKinds.RETRY",
+      equals: 21,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.8.primitiveKinds.CONTROL",
+      equals: 199,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.8.primitiveKinds.READ",
+      equals: 341,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.8.primitiveKinds.LOCAL_DURABLE_ACCEPT",
+      equals: 351,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.8.primitiveKinds.LOCAL_SNAPSHOT_INSTALL",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.8.primitiveKinds.SNAPSHOT_CAPTURE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.8.primitiveKinds.SNAPSHOT_RESTORE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.8.historyId",
+      equals: 8,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.8.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.8.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.8.logicalActions",
+      equals: 80,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.8.preludeBusinessCommands",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.8.actualTradeRecords",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.8.differentMakerTakerAccountAssertions",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.8.rawFile",
+      equals: "generated-08.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.8.rawSha256",
+      equals:
+        "94580ae6b5a5abcf4b4d92ccdf63befd9ff613b41a5ae33cb8a18cbeae36b36f",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.8.rawBytes",
+      equals: 1087244,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.9.primitiveAttempts",
+      equals: 1176,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.9.assertions",
+      equals: 21263,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.9.primitiveKinds.GENESIS_IMPORT",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.9.primitiveKinds.BUSINESS",
+      equals: 276,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.9.primitiveKinds.RETRY",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.9.primitiveKinds.CONTROL",
+      equals: 181,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.9.primitiveKinds.READ",
+      equals: 326,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.9.primitiveKinds.LOCAL_DURABLE_ACCEPT",
+      equals: 321,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.9.primitiveKinds.LOCAL_SNAPSHOT_INSTALL",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.9.primitiveKinds.SNAPSHOT_CAPTURE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.9.primitiveKinds.SNAPSHOT_RESTORE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.9.historyId",
+      equals: 9,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.9.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.9.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.9.logicalActions",
+      equals: 80,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.9.preludeBusinessCommands",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.9.actualTradeRecords",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.9.differentMakerTakerAccountAssertions",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.9.rawFile",
+      equals: "generated-09.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.9.rawSha256",
+      equals:
+        "76b894d83eb6999d398cfecd29a81c3e0ddb283d6a4d645e45726600b2b28b0b",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.9.rawBytes",
+      equals: 950031,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.10.primitiveAttempts",
+      equals: 1191,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.10.assertions",
+      equals: 21409,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.10.primitiveKinds.GENESIS_IMPORT",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.10.primitiveKinds.BUSINESS",
+      equals: 276,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.10.primitiveKinds.RETRY",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.10.primitiveKinds.CONTROL",
+      equals: 187,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.10.primitiveKinds.READ",
+      equals: 332,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.10.primitiveKinds.LOCAL_DURABLE_ACCEPT",
+      equals: 324,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.10.primitiveKinds.LOCAL_SNAPSHOT_INSTALL",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.10.primitiveKinds.SNAPSHOT_CAPTURE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.10.primitiveKinds.SNAPSHOT_RESTORE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.10.historyId",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.10.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.10.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.10.logicalActions",
+      equals: 80,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.10.preludeBusinessCommands",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.10.actualTradeRecords",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.10.differentMakerTakerAccountAssertions",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.10.rawFile",
+      equals: "generated-10.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.10.rawSha256",
+      equals:
+        "35d8c5b06b8641cbfd2e075cf7ca1522872b382d0d1787f0573e8637ffa733c5",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.10.rawBytes",
+      equals: 975754,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.11.primitiveAttempts",
+      equals: 1199,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.11.assertions",
+      equals: 21537,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.11.primitiveKinds.GENESIS_IMPORT",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.11.primitiveKinds.BUSINESS",
+      equals: 276,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.11.primitiveKinds.RETRY",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.11.primitiveKinds.CONTROL",
+      equals: 191,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.11.primitiveKinds.READ",
+      equals: 336,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.11.primitiveKinds.LOCAL_DURABLE_ACCEPT",
+      equals: 324,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.11.primitiveKinds.LOCAL_SNAPSHOT_INSTALL",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.11.primitiveKinds.SNAPSHOT_CAPTURE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.11.primitiveKinds.SNAPSHOT_RESTORE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.11.historyId",
+      equals: 11,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.11.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.11.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.11.logicalActions",
+      equals: 80,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.11.preludeBusinessCommands",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.11.actualTradeRecords",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.11.differentMakerTakerAccountAssertions",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.11.rawFile",
+      equals: "generated-11.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.11.rawSha256",
+      equals:
+        "c9462ee5758df1d100a0683404acb60511bb6aaf35c71b061c26ec7b0dfc0e59",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.11.rawBytes",
+      equals: 967212,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.12.primitiveAttempts",
+      equals: 1186,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.12.assertions",
+      equals: 21482,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.12.primitiveKinds.GENESIS_IMPORT",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.12.primitiveKinds.BUSINESS",
+      equals: 274,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.12.primitiveKinds.RETRY",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.12.primitiveKinds.CONTROL",
+      equals: 188,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.12.primitiveKinds.READ",
+      equals: 332,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.12.primitiveKinds.LOCAL_DURABLE_ACCEPT",
+      equals: 320,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.12.primitiveKinds.LOCAL_SNAPSHOT_INSTALL",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.12.primitiveKinds.SNAPSHOT_CAPTURE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.12.primitiveKinds.SNAPSHOT_RESTORE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.12.historyId",
+      equals: 12,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.12.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.12.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.12.logicalActions",
+      equals: 80,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.12.preludeBusinessCommands",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.12.actualTradeRecords",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.12.differentMakerTakerAccountAssertions",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.12.rawFile",
+      equals: "generated-12.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.12.rawSha256",
+      equals:
+        "fc7e79a0fcae5b3321c9f346554700f1a032c502ea91a84883569c263a9f182c",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.12.rawBytes",
+      equals: 969628,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.13.primitiveAttempts",
+      equals: 1186,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.13.assertions",
+      equals: 21331,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.13.primitiveKinds.GENESIS_IMPORT",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.13.primitiveKinds.BUSINESS",
+      equals: 276,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.13.primitiveKinds.RETRY",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.13.primitiveKinds.CONTROL",
+      equals: 185,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.13.primitiveKinds.READ",
+      equals: 330,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.13.primitiveKinds.LOCAL_DURABLE_ACCEPT",
+      equals: 323,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.13.primitiveKinds.LOCAL_SNAPSHOT_INSTALL",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.13.primitiveKinds.SNAPSHOT_CAPTURE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.13.primitiveKinds.SNAPSHOT_RESTORE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.13.historyId",
+      equals: 13,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.13.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.13.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.13.logicalActions",
+      equals: 80,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.13.preludeBusinessCommands",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.13.actualTradeRecords",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.13.differentMakerTakerAccountAssertions",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.13.rawFile",
+      equals: "generated-13.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.13.rawSha256",
+      equals:
+        "5999006234193be21dfe2b9ca19da69dcade23e7b45c75362e2b98118ab79163",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.13.rawBytes",
+      equals: 966599,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.14.primitiveAttempts",
+      equals: 1198,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.14.assertions",
+      equals: 21515,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.14.primitiveKinds.GENESIS_IMPORT",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.14.primitiveKinds.BUSINESS",
+      equals: 276,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.14.primitiveKinds.RETRY",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.14.primitiveKinds.CONTROL",
+      equals: 190,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.14.primitiveKinds.READ",
+      equals: 335,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.14.primitiveKinds.LOCAL_DURABLE_ACCEPT",
+      equals: 325,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.14.primitiveKinds.LOCAL_SNAPSHOT_INSTALL",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.14.primitiveKinds.SNAPSHOT_CAPTURE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.14.primitiveKinds.SNAPSHOT_RESTORE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.14.historyId",
+      equals: 14,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.14.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.14.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.14.logicalActions",
+      equals: 80,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.14.preludeBusinessCommands",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.14.actualTradeRecords",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.14.differentMakerTakerAccountAssertions",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.14.rawFile",
+      equals: "generated-14.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.14.rawSha256",
+      equals:
+        "f22ebee0831a7e266a3b6f991671ea3e5b332082bb188cc0bafac776a3e9ba05",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.14.rawBytes",
+      equals: 989439,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.15.primitiveAttempts",
+      equals: 1184,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.15.assertions",
+      equals: 21279,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.15.primitiveKinds.GENESIS_IMPORT",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.15.primitiveKinds.BUSINESS",
+      equals: 276,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.15.primitiveKinds.RETRY",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.15.primitiveKinds.CONTROL",
+      equals: 185,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.15.primitiveKinds.READ",
+      equals: 330,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.15.primitiveKinds.LOCAL_DURABLE_ACCEPT",
+      equals: 321,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.15.primitiveKinds.LOCAL_SNAPSHOT_INSTALL",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.15.primitiveKinds.SNAPSHOT_CAPTURE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.15.primitiveKinds.SNAPSHOT_RESTORE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.15.historyId",
+      equals: 15,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.15.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.15.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.15.logicalActions",
+      equals: 80,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.15.preludeBusinessCommands",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.15.actualTradeRecords",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.15.differentMakerTakerAccountAssertions",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.15.rawFile",
+      equals: "generated-15.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.15.rawSha256",
+      equals:
+        "bba78e0d7a2478ea3d2173da1a4a2821cdd74c5af38265a38cd1411f6d787ab6",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.15.rawBytes",
+      equals: 959329,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.16.primitiveAttempts",
+      equals: 1276,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.16.assertions",
+      equals: 23877,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.16.primitiveKinds.GENESIS_IMPORT",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.16.primitiveKinds.BUSINESS",
+      equals: 309,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.16.primitiveKinds.RETRY",
+      equals: 21,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.16.primitiveKinds.CONTROL",
+      equals: 198,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.16.primitiveKinds.READ",
+      equals: 340,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.16.primitiveKinds.LOCAL_DURABLE_ACCEPT",
+      equals: 356,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.16.primitiveKinds.LOCAL_SNAPSHOT_INSTALL",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.16.primitiveKinds.SNAPSHOT_CAPTURE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.16.primitiveKinds.SNAPSHOT_RESTORE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.16.historyId",
+      equals: 16,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.16.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.16.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.16.logicalActions",
+      equals: 80,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.16.preludeBusinessCommands",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.16.actualTradeRecords",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.16.differentMakerTakerAccountAssertions",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.16.rawFile",
+      equals: "generated-16.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.16.rawSha256",
+      equals:
+        "a64a3784566ccfb6ef7742ffcf8fd405e54e68cd283a53e9bd8a8e4b6f2f8309",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.16.rawBytes",
+      equals: 1161742,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.17.primitiveAttempts",
+      equals: 1189,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.17.assertions",
+      equals: 21465,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.17.primitiveKinds.GENESIS_IMPORT",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.17.primitiveKinds.BUSINESS",
+      equals: 276,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.17.primitiveKinds.RETRY",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.17.primitiveKinds.CONTROL",
+      equals: 187,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.17.primitiveKinds.READ",
+      equals: 332,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.17.primitiveKinds.LOCAL_DURABLE_ACCEPT",
+      equals: 322,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.17.primitiveKinds.LOCAL_SNAPSHOT_INSTALL",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.17.primitiveKinds.SNAPSHOT_CAPTURE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.17.primitiveKinds.SNAPSHOT_RESTORE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.17.historyId",
+      equals: 17,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.17.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.17.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.17.logicalActions",
+      equals: 80,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.17.preludeBusinessCommands",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.17.actualTradeRecords",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.17.differentMakerTakerAccountAssertions",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.17.rawFile",
+      equals: "generated-17.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.17.rawSha256",
+      equals:
+        "65c65d714659aa0d2345ebf60aac6bd60292923c3be5422f5641977f41eb797a",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.17.rawBytes",
+      equals: 965068,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.18.primitiveAttempts",
+      equals: 1190,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.18.assertions",
+      equals: 21471,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.18.primitiveKinds.GENESIS_IMPORT",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.18.primitiveKinds.BUSINESS",
+      equals: 276,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.18.primitiveKinds.RETRY",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.18.primitiveKinds.CONTROL",
+      equals: 187,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.18.primitiveKinds.READ",
+      equals: 332,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.18.primitiveKinds.LOCAL_DURABLE_ACCEPT",
+      equals: 323,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.18.primitiveKinds.LOCAL_SNAPSHOT_INSTALL",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.18.primitiveKinds.SNAPSHOT_CAPTURE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.18.primitiveKinds.SNAPSHOT_RESTORE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.18.historyId",
+      equals: 18,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.18.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.18.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.18.logicalActions",
+      equals: 80,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.18.preludeBusinessCommands",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.18.actualTradeRecords",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.18.differentMakerTakerAccountAssertions",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.18.rawFile",
+      equals: "generated-18.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.18.rawSha256",
+      equals:
+        "df85b83c74ba7d1ccf3c3b6b171a02d5bfbf5f1ea644bc296168aa88616d35e1",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.18.rawBytes",
+      equals: 964297,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.19.primitiveAttempts",
+      equals: 1188,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.19.assertions",
+      equals: 21324,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.19.primitiveKinds.GENESIS_IMPORT",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.19.primitiveKinds.BUSINESS",
+      equals: 276,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.19.primitiveKinds.RETRY",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.19.primitiveKinds.CONTROL",
+      equals: 187,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.19.primitiveKinds.READ",
+      equals: 332,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.19.primitiveKinds.LOCAL_DURABLE_ACCEPT",
+      equals: 321,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.19.primitiveKinds.LOCAL_SNAPSHOT_INSTALL",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.19.primitiveKinds.SNAPSHOT_CAPTURE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.19.primitiveKinds.SNAPSHOT_RESTORE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.19.historyId",
+      equals: 19,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.19.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.19.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.19.logicalActions",
+      equals: 80,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.19.preludeBusinessCommands",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.19.actualTradeRecords",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.19.differentMakerTakerAccountAssertions",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.19.rawFile",
+      equals: "generated-19.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.19.rawSha256",
+      equals:
+        "7991ffded5eb41705a5f21e26cc971feb566265f65c8a01de77f0f392990f807",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.19.rawBytes",
+      equals: 966589,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.20.primitiveAttempts",
+      equals: 1186,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.20.assertions",
+      equals: 21436,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.20.primitiveKinds.GENESIS_IMPORT",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.20.primitiveKinds.BUSINESS",
+      equals: 274,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.20.primitiveKinds.RETRY",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.20.primitiveKinds.CONTROL",
+      equals: 189,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.20.primitiveKinds.READ",
+      equals: 333,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.20.primitiveKinds.LOCAL_DURABLE_ACCEPT",
+      equals: 318,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.20.primitiveKinds.LOCAL_SNAPSHOT_INSTALL",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.20.primitiveKinds.SNAPSHOT_CAPTURE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.20.primitiveKinds.SNAPSHOT_RESTORE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.20.historyId",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.20.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.20.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.20.logicalActions",
+      equals: 80,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.20.preludeBusinessCommands",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.20.actualTradeRecords",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.20.differentMakerTakerAccountAssertions",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.20.rawFile",
+      equals: "generated-20.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.20.rawSha256",
+      equals:
+        "22da3049d9bfd24a78b774e84548e3a2ceb00fa62d6b0af766b9763ce8045960",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.20.rawBytes",
+      equals: 979612,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.21.primitiveAttempts",
+      equals: 1198,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.21.assertions",
+      equals: 21373,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.21.primitiveKinds.GENESIS_IMPORT",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.21.primitiveKinds.BUSINESS",
+      equals: 276,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.21.primitiveKinds.RETRY",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.21.primitiveKinds.CONTROL",
+      equals: 191,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.21.primitiveKinds.READ",
+      equals: 336,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.21.primitiveKinds.LOCAL_DURABLE_ACCEPT",
+      equals: 323,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.21.primitiveKinds.LOCAL_SNAPSHOT_INSTALL",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.21.primitiveKinds.SNAPSHOT_CAPTURE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.21.primitiveKinds.SNAPSHOT_RESTORE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.21.historyId",
+      equals: 21,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.21.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.21.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.21.logicalActions",
+      equals: 80,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.21.preludeBusinessCommands",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.21.actualTradeRecords",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.21.differentMakerTakerAccountAssertions",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.21.rawFile",
+      equals: "generated-21.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.21.rawSha256",
+      equals:
+        "1b17713418d432d5d93827a2379332713d6c2ad8035f014367f0362f528005fa",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.21.rawBytes",
+      equals: 972574,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.22.primitiveAttempts",
+      equals: 1181,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.22.assertions",
+      equals: 21258,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.22.primitiveKinds.GENESIS_IMPORT",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.22.primitiveKinds.BUSINESS",
+      equals: 276,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.22.primitiveKinds.RETRY",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.22.primitiveKinds.CONTROL",
+      equals: 183,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.22.primitiveKinds.READ",
+      equals: 328,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.22.primitiveKinds.LOCAL_DURABLE_ACCEPT",
+      equals: 322,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.22.primitiveKinds.LOCAL_SNAPSHOT_INSTALL",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.22.primitiveKinds.SNAPSHOT_CAPTURE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.22.primitiveKinds.SNAPSHOT_RESTORE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.22.historyId",
+      equals: 22,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.22.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.22.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.22.logicalActions",
+      equals: 80,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.22.preludeBusinessCommands",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.22.actualTradeRecords",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.22.differentMakerTakerAccountAssertions",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.22.rawFile",
+      equals: "generated-22.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.22.rawSha256",
+      equals:
+        "e3ffb833023546f87635508778abca5594c8547ae2338b359ff9e78b5e2bbeff",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.22.rawBytes",
+      equals: 967448,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.23.primitiveAttempts",
+      equals: 1194,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.23.assertions",
+      equals: 21486,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.23.primitiveKinds.GENESIS_IMPORT",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.23.primitiveKinds.BUSINESS",
+      equals: 276,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.23.primitiveKinds.RETRY",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.23.primitiveKinds.CONTROL",
+      equals: 189,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.23.primitiveKinds.READ",
+      equals: 334,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.23.primitiveKinds.LOCAL_DURABLE_ACCEPT",
+      equals: 323,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.23.primitiveKinds.LOCAL_SNAPSHOT_INSTALL",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.23.primitiveKinds.SNAPSHOT_CAPTURE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.23.primitiveKinds.SNAPSHOT_RESTORE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.23.historyId",
+      equals: 23,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.23.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.23.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.23.logicalActions",
+      equals: 80,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.23.preludeBusinessCommands",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.23.actualTradeRecords",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.23.differentMakerTakerAccountAssertions",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.23.rawFile",
+      equals: "generated-23.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.23.rawSha256",
+      equals:
+        "adb49e511f3bb165fcaff215bc1dd3589a587f0358b6581b95204daeae8d4a7f",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.23.rawBytes",
+      equals: 973803,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.24.primitiveAttempts",
+      equals: 1282,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.24.assertions",
+      equals: 24008,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.24.primitiveKinds.GENESIS_IMPORT",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.24.primitiveKinds.BUSINESS",
+      equals: 309,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.24.primitiveKinds.RETRY",
+      equals: 21,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.24.primitiveKinds.CONTROL",
+      equals: 202,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.24.primitiveKinds.READ",
+      equals: 344,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.24.primitiveKinds.LOCAL_DURABLE_ACCEPT",
+      equals: 354,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.24.primitiveKinds.LOCAL_SNAPSHOT_INSTALL",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.24.primitiveKinds.SNAPSHOT_CAPTURE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.24.primitiveKinds.SNAPSHOT_RESTORE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.24.historyId",
+      equals: 24,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.24.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.24.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.24.logicalActions",
+      equals: 80,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.24.preludeBusinessCommands",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.24.actualTradeRecords",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.24.differentMakerTakerAccountAssertions",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.24.rawFile",
+      equals: "generated-24.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.24.rawSha256",
+      equals:
+        "3a93184ea45ed055cb91059558801a6942a8fdad95ca0edfc9ab3b84be3cfd6b",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.24.rawBytes",
+      equals: 1051311,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.25.primitiveAttempts",
+      equals: 1194,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.25.assertions",
+      equals: 21452,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.25.primitiveKinds.GENESIS_IMPORT",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.25.primitiveKinds.BUSINESS",
+      equals: 276,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.25.primitiveKinds.RETRY",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.25.primitiveKinds.CONTROL",
+      equals: 187,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.25.primitiveKinds.READ",
+      equals: 332,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.25.primitiveKinds.LOCAL_DURABLE_ACCEPT",
+      equals: 327,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.25.primitiveKinds.LOCAL_SNAPSHOT_INSTALL",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.25.primitiveKinds.SNAPSHOT_CAPTURE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.25.primitiveKinds.SNAPSHOT_RESTORE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.25.historyId",
+      equals: 25,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.25.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.25.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.25.logicalActions",
+      equals: 80,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.25.preludeBusinessCommands",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.25.actualTradeRecords",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.25.differentMakerTakerAccountAssertions",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.25.rawFile",
+      equals: "generated-25.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.25.rawSha256",
+      equals:
+        "4d48239e23107ec1dc73952aa3a57f5bfb2d611fe10fa95534f3513dd16c1a89",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.25.rawBytes",
+      equals: 969202,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.26.primitiveAttempts",
+      equals: 1188,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.26.assertions",
+      equals: 21355,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.26.primitiveKinds.GENESIS_IMPORT",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.26.primitiveKinds.BUSINESS",
+      equals: 276,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.26.primitiveKinds.RETRY",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.26.primitiveKinds.CONTROL",
+      equals: 187,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.26.primitiveKinds.READ",
+      equals: 332,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.26.primitiveKinds.LOCAL_DURABLE_ACCEPT",
+      equals: 321,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.26.primitiveKinds.LOCAL_SNAPSHOT_INSTALL",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.26.primitiveKinds.SNAPSHOT_CAPTURE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.26.primitiveKinds.SNAPSHOT_RESTORE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.26.historyId",
+      equals: 26,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.26.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.26.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.26.logicalActions",
+      equals: 80,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.26.preludeBusinessCommands",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.26.actualTradeRecords",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.26.differentMakerTakerAccountAssertions",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.26.rawFile",
+      equals: "generated-26.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.26.rawSha256",
+      equals:
+        "4f983c7dd7d1b7daa73bc3f97b7ecaf3daf221f347572300128159e4b1cca28c",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.26.rawBytes",
+      equals: 958298,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.27.primitiveAttempts",
+      equals: 1185,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.27.assertions",
+      equals: 21407,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.27.primitiveKinds.GENESIS_IMPORT",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.27.primitiveKinds.BUSINESS",
+      equals: 276,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.27.primitiveKinds.RETRY",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.27.primitiveKinds.CONTROL",
+      equals: 185,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.27.primitiveKinds.READ",
+      equals: 330,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.27.primitiveKinds.LOCAL_DURABLE_ACCEPT",
+      equals: 322,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.27.primitiveKinds.LOCAL_SNAPSHOT_INSTALL",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.27.primitiveKinds.SNAPSHOT_CAPTURE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.27.primitiveKinds.SNAPSHOT_RESTORE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.27.historyId",
+      equals: 27,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.27.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.27.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.27.logicalActions",
+      equals: 80,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.27.preludeBusinessCommands",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.27.actualTradeRecords",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.27.differentMakerTakerAccountAssertions",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.27.rawFile",
+      equals: "generated-27.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.27.rawSha256",
+      equals:
+        "cbc21050a77f6e5ab18d5205db6750ee4901ff0482e6090b3903d239e122808e",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.27.rawBytes",
+      equals: 965611,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.28.primitiveAttempts",
+      equals: 1178,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.28.assertions",
+      equals: 21344,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.28.primitiveKinds.GENESIS_IMPORT",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.28.primitiveKinds.BUSINESS",
+      equals: 274,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.28.primitiveKinds.RETRY",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.28.primitiveKinds.CONTROL",
+      equals: 183,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.28.primitiveKinds.READ",
+      equals: 327,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.28.primitiveKinds.LOCAL_DURABLE_ACCEPT",
+      equals: 322,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.28.primitiveKinds.LOCAL_SNAPSHOT_INSTALL",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.28.primitiveKinds.SNAPSHOT_CAPTURE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.28.primitiveKinds.SNAPSHOT_RESTORE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.28.historyId",
+      equals: 28,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.28.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.28.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.28.logicalActions",
+      equals: 80,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.28.preludeBusinessCommands",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.28.actualTradeRecords",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.28.differentMakerTakerAccountAssertions",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.28.rawFile",
+      equals: "generated-28.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.28.rawSha256",
+      equals:
+        "db7bbd82971e75c1a93a27473fbc5352bcc1461d8c7d77961925f8204deff1d3",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.28.rawBytes",
+      equals: 959792,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.29.primitiveAttempts",
+      equals: 1190,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.29.assertions",
+      equals: 21385,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.29.primitiveKinds.GENESIS_IMPORT",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.29.primitiveKinds.BUSINESS",
+      equals: 276,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.29.primitiveKinds.RETRY",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.29.primitiveKinds.CONTROL",
+      equals: 188,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.29.primitiveKinds.READ",
+      equals: 333,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.29.primitiveKinds.LOCAL_DURABLE_ACCEPT",
+      equals: 321,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.29.primitiveKinds.LOCAL_SNAPSHOT_INSTALL",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.29.primitiveKinds.SNAPSHOT_CAPTURE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.29.primitiveKinds.SNAPSHOT_RESTORE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.29.historyId",
+      equals: 29,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.29.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.29.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.29.logicalActions",
+      equals: 80,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.29.preludeBusinessCommands",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.29.actualTradeRecords",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.29.differentMakerTakerAccountAssertions",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.29.rawFile",
+      equals: "generated-29.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.29.rawSha256",
+      equals:
+        "2e6a2853a2413d1d34e5f85a448d8fa1afe745bc1a2db828a8884b012df96fe8",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.29.rawBytes",
+      equals: 961947,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.30.primitiveAttempts",
+      equals: 1190,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.30.assertions",
+      equals: 21411,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.30.primitiveKinds.GENESIS_IMPORT",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.30.primitiveKinds.BUSINESS",
+      equals: 276,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.30.primitiveKinds.RETRY",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.30.primitiveKinds.CONTROL",
+      equals: 186,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.30.primitiveKinds.READ",
+      equals: 331,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.30.primitiveKinds.LOCAL_DURABLE_ACCEPT",
+      equals: 325,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.30.primitiveKinds.LOCAL_SNAPSHOT_INSTALL",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.30.primitiveKinds.SNAPSHOT_CAPTURE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.30.primitiveKinds.SNAPSHOT_RESTORE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.30.historyId",
+      equals: 30,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.30.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.30.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.30.logicalActions",
+      equals: 80,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.30.preludeBusinessCommands",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.30.actualTradeRecords",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.30.differentMakerTakerAccountAssertions",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.30.rawFile",
+      equals: "generated-30.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.30.rawSha256",
+      equals:
+        "246ade47c2b65f69aeac68994b9fe5b762207329b98ace0b72fae349a8e840f0",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.30.rawBytes",
+      equals: 955011,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.31.primitiveAttempts",
+      equals: 1186,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.31.assertions",
+      equals: 21359,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.31.primitiveKinds.GENESIS_IMPORT",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.31.primitiveKinds.BUSINESS",
+      equals: 276,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.31.primitiveKinds.RETRY",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.31.primitiveKinds.CONTROL",
+      equals: 186,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.31.primitiveKinds.READ",
+      equals: 331,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.31.primitiveKinds.LOCAL_DURABLE_ACCEPT",
+      equals: 321,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.31.primitiveKinds.LOCAL_SNAPSHOT_INSTALL",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.31.primitiveKinds.SNAPSHOT_CAPTURE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.31.primitiveKinds.SNAPSHOT_RESTORE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.31.historyId",
+      equals: 31,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.31.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.31.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.31.logicalActions",
+      equals: 80,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.31.preludeBusinessCommands",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.31.actualTradeRecords",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.31.differentMakerTakerAccountAssertions",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.31.rawFile",
+      equals: "generated-31.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.31.rawSha256",
+      equals:
+        "baf66e07f5c2aa383c4f200e6a33ef55f9684b6e7ac85782dd5868c161231f21",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.31.rawBytes",
+      equals: 957547,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.32.primitiveAttempts",
+      equals: 1263,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.32.assertions",
+      equals: 23761,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.32.primitiveKinds.GENESIS_IMPORT",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.32.primitiveKinds.BUSINESS",
+      equals: 309,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.32.primitiveKinds.RETRY",
+      equals: 21,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.32.primitiveKinds.CONTROL",
+      equals: 194,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.32.primitiveKinds.READ",
+      equals: 336,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.32.primitiveKinds.LOCAL_DURABLE_ACCEPT",
+      equals: 351,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.32.primitiveKinds.LOCAL_SNAPSHOT_INSTALL",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.32.primitiveKinds.SNAPSHOT_CAPTURE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.32.primitiveKinds.SNAPSHOT_RESTORE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.32.historyId",
+      equals: 32,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.32.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.32.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.32.logicalActions",
+      equals: 80,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.32.preludeBusinessCommands",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.32.actualTradeRecords",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.32.differentMakerTakerAccountAssertions",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.32.rawFile",
+      equals: "generated-32.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.32.rawSha256",
+      equals:
+        "65c755ed36719371a4361f3d6042546ccb4ca9c5984f7edf04ecbde350dc3d00",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.32.rawBytes",
+      equals: 1051786,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.33.primitiveAttempts",
+      equals: 1180,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.33.assertions",
+      equals: 21294,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.33.primitiveKinds.GENESIS_IMPORT",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.33.primitiveKinds.BUSINESS",
+      equals: 276,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.33.primitiveKinds.RETRY",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.33.primitiveKinds.CONTROL",
+      equals: 184,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.33.primitiveKinds.READ",
+      equals: 329,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.33.primitiveKinds.LOCAL_DURABLE_ACCEPT",
+      equals: 319,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.33.primitiveKinds.LOCAL_SNAPSHOT_INSTALL",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.33.primitiveKinds.SNAPSHOT_CAPTURE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.33.primitiveKinds.SNAPSHOT_RESTORE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.33.historyId",
+      equals: 33,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.33.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.33.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.33.logicalActions",
+      equals: 80,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.33.preludeBusinessCommands",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.33.actualTradeRecords",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.33.differentMakerTakerAccountAssertions",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.33.rawFile",
+      equals: "generated-33.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.33.rawSha256",
+      equals:
+        "f2ce1256f272ced129fc1a6cc41fed80dd5a5065167d14c96ce4fa446287e194",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.33.rawBytes",
+      equals: 958797,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.34.primitiveAttempts",
+      equals: 1181,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.34.assertions",
+      equals: 21279,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.34.primitiveKinds.GENESIS_IMPORT",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.34.primitiveKinds.BUSINESS",
+      equals: 276,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.34.primitiveKinds.RETRY",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.34.primitiveKinds.CONTROL",
+      equals: 183,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.34.primitiveKinds.READ",
+      equals: 328,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.34.primitiveKinds.LOCAL_DURABLE_ACCEPT",
+      equals: 322,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.34.primitiveKinds.LOCAL_SNAPSHOT_INSTALL",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.34.primitiveKinds.SNAPSHOT_CAPTURE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.34.primitiveKinds.SNAPSHOT_RESTORE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.34.historyId",
+      equals: 34,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.34.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.34.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.34.logicalActions",
+      equals: 80,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.34.preludeBusinessCommands",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.34.actualTradeRecords",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.34.differentMakerTakerAccountAssertions",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.34.rawFile",
+      equals: "generated-34.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.34.rawSha256",
+      equals:
+        "73187dff110ca555db20d74d3e76c16dcc75c4ba23efc7641cbc3c7eb193e4dc",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.34.rawBytes",
+      equals: 976714,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.35.primitiveAttempts",
+      equals: 1187,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.35.assertions",
+      equals: 21322,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.35.primitiveKinds.GENESIS_IMPORT",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.35.primitiveKinds.BUSINESS",
+      equals: 276,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.35.primitiveKinds.RETRY",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.35.primitiveKinds.CONTROL",
+      equals: 186,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.35.primitiveKinds.READ",
+      equals: 331,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.35.primitiveKinds.LOCAL_DURABLE_ACCEPT",
+      equals: 322,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.35.primitiveKinds.LOCAL_SNAPSHOT_INSTALL",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.35.primitiveKinds.SNAPSHOT_CAPTURE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.35.primitiveKinds.SNAPSHOT_RESTORE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.35.historyId",
+      equals: 35,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.35.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.35.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.35.logicalActions",
+      equals: 80,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.35.preludeBusinessCommands",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.35.actualTradeRecords",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.35.differentMakerTakerAccountAssertions",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.35.rawFile",
+      equals: "generated-35.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.35.rawSha256",
+      equals:
+        "fbd49f430191ece9540525b9a74d8a012a6b368d2cb9aaf61f2f2d85321033d8",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.35.rawBytes",
+      equals: 955405,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.36.primitiveAttempts",
+      equals: 1179,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.36.assertions",
+      equals: 21408,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.36.primitiveKinds.GENESIS_IMPORT",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.36.primitiveKinds.BUSINESS",
+      equals: 274,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.36.primitiveKinds.RETRY",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.36.primitiveKinds.CONTROL",
+      equals: 185,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.36.primitiveKinds.READ",
+      equals: 329,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.36.primitiveKinds.LOCAL_DURABLE_ACCEPT",
+      equals: 319,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.36.primitiveKinds.LOCAL_SNAPSHOT_INSTALL",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.36.primitiveKinds.SNAPSHOT_CAPTURE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.36.primitiveKinds.SNAPSHOT_RESTORE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.36.historyId",
+      equals: 36,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.36.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.36.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.36.logicalActions",
+      equals: 80,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.36.preludeBusinessCommands",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.36.actualTradeRecords",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.36.differentMakerTakerAccountAssertions",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.36.rawFile",
+      equals: "generated-36.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.36.rawSha256",
+      equals:
+        "5b83d54f234942b275ad3f199f7451fb6c35b249ec29b37e79faf8f8a00dfa21",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.36.rawBytes",
+      equals: 960713,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.37.primitiveAttempts",
+      equals: 1196,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.37.assertions",
+      equals: 21529,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.37.primitiveKinds.GENESIS_IMPORT",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.37.primitiveKinds.BUSINESS",
+      equals: 276,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.37.primitiveKinds.RETRY",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.37.primitiveKinds.CONTROL",
+      equals: 190,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.37.primitiveKinds.READ",
+      equals: 335,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.37.primitiveKinds.LOCAL_DURABLE_ACCEPT",
+      equals: 323,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.37.primitiveKinds.LOCAL_SNAPSHOT_INSTALL",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.37.primitiveKinds.SNAPSHOT_CAPTURE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.37.primitiveKinds.SNAPSHOT_RESTORE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.37.historyId",
+      equals: 37,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.37.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.37.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.37.logicalActions",
+      equals: 80,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.37.preludeBusinessCommands",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.37.actualTradeRecords",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.37.differentMakerTakerAccountAssertions",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.37.rawFile",
+      equals: "generated-37.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.37.rawSha256",
+      equals:
+        "34f1ad455245846db1ea5a25dd58bc57e804bb071477492b1f71d4d441b7e059",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.37.rawBytes",
+      equals: 959459,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.38.primitiveAttempts",
+      equals: 1185,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.38.assertions",
+      equals: 21396,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.38.primitiveKinds.GENESIS_IMPORT",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.38.primitiveKinds.BUSINESS",
+      equals: 276,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.38.primitiveKinds.RETRY",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.38.primitiveKinds.CONTROL",
+      equals: 184,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.38.primitiveKinds.READ",
+      equals: 329,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.38.primitiveKinds.LOCAL_DURABLE_ACCEPT",
+      equals: 324,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.38.primitiveKinds.LOCAL_SNAPSHOT_INSTALL",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.38.primitiveKinds.SNAPSHOT_CAPTURE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.38.primitiveKinds.SNAPSHOT_RESTORE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.38.historyId",
+      equals: 38,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.38.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.38.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.38.logicalActions",
+      equals: 80,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.38.preludeBusinessCommands",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.38.actualTradeRecords",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.38.differentMakerTakerAccountAssertions",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.38.rawFile",
+      equals: "generated-38.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.38.rawSha256",
+      equals:
+        "c006f0af43b6a3864df4edb91e5b00166f3a9b6b4eb0fa3d7fe8f173bc582671",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.38.rawBytes",
+      equals: 972316,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.39.primitiveAttempts",
+      equals: 1197,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.39.assertions",
+      equals: 21567,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.39.primitiveKinds.GENESIS_IMPORT",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.39.primitiveKinds.BUSINESS",
+      equals: 276,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.39.primitiveKinds.RETRY",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.39.primitiveKinds.CONTROL",
+      equals: 189,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.39.primitiveKinds.READ",
+      equals: 334,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.39.primitiveKinds.LOCAL_DURABLE_ACCEPT",
+      equals: 326,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.39.primitiveKinds.LOCAL_SNAPSHOT_INSTALL",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.39.primitiveKinds.SNAPSHOT_CAPTURE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.39.primitiveKinds.SNAPSHOT_RESTORE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.39.historyId",
+      equals: 39,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.39.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.39.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.39.logicalActions",
+      equals: 80,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.39.preludeBusinessCommands",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.39.actualTradeRecords",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.39.differentMakerTakerAccountAssertions",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.39.rawFile",
+      equals: "generated-39.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.39.rawSha256",
+      equals:
+        "6f5c1bf730dda40440e0fd651c197d38bd2bfb9f4195453f97743b47fdc7b020",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.39.rawBytes",
+      equals: 969771,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.40.primitiveAttempts",
+      equals: 1289,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.40.assertions",
+      equals: 24029,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.40.primitiveKinds.GENESIS_IMPORT",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.40.primitiveKinds.BUSINESS",
+      equals: 309,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.40.primitiveKinds.RETRY",
+      equals: 21,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.40.primitiveKinds.CONTROL",
+      equals: 204,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.40.primitiveKinds.READ",
+      equals: 346,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.40.primitiveKinds.LOCAL_DURABLE_ACCEPT",
+      equals: 357,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.40.primitiveKinds.LOCAL_SNAPSHOT_INSTALL",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.40.primitiveKinds.SNAPSHOT_CAPTURE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.40.primitiveKinds.SNAPSHOT_RESTORE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.40.historyId",
+      equals: 40,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.40.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.40.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.40.logicalActions",
+      equals: 80,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.40.preludeBusinessCommands",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.40.actualTradeRecords",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.40.differentMakerTakerAccountAssertions",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.40.rawFile",
+      equals: "generated-40.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.40.rawSha256",
+      equals:
+        "43fc00d5efba33da5906d2cd3f3563e7f1429a4e198aa819318cb4e741e189b4",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.40.rawBytes",
+      equals: 1056105,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.41.primitiveAttempts",
+      equals: 1196,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.41.assertions",
+      equals: 21409,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.41.primitiveKinds.GENESIS_IMPORT",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.41.primitiveKinds.BUSINESS",
+      equals: 276,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.41.primitiveKinds.RETRY",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.41.primitiveKinds.CONTROL",
+      equals: 189,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.41.primitiveKinds.READ",
+      equals: 334,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.41.primitiveKinds.LOCAL_DURABLE_ACCEPT",
+      equals: 325,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.41.primitiveKinds.LOCAL_SNAPSHOT_INSTALL",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.41.primitiveKinds.SNAPSHOT_CAPTURE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.41.primitiveKinds.SNAPSHOT_RESTORE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.41.historyId",
+      equals: 41,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.41.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.41.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.41.logicalActions",
+      equals: 80,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.41.preludeBusinessCommands",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.41.actualTradeRecords",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.41.differentMakerTakerAccountAssertions",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.41.rawFile",
+      equals: "generated-41.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.41.rawSha256",
+      equals:
+        "cfc246eaef500f7d50f716030d39d3d9646e580d148cca520a4814995fc979b2",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.41.rawBytes",
+      equals: 964992,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.42.primitiveAttempts",
+      equals: 1186,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.42.assertions",
+      equals: 21287,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.42.primitiveKinds.GENESIS_IMPORT",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.42.primitiveKinds.BUSINESS",
+      equals: 276,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.42.primitiveKinds.RETRY",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.42.primitiveKinds.CONTROL",
+      equals: 185,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.42.primitiveKinds.READ",
+      equals: 330,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.42.primitiveKinds.LOCAL_DURABLE_ACCEPT",
+      equals: 323,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.42.primitiveKinds.LOCAL_SNAPSHOT_INSTALL",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.42.primitiveKinds.SNAPSHOT_CAPTURE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.42.primitiveKinds.SNAPSHOT_RESTORE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.42.historyId",
+      equals: 42,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.42.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.42.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.42.logicalActions",
+      equals: 80,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.42.preludeBusinessCommands",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.42.actualTradeRecords",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.42.differentMakerTakerAccountAssertions",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.42.rawFile",
+      equals: "generated-42.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.42.rawSha256",
+      equals:
+        "4c2236c9c32b241754388ed58ca01722685d433db434190dd62338b5a92e8676",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.42.rawBytes",
+      equals: 956024,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.43.primitiveAttempts",
+      equals: 1195,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.43.assertions",
+      equals: 21550,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.43.primitiveKinds.GENESIS_IMPORT",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.43.primitiveKinds.BUSINESS",
+      equals: 276,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.43.primitiveKinds.RETRY",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.43.primitiveKinds.CONTROL",
+      equals: 189,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.43.primitiveKinds.READ",
+      equals: 334,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.43.primitiveKinds.LOCAL_DURABLE_ACCEPT",
+      equals: 324,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.43.primitiveKinds.LOCAL_SNAPSHOT_INSTALL",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.43.primitiveKinds.SNAPSHOT_CAPTURE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.43.primitiveKinds.SNAPSHOT_RESTORE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.43.historyId",
+      equals: 43,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.43.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.43.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.43.logicalActions",
+      equals: 80,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.43.preludeBusinessCommands",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.43.actualTradeRecords",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.43.differentMakerTakerAccountAssertions",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.43.rawFile",
+      equals: "generated-43.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.43.rawSha256",
+      equals:
+        "d69e4373e47d735730fe0d31bc54678889e161848c607ec0118b75b33bad7539",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.43.rawBytes",
+      equals: 967257,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.44.primitiveAttempts",
+      equals: 1187,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.44.assertions",
+      equals: 21450,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.44.primitiveKinds.GENESIS_IMPORT",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.44.primitiveKinds.BUSINESS",
+      equals: 274,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.44.primitiveKinds.RETRY",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.44.primitiveKinds.CONTROL",
+      equals: 189,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.44.primitiveKinds.READ",
+      equals: 333,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.44.primitiveKinds.LOCAL_DURABLE_ACCEPT",
+      equals: 319,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.44.primitiveKinds.LOCAL_SNAPSHOT_INSTALL",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.44.primitiveKinds.SNAPSHOT_CAPTURE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.44.primitiveKinds.SNAPSHOT_RESTORE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.44.historyId",
+      equals: 44,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.44.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.44.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.44.logicalActions",
+      equals: 80,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.44.preludeBusinessCommands",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.44.actualTradeRecords",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.44.differentMakerTakerAccountAssertions",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.44.rawFile",
+      equals: "generated-44.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.44.rawSha256",
+      equals:
+        "b0a197c94ec91221188bac7a28bb77ce2280c64aa80f9011f8a61bea5c11d758",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.44.rawBytes",
+      equals: 973034,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.45.primitiveAttempts",
+      equals: 1184,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.45.assertions",
+      equals: 21280,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.45.primitiveKinds.GENESIS_IMPORT",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.45.primitiveKinds.BUSINESS",
+      equals: 276,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.45.primitiveKinds.RETRY",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.45.primitiveKinds.CONTROL",
+      equals: 185,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.45.primitiveKinds.READ",
+      equals: 330,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.45.primitiveKinds.LOCAL_DURABLE_ACCEPT",
+      equals: 321,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.45.primitiveKinds.LOCAL_SNAPSHOT_INSTALL",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.45.primitiveKinds.SNAPSHOT_CAPTURE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.45.primitiveKinds.SNAPSHOT_RESTORE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.45.historyId",
+      equals: 45,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.45.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.45.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.45.logicalActions",
+      equals: 80,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.45.preludeBusinessCommands",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.45.actualTradeRecords",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.45.differentMakerTakerAccountAssertions",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.45.rawFile",
+      equals: "generated-45.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.45.rawSha256",
+      equals:
+        "ce90991ce1f622abb5e6b0fb2d993d1c8b9832a18960c23c1e97479e91e5fb53",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.45.rawBytes",
+      equals: 949631,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.46.primitiveAttempts",
+      equals: 1188,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.46.assertions",
+      equals: 21343,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.46.primitiveKinds.GENESIS_IMPORT",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.46.primitiveKinds.BUSINESS",
+      equals: 276,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.46.primitiveKinds.RETRY",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.46.primitiveKinds.CONTROL",
+      equals: 186,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.46.primitiveKinds.READ",
+      equals: 331,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.46.primitiveKinds.LOCAL_DURABLE_ACCEPT",
+      equals: 323,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.46.primitiveKinds.LOCAL_SNAPSHOT_INSTALL",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.46.primitiveKinds.SNAPSHOT_CAPTURE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.46.primitiveKinds.SNAPSHOT_RESTORE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.46.historyId",
+      equals: 46,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.46.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.46.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.46.logicalActions",
+      equals: 80,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.46.preludeBusinessCommands",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.46.actualTradeRecords",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.46.differentMakerTakerAccountAssertions",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.46.rawFile",
+      equals: "generated-46.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.46.rawSha256",
+      equals:
+        "78ba43b423732e8aed0a0b6bd341b168b65040cd83aebb6c07ead05e6397c767",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.46.rawBytes",
+      equals: 961591,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.47.primitiveAttempts",
+      equals: 1180,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.47.assertions",
+      equals: 21357,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.47.primitiveKinds.GENESIS_IMPORT",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.47.primitiveKinds.BUSINESS",
+      equals: 276,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.47.primitiveKinds.RETRY",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.47.primitiveKinds.CONTROL",
+      equals: 183,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.47.primitiveKinds.READ",
+      equals: 328,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.47.primitiveKinds.LOCAL_DURABLE_ACCEPT",
+      equals: 321,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.47.primitiveKinds.LOCAL_SNAPSHOT_INSTALL",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.47.primitiveKinds.SNAPSHOT_CAPTURE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.47.primitiveKinds.SNAPSHOT_RESTORE",
+      equals: 20,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.47.historyId",
+      equals: 47,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.47.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.47.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.47.logicalActions",
+      equals: 80,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.47.preludeBusinessCommands",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.47.actualTradeRecords",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.47.differentMakerTakerAccountAssertions",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.47.rawFile",
+      equals: "generated-47.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.47.rawSha256",
+      equals:
+        "7fba78448794218f51b4d9b25abcb9aae3fa691fadd74685cc52a0abc03f2168",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "histories.47.rawBytes",
+      equals: 964203,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "seed",
+      equals: 6414,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "executedHistories",
+      equals: 48,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "passedHistories",
+      equals: 48,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "logicalActions",
+      equals: 3840,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "preludeBusinessCommands",
+      equals: 48,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "primitiveAttempts",
+      equals: 57549,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "assertions",
+      equals: 1041767,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "actualTradeRecords",
+      equals: 78,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "differentMakerTakerAccountAssertions",
+      equals: 72,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "drawsVerified",
+      equals: 15360,
+    },
+    {
+      artifactPath: "reports/check/generated.json",
+      field: "corpusSha256",
+      equals:
+        "634b17ce63eba6aeacd6cab8cc04a69786dac3a3fc15fc8fde1e942b6486e449",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "schemaVersion",
+      equals: "matching.m14.mutants.v1",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "unit",
+      equals: "M14",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "contractPlanVersion",
+      equals: "0.17",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "startCommit",
+      equals: "96b749861292950749701e34a6f20796f239cd4b",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "workloadSha256",
+      equals:
+        "005afdabc720ab782ea092e416a7d9c1273daf09246eede1e43607ed110ad9e3",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "profileSha256",
+      equals:
+        "02ef0ee44900e1a472fea03ed5cb406215550994826b53f4b708e33815c6be9d",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "primitiveCountMeaning",
+      equals:
+        "Concrete workload transition, read, capture, restore, frame and sink steps; oracle evaluation and diagnostic image reads are validation observations.",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.length",
+      equals: 8,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.0.id",
+      equals: "M14-MAKER-ACCOUNT-FROM-TAKER",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.0.status",
+      equals: "STUDENT_FAILURE",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.0.failure",
+      equals: "independent exact Execution bytes",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.0.actualMutationActions",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.0.primitiveAttempts",
+      equals: 4,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.0.assertions",
+      equals: 30,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.0.rawFile",
+      equals: "M14-MAKER-ACCOUNT-FROM-TAKER.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.0.rawSha256",
+      equals:
+        "fc237426d4dfdc6ad0ad460db86d177e2b1d664299f69ec50b36f56d5c82748c",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.0.rawBytes",
+      equals: 5510,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.0.proofObligations.length",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.0.proofObligations.0",
+      equals: "ACTUAL_SEMANTIC_BOUNDARY",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.0.classification",
+      equals: "STUDENT_FAILURE",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.0.countedAsKill",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.0.control.id",
+      equals: "M14-MAKER-ACCOUNT-FROM-TAKER-CONTROL",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.0.control.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.0.control.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.0.control.actualMutationActions",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.0.control.primitiveAttempts",
+      equals: 4,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.0.control.assertions",
+      equals: 49,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.0.control.rawFile",
+      equals: "M14-MAKER-ACCOUNT-FROM-TAKER-CONTROL.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.0.control.rawSha256",
+      equals:
+        "fd7156e25e2ebae45c62ce7d6338b0eeda1be77b1c390aff6232bc15fa88f24c",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.0.control.rawBytes",
+      equals: 5633,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.0.control.proofObligations.length",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.0.control.proofObligations.0",
+      equals: "PRODUCTION_CONTROL",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.1.id",
+      equals: "M14-PRIVATE-ACCOUNT-IN-MARKET",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.1.status",
+      equals: "STUDENT_FAILURE",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.1.failure",
+      equals: "independent exact Market bytes",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.1.actualMutationActions",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.1.primitiveAttempts",
+      equals: 4,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.1.assertions",
+      equals: 32,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.1.rawFile",
+      equals: "M14-PRIVATE-ACCOUNT-IN-MARKET.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.1.rawSha256",
+      equals:
+        "16843ee7a8dfd73af2f3051ad9c35e0a6d6faf4631465c76b7f1bf3ffa3e84b4",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.1.rawBytes",
+      equals: 5793,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.1.proofObligations.length",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.1.proofObligations.0",
+      equals: "ACTUAL_SEMANTIC_BOUNDARY",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.1.classification",
+      equals: "STUDENT_FAILURE",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.1.countedAsKill",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.1.control.id",
+      equals: "M14-PRIVATE-ACCOUNT-IN-MARKET-CONTROL",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.1.control.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.1.control.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.1.control.actualMutationActions",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.1.control.primitiveAttempts",
+      equals: 4,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.1.control.assertions",
+      equals: 49,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.1.control.rawFile",
+      equals: "M14-PRIVATE-ACCOUNT-IN-MARKET-CONTROL.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.1.control.rawSha256",
+      equals:
+        "48039b3cb8a45f0887f86134bfa77bcf7c6c14a5b61331549a5ebb4fd8fd5053",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.1.control.rawBytes",
+      equals: 5806,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.1.control.proofObligations.length",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.1.control.proofObligations.0",
+      equals: "PRODUCTION_CONTROL",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.2.id",
+      equals: "M14-DUPLICATE-CREATES-BATCH",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.2.status",
+      equals: "STUDENT_FAILURE",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.2.failure",
+      equals: "retry/conflict preserves full image",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.2.actualMutationActions",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.2.primitiveAttempts",
+      equals: 4,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.2.assertions",
+      equals: 22,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.2.rawFile",
+      equals: "M14-DUPLICATE-CREATES-BATCH.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.2.rawSha256",
+      equals:
+        "87c8005657f5939ec391bc91ff9e34da2447b9920dd1ebea54a1ae449422f0bd",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.2.rawBytes",
+      equals: 6745,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.2.proofObligations.length",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.2.proofObligations.0",
+      equals: "ACTUAL_SEMANTIC_BOUNDARY",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.2.classification",
+      equals: "STUDENT_FAILURE",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.2.countedAsKill",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.2.control.id",
+      equals: "M14-DUPLICATE-CREATES-BATCH-CONTROL",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.2.control.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.2.control.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.2.control.actualMutationActions",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.2.control.primitiveAttempts",
+      equals: 4,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.2.control.assertions",
+      equals: 24,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.2.control.rawFile",
+      equals: "M14-DUPLICATE-CREATES-BATCH-CONTROL.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.2.control.rawSha256",
+      equals:
+        "1579f3194bc8feda8574b635416ecb471692cccd6ed052dd8acb341204498334",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.2.control.rawBytes",
+      equals: 3278,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.2.control.proofObligations.length",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.2.control.proofObligations.0",
+      equals: "PRODUCTION_CONTROL",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.3.id",
+      equals: "M14-ACK-ACCEPTS-FUTURE",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.3.status",
+      equals: "STUDENT_FAILURE",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.3.failure",
+      equals: "rejected/replayed control preserves image",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.3.actualMutationActions",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.3.primitiveAttempts",
+      equals: 5,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.3.assertions",
+      equals: 34,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.3.rawFile",
+      equals: "M14-ACK-ACCEPTS-FUTURE.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.3.rawSha256",
+      equals:
+        "52bb508014a476e2c3c916aa7f32f849bbdb5e1a7ed19ec47f8aae24b6d72487",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.3.rawBytes",
+      equals: 7930,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.3.proofObligations.length",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.3.proofObligations.0",
+      equals: "ACTUAL_SEMANTIC_BOUNDARY",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.3.classification",
+      equals: "STUDENT_FAILURE",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.3.countedAsKill",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.3.control.id",
+      equals: "M14-ACK-ACCEPTS-FUTURE-CONTROL",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.3.control.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.3.control.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.3.control.actualMutationActions",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.3.control.primitiveAttempts",
+      equals: 5,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.3.control.assertions",
+      equals: 36,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.3.control.rawFile",
+      equals: "M14-ACK-ACCEPTS-FUTURE-CONTROL.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.3.control.rawSha256",
+      equals:
+        "0b6d847b97c0033424cac3a4d8e99f083efcdaee667166cfbb3a38dbc509f21b",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.3.control.rawBytes",
+      equals: 3713,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.3.control.proofObligations.length",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.3.control.proofObligations.0",
+      equals: "PRODUCTION_CONTROL",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.4.id",
+      equals: "M14-MARKET-SNAPSHOT-CUT-OFF-BY-ONE",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.4.status",
+      equals: "STUDENT_FAILURE",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.4.failure",
+      equals: "independent whole-shard snapshot bytes",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.4.actualMutationActions",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.4.primitiveAttempts",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.4.assertions",
+      equals: 15,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.4.rawFile",
+      equals: "M14-MARKET-SNAPSHOT-CUT-OFF-BY-ONE.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.4.rawSha256",
+      equals:
+        "3358fa7841ff81aa42f1c53b647e657280234d6c39f2635dbaa9bdcadaeaa40f",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.4.rawBytes",
+      equals: 4137,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.4.proofObligations.length",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.4.proofObligations.0",
+      equals: "ACTUAL_SEMANTIC_BOUNDARY",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.4.classification",
+      equals: "STUDENT_FAILURE",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.4.countedAsKill",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.4.control.id",
+      equals: "M14-MARKET-SNAPSHOT-CUT-OFF-BY-ONE-CONTROL",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.4.control.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.4.control.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.4.control.actualMutationActions",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.4.control.primitiveAttempts",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.4.control.assertions",
+      equals: 37,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.4.control.rawFile",
+      equals: "M14-MARKET-SNAPSHOT-CUT-OFF-BY-ONE-CONTROL.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.4.control.rawSha256",
+      equals:
+        "125340e8a1f65c55a2a1aae26aba0933da0ae6d3d19ec3ede30fa44a6983e84d",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.4.control.rawBytes",
+      equals: 3960,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.4.control.proofObligations.length",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.4.control.proofObligations.0",
+      equals: "PRODUCTION_CONTROL",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.5.id",
+      equals: "M14-STALE-PUBLISHER-ACCEPTED",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.5.status",
+      equals: "STUDENT_FAILURE",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.5.failure",
+      equals: "stale publisher cannot advance after trusted install",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.5.actualMutationActions",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.5.primitiveAttempts",
+      equals: 8,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.5.assertions",
+      equals: 48,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.5.rawFile",
+      equals: "M14-STALE-PUBLISHER-ACCEPTED.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.5.rawSha256",
+      equals:
+        "0bb1989bec0116e8935f30098485fed9b144333d37da8244803ef2939fbf18b5",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.5.rawBytes",
+      equals: 4604,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.5.proofObligations.length",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.5.proofObligations.0",
+      equals: "ACTUAL_SEMANTIC_BOUNDARY",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.5.classification",
+      equals: "STUDENT_FAILURE",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.5.countedAsKill",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.5.control.id",
+      equals: "M14-STALE-PUBLISHER-ACCEPTED-CONTROL",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.5.control.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.5.control.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.5.control.actualMutationActions",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.5.control.primitiveAttempts",
+      equals: 12,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.5.control.assertions",
+      equals: 53,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.5.control.rawFile",
+      equals: "M14-STALE-PUBLISHER-ACCEPTED-CONTROL.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.5.control.rawSha256",
+      equals:
+        "0743d1a17e64e4765237490737cd0bde15eaf3b892aa3f93be708e3e150ccdea",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.5.control.rawBytes",
+      equals: 4892,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.5.control.proofObligations.length",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.5.control.proofObligations.0",
+      equals: "PRODUCTION_CONTROL",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.6.id",
+      equals: "M14-CAPACITY-REJECT-AFTER-LIVE-APPLY",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.6.status",
+      equals: "STUDENT_FAILURE",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.6.failure",
+      equals: "refusal preserves full state/identity/output",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.6.actualMutationActions",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.6.primitiveAttempts",
+      equals: 39,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.6.assertions",
+      equals: 1215,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.6.rawFile",
+      equals: "M14-CAPACITY-REJECT-AFTER-LIVE-APPLY.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.6.rawSha256",
+      equals:
+        "ab9dd58eada936aa206f91baa5232cd0a5dad256ce1bbe7ced9aded13a7ebceb",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.6.rawBytes",
+      equals: 61005,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.6.proofObligations.length",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.6.proofObligations.0",
+      equals: "ACTUAL_SEMANTIC_BOUNDARY",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.6.classification",
+      equals: "STUDENT_FAILURE",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.6.countedAsKill",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.6.control.id",
+      equals: "M14-CAPACITY-REJECT-AFTER-LIVE-APPLY-CONTROL",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.6.control.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.6.control.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.6.control.actualMutationActions",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.6.control.primitiveAttempts",
+      equals: 101,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.6.control.assertions",
+      equals: 1586,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.6.control.rawFile",
+      equals: "M14-CAPACITY-REJECT-AFTER-LIVE-APPLY-CONTROL.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.6.control.rawSha256",
+      equals:
+        "350b58e7d6b2bb2647c8e44a2b79dc5718501bf996823fafb03330226fd45306",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.6.control.rawBytes",
+      equals: 68858,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.6.control.proofObligations.length",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.6.control.proofObligations.0",
+      equals: "PRODUCTION_CONTROL",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.7.id",
+      equals: "M14-SNAPSHOT-DROPS-OUTPUT-BINDING",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.7.status",
+      equals: "STUDENT_FAILURE",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.7.failure",
+      equals:
+        "snapshot retains original output commitment 5400bf6f-03d0-3176-8e33-36fa7fc442da",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.7.actualMutationActions",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.7.primitiveAttempts",
+      equals: 4,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.7.assertions",
+      equals: 22,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.7.rawFile",
+      equals: "M14-SNAPSHOT-DROPS-OUTPUT-BINDING.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.7.rawSha256",
+      equals:
+        "df908cbec2730862a6cae30d71251645216976e11c5941fade689f2e7ce6f7e4",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.7.rawBytes",
+      equals: 6270,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.7.proofObligations.length",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.7.proofObligations.0",
+      equals: "ACTUAL_SEMANTIC_BOUNDARY",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.7.classification",
+      equals: "STUDENT_FAILURE",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.7.countedAsKill",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.7.control.id",
+      equals: "M14-SNAPSHOT-DROPS-OUTPUT-BINDING-CONTROL",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.7.control.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.7.control.failure",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.7.control.actualMutationActions",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.7.control.primitiveAttempts",
+      equals: 4,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.7.control.assertions",
+      equals: 23,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.7.control.rawFile",
+      equals: "M14-SNAPSHOT-DROPS-OUTPUT-BINDING-CONTROL.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.7.control.rawSha256",
+      equals:
+        "fc430c0019122489236dd402e5eaf6e697f4727381790d1c1c1e3953c71d15c1",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.7.control.rawBytes",
+      equals: 5969,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.7.control.proofObligations.length",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "candidates.7.control.proofObligations.0",
+      equals: "PRODUCTION_CONTROL",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "systemErrorControls.length",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "systemErrorControls.0.id",
+      equals: "M14-THROWING-CONTROL",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "systemErrorControls.0.status",
+      equals: "SYSTEM_ERROR",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "systemErrorControls.0.failure",
+      equals:
+        "java.lang.IllegalStateException: explicit throwing semantic control",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "systemErrorControls.0.actualMutationActions",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "systemErrorControls.0.primitiveAttempts",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "systemErrorControls.0.assertions",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "systemErrorControls.0.rawFile",
+      equals: "M14-THROWING-CONTROL.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "systemErrorControls.0.rawSha256",
+      equals:
+        "02b4eade09e70911d7b27b0dec8d46ae61bb98f72245fa52b6068394c017dd7d",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "systemErrorControls.0.rawBytes",
+      equals: 1436,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "systemErrorControls.0.proofObligations.length",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "systemErrorControls.0.proofObligations.0",
+      equals: "THROWING_IS_NOT_KILL",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "systemErrorControls.0.classification",
+      equals: "SYSTEM_ERROR",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "systemErrorControls.0.countedAsKill",
+      equals: false,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "systemErrorControls.1.id",
+      equals: "M14-CORRUPT-CHILD-REPORT",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "systemErrorControls.1.status",
+      equals: "SYSTEM_ERROR",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "systemErrorControls.1.failure",
+      equals:
+        "io.github.lchareln.cex.matching.testkit.FixtureSchemaException: JSON Schema rejected document: [: 架构中未定义属性“invented”，并且架构不允许附加属性, : 未找到所需属性“scenarios”, : 未找到所需属性“executedScenarios”, : 未找到所需属性“passedScenarios”, : 未找到所需属性“primitiveAttempts”, : 未找到所需属性“assertions”]",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "systemErrorControls.1.actualMutationActions",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "systemErrorControls.1.primitiveAttempts",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "systemErrorControls.1.assertions",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "systemErrorControls.1.rawFile",
+      equals: "M14-CORRUPT-CHILD-REPORT.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "systemErrorControls.1.rawSha256",
+      equals:
+        "69946f0ed07db704080d76a635073ddc8886ce7f7999cf956561bd451c6b2089",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "systemErrorControls.1.rawBytes",
+      equals: 1014,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "systemErrorControls.1.proofObligations.length",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "systemErrorControls.1.proofObligations.0",
+      equals: "SCHEMA_ERROR_IS_NOT_KILL",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "systemErrorControls.1.classification",
+      equals: "SYSTEM_ERROR",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "systemErrorControls.1.countedAsKill",
+      equals: false,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "systemErrorControls.2.id",
+      equals: "M14-MISSING-BOUND-RAW-ARTIFACT",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "systemErrorControls.2.status",
+      equals: "SYSTEM_ERROR",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "systemErrorControls.2.failure",
+      equals:
+        "java.lang.IllegalStateException: missing or changed originally judged raw artifact",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "systemErrorControls.2.actualMutationActions",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "systemErrorControls.2.primitiveAttempts",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "systemErrorControls.2.assertions",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "systemErrorControls.2.rawFile",
+      equals: "M14-MISSING-BOUND-RAW-ARTIFACT.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "systemErrorControls.2.rawSha256",
+      equals:
+        "c4603655bb344c7ae6c096c5b8dfb3806d6727e333c7b0ef3853e80ccc525fb8",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "systemErrorControls.2.rawBytes",
+      equals: 837,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "systemErrorControls.2.proofObligations.length",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "systemErrorControls.2.proofObligations.0",
+      equals: "MISSING_ARTIFACT_IS_NOT_KILL",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "systemErrorControls.2.classification",
+      equals: "SYSTEM_ERROR",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "systemErrorControls.2.countedAsKill",
+      equals: false,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "executed",
+      equals: 8,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "killed",
+      equals: 8,
+    },
+    {
+      artifactPath: "reports/check/mutants.json",
+      field: "systemErrorControlCount",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/inherited.json",
+      field: "schemaVersion",
+      equals: "matching.m14.inherited.v1",
+    },
+    {
+      artifactPath: "reports/check/inherited.json",
+      field: "status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/inherited.json",
+      field: "baselineRef",
+      equals: "course/m13-complete",
+    },
+    {
+      artifactPath: "reports/check/inherited.json",
+      field: "baselineCommit",
+      equals: "eb1b65d2ea2159ba607e3271f0bfd209ea4906ea",
+    },
+    {
+      artifactPath: "reports/check/inherited.json",
+      field: "sourceCommit",
+      equals: "56c4ec09ddf9fcf57f1cce763ae8b451ba7f394f",
+    },
+    {
+      artifactPath: "reports/check/inherited.json",
+      field: "sourceDirty",
+      equals: false,
+    },
+    {
+      artifactPath: "reports/check/inherited.json",
+      field: "currentCompiledClasses",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/inherited.json",
+      field: "matchingCoreByteIdenticalToM13",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/inherited.json",
+      field: "m13Scenarios",
+      equals: 10,
+    },
+    {
+      artifactPath: "reports/check/inherited.json",
+      field: "m13GeneratedActions",
+      equals: 4096,
+    },
+    {
+      artifactPath: "reports/check/inherited.json",
+      field: "m13SemanticMutantsKilled",
+      equals: 6,
+    },
+    {
+      artifactPath: "reports/check/inherited.json",
+      field: "m13ClusterGroups",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/inherited.json",
+      field: "m13MemberProcesses",
+      equals: 6,
+    },
+    {
+      artifactPath: "reports/check/inherited.json",
+      field: "m11ProtocolGoldens",
+      equals: 6,
+    },
+    {
+      artifactPath: "reports/check/inherited.json",
+      field: "m12RealProcessHistoryPassed",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/inherited.json",
+      field: "historicalEvidenceRebound",
+      equals: false,
+    },
+    {
+      artifactPath: "reports/check/inherited.json",
+      field: "childReportRoot",
+      equals: "inherited/m13",
+    },
+    {
+      artifactPath: "reports/check/inherited.json",
+      field: "checkSha256",
+      equals:
+        "f4df000c50bc715aa519000f652c95be4a213ed15455bbe37bd23eafd51303ca",
+    },
+    {
+      artifactPath: "reports/check/inherited.json",
+      field: "inheritedPayloads",
+      equals: 177,
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "schemaVersion",
+      equals: "matching.m14.environment.v1",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "javaRuntime",
+      equals: "OpenJDK Runtime Environment",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "javaVersion",
+      equals: "25.0.4.1+1-LTS",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "javaVendor",
+      equals: "Eclipse Adoptium",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "vmName",
+      equals: "OpenJDK 64-Bit Server VM",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "jvmArguments.length",
+      equals: 6,
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "jvmArguments.0",
+      equals: "-Daeron.socket.so_rcvbuf=0",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "jvmArguments.1",
+      equals: "--add-opens=java.base/jdk.internal.misc=ALL-UNNAMED",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "jvmArguments.2",
+      equals: "-Dfile.encoding=UTF-8",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "jvmArguments.3",
+      equals: "-Duser.country=CN",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "jvmArguments.4",
+      equals: "-Duser.language=zh",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "jvmArguments.5",
+      equals: "-Duser.variant",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "osName",
+      equals: "Mac OS X",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "osVersion",
+      equals: "26.0.1",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "osArchitecture",
+      equals: "aarch64",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "availableProcessors",
+      equals: 8,
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "physicalMemoryBytes",
+      equals: 8589934592,
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "maximumHeapBytes",
+      equals: 2147483648,
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "garbageCollectorNames.length",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "garbageCollectorNames.0",
+      equals: "G1 Concurrent GC",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "garbageCollectorNames.1",
+      equals: "G1 Old Generation",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "garbageCollectorNames.2",
+      equals: "G1 Young Generation",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "cpuModel",
+      equals: "M14_CORRECTNESS_CPU_NOT_PROFILED",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "storageDevice",
+      equals: "M14_LOCAL_SINK_STORAGE_NOT_QUALIFIED",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "filesystem",
+      equals: "M14_LOCAL_FILESYSTEM_NOT_QUALIFIED",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "powerPolicy",
+      equals: "M14_CORRECTNESS_POWER_POLICY_NOT_PROFILED",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "walRoot",
+      equals:
+        "/Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m14-release-check/build/reports/m14",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "walRootUri",
+      equals:
+        "file:///Users/reln/Documents/Codex/2026-09-07/ji/work/cex-m14-release-check/build/reports/m14/",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "walFileStoreName",
+      equals: "/dev/disk3s5",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "walFileStoreType",
+      equals: "apfs",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "walFileStoreTotalSpaceBytes",
+      equals: 245107195904,
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "walFileStoreUsableSpaceBytes",
+      equals: 20868493312,
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "walFileStoreUnallocatedSpaceBytes",
+      equals: 20868493312,
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "runStartedAt",
+      equals: "2026-09-07T13:19:22.033016Z",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "runFinishedAt",
+      equals: "2026-09-07T13:25:14.111864Z",
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "correctnessOnly",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "performanceQualified",
+      equals: false,
+    },
+    {
+      artifactPath: "reports/check/environment.json",
+      field: "singleHost",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/architecture.json",
+      field: "schemaVersion",
+      equals: "matching.m14.architecture.v1",
+    },
+    {
+      artifactPath: "reports/check/architecture.json",
+      field: "status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/architecture.json",
+      field: "evidenceMode",
+      equals:
+        "CURRENT_COMPILED_METHOD_CALL_GRAPH_WITH_PROJECT_VIRTUAL_DISPATCH_AND_LAMBDA_HANDLES",
+    },
+    {
+      artifactPath: "reports/check/architecture.json",
+      field: "callbackInterface",
+      equals: "io.aeron.cluster.service.ClusteredService",
+    },
+    {
+      artifactPath: "reports/check/architecture.json",
+      field: "callbackRoots",
+      equals: 18,
+    },
+    {
+      artifactPath: "reports/check/architecture.json",
+      field: "reachableMethods",
+      equals: 1272,
+    },
+    {
+      artifactPath: "reports/check/architecture.json",
+      field: "lambdaMethodHandles",
+      equals: 134,
+    },
+    {
+      artifactPath: "reports/check/architecture.json",
+      field: "externalIoViolations",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/architecture.json",
+      field: "matchingCoreByteIdenticalToM13",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/architecture.json",
+      field: "roots.length",
+      equals: 18,
+    },
+    {
+      artifactPath: "reports/check/architecture.json",
+      field: "methods.length",
+      equals: 1272,
+    },
+    {
+      artifactPath: "reports/check/architecture.json",
+      field: "projectEdges.length",
+      equals: 2836,
+    },
+    {
+      artifactPath: "reports/check/architecture.json",
+      field: "libraryCalls.length",
+      equals: 1618,
+    },
+    {
+      artifactPath: "reports/check/architecture.json",
+      field: "compiledClasses.length",
+      equals: 199,
+    },
+    {
+      artifactPath: "reports/check/architecture.json",
+      field: "violations.length",
+      equals: 0,
+    },
+    {
+      artifactPath: "reports/check/architecture.json",
+      field: "libraryBoundary",
+      equals:
+        "Pinned JDK and Aeron/Agrona internals are not recursively analyzed. Aeron snapshot progress is permitted; external consumer, TCP, filesystem, process and blocking coordination APIs are rejected.",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "clusterGroups",
+      equals: 2,
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "elapsedNanos",
+      equals: 58010108292,
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "error",
+      equals: "",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "memberProcesses",
+      equals: 6,
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "ownerProcessId",
+      equals: 99936,
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "profileSha256",
+      equals:
+        "02ef0ee44900e1a472fea03ed5cb406215550994826b53f4b708e33815c6be9d",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "publisherProcesses",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "rawFiles.length",
+      equals: 9,
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "schemaVersion",
+      equals: "matching.m14.cluster-faults.v1",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "sinkProcesses",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "startedAtEpochMillis",
+      equals: 1788787455422,
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "teardownComplete",
+      equals: true,
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "teardownElapsedNanos",
+      equals: 706938875,
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.length",
+      equals: 7,
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.0.assertions.length",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.0.assertions.0",
+      equals: "APPLIED_BATCH_SAME_BYTES_AFTER_FAILOVER",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.0.assertions.1",
+      equals: "ONE_DURABLE_SINK_ACCEPTANCE",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.0.assertions.2",
+      equals: "ORIGINAL_RETRY_NO_NEW_OUTPUT",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.0.elapsedNanos",
+      equals: 11178157583,
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.0.id",
+      equals: "M14-C01-APPLY-BEFORE-PUBLISH",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.0.rawFiles.length",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.0.rawFiles.0.purpose",
+      equals: "M14-C01-APPLY-BEFORE-PUBLISH",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.0.rawFiles.0.rawBytes",
+      equals: 33140,
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.0.rawFiles.0.rawFile",
+      equals: "raw/m14/bundles/M14-C01-APPLY-BEFORE-PUBLISH.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.0.rawFiles.0.rawSha256",
+      equals:
+        "45c4c09dd0988e02c4ea50f7fcb087358d451e753f34db11f7567565b7556e17",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.0.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.1.assertions.length",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.1.assertions.0",
+      equals: "FORCED_FRONTIER_SURVIVES",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.1.assertions.1",
+      equals: "DUPLICATE_DELIVERY_SINGLE_ACCEPTANCE",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.1.assertions.2",
+      equals: "REPLICATED_CURSOR_NOT_PREMATURE",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.1.elapsedNanos",
+      equals: 1200300292,
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.1.id",
+      equals: "M14-C02-DURABLE-WRITE-BEFORE-ACK-LOSS",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.1.rawFiles.length",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.1.rawFiles.0.purpose",
+      equals: "M14-C02-DURABLE-WRITE-BEFORE-ACK-LOSS",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.1.rawFiles.0.rawBytes",
+      equals: 50387,
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.1.rawFiles.0.rawFile",
+      equals: "raw/m14/bundles/M14-C02-DURABLE-WRITE-BEFORE-ACK-LOSS.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.1.rawFiles.0.rawSha256",
+      equals:
+        "4ed61948f8a065ac7a33958804c384abc07e13b1a567db9bd13e1940695cd061",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.1.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.2.assertions.length",
+      equals: 3,
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.2.assertions.0",
+      equals: "ACTUAL_ACK_RECEIVED",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.2.assertions.1",
+      equals: "NO_ACK_CONTROL_SUBMITTED_BEFORE_CRASH",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.2.assertions.2",
+      equals: "OUTBOX_RETAINED_UNTIL_VALID_REPLICATED_ACK",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.2.elapsedNanos",
+      equals: 953960916,
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.2.id",
+      equals: "M14-C03-DURABLE-ACK-BEFORE-REPLICATION",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.2.rawFiles.length",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.2.rawFiles.0.purpose",
+      equals: "M14-C03-DURABLE-ACK-BEFORE-REPLICATION",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.2.rawFiles.0.rawBytes",
+      equals: 37499,
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.2.rawFiles.0.rawFile",
+      equals: "raw/m14/bundles/M14-C03-DURABLE-ACK-BEFORE-REPLICATION.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.2.rawFiles.0.rawSha256",
+      equals:
+        "61da048d2f0569b6920620d4bc83207acab08ae3545aa6e7c83bcdfa004b8900",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.2.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.3.assertions.length",
+      equals: 5,
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.3.assertions.0",
+      equals: "OLD_PID_ALIVE_AT_BOTH_ATTEMPTS",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.3.assertions.1",
+      equals: "STALE_DATA_REJECTED_AFTER_ADMIN_OK",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.3.assertions.2",
+      equals: "STALE_ACK_NO_CURSOR_OR_EVICTION_DELTA",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.3.assertions.3",
+      equals: "NEW_AUTHORITY_SAME_STABLE_BATCH_BYTES",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.3.assertions.4",
+      equals: "HIGHER_DATA_EPOCH_DOES_NOT_SELF_AUTHORIZE",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.3.elapsedNanos",
+      equals: 1185200000,
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.3.id",
+      equals: "M14-C04-LIVE-STALE-PUBLISHER",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.3.rawFiles.length",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.3.rawFiles.0.purpose",
+      equals: "M14-C04-LIVE-STALE-PUBLISHER",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.3.rawFiles.0.rawBytes",
+      equals: 39910,
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.3.rawFiles.0.rawFile",
+      equals: "raw/m14/bundles/M14-C04-LIVE-STALE-PUBLISHER.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.3.rawFiles.0.rawSha256",
+      equals:
+        "ec778230974c7fd87bc41fbda362e9ab70e036ebbd370fe1ee275790e74ca0ee",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.3.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.4.assertions.length",
+      equals: 4,
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.4.assertions.0",
+      equals: "FULL_SHARD1_NO_PARTIAL_APPLY",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.4.assertions.1",
+      equals: "SHARD2_ACTUAL_PROGRESS",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.4.assertions.2",
+      equals: "CONTROL_CAN_DRAIN_FULL_OUTBOX",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.4.assertions.3",
+      equals: "REFUSED_ID_FIRST_APPLIES_ONCE",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.4.elapsedNanos",
+      equals: 2807549917,
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.4.id",
+      equals: "M14-C05-EXECUTION-FULL-SHARD-ISOLATION",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.4.rawFiles.length",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.4.rawFiles.0.purpose",
+      equals: "M14-C05-EXECUTION-FULL-SHARD-ISOLATION",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.4.rawFiles.0.rawBytes",
+      equals: 492309,
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.4.rawFiles.0.rawFile",
+      equals: "raw/m14/bundles/M14-C05-EXECUTION-FULL-SHARD-ISOLATION.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.4.rawFiles.0.rawSha256",
+      equals:
+        "4f9d733f9885b36f8565c485666c0cab890c90b884d14a77327333427344a135",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.4.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.5.assertions.length",
+      equals: 5,
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.5.assertions.0",
+      equals: "SIX_ACTUAL_SNAPSHOT_LOADS",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.5.assertions.1",
+      equals: "EXACT_SUFFIX_STATE_OUTPUT_CURSOR_GRANT_PROFILE",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.5.assertions.2",
+      equals: "DURABLE_SINK_JOURNAL_RECONSTRUCTION",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.5.assertions.3",
+      equals: "ORIGINAL_REQUEST_CONTROL_RETRY",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.5.assertions.4",
+      equals: "OWNED_PROCESSES_TEARDOWN",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.5.elapsedNanos",
+      equals: 17504917667,
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.5.id",
+      equals: "M14-C06-SNAPSHOT-ALL-MEMBERS-AND-SINK-RESTART",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.5.rawFiles.length",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.5.rawFiles.0.purpose",
+      equals: "M14-C06-SNAPSHOT-ALL-MEMBERS-AND-SINK-RESTART",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.5.rawFiles.0.rawBytes",
+      equals: 1159640,
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.5.rawFiles.0.rawFile",
+      equals:
+        "raw/m14/bundles/M14-C06-SNAPSHOT-ALL-MEMBERS-AND-SINK-RESTART.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.5.rawFiles.0.rawSha256",
+      equals:
+        "0d0539b64dfb9c71ba29fc0f3438784100bcd36c684341bf08da555959023688",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.5.status",
+      equals: "PASS",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.6.assertions.length",
+      equals: 6,
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.6.assertions.0",
+      equals: "REAL_APPLIED_LARGE_BATCH",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.6.assertions.1",
+      equals: "REAL_WHOLE_SHARD_LARGE_SNAPSHOT",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.6.assertions.2",
+      equals: "AT_LEAST_TWO_APPLICATION_FRAGMENTS_EACH",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.6.assertions.3",
+      equals: "REASSEMBLED_BYTES_MATCH_SOURCE",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.6.assertions.4",
+      equals: "SNAPSHOT_NOT_IN_BATCH_QUEUE",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.6.assertions.5",
+      equals: "PARTIAL_MESSAGE_NO_CURSOR",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.6.elapsedNanos",
+      equals: 17241716167,
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.6.id",
+      equals: "M14-C07-FRAGMENTED-BATCH-AND-MARKET-REBUILD",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.6.rawFiles.length",
+      equals: 1,
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.6.rawFiles.0.purpose",
+      equals: "M14-C07-FRAGMENTED-BATCH-AND-MARKET-REBUILD",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.6.rawFiles.0.rawBytes",
+      equals: 1856994,
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.6.rawFiles.0.rawFile",
+      equals:
+        "raw/m14/bundles/M14-C07-FRAGMENTED-BATCH-AND-MARKET-REBUILD.jsonl.gz",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.6.rawFiles.0.rawSha256",
+      equals:
+        "0fdcfecf6932cf7ada515c46b9a9921ad0f72d621089ae502073680c6f4ee7c0",
+    },
+    {
+      artifactPath: "reports/check/m14-cluster-faults.json",
+      field: "scenarios.6.status",
+      equals: "PASS",
+    },
+  ],
+};
+
 export const PRACTICE_UNITS: readonly PracticeUnit[] = [
   {
     projectSlug: "high-availability-cex",
@@ -16078,7 +24764,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     order: 10,
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.1",
-    planCompatibility: "当前 PLAN v0.16 只在 M12 已发布基线上为 M13 冻结静态权威路由与 shard 内多订单簿；M00 输入、验证、canonical history、digest 与 evidence 合同不变。因此 M00 的 `course.properties` 与不可移动起点继续记录合同 `planVersion=0.1`，网站另行公开当前计划版本和这条兼容说明，不改 tag、不回写冻结证据，也不把后续 WAL、Snapshot、benchmark 或 Cluster wire bytes 声称为 M00 canonical format。",
+    planCompatibility: "当前 PLAN v0.17 只在已发布 M13 之后新增可续接业务输出合同；M00 输入、验证、canonical history、digest 与 evidence 合同不变。因此 M00 的 `course.properties` 与不可移动起点继续记录合同 `planVersion=0.1`，网站另行公开当前计划版本和这条兼容说明，不改 tag、不回写冻结证据，也不把后续 WAL、Snapshot、benchmark 或 Cluster wire bytes 声称为 M00 canonical format。",
     prerequisiteUnitCodes: [],
     startRef: "course/m00.2-start",
     supersededStartRefs: [
@@ -16463,7 +25149,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     order: 20,
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.3",
-    planCompatibility: "当前 PLAN v0.16 只在 M12 已发布基线上为 M13 冻结静态权威路由与 shard 内多订单簿；M01 价格时间优先业务语义、冻结 event batch、Golden corpus 与 evidence 不回写，也不表示后续 Java event hierarchy、WAL/Snapshot bytes、queue、Cluster codec 或恢复运行时与 M01 完成提交相同。因此 M01 的 `course.properties`、起点、完成 tag、教程与持久 evidence 继续保留合同 `planVersion=0.3`。",
+    planCompatibility: "当前 PLAN v0.17 只在已发布 M13 之后新增可续接业务输出合同；M01 价格时间优先业务语义、冻结 event batch、Golden corpus 与 evidence 不回写，也不表示后续 Java event hierarchy、WAL/Snapshot bytes、queue、Cluster codec 或恢复运行时与 M01 完成提交相同。因此 M01 的 `course.properties`、起点、完成 tag、教程与持久 evidence 继续保留合同 `planVersion=0.3`。",
     prerequisiteUnitCodes: ["M00"],
     startRef: "course/m01-start",
     completeRef: "course/m01-complete",
@@ -17182,7 +25868,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     order: 30,
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.4",
-    planCompatibility: "当前 PLAN v0.16 只在 M12 已发布基线上为 M13 冻结静态权威路由与 shard 内多订单簿；M02 可寻址生命周期、10/34 corpus、M02H1、complete tag 与 evidence 不回写，也不表示后续 Java event hierarchy、WAL/Snapshot record shape、queue、Cluster codec 或 runtime 与 M02 完成提交相同。",
+    planCompatibility: "当前 PLAN v0.17 只在已发布 M13 之后新增可续接业务输出合同；M02 可寻址生命周期、10/34 corpus、M02H1、complete tag 与 evidence 不回写，也不表示后续 Java event hierarchy、WAL/Snapshot record shape、queue、Cluster codec 或 runtime 与 M02 完成提交相同。",
     prerequisiteUnitCodes: ["M01"],
     startRef: "course/m02-start",
     completeRef: "course/m02-complete",
@@ -17266,7 +25952,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     order: 40,
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.5",
-    planCompatibility: "当前 PLAN v0.16 只在 M12 已发布基线上为 M13 冻结静态权威路由与 shard 内多订单簿；M03 冻结 tag、M03G1 command canonical 身份、`matching-0.1.0` 与 evidence 不回写。后续新增 event shape、WAL/Snapshot source、queue、Cluster codec 和 runtime 只由对应单元的架构门禁验收，不重绑 M03 证据。",
+    planCompatibility: "当前 PLAN v0.17 只在已发布 M13 之后新增可续接业务输出合同；M03 冻结 tag、M03G1 command canonical 身份、`matching-0.1.0` 与 evidence 不回写。后续新增 event shape、WAL/Snapshot source、queue、Cluster codec 和 runtime 只由对应单元的架构门禁验收，不重绑 M03 证据。",
     prerequisiteUnitCodes: ["M02"],
     startRef: "course/m03-start",
     completeRef: "course/m03-complete",
@@ -17354,7 +26040,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     order: 50,
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.6",
-    planCompatibility: "当前 PLAN v0.16 只在 M12 已发布基线上为 M13 冻结静态权威路由与 shard 内多订单簿；M04 的五字段 ExecutionPolicy、14/48 固定语料、M04F1/M04H1/M04X1、complete tag、产品停止点与 evidence 不回写，后续归因、STP 事件、WAL frame、Snapshot state、queue 或 Cluster codec 也不表示 M04 Java event shape/event bytes 曾被冻结。",
+    planCompatibility: "当前 PLAN v0.17 只在已发布 M13 之后新增可续接业务输出合同；M04 的五字段 ExecutionPolicy、14/48 固定语料、M04F1/M04H1/M04X1、complete tag、产品停止点与 evidence 不回写，后续归因、STP 事件、WAL frame、Snapshot state、queue 或 Cluster codec 也不表示 M04 Java event shape/event bytes 曾被冻结。",
     prerequisiteUnitCodes: ["M03"],
     startRef: "course/m04-start",
     completeRef: "course/m04-complete",
@@ -17448,7 +26134,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     order: 60,
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.7",
-    planCompatibility: "PLAN v0.15 曾在 M11 之后为 M12 冻结单机三投票成员、Leader 进程故障、UNKNOWN 同身份重试、旧 Leader 追赶与无 quorum 失败关闭；PLAN v0.16 再单独签约 M13 静态路由。M05 的 RuleSet/activation fence、12/54 fixed、160×64、20 项 coverage、8 项 mutant、五篇 permalink、complete tag 与公开 evidence 保持不变，不因 Snapshot、性能资格、Cluster adapter 或分片合同回写。",
+    planCompatibility: "PLAN v0.17 仅新增 M14 可续接业务输出合同，以下已发布单元的合同与证据继续保留。PLAN v0.15 曾在 M11 之后为 M12 冻结单机三投票成员、Leader 进程故障、UNKNOWN 同身份重试、旧 Leader 追赶与无 quorum 失败关闭；PLAN v0.16 再单独签约 M13 静态路由。M05 的 RuleSet/activation fence、12/54 fixed、160×64、20 项 coverage、8 项 mutant、五篇 permalink、complete tag 与公开 evidence 保持不变，不因 Snapshot、性能资格、Cluster adapter 或分片合同回写。",
     prerequisiteUnitCodes: ["M04"],
     startRef: "course/m05-start",
     completeRef: "course/m05-complete",
@@ -17543,7 +26229,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     order: 70,
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.8",
-    planCompatibility: "当前 PLAN v0.16 只在 M12 已发布基线上为 M13 冻结静态权威路由与 shard 内多订单簿；M06 的 mode/Mass Cancel 语义、15/64 fixed、160×64、26 项 coverage、10 项 mutant、complete tag 与公开 evidence 不回写，Snapshot、负载或 Cluster 恢复路径也不能把状态默认为 OPEN。",
+    planCompatibility: "当前 PLAN v0.17 只在已发布 M13 之后新增可续接业务输出合同；M06 的 mode/Mass Cancel 语义、15/64 fixed、160×64、26 项 coverage、10 项 mutant、complete tag 与公开 evidence 不回写，Snapshot、负载或 Cluster 恢复路径也不能把状态默认为 OPEN。",
     prerequisiteUnitCodes: ["M05"],
     startRef: "course/m06-start",
     completeRef: "course/m06-complete",
@@ -17625,7 +26311,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     order: 80,
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.9",
-    planCompatibility: "当前 PLAN v0.16 只在 M12 已发布基线上为 M13 冻结静态权威路由与 shard 内多订单簿；M07 的 opaque participant group、taker-owned STP disposition、16/72 fixed、160×64、24 项 coverage、8 项 mutant、complete tag 与公开 evidence 不回写，Snapshot、负载与 Cluster restart 都必须完整保存其可恢复结果。",
+    planCompatibility: "当前 PLAN v0.17 只在已发布 M13 之后新增可续接业务输出合同；M07 的 opaque participant group、taker-owned STP disposition、16/72 fixed、160×64、24 项 coverage、8 项 mutant、complete tag 与公开 evidence 不回写，Snapshot、负载与 Cluster restart 都必须完整保存其可恢复结果。",
     prerequisiteUnitCodes: ["M06"],
     startRef: "course/m07-start",
     completeRef: "course/m07-complete",
@@ -17712,7 +26398,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     order: 90,
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.10",
-    planCompatibility: "当前 PLAN v0.16 只在 M12 已发布基线上为 M13 冻结静态权威路由与 shard 内多订单簿；M08 的 M08C1/M08W1、append→force→apply→ACK、durable identity、genesis recovery、complete tag 与公开 evidence 均不回写，M09 Snapshot、M10 queue 与 M11 Cluster codec 也不能被声称为 M08 WAL 格式的一部分。",
+    planCompatibility: "当前 PLAN v0.17 只在已发布 M13 之后新增可续接业务输出合同；M08 的 M08C1/M08W1、append→force→apply→ACK、durable identity、genesis recovery、complete tag 与公开 evidence 均不回写，M09 Snapshot、M10 queue 与 M11 Cluster codec 也不能被声称为 M08 WAL 格式的一部分。",
     prerequisiteUnitCodes: ["M07"],
     startRef: "course/m08-start",
     completeRef: "course/m08-complete",
@@ -17800,7 +26486,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     order: 100,
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.11",
-    planCompatibility: "当前 PLAN v0.16 只在 M12 已发布基线上为 M13 冻结静态权威路由与 shard 内多订单簿；M09 的 M09S1、RecoveryBudget、22/88 fixed、96×40 generated、32 项 obligation、12 个 candidate、complete tag 与公开 evidence 不回写，M10 queue、benchmark 或 M11 Cluster snapshot/codec 都不成为 M09 Snapshot/WAL 格式的一部分。",
+    planCompatibility: "当前 PLAN v0.17 只在已发布 M13 之后新增可续接业务输出合同；M09 的 M09S1、RecoveryBudget、22/88 fixed、96×40 generated、32 项 obligation、12 个 candidate、complete tag 与公开 evidence 不回写，M10 queue、benchmark 或 M11 Cluster snapshot/codec 都不成为 M09 Snapshot/WAL 格式的一部分。",
     prerequisiteUnitCodes: ["M08"],
     startRef: "course/m09-start",
     completeRef: "course/m09-complete",
@@ -17889,7 +26575,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     order: 110,
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.13",
-    planCompatibility: "当前 PLAN v0.16 只在 M12 已发布基线上为 M13 冻结静态权威路由与 shard 内多订单簿；M10 的 M10Q2 workload、环境绑定 knee/QOP、降序长稳态晋级、matching-0.5.0、complete tag 与公开 evidence 不回写，M11/M12 也不继承或重命名单机容量数字。",
+    planCompatibility: "当前 PLAN v0.17 只在已发布 M13 之后新增可续接业务输出合同；M10 的 M10Q2 workload、环境绑定 knee/QOP、降序长稳态晋级、matching-0.5.0、complete tag 与公开 evidence 不回写，M11/M12 也不继承或重命名单机容量数字。",
     prerequisiteUnitCodes: ["M09"],
     startRef: "course/m10-start",
     completeRef: "course/m10-complete",
@@ -17997,7 +26683,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     order: 120,
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.14",
-    planCompatibility: "当前 PLAN v0.16 只在 M12 已发布基线上为 M13 冻结静态权威路由与 shard 内多订单簿；M11 的 application request/response/snapshot current2/minReadable1、六份 Golden、Direct/Cluster/restart 等价、complete tag 与公开 evidence 均保持不变，M12 不回写其协议 bytes 或单节点结论。",
+    planCompatibility: "当前 PLAN v0.17 只在已发布 M13 之后新增可续接业务输出合同；M11 的 application request/response/snapshot current2/minReadable1、六份 Golden、Direct/Cluster/restart 等价、complete tag 与公开 evidence 均保持不变，M12 不回写其协议 bytes 或单节点结论。",
     prerequisiteUnitCodes: ["M10"],
     startRef: "course/m11-start",
     completeRef: "course/m11-complete",
@@ -18101,7 +26787,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     order: 130,
     lifecycle: "PUBLISHED",
     contractPlanVersion: "0.15",
-    planCompatibility: "PLAN v0.16 新签约 M13 静态分片，并将升级恢复与运行资格归入候选 M15；M12 的单机单分片 fail-stop 合同、refs 与 evidence 均保留原样。",
+    planCompatibility: "PLAN v0.17 仅新增 M14 可续接业务输出合同，以下已发布单元的合同与证据继续保留。PLAN v0.16 新签约 M13 静态分片，并将升级恢复与运行资格归入候选 M15；M12 的单机单分片 fail-stop 合同、refs 与 evidence 均保留原样。",
     prerequisiteUnitCodes: ["M11"],
     startRef: "course/m12-start",
     completeRef: "course/m12-complete",
@@ -18211,6 +26897,7 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
   order: 140,
   lifecycle: "PUBLISHED",
   contractPlanVersion: "0.16",
+  planCompatibility: "PLAN v0.17 在已发布 M13 之后签约 M14 可续接业务输出；M13 的静态权威路由、多订单簿、64×64 生成历史、两组六 JVM 故障证据、五篇教程、固定 refs 与公开 evidence 保留原样，不回写历史合同，也不把新增归属/outbox/cursor/fence 声称为 M13 已有能力。",
   prerequisiteUnitCodes: ["M12"],
   startRef: "course/m13-start",
   adds: ["instrument 到 shard 的版本化权威静态路由"],
@@ -18261,6 +26948,79 @@ export const PRACTICE_UNITS: readonly PracticeUnit[] = [
     { lessonOrder: 50, permalink: "static-shard-evidence-and-runbook" },
   ],
   evidenceContract: M13_EVIDENCE_CONTRACT,
+},
+  {
+  projectSlug: "high-availability-cex",
+  profileVersion: "SPOT-CEX-1.0",
+  code: "M14",
+  trackCode: "M",
+  title: "可续接业务输出",
+  summary: "把已应用的业务事实保存为归属明确、可恢复且可连续消费的两条输出流。",
+  objective:
+    "从显式 OutputGenesis 起，同一次 apply 形成 Execution 与公开 Market outbox；消费者按独立 durable cursor 续接，旧 publisher 受 fence 约束，积压达到 Q1 上限时确定性背压。",
+  order: 150,
+  lifecycle: "PUBLISHED",
+  contractPlanVersion: "0.17",
+  prerequisiteUnitCodes: ["M13"],
+  startRef: "course/m14-start",
+  expectedLessons: [
+    {
+      lessonOrder: 10,
+      permalink: "accountable-execution-and-public-market-contracts",
+    },
+    { lessonOrder: 20, permalink: "same-apply-recoverable-outbox" },
+    {
+      lessonOrder: 30,
+      permalink: "execution-replay-and-market-snapshot-resume",
+    },
+    { lessonOrder: 40, permalink: "durable-cursor-and-publisher-fencing" },
+    {
+      lessonOrder: 50,
+      permalink: "bounded-output-backpressure-and-resume-evidence",
+    },
+  ],
+  adds: ["从显式 genesis 开始的可恢复、可续接业务输出"],
+  delivers: [
+    "每 shard 独立 Execution/Market stream、typed batch、同 apply outbox 与可恢复输出位置",
+    "opaque accountRef 的 maker/taker 与订单终态归属、严格公共字段投影",
+    "完整 batch replay、whole-shard Market snapshot cut、durable cursor、publisher authority 与有界传输",
+  ],
+  freezes: [
+    "严格空 resting book 的 M13 import；legacy retry 保留原结果但不补造 genesis 之前的输出",
+    "Execution 每个新准入 business/route command 恰好一个 batch；Market 只因公共变化或公共成交前进，双方序号不互借",
+    "M14-Q1 canonical profile：Execution 最多 32 个 pending batch / 262144 bytes，每 batch 最多 256 records / 65536 bytes；Market 最多 16 batch / 524288 bytes，whole-shard snapshot 最多 1048576 bytes",
+    "控制 UUID/controlRevision 独立于业务身份与序号；ACK 以真实 durable receipt 为前提，旧 authority 在可信 ADMIN_OK 后被外部 sink 拒绝",
+    "12 个本地场景、C01–C07 七个真实进程 witness、seed 6414 的 48×80=3840 个逻辑生成动作（primitive attempts 单独计数）与 8 项语义 mutant",
+    "五篇 lessonOrder/permalink 在起点之前固定；M00–M13 合同、refs、Golden 与已公开 evidence 不回写",
+  ],
+  excludes: [
+    "Counter、Rest、账户授权、余额、费用、结算和网络 exactly-once",
+    "M13 存量无归属订单导入、历史 Execution 补造、跨 shard 原子顺序和在线迁移",
+    "全历史裁剪、总状态或恢复时间有界、性能/RTO/RPO、cold backup、升级回滚与产品 release",
+  ],
+  gate: [
+    "精确不可变 start 的继承 clean build GREEN 与结构化 GOAL_NOT_IMPLEMENTED RED，之后才进入 READY/实施",
+    "matching-core Git tree 与 M13 完成点完全相同；独立 linear reference 与 typed output/public projection oracle、状态不变拒绝、严格恢复校验及八项 production-control 语义反例",
+    "两组六 member、独立 publisher 与 durable sink 实际进程故障、活旧 publisher 延迟、ACK 窗口、容量分片隔离、分片传输和六副本 snapshot/load",
+    "clean annotated completion 的 fresh qualification/export、最初报告 bytes 绑定、严格 inventory/hash 与完整 teardown；通过后原子公开五篇教程",
+  ],
+  interaction: [
+    "L0 本地 JVM：先预测归属、gap、ACK/fence 与容量故障，再运行固定入口并核对原始事实；无浏览器模型或远程 Judge",
+  ],
+  evidence: [
+    "冻结 spec/profile/workload/schema、结构化 RED、逐动作 typed output/oracle、完整 batch 和 snapshot 原始 bytes",
+    "实际 PID/端口/目录、committed grant 到 ADMIN_OK 的安装链、durable journal 与重复验收、七个故障 witness、frame/queue 高水位、六成员恢复与清理报告",
+    "clean course/m14-complete / 56c4ec09ddf9fcf57f1cce763ae8b451ba7f394f 的 fresh manifest 已生成：https://lcha-reln.github.io/signal-grid-blog/practice/high-availability-cex/m14/evidence/manifest.json；SHA-256 7eb56335954e03a6792b8f9971b922e3bd45bf5dcbd60e47f1e5cedde3fb2081，绑定 332 个 artifact、有限 claim 与 12 条 limitation",
+  ],
+  stopPoint:
+    "从显式 genesis 起具备有限 Q1 输出恢复、续接、fencing 与背压资格；M14 不发布产品版本，matching-1.0.0 留到 M15 运营资格闭环之后。",
+  localCommands: ["./gradlew clean build", "./gradlew m14Check"],
+  completeRef: "course/m14-complete",
+  completeCommit: "56c4ec09ddf9fcf57f1cce763ae8b451ba7f394f",
+  evidencePath: "build/lab-evidence/M14/manifest.json",
+  evidenceUrl:
+    "https://lcha-reln.github.io/signal-grid-blog/practice/high-availability-cex/m14/evidence/manifest.json",
+  evidenceContract: M14_EVIDENCE_CONTRACT,
 },
 ];
 

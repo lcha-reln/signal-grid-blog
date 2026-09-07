@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/lcha-reln/cex-matching/main/schemas/matching.m12.environment.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "status", "javaRuntime", "javaVersion", "javaVendor", "vmName", "jvmArguments", "osName", "osVersion", "osArchitecture", "availableProcessors", "physicalMemoryBytes", "maximumHeapBytes", "garbageCollectorNames", "cpuModel", "storageDevice", "filesystem", "powerPolicy", "walRoot", "walRootUri", "walFileStoreName", "walFileStoreType", "walFileStoreTotalSpaceBytes", "walFileStoreUsableSpaceBytes", "walFileStoreUnallocatedSpaceBytes", "runStartedAt", "runFinishedAt", "correctnessOnly", "performanceQualified", "singleHost"],
+  "properties": {
+    "schemaVersion": { "const": "matching.m12.environment.v1" },
+    "status": { "const": "PASS" },
+    "javaRuntime": { "$ref": "#/$defs/text" },
+    "javaVersion": { "$ref": "#/$defs/text" },
+    "javaVendor": { "$ref": "#/$defs/text" },
+    "vmName": { "$ref": "#/$defs/text" },
+    "jvmArguments": { "type": "array", "maxItems": 256, "items": { "type": "string", "maxLength": 4096 } },
+    "osName": { "$ref": "#/$defs/text" },
+    "osVersion": { "$ref": "#/$defs/text" },
+    "osArchitecture": { "$ref": "#/$defs/text" },
+    "availableProcessors": { "type": "integer", "minimum": 1 },
+    "physicalMemoryBytes": { "type": "integer", "minimum": 1 },
+    "maximumHeapBytes": { "type": "integer", "minimum": 1 },
+    "garbageCollectorNames": { "type": "array", "minItems": 1, "maxItems": 32, "uniqueItems": true, "items": { "$ref": "#/$defs/text" } },
+    "cpuModel": { "$ref": "#/$defs/text" },
+    "storageDevice": { "$ref": "#/$defs/text" },
+    "filesystem": { "$ref": "#/$defs/text" },
+    "powerPolicy": { "$ref": "#/$defs/text" },
+    "walRoot": { "$ref": "#/$defs/text" },
+    "walRootUri": { "type": "string", "format": "uri", "minLength": 1, "maxLength": 4096 },
+    "walFileStoreName": { "$ref": "#/$defs/text" },
+    "walFileStoreType": { "$ref": "#/$defs/text" },
+    "walFileStoreTotalSpaceBytes": { "type": "integer", "minimum": 1 },
+    "walFileStoreUsableSpaceBytes": { "type": "integer", "minimum": 0 },
+    "walFileStoreUnallocatedSpaceBytes": { "type": "integer", "minimum": 0 },
+    "runStartedAt": { "type": "string", "format": "date-time" },
+    "runFinishedAt": { "type": "string", "format": "date-time" },
+    "correctnessOnly": { "const": true },
+    "performanceQualified": { "const": false },
+    "singleHost": { "const": true }
+  },
+  "$defs": {
+    "text": { "type": "string", "minLength": 1, "maxLength": 4096 }
+  }
+}

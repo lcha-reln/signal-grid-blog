@@ -1,0 +1,995 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lcha-reln.github.io/signal-grid-blog/schemas/matching.m14.workload.v1.schema.json",
+  "title": "Matching M14 immutable Q1 workload v1",
+  "description": "Exact pre-implementation contract. A different value requires a new workload version and start identity; structural acceptance cannot silently change distribution.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "unit",
+    "contractPlanVersion",
+    "objective",
+    "dependencyBaseline",
+    "profile",
+    "initialState",
+    "generator",
+    "fixedScenarios",
+    "processScenarios",
+    "realTopology",
+    "deadlines",
+    "architectureObligations",
+    "preImplementationByteBudget",
+    "requiredMutants",
+    "systemErrorControls",
+    "classification",
+    "tutorialPermalinks",
+    "limitations",
+    "releaseTarget"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "matching.m14.workload.v1"
+    },
+    "unit": {
+      "const": "M14"
+    },
+    "contractPlanVersion": {
+      "const": "0.17"
+    },
+    "objective": {
+      "const": "Qualify finite Q1 accountable Execution and public Market streams from an explicit empty-resting M13 genesis, same-apply recoverable output, durable resumable cursors, trusted publisher grants, and bounded pending output across two real three-member groups."
+    },
+    "dependencyBaseline": {
+      "const": {
+        "sourceRef": "course/m13-complete",
+        "sourceCommit": "eb1b65d2ea2159ba607e3271f0bfd209ea4906ea",
+        "aeronVersion": "1.52.2",
+        "agronaVersion": "2.5.0",
+        "javaRelease": 25,
+        "m11GoldenCount": 6
+      }
+    },
+    "profile": {
+      "const": {
+        "path": "matching-testkit/src/test/resources/m14/profile-q1.json",
+        "sha256": "02ef0ee44900e1a472fea03ed5cb406215550994826b53f4b708e33815c6be9d"
+      }
+    },
+    "initialState": {
+      "const": {
+        "routeVersion": 1,
+        "routeOwner": "ops-m14",
+        "routes": {
+          "BTC-USDT": 1,
+          "ETH-USDT": 1,
+          "SOL-USDT": 2
+        },
+        "genesisPolicy": "M13_EMPTY_RESTING_BOOKS_ONLY",
+        "accounts": [
+          "acct-0",
+          "acct-1",
+          "acct-2",
+          "acct-3"
+        ],
+        "accountIsProducerOrStpGroup": false
+      }
+    },
+    "generator": {
+      "const": {
+        "algorithm": "SPLITMIX64_FIXED_FAMILY_V1",
+        "seed": 6414,
+        "histories": 48,
+        "actionsPerHistory": 80,
+        "logicalActions": 3840,
+        "actionFamilyOrder": [
+          "PLACE",
+          "CANCEL_PREVIOUS",
+          "BOOK_OR_ROUTE_CONTROL",
+          "EXACT_RETRY_OR_CONFLICT",
+          "GRANT_ACK_OR_SATURATE_DRAIN",
+          "READ_CURSOR_BOUNDARIES",
+          "MARKET_REBUILD",
+          "SNAPSHOT_RESTORE"
+        ],
+        "drawsPerAction": 4,
+        "stateScope": "ONE_GLOBAL_UNSIGNED_64BIT_STATE_HISTORY_MAJOR_ACTION_MINOR",
+        "corpusPath": "matching-testkit/src/test/resources/m14/generated-corpus-v1.json",
+        "corpusSha256": "634b17ce63eba6aeacd6cab8cc04a69786dac3a3fc15fc8fde1e942b6486e449",
+        "saturationHistories": [
+          0,
+          8,
+          16,
+          24,
+          32,
+          40
+        ],
+        "saturationActionIndex": 36,
+        "preludeBusinessCommandsPerHistory": 1,
+        "minimumActualTradeRecords": 48,
+        "minimumDifferentMakerTakerAccountAssertions": 48,
+        "oracle": "INDEPENDENT_LINEAR_TYPED_OUTPUT_V1",
+        "macroExpansionContract": "docs/specs/m14-process-protocol.md#frozen-input-program"
+      }
+    },
+    "fixedScenarios": {
+      "const": [
+        {
+          "id": "M14-L01-TYPED-ACCOUNTABLE-TRADE",
+          "inputProgram": [
+            {
+              "operation": "FRESH_GENESIS"
+            },
+            {
+              "operation": "PLACE",
+              "instrument": "BTC-USDT",
+              "orderId": 101,
+              "side": "SELL",
+              "priceTicks": 100,
+              "quantityLots": 3,
+              "executionPolicy": "GTC",
+              "participantGroupId": 7,
+              "stpPolicy": "CANCEL_TAKER",
+              "accountRef": "maker-A"
+            },
+            {
+              "operation": "PLACE",
+              "instrument": "BTC-USDT",
+              "orderId": 102,
+              "side": "BUY",
+              "priceTicks": 100,
+              "quantityLots": 2,
+              "executionPolicy": "GTC",
+              "participantGroupId": 8,
+              "stpPolicy": "CANCEL_TAKER",
+              "accountRef": "taker-B"
+            }
+          ],
+          "expected": {
+            "result": "PASS",
+            "proofObligations": [
+              "MAKER_ACCOUNT_FROM_ORDER_101",
+              "TAKER_ACCOUNT_FROM_ORDER_102",
+              "TRADE_100_TICKS_2_LOTS",
+              "MAKER_REMAINDER_1",
+              "PUBLIC_FIELD_WHITELIST",
+              "INDEPENDENT_STREAM_IDENTITIES"
+            ],
+            "businessMismatch": "STUDENT_FAILURE",
+            "infrastructureOrMalformedReport": "SYSTEM_ERROR"
+          }
+        },
+        {
+          "id": "M14-L02-TERMINAL-AND-CONTROL-OUTPUT",
+          "inputProgram": [
+            {
+              "operation": "FRESH_GENESIS"
+            },
+            {
+              "operation": "POLICY_MATRIX",
+              "policies": [
+                "GTC",
+                "IOC",
+                "FOK",
+                "POST_ONLY"
+              ],
+              "makerLotsByLiquidity": {
+                "EMPTY": 0,
+                "PARTIAL": 2,
+                "SUFFICIENT": 3
+              },
+              "priceTicks": 100,
+              "takerLots": 3,
+              "accounts": [
+                "maker-A",
+                "taker-B"
+              ]
+            },
+            {
+              "operation": "FIELD_REJECTION_MATRIX",
+              "invalidFields": [
+                "quantityLots=0",
+                "priceTicks=0",
+                "orderId=0"
+              ]
+            },
+            {
+              "operation": "MISSING_CANCEL",
+              "orderId": 999
+            },
+            {
+              "operation": "RULE_PREPARE_ACTIVATE_MATRIX",
+              "versions": [
+                2,
+                3
+              ],
+              "inclusivePriceBands": [
+                [
+                  90,
+                  110
+                ],
+                [
+                  95,
+                  105
+                ]
+              ],
+              "expectedModes": [
+                "OPEN",
+                "CANCEL_ONLY",
+                "HALTED"
+              ]
+            },
+            {
+              "operation": "APPEND_ROUTE_BOTH_SHARDS",
+              "addedInstrument": "DOGE-USDT",
+              "ownerShard": 2,
+              "newVersion": 2
+            }
+          ],
+          "expected": {
+            "result": "PASS",
+            "proofObligations": [
+              "ONE_EXECUTION_BATCH_PER_NEW_APPLY",
+              "NO_SYNTHETIC_ACCOUNT_RELEASE",
+              "MARKET_ONLY_PUBLIC_CHANGE",
+              "BOOK_MODE_RULE_AND_ROUTE_OUTPUT",
+              "ORIGINAL_POLICY_SEMANTICS"
+            ],
+            "businessMismatch": "STUDENT_FAILURE",
+            "infrastructureOrMalformedReport": "SYSTEM_ERROR"
+          }
+        },
+        {
+          "id": "M14-L03-STP-AND-MASS-CANCEL-OWNERSHIP",
+          "inputProgram": [
+            {
+              "operation": "STP_MATRIX",
+              "policies": [
+                "CANCEL_TAKER",
+                "CANCEL_MAKER",
+                "CANCEL_BOTH"
+              ],
+              "groupId": 17,
+              "priceTicks": 100,
+              "makerLots": 3,
+              "takerLots": 2,
+              "accounts": [
+                "same-group-maker",
+                "same-group-taker"
+              ]
+            },
+            {
+              "operation": "MASS_CANCEL_OWNERSHIP",
+              "restingOrders": [
+                {
+                  "orderId": 201,
+                  "accountRef": "acct-0"
+                },
+                {
+                  "orderId": 202,
+                  "accountRef": "acct-1"
+                },
+                {
+                  "orderId": 203,
+                  "accountRef": "acct-2"
+                }
+              ],
+              "mode": "HALTED",
+              "operatorId": "ops-m14"
+            }
+          ],
+          "expected": {
+            "result": "PASS",
+            "proofObligations": [
+              "EACH_STP_DISPOSITION_EXACT",
+              "NO_FICTITIOUS_TRADE",
+              "CANCEL_OWNERSHIP_FROM_AFFECTED_ORDER",
+              "OPERATOR_NOT_ORDER_ACCOUNT"
+            ],
+            "businessMismatch": "STUDENT_FAILURE",
+            "infrastructureOrMalformedReport": "SYSTEM_ERROR"
+          }
+        },
+        {
+          "id": "M14-L04-IDENTITY-AND-LEGACY-REPLAY",
+          "inputProgram": [
+            {
+              "operation": "IMPORT_TERMINAL_M13_PREFIX",
+              "placeOrderId": 301,
+              "priceTicks": 100,
+              "quantityLots": 1,
+              "cancelBeforeImport": true
+            },
+            {
+              "operation": "LEGACY_RETRY_MATRIX",
+              "accountPresence": [
+                "ABSENT",
+                "PRESENT"
+              ],
+              "presentAccount": "invented-owner"
+            },
+            {
+              "operation": "M14_RETRY_MATRIX",
+              "accountRef": "acct-0",
+              "conflictingAccount": "acct-1",
+              "contexts": [
+                "NORMAL",
+                "NEW_ROUTE",
+                "NEW_PUBLISHER_GRANT",
+                "FULL_EXECUTION",
+                "SNAPSHOT_RESTART",
+                "ORIGINAL_OUTPUT_EVICTED"
+              ]
+            }
+          ],
+          "expected": {
+            "result": "PASS",
+            "proofObligations": [
+              "LEGACY_RESULT_EXACT_NO_BACKFILL",
+              "LEGACY_ATTRIBUTION_FORBIDDEN",
+              "EXACT_NEW_RETRY_ORIGINAL_OUTPUT_ID",
+              "CONFLICT_NO_MUTATION",
+              "DUPLICATE_BEFORE_CAPACITY"
+            ],
+            "businessMismatch": "STUDENT_FAILURE",
+            "infrastructureOrMalformedReport": "SYSTEM_ERROR"
+          }
+        },
+        {
+          "id": "M14-L05-GENESIS-AND-PROFILE-IMPORT",
+          "inputProgram": [
+            {
+              "operation": "GENESIS_IMPORT_MATRIX",
+              "cases": [
+                "EMPTY",
+                "TERMINAL_IDENTITIES",
+                "NONEMPTY_RESTING_BOOK",
+                "ALTERED_M13_DIGEST",
+                "ALTERED_ROUTE_CUT",
+                "FOREIGN_EXPECTED_GENESIS",
+                "ALTERED_PROFILE_VALUE_AND_HASH",
+                "UNKNOWN_PROFILE_FIELD",
+                "MISSING_PROFILE_FIELD"
+              ]
+            }
+          ],
+          "expected": {
+            "result": "PASS",
+            "proofObligations": [
+              "ONLY_EMPTY_RESTING_IMPORT",
+              "PRESERVE_VALID_LEGACY_PREFIX",
+              "REJECT_CROSS_GENESIS",
+              "EXACT_Q1_PROFILE_REQUIRED"
+            ],
+            "businessMismatch": "STUDENT_FAILURE",
+            "infrastructureOrMalformedReport": "SYSTEM_ERROR"
+          }
+        },
+        {
+          "id": "M14-L06-SAME-APPLY-CAPACITY",
+          "inputProgram": [
+            {
+              "operation": "SATURATE_DRAIN",
+              "targetShard": 1,
+              "saturationNewRequests": 32,
+              "overflowProbeRequests": 1
+            },
+            {
+              "operation": "BYTE_CAPACITY_SWEEPS",
+              "books": 16,
+              "makersPerBook": 128,
+              "makerSide": "SELL",
+              "firstPriceTicks": 100,
+              "quantityLotsEach": 1,
+              "makerAccount": "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM",
+              "takerAccount": "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT",
+              "ackPreloadImmediately": true,
+              "retainSweepsUntilRefusal": true,
+              "sweepQuantityLots": 128,
+              "sweepLimitPriceTicks": 227,
+              "maxSweepAttempts": 16
+            },
+            {
+              "operation": "RECORD_LIMIT_REFUSAL",
+              "makers": 128,
+              "distinctMakerPrices": true,
+              "takerLots": 129,
+              "takerPolicy": "GTC",
+              "expectedMarketRecords": 257,
+              "maxRecordsPerBatch": 256
+            },
+            {
+              "operation": "RESTING_LIMIT_REFUSAL",
+              "initialRestingOrders": 128,
+              "extraOrders": 1
+            },
+            {
+              "operation": "BOOK_LIMIT_REFUSAL",
+              "initialBooks": 16,
+              "extraBooks": 1
+            },
+            {
+              "operation": "MARKET_LEVEL_SUM_LIMIT_REFUSAL",
+              "instrument": "BTC-USDT",
+              "side": "BUY",
+              "priceTicks": 100,
+              "firstQuantityLots": "9223372036854775807",
+              "secondQuantityLots": "1",
+              "accounts": [
+                "acct-0",
+                "acct-1"
+              ],
+              "expected": "OUTPUT_PROFILE_LIMIT_COMPLETE_STATE_UNCHANGED"
+            }
+          ],
+          "expected": {
+            "result": "PASS",
+            "proofObligations": [
+              "COUNT_BOUND_REACHED_32",
+              "BYTE_BOUND_REACHED_BEFORE_COUNT_32",
+              "REFUSAL_FULL_STATE_EQUALITY",
+              "CONTROL_WHILE_FULL",
+              "SAME_REFUSED_ID_APPLIES_AFTER_ACK",
+              "RECORD_ORDER_BOOK_PROFILE_LIMITS_ACTUAL",
+              "MARKET_LEVEL_SUM_OVERFLOW_IS_PROFILE_REFUSAL"
+            ],
+            "businessMismatch": "STUDENT_FAILURE",
+            "infrastructureOrMalformedReport": "SYSTEM_ERROR"
+          }
+        },
+        {
+          "id": "M14-L07-EXECUTION-REPLAY-AND-GAP",
+          "inputProgram": [
+            {
+              "operation": "GENERATE_NO_EFFECT_BATCHES",
+              "count": 7
+            },
+            {
+              "operation": "PAGE_REPLAY",
+              "maxBatches": 4,
+              "maxBytes": 262144
+            },
+            {
+              "operation": "ACK_MATRIX",
+              "cases": [
+                "CONTIGUOUS_VALID",
+                "CUMULATIVE_ZERO_TO_TWO_AFTER_BOTH_DURABLE",
+                "DUPLICATE_EXACT",
+                "BACKWARD",
+                "FUTURE",
+                "WRONG_DIGEST",
+                "FOREIGN_GENESIS",
+                "WRONG_CONSUMER",
+                "STALE_GRANT"
+              ]
+            },
+            {
+              "operation": "READ_EVICTED_EXECUTION",
+              "afterSequence": 0
+            }
+          ],
+          "expected": {
+            "result": "PASS",
+            "proofObligations": [
+              "WHOLE_BATCH_PAGING",
+              "EXACT_REPEAT_BYTES",
+              "VALID_CUMULATIVE_ACK_NOT_FALSE_GAP",
+              "DURABLE_ACK_BEFORE_EVICTION",
+              "EXPLICIT_UNRECOVERABLE_GAP",
+              "NO_SNAPSHOT_EXECUTION_SKIP"
+            ],
+            "businessMismatch": "STUDENT_FAILURE",
+            "infrastructureOrMalformedReport": "SYSTEM_ERROR"
+          }
+        },
+        {
+          "id": "M14-L08-MARKET-SNAPSHOT-SUFFIX",
+          "inputProgram": [
+            {
+              "operation": "MARKET_REBUILD",
+              "instrument": "BTC-USDT",
+              "pairedPlaceCancelCount": 10,
+              "suffixPairCount": 1,
+              "firstOrderId": 8000,
+              "priceTicks": 1,
+              "quantityLots": 1,
+              "accountRef": "acct-3"
+            },
+            {
+              "operation": "SNAPSHOT_CURSOR_NEGATIVES",
+              "cases": [
+                "FOREIGN_GENESIS",
+                "WRONG_SHARD",
+                "BACKWARD_CUT",
+                "OFF_BY_ONE_CUT",
+                "ALTERED_DIGEST",
+                "EXECUTION_KIND",
+                "CONCURRENT_NEW_MARKET_CUT"
+              ]
+            }
+          ],
+          "expected": {
+            "result": "PASS",
+            "proofObligations": [
+              "REAL_16_BATCH_RETENTION_GAP",
+              "WHOLE_SHARD_ALL_BOOKS",
+              "SNAPSHOT_CUT_SUFFIX_EQUALITY",
+              "NO_PRIVATE_FIELDS",
+              "NO_TRADE_HISTORY_RECOVERY_CLAIM"
+            ],
+            "businessMismatch": "STUDENT_FAILURE",
+            "infrastructureOrMalformedReport": "SYSTEM_ERROR"
+          }
+        },
+        {
+          "id": "M14-L09-FENCE-AND-CONTROL-IDENTITY",
+          "inputProgram": [
+            {
+              "operation": "CONTROL_MATRIX",
+              "cases": [
+                "INDEPENDENT_STREAM_GRANTS",
+                "EXACT_CONTROL_RETRY",
+                "SAME_ID_CHANGED_PAYLOAD",
+                "WRONG_CONTROL_REVISION",
+                "OLD_GRANT_ACK_NEW_ID",
+                "EXACT_OLD_CONTROL_RETRY",
+                "UNINSTALLED_HIGHER_DATA_EPOCH",
+                "CURRENT_ACK_NO_CHANGE"
+              ]
+            }
+          ],
+          "expected": {
+            "result": "PASS",
+            "proofObligations": [
+              "CONTROL_ONLY_REVISION",
+              "DATA_CANNOT_AUTHORIZE",
+              "STALE_CONTROL_NO_EVICTION",
+              "EXACT_CONTROL_RETRY_NO_MUTATION",
+              "TRUSTED_ADMIN_INSTALL_ORDER"
+            ],
+            "businessMismatch": "STUDENT_FAILURE",
+            "infrastructureOrMalformedReport": "SYSTEM_ERROR"
+          }
+        },
+        {
+          "id": "M14-L10-SNAPSHOT-BUSINESS-OUTPUT-CUT",
+          "inputProgram": [
+            {
+              "operation": "SNAPSHOT_CUT_MATRIX",
+              "cuts": [
+                "PENDING_OUTPUT",
+                "ACKED_OUTPUT",
+                "NEW_GRANT",
+                "ROUTE_ADDED",
+                "MARKET_EVICTED"
+              ],
+              "suffixPairs": 2
+            }
+          ],
+          "expected": {
+            "result": "PASS",
+            "proofObligations": [
+              "SNAPSHOT_SUFFIX_DIRECT_EQUIVALENCE",
+              "FULL_OUTPUT_IDENTITY_AND_BYTES",
+              "CONTROL_BUSINESS_INTERLEAVING",
+              "ORIGINAL_RETRY_AFTER_RESTORE"
+            ],
+            "businessMismatch": "STUDENT_FAILURE",
+            "infrastructureOrMalformedReport": "SYSTEM_ERROR"
+          }
+        },
+        {
+          "id": "M14-L11-SEMANTIC-SNAPSHOT-CORRUPTION",
+          "inputProgram": [
+            {
+              "operation": "RECHECKSUM_CORRUPTION_MATRIX",
+              "mutations": [
+                "EARLY_ACCOUNT",
+                "EARLY_TYPED_EVENT",
+                "EARLY_BATCH_IDENTITY",
+                "PROFILE",
+                "GENESIS",
+                "MARKET_CUT",
+                "RETAINED_RING_HOLE",
+                "ACK_AHEAD",
+                "GRANT_REGRESSION",
+                "CONTROL_INTERLEAVING",
+                "MISSING_ORIGINAL_OUTPUT_BINDING"
+              ]
+            }
+          ],
+          "expected": {
+            "result": "PASS",
+            "proofObligations": [
+              "EVERY_MUTATED_IMAGE_REJECTED_BEFORE_INSTALL",
+              "CHECKSUM_NOT_SEMANTIC_PROOF",
+              "ORIGINAL_STATE_UNCHANGED"
+            ],
+            "businessMismatch": "STUDENT_FAILURE",
+            "infrastructureOrMalformedReport": "SYSTEM_ERROR"
+          }
+        },
+        {
+          "id": "M14-L12-CODEC-AND-WORK-BUDGET",
+          "inputProgram": [
+            {
+              "operation": "TYPED_VARIANT_ROUNDTRIP",
+              "coverage": "ALL_M08_MATCHING_CONTROL_MASS_CANCEL_AND_ROUTE_VARIANTS"
+            },
+            {
+              "operation": "PROTOCOL_NEGATIVE_MATRIX",
+              "cases": [
+                "TRUNCATED",
+                "OVERSIZED",
+                "UNKNOWN_VERSION",
+                "UNKNOWN_ENUM",
+                "DUPLICATE_MAP_KEY",
+                "NONCANONICAL_ORDER",
+                "INVALID_UTF8",
+                "FRAME_MIXED_MESSAGE",
+                "FRAME_DUPLICATE_INDEX",
+                "FRAME_MISSING_TAIL",
+                "FRAME_TOTAL_HASH_MISMATCH"
+              ]
+            },
+            {
+              "operation": "FRAME_AND_QUEUE_LIMITS",
+              "largeBatchBytesGreaterThan": 4096,
+              "largeSnapshotBytesGreaterThan": 4096,
+              "maxBatchBytes": 65536,
+              "maxSnapshotBytes": 1048576
+            }
+          ],
+          "expected": {
+            "result": "PASS",
+            "proofObligations": [
+              "CANONICAL_TYPED_BYTES",
+              "NO_UNBOUNDED_ALLOCATION",
+              "ACTUAL_FRAME_AND_QUEUE_HIGH_WATER",
+              "PARTIAL_MESSAGE_NO_CURSOR_ADVANCE"
+            ],
+            "businessMismatch": "STUDENT_FAILURE",
+            "infrastructureOrMalformedReport": "SYSTEM_ERROR"
+          }
+        }
+      ]
+    },
+    "processScenarios": {
+      "const": [
+        {
+          "id": "M14-C01-APPLY-BEFORE-PUBLISH",
+          "inputProgram": [
+            {
+              "operation": "PAUSE_PUBLISHER",
+              "barrier": "BEFORE_NEXT_READ"
+            },
+            {
+              "operation": "APPLY_BUSINESS_AND_OBSERVE_ALL_LIVE"
+            },
+            {
+              "operation": "KILL_OBSERVED_SHARD1_LEADER"
+            },
+            {
+              "operation": "AWAIT_REPLACEMENT_AND_RESUME"
+            }
+          ],
+          "expected": {
+            "result": "PASS",
+            "proofObligations": [
+              "APPLIED_BATCH_SAME_BYTES_AFTER_FAILOVER",
+              "ONE_DURABLE_SINK_ACCEPTANCE",
+              "ORIGINAL_RETRY_NO_NEW_OUTPUT"
+            ],
+            "businessMismatch": "STUDENT_FAILURE",
+            "infrastructureOrMalformedReport": "SYSTEM_ERROR"
+          }
+        },
+        {
+          "id": "M14-C02-DURABLE-WRITE-BEFORE-ACK-LOSS",
+          "inputProgram": [
+            {
+              "operation": "PAUSE_SINK",
+              "barrier": "JOURNAL_FORCED_BEFORE_ACK_WRITE"
+            },
+            {
+              "operation": "KILL_AND_RESTART_SINK_ORIGINAL_DIRECTORY"
+            },
+            {
+              "operation": "REDELIVER_SAME_BATCH"
+            }
+          ],
+          "expected": {
+            "result": "PASS",
+            "proofObligations": [
+              "FORCED_FRONTIER_SURVIVES",
+              "DUPLICATE_DELIVERY_SINGLE_ACCEPTANCE",
+              "REPLICATED_CURSOR_NOT_PREMATURE"
+            ],
+            "businessMismatch": "STUDENT_FAILURE",
+            "infrastructureOrMalformedReport": "SYSTEM_ERROR"
+          }
+        },
+        {
+          "id": "M14-C03-DURABLE-ACK-BEFORE-REPLICATION",
+          "inputProgram": [
+            {
+              "operation": "PAUSE_PUBLISHER",
+              "barrier": "DURABLE_ACK_RECEIVED_BEFORE_CLUSTER_SUBMIT"
+            },
+            {
+              "operation": "KILL_PUBLISHER"
+            },
+            {
+              "operation": "OBSERVE_UNCHANGED_REPLICA_CURSOR"
+            },
+            {
+              "operation": "REPLACE_REDELIVER_AND_COMMIT_ACK"
+            }
+          ],
+          "expected": {
+            "result": "PASS",
+            "proofObligations": [
+              "ACTUAL_ACK_RECEIVED",
+              "NO_ACK_CONTROL_SUBMITTED_BEFORE_CRASH",
+              "OUTBOX_RETAINED_UNTIL_VALID_REPLICATED_ACK"
+            ],
+            "businessMismatch": "STUDENT_FAILURE",
+            "infrastructureOrMalformedReport": "SYSTEM_ERROR"
+          }
+        },
+        {
+          "id": "M14-C04-LIVE-STALE-PUBLISHER",
+          "inputProgram": [
+            {
+              "operation": "PAUSE_OLD_PUBLISHER_WITH_CACHED_DATA_AND_ACK"
+            },
+            {
+              "operation": "COMMIT_NEW_GRANT_OBSERVE_REPLICAS_ADMIN_FORCE"
+            },
+            {
+              "operation": "AWAIT_ADMIN_OK_START_NEW_PUBLISHER"
+            },
+            {
+              "operation": "RELEASE_OLD_DATA_AND_OLD_GRANT_NEW_ID_ACK"
+            }
+          ],
+          "expected": {
+            "result": "PASS",
+            "proofObligations": [
+              "OLD_PID_ALIVE_AT_BOTH_ATTEMPTS",
+              "STALE_DATA_REJECTED_AFTER_ADMIN_OK",
+              "STALE_ACK_NO_CURSOR_OR_EVICTION_DELTA",
+              "NEW_AUTHORITY_SAME_STABLE_BATCH_BYTES",
+              "HIGHER_DATA_EPOCH_DOES_NOT_SELF_AUTHORIZE"
+            ],
+            "businessMismatch": "STUDENT_FAILURE",
+            "infrastructureOrMalformedReport": "SYSTEM_ERROR"
+          }
+        },
+        {
+          "id": "M14-C05-EXECUTION-FULL-SHARD-ISOLATION",
+          "inputProgram": [
+            {
+              "operation": "SATURATE_SHARD1_EXECUTION",
+              "count": 32,
+              "overflowProbes": 1
+            },
+            {
+              "operation": "APPLY_SHARD2_DURING_FULL_WINDOW"
+            },
+            {
+              "operation": "COMMIT_NEW_GRANT_AND_DURABLE_ACK_WHILE_FULL"
+            },
+            {
+              "operation": "RETRY_SAME_REJECTED_ID"
+            }
+          ],
+          "expected": {
+            "result": "PASS",
+            "proofObligations": [
+              "FULL_SHARD1_NO_PARTIAL_APPLY",
+              "SHARD2_ACTUAL_PROGRESS",
+              "CONTROL_CAN_DRAIN_FULL_OUTBOX",
+              "REFUSED_ID_FIRST_APPLIES_ONCE"
+            ],
+            "businessMismatch": "STUDENT_FAILURE",
+            "infrastructureOrMalformedReport": "SYSTEM_ERROR"
+          }
+        },
+        {
+          "id": "M14-C06-SNAPSHOT-ALL-MEMBERS-AND-SINK-RESTART",
+          "inputProgram": [
+            {
+              "operation": "CREATE_PENDING_ACKED_AND_NONINITIAL_GRANT_STATE_BOTH_SHARDS"
+            },
+            {
+              "operation": "SNAPSHOT_ALL_SIX_AND_OBSERVE_ARCHIVE_COMPLETION"
+            },
+            {
+              "operation": "APPLY_SUFFIX_BOTH_SHARDS"
+            },
+            {
+              "operation": "STOP_ALL_MEMBERS_PUBLISHERS_AND_SINK"
+            },
+            {
+              "operation": "RESTART_ORIGINAL_DIRECTORIES_AND_RECONCILE_ADMIN"
+            },
+            {
+              "operation": "COMPARE_ALL_SIX_AND_DIRECT_AND_SINK"
+            }
+          ],
+          "expected": {
+            "result": "PASS",
+            "proofObligations": [
+              "SIX_ACTUAL_SNAPSHOT_LOADS",
+              "EXACT_SUFFIX_STATE_OUTPUT_CURSOR_GRANT_PROFILE",
+              "DURABLE_SINK_JOURNAL_RECONSTRUCTION",
+              "ORIGINAL_REQUEST_CONTROL_RETRY",
+              "OWNED_PROCESSES_TEARDOWN"
+            ],
+            "businessMismatch": "STUDENT_FAILURE",
+            "infrastructureOrMalformedReport": "SYSTEM_ERROR"
+          }
+        },
+        {
+          "id": "M14-C07-FRAGMENTED-BATCH-AND-MARKET-REBUILD",
+          "inputProgram": [
+            {
+              "operation": "PRELOAD_DISTINCT_LEVELS_WITH_ACK",
+              "books": 2,
+              "ordersPerBook": 128
+            },
+            {
+              "operation": "CAPTURE_FRAGMENTED_WHOLE_SHARD_SNAPSHOT",
+              "minimumEncodedBytesExclusive": 4096
+            },
+            {
+              "operation": "HALT_AND_MASS_CANCEL_ONE_BOOK",
+              "orders": 128
+            },
+            {
+              "operation": "CAPTURE_FRAGMENTED_EXECUTION_BATCH",
+              "minimumEncodedBytesExclusive": 4096
+            },
+            {
+              "operation": "MARKET_RETENTION_GAP_SNAPSHOT_AND_SUFFIX"
+            }
+          ],
+          "expected": {
+            "result": "PASS",
+            "proofObligations": [
+              "REAL_APPLIED_LARGE_BATCH",
+              "REAL_WHOLE_SHARD_LARGE_SNAPSHOT",
+              "AT_LEAST_TWO_APPLICATION_FRAGMENTS_EACH",
+              "REASSEMBLED_BYTES_MATCH_SOURCE",
+              "SNAPSHOT_NOT_IN_BATCH_QUEUE",
+              "PARTIAL_MESSAGE_NO_CURSOR"
+            ],
+            "businessMismatch": "STUDENT_FAILURE",
+            "infrastructureOrMalformedReport": "SYSTEM_ERROR"
+          }
+        }
+      ]
+    },
+    "realTopology": {
+      "const": {
+        "groups": 2,
+        "membersPerGroup": 3,
+        "memberIds": [
+          0,
+          1,
+          2
+        ],
+        "clusterIds": [
+          141,
+          142
+        ],
+        "singleHost": true,
+        "publishersPerShard": 1,
+        "durableSinkProcesses": 1,
+        "takeoverExtraPublisherProcesses": 1,
+        "minimumInitialChildJvms": 9,
+        "minimumTakeoverChildJvms": 10,
+        "adapterPortOffset": 6,
+        "portsPerMember": 10,
+        "ownedRoot": "build/tmp/m14/output-qualification",
+        "adminChannel": "CONTROLLER_OWNED_CHILD_STDIN_ONLY",
+        "dataTransport": "LOOPBACK_TCP_CANONICAL_FRAGMENT_FRAMES",
+        "faultController": "OUTSIDE_CLUSTERED_SERVICE"
+      }
+    },
+    "deadlines": {
+      "const": {
+        "stepMillis": 45000,
+        "suiteMillis": 360000,
+        "teardownMillis": 45000,
+        "policy": "OBSERVED_MILESTONE_AND_BOUNDED_POLL_NO_FIXED_SLEEP_PROOF"
+      }
+    },
+    "architectureObligations": {
+      "const": [
+        "M14_NEW_CALLBACK_REACHABILITY_INSPECTED",
+        "ONLY_DETERMINISTIC_TYPED_APPLY_SNAPSHOT_AND_IMMUTABLE_VIEW_IN_CALLBACK",
+        "TCP_DISK_CONSUMER_AND_WAIT_OUTSIDE_CALLBACK",
+        "CORE_INFRASTRUCTURE_FREE",
+        "M11_GOLDENS_UNCHANGED",
+        "INHERITED_M10_M11_M12_M13_SEMANTICS_PASS"
+      ]
+    },
+    "preImplementationByteBudget": {
+      "const": {
+        "kind": "STATIC_DERIVATION_NOT_MEASUREMENT",
+        "sweepMakerCount": 128,
+        "tradeRecordBytes": 308,
+        "acceptedRecordBytes": 154,
+        "executionHeaderAndTrailerBytes": 205,
+        "executionBatchBytes": 39783,
+        "sixPendingBatchBytes": 238698,
+        "sevenPendingBatchBytes": 278481,
+        "marketBatchRecords": 256,
+        "marketBatchBytes": 8285,
+        "sixteenBookSnapshotBytes": 35853,
+        "formulaContract": "docs/specs/m14-process-protocol.md#frozen-input-program"
+      }
+    },
+    "requiredMutants": {
+      "const": [
+        "M14-MAKER-ACCOUNT-FROM-TAKER",
+        "M14-PRIVATE-ACCOUNT-IN-MARKET",
+        "M14-DUPLICATE-CREATES-BATCH",
+        "M14-ACK-ACCEPTS-FUTURE",
+        "M14-MARKET-SNAPSHOT-CUT-OFF-BY-ONE",
+        "M14-STALE-PUBLISHER-ACCEPTED",
+        "M14-CAPACITY-REJECT-AFTER-LIVE-APPLY",
+        "M14-SNAPSHOT-DROPS-OUTPUT-BINDING"
+      ]
+    },
+    "systemErrorControls": {
+      "const": [
+        "M14-THROWING-CONTROL",
+        "M14-CORRUPT-CHILD-REPORT",
+        "M14-MISSING-BOUND-RAW-ARTIFACT"
+      ]
+    },
+    "classification": {
+      "const": {
+        "validCompletion": "PASS",
+        "unimplemented": "GOAL_NOT_IMPLEMENTED",
+        "businessMismatch": "STUDENT_FAILURE",
+        "processProtocolSchemaArtifactOrDeadlineFailure": "SYSTEM_ERROR",
+        "systemErrorIsMutantKill": false,
+        "productionControlRequiredForEveryMutant": true
+      }
+    },
+    "tutorialPermalinks": {
+      "const": [
+        "accountable-execution-and-public-market-contracts",
+        "same-apply-recoverable-outbox",
+        "execution-replay-and-market-snapshot-resume",
+        "durable-cursor-and-publisher-fencing",
+        "bounded-output-backpressure-and-resume-evidence"
+      ]
+    },
+    "limitations": {
+      "const": [
+        "FINITE_Q1_CORPUS",
+        "EMPTY_RESTING_M13_GENESIS_ONLY",
+        "NO_PRE_GENESIS_EXECUTION_BACKFILL",
+        "ONE_FIXED_CONSUMER_PER_STREAM",
+        "TRUSTED_LOCAL_CONTROLLER_NOT_PRODUCTION_AUTH",
+        "LOCALHOST_PROCESS_FAILURE_ONLY",
+        "NO_NETWORK_EXACTLY_ONCE",
+        "TOTAL_RETAINED_HISTORY_AND_RECOVERY_COST_NOT_BOUNDED",
+        "NO_COUNTER_REST_OR_SETTLEMENT",
+        "NO_PERFORMANCE_RTO_SLO_BACKUP_OR_UPGRADE_QUALIFICATION"
+      ]
+    },
+    "releaseTarget": {
+      "const": {
+        "unitTag": "course/m14-complete",
+        "productRelease": null,
+        "claim": "FINITE_Q1_DURABLE_OUTPUT_RESUME_AND_BACKPRESSURE"
+      }
+    }
+  }
+}

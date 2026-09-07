@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/lcha-reln/cex-matching/main/schemas/matching.m11.mutants.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "status",
+    "required",
+    "killed",
+    "classification",
+    "executableCandidates",
+    "systemErrorControls",
+    "systemErrorsObserved",
+    "systemErrorCountedAsKill",
+    "counterexampleSha256",
+    "counterexampleCanonicalSha256",
+    "productionControlsPassed",
+    "serializedFreshReplays",
+    "serializedReplayFingerprintsExact",
+    "oneMinimalCounterexamples",
+    "actualMutationActions",
+    "rawActions",
+    "minimalActions",
+    "shrinkTrials",
+    "candidates",
+    "controls"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "matching.m11.mutants.v1" },
+    "status": { "const": "PASS" },
+    "required": { "const": 10 },
+    "killed": { "const": 10 },
+    "classification": { "const": "STUDENT_FAILURE" },
+    "executableCandidates": { "const": 10 },
+    "systemErrorControls": { "const": 3 },
+    "systemErrorsObserved": { "const": 3 },
+    "systemErrorCountedAsKill": { "const": false },
+    "counterexampleSha256": { "$ref": "#/$defs/sha256" },
+    "counterexampleCanonicalSha256": { "$ref": "#/$defs/sha256" },
+    "productionControlsPassed": { "const": 10 },
+    "serializedFreshReplays": { "const": 10 },
+    "serializedReplayFingerprintsExact": { "const": true },
+    "oneMinimalCounterexamples": { "const": 10 },
+    "actualMutationActions": { "type": "integer", "minimum": 10 },
+    "rawActions": { "type": "integer", "minimum": 10 },
+    "minimalActions": { "type": "integer", "minimum": 10 },
+    "shrinkTrials": { "type": "integer", "minimum": 10 },
+    "candidates": {
+      "type": "array",
+      "minItems": 10,
+      "maxItems": 10,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/candidate" }
+    },
+    "controls": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/control" }
+    }
+  },
+  "$defs": {
+    "candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "productionClassification", "classification", "fingerprint", "candidateDriver", "observer", "freshProductionControl", "singleFaultMode", "actualMutationActions", "systemErrorCountedAsKill", "counterexampleId"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^M11-[A-Z0-9-]+$" },
+        "productionClassification": { "const": "PASS" },
+        "classification": { "const": "STUDENT_FAILURE" },
+        "fingerprint": { "type": "string", "pattern": "^[A-Z0-9_]+$" },
+        "candidateDriver": { "const": "FRESH_PRODUCTION_DERIVED_SINGLE_FAULT_MACHINE" },
+        "observer": { "const": "M11_UNIFIED_TYPED_TRACE_OBSERVER_V2" },
+        "freshProductionControl": { "const": true },
+        "singleFaultMode": { "type": "string", "pattern": "^[A-Z0-9_]+$" },
+        "actualMutationActions": { "type": "integer", "minimum": 1 },
+        "systemErrorCountedAsKill": { "const": false },
+        "counterexampleId": { "type": "string", "pattern": "^cex-m11-[a-z0-9-]+$" }
+      }
+    },
+    "control": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "classification", "classifier", "executedPath", "failureType", "countedAsKill"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^M11-[A-Z0-9-]+$" },
+        "classification": { "const": "SYSTEM_ERROR" },
+        "classifier": { "const": "M11_SHARED_FAILURE_CLASSIFIER_V1" },
+        "executedPath": { "type": "string", "pattern": "^[A-Z0-9_]+$" },
+        "failureType": { "type": "string", "minLength": 1 },
+        "countedAsKill": { "const": false }
+      }
+    },
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+  }
+}

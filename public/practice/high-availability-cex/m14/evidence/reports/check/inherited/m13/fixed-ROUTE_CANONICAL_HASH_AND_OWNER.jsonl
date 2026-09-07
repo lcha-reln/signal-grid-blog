@@ -1,0 +1,8 @@
+{"schemaVersion":"matching.m13.semantic-trace.v1","kind":"ASSERTION","invariant":"route canonical hash depends on map insertion order","satisfied":true}
+{"schemaVersion":"matching.m13.semantic-trace.v1","kind":"ASSERTION","invariant":"route codec diverged","satisfied":true}
+{"schemaVersion":"matching.m13.semantic-trace.v1","kind":"ASSERTION","invariant":"blank owner accepted","satisfied":true}
+{"schemaVersion":"matching.m13.semantic-trace.v1","kind":"ASSERTION","invariant":"owner omitted from route digest","satisfied":true}
+{"schemaVersion":"matching.m13.semantic-trace.v1","kind":"ASSERTION","invariant":"append-only route not recognized","satisfied":true}
+{"schemaVersion":"matching.m13.semantic-trace.v1","kind":"ASSERTION","invariant":"no-op route accepted as addition","satisfied":true}
+{"schemaVersion":"matching.m13.semantic-trace.v1","kind":"FACT","name":"canonicalRouteBase64","value":"TTEzVAAAAAEAAAAAAAAAAQAAAAxtYXRjaGluZy1vcHMAAAADAAAACEJUQy1VU0RUAAAAAAAAAAEAAAAIRVRILVVTRFQAAAAAAAAAAQAAAAhTT0wtVVNEVAAAAAAAAAACAAAAQGIwNmJkMjIyMjBiMGRkZWFkYmUwMjIzYmJhYTc0NWU5ZjY0YTI4YjZkMzYxMGM0MjJkZjc4NTkwMDAwNjJhOGM="}
+{"schemaVersion":"matching.m13.semantic-trace.v1","kind":"FACT","name":"completion","value":"PASS: "}

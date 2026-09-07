@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/lcha-reln/cex-matching/main/schemas/matching.m12.leadership.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "status", "implementation", "initialLeaderId", "initialLeadershipTermId", "faultTargetLeaderId", "faultTargetLeadershipTermId", "killedObservedCurrentLeader", "replacementLeaderId", "replacementLeadershipTermId", "leadershipTermAdvanced", "staleLeaderAcknowledgements", "clientGenerations"],
+  "properties": {
+    "schemaVersion": { "const": "matching.m12.leadership.v1" },
+    "status": { "const": "PASS" },
+    "implementation": { "const": "REAL_AERON_CHILD_PROCESSES" },
+    "initialLeaderId": { "$ref": "#/$defs/memberId" },
+    "initialLeadershipTermId": { "type": "integer", "minimum": 0 },
+    "faultTargetLeaderId": { "$ref": "#/$defs/memberId" },
+    "faultTargetLeadershipTermId": { "type": "integer", "minimum": 0 },
+    "killedObservedCurrentLeader": { "const": true },
+    "replacementLeaderId": { "$ref": "#/$defs/memberId" },
+    "replacementLeadershipTermId": { "type": "integer", "minimum": 1 },
+    "leadershipTermAdvanced": { "const": true },
+    "staleLeaderAcknowledgements": { "const": 0 },
+    "clientGenerations": { "type": "array", "minItems": 3, "maxItems": 3, "items": { "$ref": "#/$defs/clientGeneration" } }
+  },
+  "$defs": {
+    "memberId": { "type": "integer", "minimum": 0, "maximum": 2 },
+    "clientGeneration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["clientGeneration", "clusterSessionId", "leadershipTermId", "leaderMemberId", "acceptedOffers", "decodedResponses", "rejectedResponses", "componentErrors"],
+      "properties": {
+        "clientGeneration": { "type": "integer", "minimum": 1, "maximum": 3 },
+        "clusterSessionId": { "type": "integer" },
+        "leadershipTermId": { "type": "integer", "minimum": 0 },
+        "leaderMemberId": { "$ref": "#/$defs/memberId" },
+        "acceptedOffers": { "type": "integer", "minimum": 1, "maximum": 84 },
+        "decodedResponses": { "type": "integer", "minimum": 0, "maximum": 84 },
+        "rejectedResponses": { "const": 0 },
+        "componentErrors": { "const": 0 }
+      }
+    }
+  }
+}

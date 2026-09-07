@@ -1,22 +1,22 @@
 # 高可用 CEX 交易核心实战课程设计
 
-> 状态：M13 当前 `PUBLISHED`（M00～M13 已发布；当前没有实施中单元，M14/M15 仍为候选）
+> 状态：M14 当前 `PUBLISHED`（M00～M14 已完成发布登记；M15 仍为候选）
 >
 > 规划日期：2026-08-26
 >
-> `planVersion`：`0.16`
+> `planVersion`：`0.17`
 >
-> 当前最新签约单元合同 `planVersion`：`0.16`（M13）
+> 当前最新签约单元合同 `planVersion`：`0.17`（M14）
 >
-> 当前推荐动作：复核 M13 五篇教程与静态分片证据，再评审 M14 连续业务输出合同；M13 无产品 release，matching-1.0.0 继续留在 M15 资格闭环之后
+> 当前推荐动作：从 annotated `course/m14-complete` 指向 clean commit `56c4ec09ddf9fcf57f1cce763ae8b451ba7f394f`；[公开 manifest](https://lcha-reln.github.io/signal-grid-blog/practice/high-availability-cex/m14/evidence/manifest.json) 的 SHA-256 为 `7eb56335954e03a6792b8f9971b922e3bd45bf5dcbd60e47f1e5cedde3fb2081` 复验 M14 的有限输出资格与五篇教程；M15 运营资格仍为候选。M14 无产品 release，matching-1.0.0 继续留在 M15 资格闭环之后
 >
 > 案例 slug：`high-availability-cex`
 >
 > 当前 Profile：`SPOT-CEX-1.0`
 >
-> 当前规划基线：`SPOT-CEX-1.0` 的 33 个候选交付单元（Matching 16 + Counter 10 + Rest 7），3 个按门禁顺序创建的代码仓库；M00–M13 已发布，M14–M15 及下游单元仍为候选
+> 当前规划基线：`SPOT-CEX-1.0` 的 33 个候选交付单元（Matching 16 + Counter 10 + Rest 7），3 个按门禁顺序创建的代码仓库；M00–M14 已完成发布登记，M15 及下游单元仍为候选
 >
-> 当前 M13 发布边界：annotated `course/m13-complete` 指向 clean commit `eb1b65d2ea2159ba607e3271f0bfd209ea4906ea`。干净普通 clone 的完整 `clean build m13Evidence` 通过；tag-bound fresh run 验证 10 个场景、seed 6313 的 64×64=4,096 个生成动作、6 个语义 mutant、两个独立三成员组及六个同时运行的 child JVM。`cex.lab-evidence.v2` manifest SHA-256 `7a1c5b677f088ccd46b9f4e523151496910aea8874683799b347d57be819ecd7` 绑定 1 项有限正确性 claim、9 条 limitation 与 204 个 artifact；五篇教程和公开 evidence 一起登记。M13 不登记 Lab 或产品 release，产品停止点仍为 `matching-0.8.0`。
+> 保留的 M13 发布边界：annotated `course/m13-complete` 指向 clean commit `eb1b65d2ea2159ba607e3271f0bfd209ea4906ea`。干净普通 clone 的完整 `clean build m13Evidence` 通过；tag-bound fresh run 验证 10 个场景、seed 6313 的 64×64=4,096 个生成动作、6 个语义 mutant、两个独立三成员组及六个同时运行的 child JVM。`cex.lab-evidence.v2` manifest SHA-256 `7a1c5b677f088ccd46b9f4e523151496910aea8874683799b347d57be819ecd7` 绑定 1 项有限正确性 claim、9 条 limitation 与 204 个 artifact；五篇教程和公开 evidence 一起登记。M13 不登记 Lab 或产品 release，产品停止点仍为 `matching-0.8.0`。
 >
 > 保留的 M12 发布边界：M00～M12 均为 `PUBLISHED`。M12 的 annotated `course/m12-start` peeled 到 `43b0bbf853a1ffefeb1d5a87d791f4eb387b1cbf`，以 workload SHA-256 `20ed1e75cd3cd86dc15a7f1f64465524a5638757abe676eb51f20bc5423b89a1` 冻结结构化 RED；annotated `course/m12-complete` 与 annotated `matching-0.8.0` 均 peeled 到 clean commit `d8b1b1fbb36323502495a8bc0a60042db1e9e040`。tag-bound fresh run 以 `appointedLeaderId=-1` 自动选举，完成 14 个固定场景、85 次 invocation（84 accepted、82 ACK、2 UNKNOWN、1 NOT_SUBMITTED）、25 项 obligation、8 个 semantic mutant 与 3 个 `SYSTEM_ERROR` control；`cex.lab-evidence.v2` manifest SHA-256 `e25ff7069a831a56cc42b1ebd7d5aaf0cde39b6158caf1e68b8725b0f8862983` 绑定 10 项 claim、15 条 limitation 与 33 个 artifact，五篇教程已原子公开
 
@@ -33,6 +33,8 @@
 路线图可以完整，实施级设计默认只覆盖当前和下一个单元；只有用户明确批准的连续批次可以预先签约，但代码窗口永远只有当前单元。M01～M10 已逐步完成输入验证、撮合语义、运行控制、本地 WAL、durable idempotency、Snapshot、有界恢复，以及单机持久运行时有界准入与环境绑定性能包络的 RED→GREEN→evidence→内容发布闭环。PLAN v0.14 已让 M11 以同样流程完成真实单节点 Aeron Cluster Adapter：core 保持无 Aeron，Cluster log/snapshot 成为唯一恢复真相，并用 application request/response/snapshot current2/minReadable1 codec、六份 Golden 与 Direct/Cluster/restart 规范化业务等价验收。PLAN v0.15 又在这个基线上完成 M12：单机、单分片、三个独立 voting-member child JVM，外部 controller 杀死观测到的 Leader，客户端以同一 durable identity 收敛 UNKNOWN；每个保留状态重启都实时读取 Aeron 1.52.2 Archive mark-file 活动时间戳，并仅在活动年龄严格大于 10,000 ms liveness timeout 后继续；former Leader 随后以 Follower 追赶，无 quorum 时拒绝确认。tag-bound fresh run 的初始 Leader 为 member 2/term 0，replacement 为 member 0/term 1；最终三个 member 的 identity count=66，semantic digest 与 identity/result digest 均匹配 Direct oracle。Backup、分区矩阵、性能、升级、多分片、下游输出、Counter/Rest/DB 与外部副作用继续排除。任何超出已签约单元合同的能力，必须删除等量范围、拆分单元或进入 backlog。
 
 PLAN v0.16 根据用户“继续任务，将撮合这部分处理完”的授权评审剩余范围：只把 M13 静态权威路由与 shard 内多订单簿升级为合同；M14 继续聚焦可续接业务输出，不再承担产品 release；新增候选 M15，以 release operational qualification 承接受控 N/N-1 升级/回滚、cold backup/restore 和环境绑定集群容量与运行诊断。`matching-1.0.0` 移到 M15，保留其升级恢复与运行资格承诺。M00–M12 的冻结合同、ref、Golden 和历史 evidence 不回写，本轮不创建 Counter/Rest 仓库。
+
+PLAN v0.17 在已发布 M13 后只签约 M14 可续接业务输出：显式 OutputGenesis、真实账户归属、per-shard Execution/Market 双流、同 apply 的可恢复 outbox、独立 durable cursor/publisher authority、whole-shard Market snapshot 与 Q1 有界积压共同构成一个连续消费合同。M13 的已发布合同、固定 ref 和原始 evidence 保留；M15 仍候选，33 单元及三个仓库门禁不变。签约时只冻结合同、输入与 RED 入口，当时不提前实现输出或创建文章；当前 M14 已完成固定身份、fresh 资格、五篇教程与公开 evidence 的发布登记，冻结语义保持不变。
 
 ## 2. 旧专题为何失败，以及本次怎样避免重演
 
@@ -329,11 +331,12 @@ rest     = rest-1.0.0
 | M11     | `PUBLISHED` | `CONTRACT` | 随 `cex-matching` 仓库 | 真实单节点 Aeron Cluster Adapter、log-only apply、application request/response/snapshot current2/minReadable1 六份 Golden、Cluster snapshot/restart 与 Direct/Cluster 规范化业务等价，已由 22/22 fixed、28/28 obligation、32 条 assertion fact、10/10 production-derived candidate、3 个 SYSTEM_ERROR control、8,192 次真实 ingress、五篇教程与 tag-bound evidence 闭环；无产品 release、三节点故障或 Cluster 容量声明 |
 | M12     | `PUBLISHED` | `CONTRACT` | 随 `cex-matching` 仓库 | 单机三成员 child JVM、Leader fail-stop、UNKNOWN 同 identity 重试、Aeron 1.52.2 ArchiveMarkFile `age > 10000` 的三项保留状态重启 witness、former Leader 追赶、无 quorum 不 ACK 与 Direct identity/state 等价已由 tag-bound fresh run、五篇教程、33 个 artifact 与 `matching-0.8.0` 闭环                                                                                                                                 |
 | M13     | `PUBLISHED` | `CONTRACT` | 随 `cex-matching` 仓库 | 静态权威路由、多订单簿、两组六 JVM 故障隔离与恢复通过；10 场景、64×64 generated、6 mutant、204 artifact 与五篇教程公开，无产品 release |
-| M14–M15 | `CANDIDATE` | `RISK_MAP` | 随 `cex-matching` 仓库 | 分别记录连续业务输出和发布制品运行资格；不冻结类、Schema 字段编号、依赖版本、负载数字或文章标题 |
+| M14 | `PUBLISHED` | `IMPLEMENTED` | 随 `cex-matching` 仓库 | annotated `course/m14-complete` 指向 clean commit `56c4ec09ddf9fcf57f1cce763ae8b451ba7f394f`；[公开 manifest](https://lcha-reln.github.io/signal-grid-blog/practice/high-availability-cex/m14/evidence/manifest.json) 的 SHA-256 为 `7eb56335954e03a6792b8f9971b922e3bd45bf5dcbd60e47f1e5cedde3fb2081`；12 个本地场景、3840 个生成动作、8 项 mutant、3 项系统控制与七个真实进程 witness 通过，五篇与原始 evidence 一起登记 |
+| M15 | `CANDIDATE` | `RISK_MAP` | 随 `cex-matching` 仓库 | 保留发布制品运行资格；受控升级回滚、cold backup/restore、环境绑定 Cluster 容量与诊断仍待窗口评审 |
 | C00–C09 | `CANDIDATE` | `RISK_MAP` | `LOCKED`               | 记录权威边界和关键故障；Matching 1.0 前不创建仓库                                                                                                                                                                                                                                                                                                                                                                      |
 | R00–R06 | `CANDIDATE` | `RISK_MAP` | `LOCKED`               | 记录外部契约边界和关键故障；Counter 1.0 前不创建仓库                                                                                                                                                                                                                                                                                                                                                                   |
 
-任何时刻全专题最多一个 `IN_PROGRESS`，最多一个下一单元处于 `READY`。规划总数 33（Matching 16 + Counter 10 + Rest 7）只是当前 SPOT Profile 的课程容量基线；未进入 `CONTRACTED` 的候选单元可以在评审时拆分、合并或调整 ID，已签约或已发布的单元不能静默改变。LOCKED Profile 不进入这个计数，也不占用实施窗口。M06–M08 是一次已完成的有界批次例外。M12 已完整发布；本次用户明确要求继续完成撮合部分，授权按门禁推进到 `matching-1.0.0`。PLAN v0.16 只签约 M13，M14/M15 仍须在各自窗口重新评审合同。M13 已完成代码、证据与五篇教程发布；当前没有 `IN_PROGRESS` 或 `READY` 单元，M14/M15 须在各自窗口签约后进入实施。
+任何时刻全专题最多一个 `IN_PROGRESS`，最多一个下一单元处于 `READY`。规划总数 33（Matching 16 + Counter 10 + Rest 7）只是当前 SPOT Profile 的课程容量基线；未进入 `CONTRACTED` 的候选单元可以在评审时拆分、合并或调整 ID，已签约或已发布的单元不能静默改变。LOCKED Profile 不进入这个计数，也不占用实施窗口。M06–M08 是一次已完成的有界批次例外。M12 已完整发布；本次用户明确要求继续完成撮合部分，授权按门禁推进到 `matching-1.0.0`。PLAN v0.17 在 M13 代码、证据与五篇教程全部发布后签约 M14 可续接业务输出。当前 M14 已完成发布登记；不可移动起点 course/m14-start 的继承 GREEN 与新增结构化 RED 继续保留，完成身份 annotated `course/m14-complete` 指向 clean commit `56c4ec09ddf9fcf57f1cce763ae8b451ba7f394f`；[公开 manifest](https://lcha-reln.github.io/signal-grid-blog/practice/high-availability-cex/m14/evidence/manifest.json) 的 SHA-256 为 `7eb56335954e03a6792b8f9971b922e3bd45bf5dcbd60e47f1e5cedde3fb2081` 绑定本次通过的 fresh 资格。M15 保持候选并在后续窗口评审。
 
 ### 6.2 单元状态机
 
@@ -504,7 +507,7 @@ Matching 是唯一优先启动的项目。它先证明业务语义，再证明�
 | M11 Aeron Cluster Adapter      | 单成员 Cluster 日志与 Snapshot 运行时适配               | 单节点 Cluster 与 direct runner 业务等价                                                     | `PUBLISHED / CONTRACT` |
 | M12 三成员 HA                  | 单机三成员 Leader 进程故障与结果未知                    | 已发布 `matching-0.8.0`：单分片三成员故障正确性停止点                                        | `PUBLISHED / CONTRACT` |
 | M13 多交易对静态分片           | instrument 到 shard 的权威路由                          | 两个独立三成员 shard、单 shard 多订单簿、错误路由拒绝和故障隔离                              | `PUBLISHED / CONTRACT` |
-| M14 可续接业务输出             | 下游连续消费                                            | 可恢复 Execution/Market stream、gap replay 与 publisher fence；无产品 release               | `CANDIDATE / RISK_MAP` |
+| M14 可续接业务输出             | 下游连续消费                                            | 可恢复 Execution/Market stream、gap replay 与 publisher fence；无产品 release               | `PUBLISHED / IMPLEMENTED` |
 | M15 发布制品运行资格           | release operational qualification                       | 受控升级/回滚、冷备份恢复与环境绑定 Cluster 运行证据闭环后发布 `matching-1.0.0`              | `CANDIDATE / RISK_MAP` |
 
 ### 8.2 M00：最小可执行规格
@@ -661,7 +664,7 @@ Matching 是唯一优先启动的项目。它先证明业务语义，再证明�
 
 > M02 单元合同 `planVersion`：`0.4`
 >
-> 当前 PLAN v0.16 只在 M12 已发布基线上为 M13 冻结静态权威路由与 shard 内多订单簿；M02 可寻址生命周期、10/34 corpus、M02H1、complete tag 与 evidence 不回写，也不表示后续 Java event hierarchy、WAL/Snapshot record shape、queue、Cluster codec 或 runtime 与 M02 完成提交相同。
+> 当前 PLAN v0.17 只在已发布 M13 之后新增可续接业务输出合同；M02 可寻址生命周期、10/34 corpus、M02H1、complete tag 与 evidence 不回写，也不表示后续 Java event hierarchy、WAL/Snapshot record shape、queue、Cluster codec 或 runtime 与 M02 完成提交相同。
 >
 > 生命周期：`PUBLISHED`。M01 是已发布前置；权威起点为 annotated [`course/m02-start`](https://github.com/lcha-reln/cex-matching/tree/course/m02-start)，peeled commit 是 `fbaa744912147fdb1d802fb16cf4a9f9d62e8112`。权威完成身份为 annotated [`course/m02-complete`](https://github.com/lcha-reln/cex-matching/tree/course/m02-complete)，commit 是 `b54b4dfb51b61a5041d60c50dc1ff3404d73b27d`。完成门禁为 10 场景、34 命令、4 个状态化验证优先级探针、100 次 fresh replay、4 个 required mutant 与 `SYSTEM_ERROR` control；M02 不发布产品 release。
 
@@ -825,7 +828,7 @@ The evidence makes no throughput, latency, recovery, durable-idempotency, or pro
 
 > M03 单元合同 `planVersion`：`0.5`
 >
-> 当前 PLAN v0.16 只在 M12 已发布基线上为 M13 冻结静态权威路由与 shard 内多订单簿；M03 冻结 tag、M03G1 command canonical 身份、`matching-0.1.0` 与 evidence 不回写。后续新增 event shape、WAL/Snapshot source、queue、Cluster codec 和 runtime 只由对应单元的架构门禁验收，不重绑 M03 证据。
+> 当前 PLAN v0.17 只在已发布 M13 之后新增可续接业务输出合同；M03 冻结 tag、M03G1 command canonical 身份、`matching-0.1.0` 与 evidence 不回写。后续新增 event shape、WAL/Snapshot source、queue、Cluster codec 和 runtime 只由对应单元的架构门禁验收，不重绑 M03 证据。
 >
 > 生命周期：`PUBLISHED`。权威起点仍是 annotated [`course/m03-start`](https://github.com/lcha-reln/cex-matching/tree/course/m03-start)，tag peeled commit 为 `4bcf4e060e8bc596d3246f1b98cec346cc66221f`；annotated [`course/m03-complete`](https://github.com/lcha-reln/cex-matching/tree/course/m03-complete) 与 annotated [`matching-0.1.0`](https://github.com/lcha-reln/cex-matching/tree/matching-0.1.0) 均 peeled 到完成提交 `dab4a2a1dccf06d6b9769c979a6ae5af6d1d2bdc`。四篇教程、共享 Matching Lab 与[持久 evidence](https://lcha-reln.github.io/signal-grid-blog/practice/high-availability-cex/m03/evidence/manifest.json) 已原子公开；manifest SHA-256 为 `14ea367d5f08029679b22a5efd2a9c0a34b16f97bb28273771b3c5125c851b52`。
 
@@ -960,7 +963,7 @@ M03-CANCELED-ID-REUSE
 >
 > 当前生命周期：`PUBLISHED`；annotated `course/m04-complete` peeled 到提交 `9d1bca13da6b13aa97a8002baff37fbc2393abe4`，五篇教程、Matching Lab 与公开 evidence 已闭合；本单元 `productRelease=null`
 >
-> 当前 PLAN v0.16 只在 M12 已发布基线上为 M13 冻结静态权威路由与 shard 内多订单簿；M04 的五字段 ExecutionPolicy、14/48 固定语料、M04F1/M04H1/M04X1、complete tag、产品停止点与 evidence 不回写，后续归因、STP 事件、WAL frame、Snapshot state、queue 或 Cluster codec 也不表示 M04 Java event shape/event bytes 曾被冻结。
+> 当前 PLAN v0.17 只在已发布 M13 之后新增可续接业务输出合同；M04 的五字段 ExecutionPolicy、14/48 固定语料、M04F1/M04H1/M04X1、complete tag、产品停止点与 evidence 不回写，后续归因、STP 事件、WAL frame、Snapshot state、queue 或 Cluster codec 也不表示 M04 Java event shape/event bytes 曾被冻结。
 
 **目标**
 
@@ -1067,7 +1070,7 @@ git switch -c unit/m04 course/m04-start
 >
 > 完成边界：annotated `course/m05-complete` peeled 到 `e593c13292c0f97665f90239a4c8d4a1ca40f579`；`./gradlew clean build m05Evidence -Pm05.unitTag=course/m05-complete --no-daemon` 为 GREEN，[Matching Lab](https://lcha-reln.github.io/signal-grid-blog/practice/high-availability-cex/m05/lab/)与[公开 evidence](https://lcha-reln.github.io/signal-grid-blog/practice/high-availability-cex/m05/evidence/manifest.json)已发布，manifest SHA-256 为 `d5ee9a4c278d204bfbb8df90feae570302339fb8028849b7ab44f39fc090a69a`。本单元 `productRelease=null`
 >
-> PLAN v0.15 曾在 M11 之后为 M12 冻结单机三投票成员、Leader 进程故障、UNKNOWN 同身份重试、旧 Leader 追赶与无 quorum 失败关闭；PLAN v0.16 再单独签约 M13 静态路由。M05 的 RuleSet/activation fence、12/54 fixed、160×64、20 项 coverage、8 项 mutant、五篇 permalink、complete tag 与公开 evidence 保持不变，不因 Snapshot、性能资格、Cluster adapter 或分片合同回写。
+> PLAN v0.17 仅新增 M14 可续接业务输出合同，以下已发布单元的合同与证据继续保留。PLAN v0.15 曾在 M11 之后为 M12 冻结单机三投票成员、Leader 进程故障、UNKNOWN 同身份重试、旧 Leader 追赶与无 quorum 失败关闭；PLAN v0.16 再单独签约 M13 静态路由。M05 的 RuleSet/activation fence、12/54 fixed、160×64、20 项 coverage、8 项 mutant、五篇 permalink、complete tag 与公开 evidence 保持不变，不因 Snapshot、性能资格、Cluster adapter 或分片合同回写。
 
 **Adds**
 
@@ -1183,7 +1186,7 @@ git switch --detach course/m05-complete
 >
 > 当前状态：`PUBLISHED`；annotated `course/m06-start` peeled 到 `b8e11a59c62b2c09fc0d418a8731e758f25be8ce`，annotated `course/m06-complete` peeled 到 `854dcf470a9ea8a2765982861b21026be1416258`
 >
-> 当前 PLAN v0.16 只在 M12 已发布基线上为 M13 冻结静态权威路由与 shard 内多订单簿；M06 的 mode/Mass Cancel 语义、15/64 fixed、160×64、26 项 coverage、10 项 mutant、complete tag 与公开 evidence 不回写，Snapshot、负载或 Cluster 恢复路径也不能把状态默认为 OPEN。
+> 当前 PLAN v0.17 只在已发布 M13 之后新增可续接业务输出合同；M06 的 mode/Mass Cancel 语义、15/64 fixed、160×64、26 项 coverage、10 项 mutant、complete tag 与公开 evidence 不回写，Snapshot、负载或 Cluster 恢复路径也不能把状态默认为 OPEN。
 
 **唯一新增轴**
 
@@ -1306,7 +1309,7 @@ M06 明确不实现 STP、WAL、Snapshot、认证/授权系统、管理 UI、节
 >
 > 当前状态：`PUBLISHED`；annotated `course/m07-start` peeled 到 `7df44b40107847ae7e959d84ce0593fdf528e810`，annotated `course/m07-complete` peeled 到 `8e9c147b12bfb6b55e69ff04ecfe3aa4c510ed23`
 >
-> 当前 PLAN v0.16 只在 M12 已发布基线上为 M13 冻结静态权威路由与 shard 内多订单簿；M07 的 opaque participant group、taker-owned STP disposition、16/72 fixed、160×64、24 项 coverage、8 项 mutant、complete tag 与公开 evidence 不回写，Snapshot、负载与 Cluster restart 都必须完整保存其可恢复结果。
+> 当前 PLAN v0.17 只在已发布 M13 之后新增可续接业务输出合同；M07 的 opaque participant group、taker-owned STP disposition、16/72 fixed、160×64、24 项 coverage、8 项 mutant、complete tag 与公开 evidence 不回写，Snapshot、负载与 Cluster restart 都必须完整保存其可恢复结果。
 
 **唯一新增轴**
 
@@ -1414,7 +1417,7 @@ M07 不实现账户/母子账户查询、资产风控、节点本地策略热切
 
 > M08 单元合同 `planVersion`：`0.10`
 >
-> 当前 PLAN v0.16 只在 M12 已发布基线上为 M13 冻结静态权威路由与 shard 内多订单簿；M08 的 M08C1/M08W1、append→force→apply→ACK、durable identity、genesis recovery、complete tag 与公开 evidence 均不回写，M09 Snapshot、M10 queue 与 M11 Cluster codec 也不能被声称为 M08 WAL 格式的一部分。
+> 当前 PLAN v0.17 只在已发布 M13 之后新增可续接业务输出合同；M08 的 M08C1/M08W1、append→force→apply→ACK、durable identity、genesis recovery、complete tag 与公开 evidence 均不回写，M09 Snapshot、M10 queue 与 M11 Cluster codec 也不能被声称为 M08 WAL 格式的一部分。
 >
 > 当前状态：`PUBLISHED`；annotated `course/m08-start` 保存结构化 RED，annotated `course/m08-complete`、完整提交、五篇教程与本站持久 evidence 共同定义完成身份
 
@@ -1535,7 +1538,7 @@ M08 不实现 Snapshot、有界恢复、WAL retention、复制、Aeron、leader/
 >
 > 当前状态：`PUBLISHED`；annotated `course/m09-start` peeled 到 `2e688ec725a4d83755fa3811988a7d65f13cd115` 并冻结 RED，annotated `course/m09-complete` peeled 到 `147a7e7dd2439764d4a5fe4d1048142645d26f2d`。五篇教程与同源静态 evidence 已公开，manifest SHA-256 为 `22b0d234e7257a74461e56feccfe6f859cc4f401dbae32fb11a8e966d9bf984a`；`productRelease=null`，没有浏览器 Lab
 >
-> 当前 PLAN v0.16 只在 M12 已发布基线上为 M13 冻结静态权威路由与 shard 内多订单簿；M09 的 M09S1、RecoveryBudget、22/88 fixed、96×40 generated、32 项 obligation、12 个 candidate、complete tag 与公开 evidence 不回写，M10 queue、benchmark 或 M11 Cluster snapshot/codec 都不成为 M09 Snapshot/WAL 格式的一部分。
+> 当前 PLAN v0.17 只在已发布 M13 之后新增可续接业务输出合同；M09 的 M09S1、RecoveryBudget、22/88 fixed、96×40 generated、32 项 obligation、12 个 candidate、complete tag 与公开 evidence 不回写，M10 queue、benchmark 或 M11 Cluster snapshot/codec 都不成为 M09 Snapshot/WAL 格式的一部分。
 
 **唯一新增轴**
 
@@ -1645,7 +1648,7 @@ M09 不实现通用 N/N-1 Snapshot/WAL 迁移、rolling upgrade、后台线程�
 
 > M10 单元合同 `planVersion`：`0.13`
 >
-> 当前 PLAN v0.16 只在 M12 已发布基线上为 M13 冻结静态权威路由与 shard 内多订单簿；M10 的 M10Q2 workload、环境绑定 knee/QOP、降序长稳态晋级、matching-0.5.0、complete tag 与公开 evidence 不回写，M11/M12 也不继承或重命名单机容量数字。
+> 当前 PLAN v0.17 只在已发布 M13 之后新增可续接业务输出合同；M10 的 M10Q2 workload、环境绑定 knee/QOP、降序长稳态晋级、matching-0.5.0、complete tag 与公开 evidence 不回写，M11/M12 也不继承或重命名单机容量数字。
 >
 > 当前生命周期：`PUBLISHED`。权威起点是 annotated `course/m10-start`；annotated `course/m10-complete` 与 annotated `matching-0.5.0` 共同指向 clean commit `77e80b0962cd6a74f6d8cd0ac203b3be5bdd6bdb`。`cex.lab-evidence.v2` manifest SHA-256 为 `03134fc4e80e6a29ba425a1e383d393af0cceeb1692b865e2c4c833b45bcc717`。本次完整 release qualification 的 published knee 为 `379`、70% candidate 为 `265`，三次 1800 秒 attempt 依次为 `231/SATURATED`、`165/SATURATED`、`82/QUALIFIED`，final QOP 为 `82`；这些数字只属于 manifest 记录的环境与单 producer、空簿 `BUY IOC@100×1` workload，不是跨环境 SLA。
 
@@ -1843,7 +1846,7 @@ M10 已形成 `matching-0.5.0`：一个单进程、单 shard、可恢复的本�
 
 > M11 单元合同 `planVersion`：`0.14`
 >
-> 当前 PLAN v0.16 只在 M12 已发布基线上为 M13 冻结静态权威路由与 shard 内多订单簿；M11 的 application request/response/snapshot current2/minReadable1、六份 Golden、Direct/Cluster/restart 等价、complete tag 与公开 evidence 均保持不变，M12 不回写其协议 bytes 或单节点结论。
+> 当前 PLAN v0.17 只在已发布 M13 之后新增可续接业务输出合同；M11 的 application request/response/snapshot current2/minReadable1、六份 Golden、Direct/Cluster/restart 等价、complete tag 与公开 evidence 均保持不变，M12 不回写其协议 bytes 或单节点结论。
 >
 > 当前生命周期：`PUBLISHED`
 >
@@ -1988,7 +1991,7 @@ M11 已发布的停止点是一个真实但仅单节点的 Aeron Cluster Adapter
 
 > M12 单元合同 `planVersion`：`0.15`
 >
-> PLAN v0.16 新签约 M13 静态分片，并将升级恢复与运行资格归入候选 M15；M12 的单机单分片 fail-stop 合同、refs 与 evidence 均保留原样。
+> PLAN v0.17 仅新增 M14 可续接业务输出合同，以下已发布单元的合同与证据继续保留。PLAN v0.16 新签约 M13 静态分片，并将升级恢复与运行资格归入候选 M15；M12 的单机单分片 fail-stop 合同、refs 与 evidence 均保留原样。
 >
 > 状态：M12 当前 `PUBLISHED`
 >
@@ -2150,6 +2153,8 @@ M12 的目标停止点 `matching-0.8.0` 是一个真实但单机、单分片的�
 
 > M13 单元合同 `planVersion`：`0.16`
 
+PLAN v0.17 在已发布 M13 之后签约 M14 可续接业务输出；M13 的静态权威路由、多订单簿、64×64 生成历史、两组六 JVM 故障证据、五篇教程、固定 refs 与公开 evidence 保留原样，不回写历史合同，也不把新增归属/outbox/cursor/fence 声称为 M13 已有能力。
+
 **Objective 与 Adds**
 
 M13 只增加一个复杂度维度：通过版本化静态权威路由，把 instrument 的命令交给唯一 shard 内的独立订单簿。撮合算法、价格时间优先、策略、规则激活、市场模式、STP 和 UNKNOWN 同 identity 重试语义继续继承已发布合同；不能用一个跨 shard 的共享状态机伪装两个故障域。
@@ -2184,27 +2189,113 @@ M13 不实现下游 Execution/Market stream、outbox、publisher fence、Counter
 
 完成 M13 时，读者拥有可在本机运行的两个独立三成员 shard，三个 instrument 按固定权威路由进入独立订单簿，错误路由无业务副作用，单 shard 故障与 snapshot/restart 可由原始证据复核。M13 是普通单元，`productRelease=null`；已发布产品停止点仍为 `matching-0.8.0`，不提前发布 `matching-1.0.0`。
 
-### 8.16 M14–M15 候选能力地图
+### 8.16 M14 可续接业务输出
 
-这些行不是已冻结合同。任一行进入 `CONTRACTED` 前必须重新验证“一句话、一个复杂度维度”；必要时允许拆分或调整候选总数。用户已授权继续完成撮合，但每个单元仍必须先冻结合同并通过前置门禁。M14 聚焦连续业务输出，原停止点承诺的升级恢复与运行资格归入新增 M15，避免把它们隐藏在输出单元中。
+> M14 单元合同 `planVersion`：`0.17`
 
-| 单元                 | Adds                           | Delivers                                                                                                                                                                                           | Excludes                                                                                                                                                      | Gate 与 Evidence                                                                                                                                                      |
-| -------------------- | ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| M14 可续接业务输出   | 下游连续消费                   | apply 时原子形成可恢复的 ExecutionBatch/outbox 和 next sequence；snapshot 保存输出恢复与发布位置；独立 Execution/Market sequence、cursor、gap 和 publisher fence；慢消费者脱离热路径且传输队列有界 | Counter/Rest 实现、原始 Cluster log 作为业务 API、只靠易失队列保存权威输出、网络 exactly-once、多地域、trade bust/correction、Cancel/Replace、opening auction、产品 release | apply 后发布前崩溃仍可 replay 完整原子 batch；Execution gap 精确补齐且不能用盘口快照跳过；Market gap 可用 snapshot + incremental；保留可复核输出恢复与 fencing evidence |
+M14 当前为 `PUBLISHED`。唯一新增维度是：**从显式 OutputGenesis 起，同一次 apply 形成归属明确的 Execution 与公开 Market 两条可恢复业务流；消费者按各自 durable cursor 续接，旧 publisher 受 fence 约束，有界积压触发确定性背压。** 前置身份为已发布 `course/m13-complete` / `eb1b65d2ea2159ba607e3271f0bfd209ea4906ea`。不可移动 `course/m14-start` 已发布并验证为 `96b749861292950749701e34a6f20796f239cd4b`；普通 clean clone 的继承 build GREEN 与完整 `m14Check` 结构化 RED 已通过。完成身份为 annotated `course/m14-complete` 指向 clean commit `56c4ec09ddf9fcf57f1cce763ae8b451ba7f394f`；[公开 manifest](https://lcha-reln.github.io/signal-grid-blog/practice/high-availability-cex/m14/evidence/manifest.json) 的 SHA-256 为 `7eb56335954e03a6792b8f9971b922e3bd45bf5dcbd60e47f1e5cedde3fb2081`。fresh 资格已通过，M14 无产品 release。
+
+规范文件位于撮合仓库的 `docs/specs/m14.md`、`docs/specs/m14-process-protocol.md`、`matching-testkit/src/test/resources/m14/profile-q1.json` 、`matching-testkit/src/test/resources/m14/workload-v1.json`、`generated-corpus-v1.json` 与对应 schema；源码协议、canonical bytes 和具体测试输入由这些文件在 start 前唯一冻结，博客不维护第二套 Java 签名。计划语义、五篇 permalink 与下列停止点由本文维护。
+
+#### 8.16.1 OutputGenesis 与账户归属划定历史覆盖
+
+M13 的 producer、STP group 或 orderId 都不是账户归属。新 Place 必须带上游提供的 opaque `accountRef`（1–64 UTF-8 bytes，无控制字符），其他新命令不带它；同 commandId/slot 的归属变化是身份冲突。maker/taker 分别取原 maker 与被准入 taker 的归属；撤单、IOC/STP 终态和 MassCancel 取被影响订单的归属，operator 身份另行保存。归属进入请求身份、typed output 和可恢复订单状态，不引入账户、授权、余额、费用或结算服务。
+
+OutputGenesis 绑定 deployment UUID、shard、canonical Q1 profile、导入 M13 snapshot hash/semantic/identity digest、原 nextShardSequence 和 active route。导入首先执行 M13 原有完整语义恢复，并要求所有 resting books 为空；保留原终态身份、规则/模式、路由与序号后，两条新流分别从 sequence 1、ACK 0、floor 1、epoch 0 未授权开始。带无归属存量订单的 snapshot 必须失败，不接受人工归属字典，也不补造历史输出。
+
+旧 M13 身份通过 M14 wrapper 携带原 canonical payload/slot、缺省 accountRef 精确重试，先于当前 route/fence/容量检查。返回原 M13 完整语义响应并遵循原 replay/correlation 规则，两条 output reference 均缺省；若给旧身份附加 accountRef，返回 `LEGACY_ATTRIBUTION_FORBIDDEN`，若改原 payload/slot，保持身份冲突。未知身份缺 accountRef 的 Place 是非法新请求。新 M14 精确 retry 返回原结果与原 output identity，即使 retained batch 已淘汰也不再生成第二份输出。
+
+#### 8.16.2 per-shard 双流与完整 batch 边界
+
+两条流分别以 `(genesisId, shardId, EXECUTION | MARKET)` 定义身份，拥有独立 sequence、cursor、retention floor 和 grant。业务 shard/book sequence、output sequence、controlRevision、publisher epoch 和 transport correlation 不可互借。首版订阅完整 shard 流，instrument 过滤发生在验收连续流之后；不建立跨 shard 全局顺序或原子切点。
+
+每个新准入的 business/route command 恰好形成一个 Execution batch，类型覆盖 Execution、MarketControl、MassCancel 或 RouteActivated；业务拒绝是无效果事实，不是虚构账户释放。typed 字段保留实际事件、ticks/lots、事件顺序、规则/模式和角色归属，不解析显示字符串。Market 仅在公共投影变化或有真实公共成交时新增一个 batch；白名单为公共 `Trade`、绝对剩余量 `LevelSet`、公开 mode/active rule 的 `BookStatus`。不含账户、producer/slot、commandId、operator、私有 orderId、STP group、Execution sequence 或私有结果 digest。batch identity/content hash 与 bytes 不随 publisher epoch 或重传改变。
+
+Execution 只能逐完整 batch 精确 replay。落在 retained floor 之前返回 `EXECUTION_GAP_UNRECOVERABLE`，不能静默跳过或用盘口替代历史。Market 落后则返回 `MARKET_SNAPSHOT_REQUIRED`，通过所有 active book（包含空 book）的完整公共镜像、同一 Market cut 和 cut+1 起连续 suffix 重建当前视图；这不能恢复已淘汰的公共成交历史。snapshot 不得跨 genesis/shard 混装、部分安装、倒退 cut 或接错 suffix。`InstallMarketSnapshotCursor` 是 MARKET 专用控制，当前完整 snapshot 的 cut/digest 必须精确相同；并发推进时返回 `SNAPSHOT_CUT_CHANGED` 后重取，Execution 没有这条跳转路径。
+
+#### 8.16.3 同 apply outbox、durable ACK 与发布 authority
+
+新请求先在隔离 candidate 上运行真实 typed 撮合，计算两条 canonical batch、公共 snapshot 与精确 count/byte 成本。只有全部可安装时，一次状态转换才共同安装业务、归属、原响应/output binding、next positions 和 outbox。`OUTPUT_PROFILE_LIMIT` / `OUTPUT_BACKPRESSURED` 必须在 live 状态、producer fence、身份和序号改变前拒绝，且不绑定该请求；ACK 释放容量后，同一身份可首次成功。已成功 retry 在容量检查前返回。
+
+service callback 只形成已提交并应用的完整不可变 view，外部 publisher 通过有界只读 adapter 获取它；callback 不等待 socket、外部 ACK、数据库或线程门闩。易失 queue 只是传输缓存。恢复 snapshot 保存 genesis/profile、导入前缀、新业务和控制的确切交错、每份原结果/输出、归属、grant/ACK/floor/tip 和保留 batch；重演并逐项校验后才安装。重算 checksum 不得掩盖早期输出、归属或控制顺序被改动。
+
+控制采用独立 UUID、expected controlRevision 和 per-shard 递增 revision；只增加新的成功控制，不消耗 business/book/output sequence 或 outbox 配额。`GrantPublisher` 安装当前 publisher/epoch；`Acknowledge` 绑定固定 consumer、stream、当前 grant、完整 sequence/digest。ACK 是累计确认：接收器先将此前到该位置的连续完整验收记录与 cursor 一起持久保存，服务再验证已生成位置/hash 并经复制 apply 后回收。服务不能仅凭末批 hash 独立证明下游已经 fsync；真实 sink journal/故障证据承担这条义务。旧控制精确 retry 只返回历史结果，不再推进/回收；新 identity 下的旧 grant、超前/倒退、外来流或内容冲突不得改变状态。
+
+可信 authority 安装顺序为 committed grant response → 所有 live replica 同 grant 观察 → controller 经仅其持有的 ADMIN stdin 传递确切身份 → sink force grant journal → `ADMIN_OK` → 新 publisher DATA。旧 publisher 拒绝断言发生在 `ADMIN_OK` 之后，不把 Cluster commit 说成跨进程原子撤销。DATA 的更大 epoch 不能自授权；sink 重启要与 committed grant 对账。它是本地受信资格控制面，不是密码学证明、生产认证服务或 Counter。
+
+#### 8.16.4 M14-Q1 的规范化资源合同
+
+canonical JSON `matching.m14.profile.v1` / `M14-Q1` 以排序字段、无空白、UTF-8 和一个末尾 LF 固定 bytes；profile SHA-256 `02ef0ee44900e1a472fea03ed5cb406215550994826b53f4b708e33815c6be9d` 绑定 genesis、workload、snapshot、每个进程与 evidence。所有实际影响准入/读取/传输/恢复的上限都在 profile 内，缺失、未知、同 id 不同内容或本地覆盖一律拒绝。
+
+| 维度 | 冻结值 |
+| --- | --- |
+| 账户/新请求/业务投影 | accountRef 64 bytes；new request 65536 bytes；16 books/shard；128 resting orders/book；256 records/batch；batch 含 header/digest 最多 65536 bytes |
+| Execution 保留 | 32 pending batches / 262144 encoded bytes；只淘汰 replicated ACK 覆盖的完整 batch |
+| Market 保留/恢复 | 16 retained batches / 524288 bytes；whole-shard public snapshot 最多 1048576 bytes；当前图像不能冒充成交历史 |
+| page/queue | read 最多 4 batches / 262144 bytes；publisher batch queue 最多 4 batches / 262144 bytes；snapshot 独立一份最多 1 MiB image，不进入 batch queue |
+| 应用帧/连接/每轮工作 | frame 总长 4096 bytes，含 length prefix 的 header 512 bytes，payload 3584 bytes；adapter 2 connections，sink 4 connections，每连接 1 reassembly；每轮最多 16 frames |
+| 协议 deadline | fragment assembly 5000 ms、connection idle 2000 ms、protocol request 10000 ms；workload step 45 s / suite 360 s |
+| 旧格式与 envelope | legacy request 2097152 bytes、response 16778240 bytes、snapshot 268435456 bytes；M14 command envelope 2097265 bytes、response 16778752 bytes；新请求准入限额不能截断 legacy 精确重试 |
+| 控制/格式防御上限 | control request/response 8192 bytes，profile 8192 bytes，genesis 1024 bytes，read metadata 512 bytes，typed string 512 bytes，sink journal record 1049600 bytes |
+| 完整恢复格式上限 | retained M14 operations 2000000；runtime snapshot 536870912 bytes；这些是明确失败关闭的格式 ceiling，不是长期容量、恢复时间或总状态有界资格 |
+
+普通 page 返回独立 batch message 和有界 metadata，不产生未定义的大 envelope；assembly 先验证声明长度再分配受限空间。snapshot source image、receiver assembly、frame workspace、batch queue 和连接的实际 high-water marks 分开记录，不能把 256 KiB queue 说成全部传输内存。真实已应用 Execution batch 与 whole-shard Market snapshot 均须至少一份大于 4096 bytes，经至少两片应用 frame 完整重组；TCP 分包和填充数据不算。
+
+必要 Execution consumer 永久停住可使所属 shard 停止新业务准入，不能丢未 ACK batch 维持假进展。独立 ACK/grant 控制仍能复制并解除积压，另一 shard 在同窗口真实应用业务。count32、pending byte 和 batch record256 拒绝必须有实际合法输入 witness，不能通过改小运行上限制造。record witness 用 128 个不同 ask 价位被一次 taker 全吃并余一手入簿，形成 128 trade + 128 ask 删除 + 1 bid 更新共 257 条候选 Market records，在安装前拒绝；其他防御性 ceiling 用明确分类的 decoder/candidate 拒绝与配置检查覆盖，不宣称所有上限都被真实业务饱和。原 M13 identity history、新归属/控制历史和 sink journal 仍未裁剪，完整前缀验证成本继续随保留历史增长。达到 2000000 个 retained M14 operations 的独立历史 guard 时，新 business/control 均以 `HISTORY_LIMIT` 零副作用停止，精确旧 retry 仍可读取；outbox 满时的控制 drain 保证只在该有限 guard 内成立。
+
+#### 8.16.5 有限输入、真实进程与证据义务
+
+冻结 **12 个本地场景、C01–C07 七个独立进程 witness、seed 6414 的 48×80=3840 个逻辑生成动作和 8 项语义 mutant**。这些冻结数量已由完成身份绑定的 fresh 资格逐项执行通过；一个逻辑动作可以按冻结规则展开多次 primitive business/control attempt，两者分别计数，不能把 primitive 扩展算成额外 generated action。fixed 覆盖账户与 public 投影、全部既有订单/控制结果、STP/MassCancel、legacy/new identity、genesis/profile import、count/byte 容量、Execution replay、whole-shard Market rebuild、grant/control identity、恢复 cut、语义篡改和 codec/work-budget。generated 八类动作包括 Place、Cancel、rule/mode/route、retry/conflict、grant/ACK、page read、Market rebuild、snapshot/restore；输入 schedule 与生成规则在 start 前固定，不在实现后换 seed 或省略失败 history。
+
+独立 oracle 使用 linear reference book 和独立 typed output/account/public projection/cursor 模型，逐动作核对完整事实。八个 mutant 为 maker 归属取错、Market 私有泄漏、duplicate 增 batch、非法超前 ACK、Market cut 偏一、旧 publisher 接受、live apply 后才容量拒绝、snapshot 丢 output binding。每个候选须有同场景 production control PASS；只有可解释 `STUDENT_FAILURE` 计 kill，throwing control 必须是 `SYSTEM_ERROR`；另有 corrupt child report 与 missing bound artifact 两项基础设施分类 control。`matching-core` 的 Git tree 必须与 M13 predecessor 完全相同，所有旧协议 Golden 和输入保持原样。
+
+真实拓扑至少同时有两组六 member JVM、两个 publisher JVM 和一个 durable protocol-test sink JVM；接管保留旧 publisher 并增 replacement，峰值至少十个子 JVM。只读 adapter 使用 member 十端口块的 `+6`；不同组、TCP/UDP、目录与 PID 必须独立。sink DATA TCP 不能安装 authority，ADMIN stdin 仅 controller 持有。
+
+| Witness | 必需故障与可复核结果 |
+| --- | --- |
+| `M14-C01-APPLY-BEFORE-PUBLISH` | 已 committed/applied/outbox 但发布前杀 Leader；替代 Leader 读到同 identity/bytes，retry 无第二输出。 |
+| `M14-C02-DURABLE-WRITE-BEFORE-ACK-LOSS` | sink 完整 journal force 后、ACK 前崩溃；重启恢复 frontier，重送去重，服务 ACK 未提前推进。 |
+| `M14-C03-DURABLE-ACK-BEFORE-REPLICATION` | publisher 收到 sink durable ACK 但尚未提交复制控制时崩溃；outbox 未提前回收，接管后对账/重送并有效 ACK。此窗口不声明已 offer 但未提交的共识故障。 |
+| `M14-C04-LIVE-STALE-PUBLISHER` | 旧 JVM 活着且持有真实 bytes/ACK；新 grant 经 ADMIN_OK 生效后实际放行旧 DATA 和新 identity 的旧 grant ACK，二者均不推进/回收。 |
+| `M14-C05-EXECUTION-FULL-SHARD-ISOLATION` | shard1 满后拒绝新业务且全状态不变；shard2 同窗口 apply/output/ACK，shard1 控制仍可复制；释放后原被拒身份首次成功。 |
+| `M14-C06-SNAPSHOT-ALL-MEMBERS-AND-SINK-RESTART` | 两组六成员真实完成 snapshot，带 suffix 停止并保留目录重启；六份加载观察与 sink journal 恢复后，完整状态/输出/cursor 与 Direct uninterrupted 等价。 |
+| `M14-C07-FRAGMENTED-BATCH-AND-MARKET-REBUILD` | 真实大 batch/snapshot 经应用帧传输；Execution 无跳过，Market gap→snapshot cut→suffix 后投影等价，错误 stream/genesis 不被接受。 |
+
+可以用一次持续运行覆盖七个 witness，但报告逐一保留屏障、PID、原 bytes、精确 delta 与退出诊断。进程、协议、Schema、超时、原始文件变化、缺失清理都属于 `SYSTEM_ERROR`，不能计为业务反例被杀死。完成导出须在 clean annotated completion 上 fresh qualification，复用 M13 的生成阶段 artifact binding 与复制前后精确 inventory/hash 检查；不得在最后重新哈希接纳已变报告。`productRelease=null`，公开计数/hash 只从实际结果填入。
+
+<!-- m14-completion-observations -->
+
+本次 clean 完成资格实际执行 12 个固定场景、21276 次 primitive、341070 次断言；生成部分为 seed 6414 的 48×80=3840 个逻辑动作、另有 48 条 prelude，57549 次 primitive、1041767 次断言，78 条实际 Trade 与 72 次不同 maker/taker 账户断言，全部 15360 次随机抽取复核。8 项语义 mutant 均在 production control PASS 后以明确 STUDENT_FAILURE 被杀死，3 项 SYSTEM_ERROR control 均不计 kill；C01–C07 七个真实进程 witness 全部 PASS，完整 teardown 已核验。manifest 绑定 332 个 artifact 与 12 条 limitation；原始 gzip 的内容字典可重建完整请求、输出和 snapshot bytes，原始压缩 hash 在写入时捕获并在发布时复核。
+
+<!-- /m14-completion-observations -->
+
+#### 8.16.6 五篇课程合同与停止点
+
+采用 L0 本地 JVM 预测、运行与原始 evidence 复核，browserModel 为 `NOT_APPLICABLE`，不登记 Lab 或创建占位教程。每篇按概念→机制→可反驳预测→实际运行事实→保证边界推进，第五篇承担有限复验流程，不能写成五份重复清单。
+
+| lessonOrder | 固定标题 | 固定 permalink |
+| --- | --- | --- |
+| 10 | M14·01：成交结果怎样成为可记账事实与公共行情 | `accountable-execution-and-public-market-contracts` |
+| 20 | M14·02：apply 已完成，发布前崩溃会丢掉什么 | `same-apply-recoverable-outbox` |
+| 30 | M14·03：Execution 缺口要补齐，Market 缺口怎样重建 | `execution-replay-and-market-snapshot-resume` |
+| 40 | M14·04：旧 publisher 还能发包时，谁有权推进 cursor | `durable-cursor-and-publisher-fencing` |
+| 50 | M14·05：用有界积压与固定标签复验连续输出 | `bounded-output-backpressure-and-resume-evidence` |
+
+五篇按上表固定标题、lessonOrder/permalink 在 `/signal-grid-blog/practice/high-availability-cex/m14/<permalink>/` 与公开 evidence 一起原子登记，源码身份为 annotated `course/m14-complete` 指向 clean commit `56c4ec09ddf9fcf57f1cce763ae8b451ba7f394f`；[公开 manifest](https://lcha-reln.github.io/signal-grid-blog/practice/high-availability-cex/m14/evidence/manifest.json) 的 SHA-256 为 `7eb56335954e03a6792b8f9971b922e3bd45bf5dcbd60e47f1e5cedde3fb2081`。经过 GREEN/RED 验证的 `startRef=course/m14-start` 与完整提交 `96b749861292950749701e34a6f20796f239cd4b` 继续保留。本地入口为 `./gradlew clean build` 与 `./gradlew m14Check`；完整博客 gate、代码 CI/Pages Actions 和生产 route/hash 仍是本次发布批次的核验项。M15 继续候选，只在 M14 完整发布后单独评审。
+
+M14 停止在 Q1、显式 genesis、受信本地 controller、同主机有限进程故障条件下的输出恢复/续接/fencing/背压资格。它不实现 Counter/Rest、客户授权、余额/费用/结算、新交易业务、动态迁移、跨 shard 原子顺序、历史补造或外部 exactly-once；不声明总历史有界、生产吞吐/延迟/RTO/RPO/SLO、跨主机/磁盘/断电、cold backup 或混合版本升级回滚资格。产品停止点仍是 `matching-0.8.0`，`matching-1.0.0` 留到 M15。
+
+### 8.17 M15 候选发布制品运行资格
+
+M15 仍为 `CANDIDATE / RISK_MAP`，没有冻结实现、Schema、版本组合、负载数字或文章。它须在 M14 完整发布后独立评审；不利用输出单元提前实现运营资格，也不缩减 `matching-1.0.0` 的既有停止点。
+
+| 单元 | Adds | Delivers | Excludes | Gate 与 Evidence |
+| --- | --- | --- | --- | --- |
 | M15 发布制品运行资格 | release operational qualification | 对固定 Matching 发布制品做受控 N/N-1 升级与回滚、cold backup/restore、环境绑定 Cluster capacity 与运行诊断；形成部署/停止/恢复/故障 Runbook 和 release evidence | 新撮合业务、在线迁移、自动再均衡、未经验证的 rolling/mixed-version 组合、跨主机/跨地域保证、无环境依据的 TPS/RTO/SLO、Counter/Rest 实现 | 兼容矩阵、回滚安全边界、冷备恢复后 state/identity/output cursor 等价、真实 Cluster 负载与有界过载、故障/资源诊断均有原始证据；累计门禁通过后发布 `matching-1.0.0` |
-
-M14 的两条流不能混为一个恢复合同：
-
-| 流               | 消费者            | 必需内容                                                                                                                                                                                                                                                                                           | Gap 处理                                                         |
-| ---------------- | ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
-| Execution stream | Counter           | 原子 batch ID/boundary、stable command identity/order command sequence、route version、instrument、command disposition、order/cancel result；每笔 trade 必须包含 execution price、quantity，以及明确标注 maker/taker 的双方 order/account 关联；execution rule version、shard sequence 和 checksum | 停止消费并精确 replay 缺失区间；订单簿 snapshot 不能替代历史成交 |
-| Market stream    | Rest 和行情消费者 | trades、BBO、depth delta、market sequence 和 checksum                                                                                                                                                                                                                                              | 允许从行情 snapshot + incremental 重建当前状态                   |
-
-权威 batch 必须先存在于复制、可 replay 的 output outbox；有界传输队列只是优化。外部持久化达到已验证边界后才能推进可裁剪位置，snapshot 必须包含 next batch sequence、last durable publication position 和未裁剪 batch。若 Execution retention 无法覆盖 Counter 的恢复窗口，系统必须 fail closed 或进入受控停市，而不能静默跳过历史。输出发布可重复，但旧 Leader 或 stale runtime 不能发布新的权威 sequence。
 
 M15 的唯一新增维度是把已经存在的功能组合成有证据约束的发布制品资格，不借资格单元增加新交易业务。受控升级允许明确停服边界，不等于已经支持任意滚动混版本升级；cold backup 必须冻结一致恢复点，恢复到新目录或环境并验证状态、幂等身份和输出游标，不能仅列出文件即宣称恢复成功。容量结论必须绑定真实 Cluster 环境和 workload，保存负载、过载、资源与恢复原始报告。具体版本组合、负载时长和数值门槛在 M15 签约时评审；若不能在一个清楚的资格合同内完成，应继续拆分候选单元，不降低 `matching-1.0.0` 的停止点承诺。
 
-### 8.17 Matching 进入下一阶段的门禁
+### 8.18 Matching 进入下一阶段的门禁
 
 - M03 发布前不允许出现 WAL、Aeron 或多交易对实现；
 - M04 发布前只允许 ExecutionPolicy 轴；M05 只允许 versioned order-entry price band；M06 只允许 mode/Mass Cancel；M07 只允许 opaque group + STP disposition；M08 只允许单写者本地 WAL/ACK/durable idempotency；
@@ -2372,7 +2463,7 @@ signal-grid-blog
 ```
 
 - 实战章节使用独立 `practiceLessons` collection，不进入 `posts`、文章归档和主 RSS；
-- `config.ts` 管案例与 Profile，`units.ts` 管已签约及之后的单元，Markdown 只管一篇教程；M00～M12 保留各自已发布 ref、完整提交、evidence 与教程，以及适用单元的 Matching Lab。M09 五篇教程已原子公开但没有登记 Lab 或产品 release；M10 五篇教程、`matching-0.5.0` 与环境绑定 release evidence 已原子登记；M11 五篇教程、`course/m11-complete` 与单节点 Aeron Adapter evidence 已原子登记，但没有 Lab 或产品 release；M12 五篇教程、`course/m12-complete`、`matching-0.8.0` 与真实三成员故障 evidence 已原子登记。M13 五篇教程、`course/m13-complete` 与静态分片原始 evidence 已原子登记，无 Lab 或产品 release；M14/M15 为候选，不进入单元注册表或创建教程；
+- `config.ts` 管案例与 Profile，`units.ts` 管已签约及之后的单元，Markdown 只管一篇教程；M00～M12 保留各自已发布 ref、完整提交、evidence 与教程，以及适用单元的 Matching Lab。M09 五篇教程已原子公开但没有登记 Lab 或产品 release；M10 五篇教程、`matching-0.5.0` 与环境绑定 release evidence 已原子登记；M11 五篇教程、`course/m11-complete` 与单节点 Aeron Adapter evidence 已原子登记，但没有 Lab 或产品 release；M12 五篇教程、`course/m12-complete`、`matching-0.8.0` 与真实三成员故障 evidence 已原子登记。M13 五篇教程、`course/m13-complete` 与静态分片原始 evidence 已原子登记，无 Lab 或产品 release；M14 的五篇教程、固定完成身份与可还原的原始 evidence 已按 PLAN v0.17 一起登记，无 Lab 或产品 release；M15 为候选且不进入注册表；
 - 教程用 `project / profileVersion / unitCode` 关联单元，同单元的 `lessonOrder` 和 `permalink` 必须唯一；路由为 `/practice/<project>/<unit>/<lesson>/`；
 - 教程一律从 `draft: true` 开始。单元达到 `PUBLISHED` 前不得公开；草稿不生成生产路由，不进入搜索、sitemap、文章统计或主 RSS；`CONTENT_VERIFIED` 冻结预期教程的排序与 permalink，`PUBLISHED` 必须原子公开完整集合；`CODE_VERIFIED` 冻结 complete tag、完整提交 SHA、仓库内 evidence 路径和发布证据合同。M00～M12 的 evidence 都托管到 Signal Grid 的固定静态路径，由 verifier 复核 CI manifest SHA-256、来源、精确 claim/限制、全部 artifact hash，以及 `reportFacts` 中冻结的业务状态和关键报告字段；
 - `pnpm verify:practice` 拒绝缺失或 `LOCKED` 单元、重复排序/地址、未 `PUBLISHED` 非草稿和 `main`、`unit/*` 等浮动 ref。它不联网读取课程仓；跨仓 tag/evidence 在发布前独立核验；
@@ -2443,7 +2534,7 @@ M00 已在独立公开仓库 [`lcha-reln/cex-matching`](https://github.com/lcha-
 
 生命周期现为 `PUBLISHED`：17 条固定记录、37 行/3199 字节 canonical history、100 次 fresh replay、必需 semantic mutant、架构边界和 evidence manifest 都已通过；M00·01～04 已按冻结顺序原子公开。tag CI 的原始 bundle 已固化为[持久 evidence](https://lcha-reln.github.io/signal-grid-blog/practice/high-availability-cex/m00/evidence/manifest.json)，manifest SHA-256 为 `a8962136833f185bee24fd45f22ea58b0db0ac1c837106f02dba7d2483f9deee`，站点 verifier 会继续复核来源、五项 claim、五条限制和全部 artifact hash。
 
-当前 PLAN v0.16 只在 M12 已发布基线上为 M13 冻结静态权威路由与 shard 内多订单簿；M00 输入、验证、canonical history、digest 与 evidence 合同不变。因此 M00 的 `course.properties` 与不可移动起点继续记录合同 `planVersion=0.1`，网站另行公开当前计划版本和这条兼容说明，不改 tag、不回写冻结证据，也不把后续 WAL、Snapshot、benchmark 或 Cluster wire bytes 声称为 M00 canonical format。
+当前 PLAN v0.17 只在已发布 M13 之后新增可续接业务输出合同；M00 输入、验证、canonical history、digest 与 evidence 合同不变。因此 M00 的 `course.properties` 与不可移动起点继续记录合同 `planVersion=0.1`，网站另行公开当前计划版本和这条兼容说明，不改 tag、不回写冻结证据，也不把后续 WAL、Snapshot、benchmark 或 Cluster wire bytes 声称为 M00 canonical format。
 
 Bootstrap 已冻结这些维护选择：
 
@@ -2467,7 +2558,7 @@ M01 已按 v0.3 合同完成并发布。不可移动练习起点是 annotated [`
 
 M01·01～04 已按冻结 `expectedLessons` 原子公开；[Matching Lab](https://lcha-reln.github.io/signal-grid-blog/practice/high-availability-cex/m01/lab/)把 Java Golden 回放与有界浏览器模型分成两个模式。浏览器模型在解锁前必须 fresh-state 重放全部 8/22 corpus，逐事件和逐盘口与静态 evidence 一致；任何读取或语义差异都会保持禁用。它只用于预测和解释，不上传源码、不运行 Java，也不输出课程裁判结论。M01 不是命名停止点，因此 `productRelease` 仍为 `null`，`matching-0.1.0` 继续留给 M03。
 
-当前 PLAN v0.16 只在 M12 已发布基线上为 M13 冻结静态权威路由与 shard 内多订单簿；M01 价格时间优先业务语义、冻结 event batch、Golden corpus 与 evidence 不回写，也不表示后续 Java event hierarchy、WAL/Snapshot bytes、queue、Cluster codec 或恢复运行时与 M01 完成提交相同。因此 M01 的 `course.properties`、起点、完成 tag、教程与持久 evidence 继续保留合同 `planVersion=0.3`。
+当前 PLAN v0.17 只在已发布 M13 之后新增可续接业务输出合同；M01 价格时间优先业务语义、冻结 event batch、Golden corpus 与 evidence 不回写，也不表示后续 Java event hierarchy、WAL/Snapshot bytes、queue、Cluster codec 或恢复运行时与 M01 完成提交相同。因此 M01 的 `course.properties`、起点、完成 tag、教程与持久 evidence 继续保留合同 `planVersion=0.3`。
 
 权威本地入口保持最小：
 
@@ -2484,6 +2575,7 @@ git switch -c unit/m01 course/m01-start
 
 | 日期       | 版本  | 变更                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | ---------- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 2026-09-07 | v0.17 | M13 全部发布后签约 M14 可续接业务输出：严格空 resting book 的 OutputGenesis import、opaque accountRef 与 typed/public 双流、同 apply outbox、per-shard 独立 cursor/fence、可信 ADMIN_OK 接管、canonical M14-Q1 限额、12+7 witness、seed 6414 的 48×80 输入义务、8 mutant 和五篇 permalink。M14 无产品 release，M15 继续候选运营资格，33 单元/三个仓库门禁与 M00–M13 已发布 refs/evidence 保持不变；当前只建立合同/RED 起点，不提前宣称实现或资格通过。 |
 | 2026-09-05 | v0.16 | 按用户继续完成撮合的授权评审剩余范围；M13 签约静态权威路由与 shard 内多订单簿，冻结 BTC-USDT/ETH-USDT 同属 shard 1、SOL-USDT 属于 shard 2、两组六个独立 child JVM、route owner/version/canonical hash、错误路由零副作用、shard 级 durable identity/application sequence、独立 book sequence、仅新增 instrument 的路由更新和六 JVM 故障隔离与 snapshot/restart 等价门禁。workload 数量、seed 和报告 identity 须在 start 前冻结，不预写通过数字。M14 保持候选连续业务输出且无产品 release；新增候选 M15 发布制品运行资格，承接受控 N/N-1 升级/回滚、cold backup/restore、环境绑定 Cluster capacity/运行诊断；matching-1.0.0 移到 M15。Matching 为 16 单元，SPOT 合计 33 单元，M00–M12 发布合同/ref/evidence 保留不变 |
 | 2026-09-03 | v0.15 | M12 从候选风险图升级为正式合同，唯一新增单机、单分片、静态三投票成员 Aeron Cluster 内的 Leader 进程故障正确性：冻结三个独立 child JVM/PID/目录/五端口块、外部 controller 强杀观测 Leader、NOT_SUBMITTED/UNKNOWN/ACKNOWLEDGED invocation 状态、UNKNOWN 以相同 commandId+producer Slot+payloadHash 和新 correlation/client generation 重试、替代 Leader term 严格高于 kill 前重新采样的 fault-target authority、`responseAcceptedUnderCurrentClientAuthority`/`observedResponseAuthorityTerm` 的客户端观察语义、evidence-captured pre-fault/pre-stop/final stable member-status snapshots 的三类 Aeron fail-stop WARN 白名单与 dropped-warning 失败关闭、旧 Leader Follower catch-up、丢失多数派不 ACK 与 quorum 恢复、三 member/Direct state equivalence、14 fixed、seed 6120、25 obligation、8 semantic mutant、3 SYSTEM_ERROR control、66 distinct command、至少 84 accepted ingress、最终 nextApplicationSequence=67、五篇 permalink 和 `matching-0.8.0` target。`matching-core` 与 M11 六份 Golden 必须 byte-identical；Backup、host/disk loss、网络分区矩阵、性能/RTO、rolling upgrade、多分片、下游输出、Counter/Rest/DB/外部副作用继续排除 |
 | 2026-09-03 | v0.14 | M11 从候选风险图升级为正式合同，唯一新增真实单 member Aeron Cluster Adapter：冻结 Aeron 1.52.2、Agrona 2.5.0、Java 25、core 无 Aeron、Cluster log/snapshot 唯一恢复真相、完整 `ClusteredService` callback-reachable production source graph 不引用 standalone WAL / external I/O（不是 runtime write counter）、application request/response/snapshot current2/minReadable1 与六份 Golden、request v1→response v1 / v2 只协商 1/2 / 全部 outcome 可降 v1、optional commandId echo、payloadHash 精确 hash domain、两 binding Snapshot Golden 与严格 identity 顺序、ingress→log apply→result bind→correlated response、22 fixed、seed 6111 的连续 32 segment×128=4,096 action corpus、两个 fresh Cluster run 共 8,192 actual ingress、全局 action 2,048 后区分 Admin acceptance 与 counter/toggle/RecordingLog/written+loaded digest 完成证据、28 obligation、10 个来自 production-component seam 的 production-derived candidate、3 SYSTEM_ERROR control、七项 evidence claim 与五篇 permalink；三节点 quorum/failover/fencing/UNKNOWN/Backup、Cluster 性能、matching-0.8.0、Counter/Rest/DB/HTTP 继续排除                                        |
@@ -2505,6 +2597,8 @@ git switch -c unit/m01 course/m01-start
 
 | 日期       | 单元 | 生命周期        | 记录                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | ---------- | ---- | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-09-07 | M14 | `PUBLISHED` | annotated `course/m14-complete` 指向 clean commit `56c4ec09ddf9fcf57f1cce763ae8b451ba7f394f`；[公开 manifest](https://lcha-reln.github.io/signal-grid-blog/practice/high-availability-cex/m14/evidence/manifest.json) 的 SHA-256 为 `7eb56335954e03a6792b8f9971b922e3bd45bf5dcbd60e47f1e5cedde3fb2081`；12 个固定场景、21276 次 primitive、341070 次断言；seed 6414 的 48×80=3840 个逻辑动作、另有 48 条 prelude，57549 次 primitive、1041767 次断言，78 条实际 Trade 与 72 次不同 maker/taker 账户断言，全部 15360 次随机抽取复核；8/8 语义 mutant、3 系统分类 control 与七个真实进程 witness 通过。五篇教程与完整公开 evidence 同批登记，M15 继续候选，无产品 release。 |
+| 2026-09-07 | M14 | `IN_PROGRESS` | annotated `course/m14-start` 已发布并指向 `96b749861292950749701e34a6f20796f239cd4b`；普通 clean clone 的继承 clean build GREEN 与完整 m14Check 结构化 RED 已通过。登记固定 startRef 与本地命令，进入实现；尚无完成身份、公开教程或完成 evidence。 |
 | 2026-09-07 | M13 | `PUBLISHED` | annotated `course/m13-complete` 指向 clean commit `eb1b65d2ea2159ba607e3271f0bfd209ea4906ea`。干净普通 clone 的完整 `clean build m13Evidence` 通过；tag-bound fresh run 验证 10 个场景、seed 6313 的 64×64=4,096 个生成动作、6 个语义 mutant、两个独立三成员组及六个同时运行的 child JVM。`cex.lab-evidence.v2` manifest SHA-256 `7a1c5b677f088ccd46b9f4e523151496910aea8874683799b347d57be819ecd7` 绑定 1 项有限正确性 claim、9 条 limitation 与 204 个 artifact；五篇教程和公开 evidence 一起登记。M13 不登记 Lab 或产品 release，产品停止点仍为 `matching-0.8.0`。 M14/M15 仍为候选，历史合同和 evidence 不回写。 |
 | 2026-09-03 | M12  | `PUBLISHED`     | PLAN v0.15 与 annotated `course/m12-start` 保留结构化 RED；annotated `course/m12-complete` 与 annotated `matching-0.8.0` 均 peeled 到 clean commit `d8b1b1fbb36323502495a8bc0a60042db1e9e040`。Aeron 1.52.2/Java 25 的 tag-bound fresh run 启动三个真实 child JVM，自动初选 member 2/term 0，外部强杀后由 member 0/term 1 接替；85 次 invocation 精确为 84 accepted、82 ACK、2 UNKNOWN、1 NOT_SUBMITTED，无 quorum attempt 84 保持 UNKNOWN，恢复 quorum 后 attempt 85 以 `DUPLICATE_REPLAYED` ACK。三项 ArchiveMarkFile witness 的 age 为 10001/10002/13078 ms，均严格大于 10,000 ms；former Leader 以 Follower 追赶，最终三 member 的 identity count=66、nextApplicationSequence=67，semantic digest `a94bccba4baee2339ddaf525c4251c051f7ad3e48021fd50ceb2ed59f4ffe4df` 与 identity/result digest `139efc2b815dc044a71ad05d40fea12c071943e6955f1f1702b29b80aa40e73e` 均匹配 Direct oracle。manifest SHA-256 `e25ff7069a831a56cc42b1ebd7d5aaf0cde39b6158caf1e68b8725b0f8862983` 绑定 10 claim、15 limitation、33 artifact 与严格 reportFacts，五篇教程已原子公开；仍无跨主机、Backup、分区矩阵、性能/RTO、升级、多分片或外部副作用资格                                                                                                            |
 | 2026-09-03 | M11  | `PUBLISHED`     | annotated `course/m11-start` peeled 到 `e80c786425dd5766b0e3568c87f01b366e44e8e6`，冻结 PLAN v0.14、schema-valid `matching.m11.check.v1 / GOAL_NOT_IMPLEMENTED` 与 workload SHA-256 `f856c8dcf2e902add248a59cdb97525083bae469745682eed0ea7ae9169033b6`；annotated `course/m11-complete` 指向 clean commit `6997e05cea81cb93b883e882c8d75887d0622a22`。Aeron 1.52.2/Agrona 2.5.0/Java 25 下，22/22 fixed、连续 32 segment×128=4,096 action corpus、两个 fresh Cluster run 共 8,192 次 actual ingress、全局 action 2,048 的 Snapshot completion/load witness、28/28 obligation、32 条 executed assertion fact、10/10 个从 production-component seam 产生的 production-derived candidate 与 3 个不计 kill 的 SYSTEM_ERROR control 闭合；完整 `ClusteredService` callback-reachable production source graph 中 standalone-WAL / external-I/O reference 为 0，该事实不是 runtime write counter。`cex.lab-evidence.v2` manifest SHA-256 `6785175b2e8657c054bc55d49c60293c5740f23770631037f51d4af6bb1caef2` 绑定 7 项 claim、8 条 limitation、27 个 artifact、12 个 child report 与约 1.27 MiB 紧凑 evidence；五篇教程已原子公开。M11 无 Lab、product release、三节点故障、Cluster 容量或高可用声明；当前没有 `IN_PROGRESS` / `READY` 单元，M12 仍未签约 |

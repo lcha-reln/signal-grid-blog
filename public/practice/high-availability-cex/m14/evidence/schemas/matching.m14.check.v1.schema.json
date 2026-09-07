@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "unit", "contractPlanVersion", "workloadSha256", "profileSha256", "declaredLocalScenarios", "declaredProcessWitnesses", "declaredGeneratedActions", "declaredSemanticMutants", "status", "executed", "clusterGroups", "memberProcesses", "sinkProcesses", "publisherProcesses"],
+  "properties": {
+    "schemaVersion": {"const": "matching.m14.check.v1"},
+    "unit": {"const": "M14"},
+    "contractPlanVersion": {"const": "0.17"},
+    "workloadSha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "profileSha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "declaredLocalScenarios": {"const": 12},
+    "declaredProcessWitnesses": {"const": 7},
+    "declaredGeneratedActions": {"const": 3840},
+    "declaredSemanticMutants": {"const": 8},
+    "status": {"const": "GOAL_NOT_IMPLEMENTED"},
+    "executed": {"const": false},
+    "clusterGroups": {"const": 0},
+    "memberProcesses": {"const": 0},
+    "sinkProcesses": {"const": 0},
+    "publisherProcesses": {"const": 0}
+  }
+}

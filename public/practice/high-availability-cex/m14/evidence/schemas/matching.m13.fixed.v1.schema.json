@@ -1,0 +1,379 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "scenarios",
+    "executedScenarios",
+    "passedScenarios",
+    "status"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "matching.m13.fixed.v1"
+    },
+    "scenarios": {
+      "type": "array",
+      "minItems": 8,
+      "maxItems": 8,
+      "items": {
+        "$ref": "#/$defs/observation"
+      },
+      "prefixItems": [
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/observation"
+            },
+            {
+              "properties": {
+                "id": {
+                  "const": "ROUTE_CANONICAL_HASH_AND_OWNER"
+                },
+                "scenario": {
+                  "const": "ROUTE_CANONICAL_HASH_AND_OWNER"
+                },
+                "candidate": {
+                  "const": "PRODUCTION"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/observation"
+            },
+            {
+              "properties": {
+                "id": {
+                  "const": "WRONG_SHARD_AND_INSTRUMENT_NO_MUTATION"
+                },
+                "scenario": {
+                  "const": "WRONG_SHARD_AND_INSTRUMENT_NO_MUTATION"
+                },
+                "candidate": {
+                  "const": "PRODUCTION"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/observation"
+            },
+            {
+              "properties": {
+                "id": {
+                  "const": "INDEPENDENT_BOOK_PRICE_TIME_AND_ORDER_IDS"
+                },
+                "scenario": {
+                  "const": "INDEPENDENT_BOOK_PRICE_TIME_AND_ORDER_IDS"
+                },
+                "candidate": {
+                  "const": "PRODUCTION"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/observation"
+            },
+            {
+              "properties": {
+                "id": {
+                  "const": "BOOK_LOCAL_RULES_MODES_AND_CONTROL_SEQUENCE"
+                },
+                "scenario": {
+                  "const": "BOOK_LOCAL_RULES_MODES_AND_CONTROL_SEQUENCE"
+                },
+                "candidate": {
+                  "const": "PRODUCTION"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/observation"
+            },
+            {
+              "properties": {
+                "id": {
+                  "const": "SHARD_IDENTITY_CONFLICT_DUPLICATE_AND_PRODUCER_FENCE"
+                },
+                "scenario": {
+                  "const": "SHARD_IDENTITY_CONFLICT_DUPLICATE_AND_PRODUCER_FENCE"
+                },
+                "candidate": {
+                  "const": "PRODUCTION"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/observation"
+            },
+            {
+              "properties": {
+                "id": {
+                  "const": "APPEND_ONLY_ROUTE_ACTIVATION"
+                },
+                "scenario": {
+                  "const": "APPEND_ONLY_ROUTE_ACTIVATION"
+                },
+                "candidate": {
+                  "const": "PRODUCTION"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/observation"
+            },
+            {
+              "properties": {
+                "id": {
+                  "const": "MULTI_BOOK_SNAPSHOT_AND_SUFFIX_EQUIVALENCE"
+                },
+                "scenario": {
+                  "const": "MULTI_BOOK_SNAPSHOT_AND_SUFFIX_EQUIVALENCE"
+                },
+                "candidate": {
+                  "const": "PRODUCTION"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/observation"
+            },
+            {
+              "properties": {
+                "id": {
+                  "const": "MALFORMED_CODEC_AND_SNAPSHOT_FAIL_CLOSED"
+                },
+                "scenario": {
+                  "const": "MALFORMED_CODEC_AND_SNAPSHOT_FAIL_CLOSED"
+                },
+                "candidate": {
+                  "const": "PRODUCTION"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "executedScenarios": {
+      "const": 8
+    },
+    "passedScenarios": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 8
+    },
+    "status": {
+      "enum": [
+        "PASS",
+        "STUDENT_FAILURE",
+        "SYSTEM_ERROR"
+      ]
+    }
+  },
+  "$defs": {
+    "observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "id",
+        "scenario",
+        "candidate",
+        "status",
+        "executed",
+        "submissions",
+        "assertions",
+        "failure",
+        "rawFile",
+        "rawSha256"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "const": "matching.m13.semantic-observation.v1"
+        },
+        "id": {
+          "enum": [
+            "ROUTE_CANONICAL_HASH_AND_OWNER",
+            "WRONG_SHARD_AND_INSTRUMENT_NO_MUTATION",
+            "INDEPENDENT_BOOK_PRICE_TIME_AND_ORDER_IDS",
+            "BOOK_LOCAL_RULES_MODES_AND_CONTROL_SEQUENCE",
+            "SHARD_IDENTITY_CONFLICT_DUPLICATE_AND_PRODUCER_FENCE",
+            "APPEND_ONLY_ROUTE_ACTIVATION",
+            "MULTI_BOOK_SNAPSHOT_AND_SUFFIX_EQUIVALENCE",
+            "MALFORMED_CODEC_AND_SNAPSHOT_FAIL_CLOSED"
+          ]
+        },
+        "scenario": {
+          "enum": [
+            "ROUTE_CANONICAL_HASH_AND_OWNER",
+            "WRONG_SHARD_AND_INSTRUMENT_NO_MUTATION",
+            "INDEPENDENT_BOOK_PRICE_TIME_AND_ORDER_IDS",
+            "BOOK_LOCAL_RULES_MODES_AND_CONTROL_SEQUENCE",
+            "SHARD_IDENTITY_CONFLICT_DUPLICATE_AND_PRODUCER_FENCE",
+            "APPEND_ONLY_ROUTE_ACTIVATION",
+            "MULTI_BOOK_SNAPSHOT_AND_SUFFIX_EQUIVALENCE",
+            "MALFORMED_CODEC_AND_SNAPSHOT_FAIL_CLOSED"
+          ]
+        },
+        "candidate": {
+          "enum": [
+            "PRODUCTION",
+            "THROWING_CONTROL",
+            "IGNORE_SHARD_ROUTE",
+            "SHARE_BOOK_STATE",
+            "OMIT_INSTRUMENT_FROM_IDENTITY",
+            "ALLOW_EXISTING_ROUTE_MOVE",
+            "DROP_SNAPSHOT_IDENTITY",
+            "USE_SHARD_SEQUENCE_FOR_BOOK_CONTROL"
+          ]
+        },
+        "status": {
+          "enum": [
+            "PASS",
+            "STUDENT_FAILURE",
+            "SYSTEM_ERROR"
+          ]
+        },
+        "executed": {
+          "const": true
+        },
+        "submissions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "assertions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "failure": {
+          "type": "string"
+        },
+        "rawFile": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]+[.]jsonl$"
+        },
+        "rawSha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "PASS"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "assertions": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "failure": {
+                "const": ""
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "failure": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "PASS"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "passedScenarios": {
+            "const": 8
+          },
+          "scenarios": {
+            "items": {
+              "properties": {
+                "status": {
+                  "const": "PASS"
+                }
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "passedScenarios": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 7
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "scenarios": {
+            "contains": {
+              "properties": {
+                "status": {
+                  "const": "SYSTEM_ERROR"
+                }
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "status": {
+            "const": "SYSTEM_ERROR"
+          }
+        }
+      }
+    }
+  ]
+}

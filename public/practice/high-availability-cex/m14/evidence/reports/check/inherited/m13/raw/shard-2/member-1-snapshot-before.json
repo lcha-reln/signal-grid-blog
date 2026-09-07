@@ -1,0 +1,10 @@
+{
+  "snapshotCount" : 0,
+  "processId" : 1155,
+  "serviceRecordingId" : -1,
+  "consensusRecordingId" : -1,
+  "serviceTerm" : -1,
+  "consensusTerm" : -1,
+  "serviceLogPosition" : -1,
+  "consensusLogPosition" : -1
+}

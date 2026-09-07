@@ -1,0 +1,690 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "mutationBoundary",
+    "candidates",
+    "throwingControl",
+    "executedCandidates",
+    "killed",
+    "status"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "matching.m13.mutants.v1"
+    },
+    "mutationBoundary": {
+      "const": "TESTKIT_REQUEST_AND_RECOVERY_ADAPTER_USING_REAL_DIRECT_M13_RUNTIME"
+    },
+    "candidates": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "classification",
+          "countedAsKill",
+          "scenario",
+          "productionControl",
+          "candidateObservation"
+        ],
+        "properties": {
+          "id": {
+            "enum": [
+              "IGNORE_SHARD_ROUTE",
+              "SHARE_BOOK_STATE",
+              "OMIT_INSTRUMENT_FROM_IDENTITY",
+              "ALLOW_EXISTING_ROUTE_MOVE",
+              "DROP_SNAPSHOT_IDENTITY",
+              "USE_SHARD_SEQUENCE_FOR_BOOK_CONTROL"
+            ]
+          },
+          "classification": {
+            "enum": [
+              "STUDENT_FAILURE",
+              "PASS",
+              "INVALID_CONTROL",
+              "SYSTEM_ERROR"
+            ]
+          },
+          "countedAsKill": {
+            "type": "boolean"
+          },
+          "scenario": {
+            "enum": [
+              "ROUTE_CANONICAL_HASH_AND_OWNER",
+              "WRONG_SHARD_AND_INSTRUMENT_NO_MUTATION",
+              "INDEPENDENT_BOOK_PRICE_TIME_AND_ORDER_IDS",
+              "BOOK_LOCAL_RULES_MODES_AND_CONTROL_SEQUENCE",
+              "SHARD_IDENTITY_CONFLICT_DUPLICATE_AND_PRODUCER_FENCE",
+              "APPEND_ONLY_ROUTE_ACTIVATION",
+              "MULTI_BOOK_SNAPSHOT_AND_SUFFIX_EQUIVALENCE",
+              "MALFORMED_CODEC_AND_SNAPSHOT_FAIL_CLOSED"
+            ]
+          },
+          "productionControl": {
+            "$ref": "#/$defs/observation"
+          },
+          "candidateObservation": {
+            "$ref": "#/$defs/observation"
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "classification": {
+                  "const": "STUDENT_FAILURE"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "countedAsKill": {
+                  "const": true
+                },
+                "productionControl": {
+                  "properties": {
+                    "status": {
+                      "const": "PASS"
+                    },
+                    "candidate": {
+                      "const": "PRODUCTION"
+                    }
+                  }
+                },
+                "candidateObservation": {
+                  "properties": {
+                    "status": {
+                      "const": "STUDENT_FAILURE"
+                    },
+                    "submissions": {
+                      "type": "integer",
+                      "minimum": 1
+                    }
+                  }
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "countedAsKill": {
+                  "const": false
+                }
+              }
+            }
+          }
+        ]
+      },
+      "prefixItems": [
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/candidate"
+            },
+            {
+              "properties": {
+                "id": {
+                  "const": "IGNORE_SHARD_ROUTE"
+                },
+                "scenario": {
+                  "const": "WRONG_SHARD_AND_INSTRUMENT_NO_MUTATION"
+                },
+                "productionControl": {
+                  "properties": {
+                    "id": {
+                      "const": "WRONG_SHARD_AND_INSTRUMENT_NO_MUTATION"
+                    },
+                    "scenario": {
+                      "const": "WRONG_SHARD_AND_INSTRUMENT_NO_MUTATION"
+                    },
+                    "candidate": {
+                      "const": "PRODUCTION"
+                    }
+                  }
+                },
+                "candidateObservation": {
+                  "properties": {
+                    "id": {
+                      "const": "WRONG_SHARD_AND_INSTRUMENT_NO_MUTATION"
+                    },
+                    "scenario": {
+                      "const": "WRONG_SHARD_AND_INSTRUMENT_NO_MUTATION"
+                    },
+                    "candidate": {
+                      "const": "IGNORE_SHARD_ROUTE"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/candidate"
+            },
+            {
+              "properties": {
+                "id": {
+                  "const": "SHARE_BOOK_STATE"
+                },
+                "scenario": {
+                  "const": "INDEPENDENT_BOOK_PRICE_TIME_AND_ORDER_IDS"
+                },
+                "productionControl": {
+                  "properties": {
+                    "id": {
+                      "const": "INDEPENDENT_BOOK_PRICE_TIME_AND_ORDER_IDS"
+                    },
+                    "scenario": {
+                      "const": "INDEPENDENT_BOOK_PRICE_TIME_AND_ORDER_IDS"
+                    },
+                    "candidate": {
+                      "const": "PRODUCTION"
+                    }
+                  }
+                },
+                "candidateObservation": {
+                  "properties": {
+                    "id": {
+                      "const": "INDEPENDENT_BOOK_PRICE_TIME_AND_ORDER_IDS"
+                    },
+                    "scenario": {
+                      "const": "INDEPENDENT_BOOK_PRICE_TIME_AND_ORDER_IDS"
+                    },
+                    "candidate": {
+                      "const": "SHARE_BOOK_STATE"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/candidate"
+            },
+            {
+              "properties": {
+                "id": {
+                  "const": "OMIT_INSTRUMENT_FROM_IDENTITY"
+                },
+                "scenario": {
+                  "const": "SHARD_IDENTITY_CONFLICT_DUPLICATE_AND_PRODUCER_FENCE"
+                },
+                "productionControl": {
+                  "properties": {
+                    "id": {
+                      "const": "SHARD_IDENTITY_CONFLICT_DUPLICATE_AND_PRODUCER_FENCE"
+                    },
+                    "scenario": {
+                      "const": "SHARD_IDENTITY_CONFLICT_DUPLICATE_AND_PRODUCER_FENCE"
+                    },
+                    "candidate": {
+                      "const": "PRODUCTION"
+                    }
+                  }
+                },
+                "candidateObservation": {
+                  "properties": {
+                    "id": {
+                      "const": "SHARD_IDENTITY_CONFLICT_DUPLICATE_AND_PRODUCER_FENCE"
+                    },
+                    "scenario": {
+                      "const": "SHARD_IDENTITY_CONFLICT_DUPLICATE_AND_PRODUCER_FENCE"
+                    },
+                    "candidate": {
+                      "const": "OMIT_INSTRUMENT_FROM_IDENTITY"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/candidate"
+            },
+            {
+              "properties": {
+                "id": {
+                  "const": "ALLOW_EXISTING_ROUTE_MOVE"
+                },
+                "scenario": {
+                  "const": "APPEND_ONLY_ROUTE_ACTIVATION"
+                },
+                "productionControl": {
+                  "properties": {
+                    "id": {
+                      "const": "APPEND_ONLY_ROUTE_ACTIVATION"
+                    },
+                    "scenario": {
+                      "const": "APPEND_ONLY_ROUTE_ACTIVATION"
+                    },
+                    "candidate": {
+                      "const": "PRODUCTION"
+                    }
+                  }
+                },
+                "candidateObservation": {
+                  "properties": {
+                    "id": {
+                      "const": "APPEND_ONLY_ROUTE_ACTIVATION"
+                    },
+                    "scenario": {
+                      "const": "APPEND_ONLY_ROUTE_ACTIVATION"
+                    },
+                    "candidate": {
+                      "const": "ALLOW_EXISTING_ROUTE_MOVE"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/candidate"
+            },
+            {
+              "properties": {
+                "id": {
+                  "const": "DROP_SNAPSHOT_IDENTITY"
+                },
+                "scenario": {
+                  "const": "MULTI_BOOK_SNAPSHOT_AND_SUFFIX_EQUIVALENCE"
+                },
+                "productionControl": {
+                  "properties": {
+                    "id": {
+                      "const": "MULTI_BOOK_SNAPSHOT_AND_SUFFIX_EQUIVALENCE"
+                    },
+                    "scenario": {
+                      "const": "MULTI_BOOK_SNAPSHOT_AND_SUFFIX_EQUIVALENCE"
+                    },
+                    "candidate": {
+                      "const": "PRODUCTION"
+                    }
+                  }
+                },
+                "candidateObservation": {
+                  "properties": {
+                    "id": {
+                      "const": "MULTI_BOOK_SNAPSHOT_AND_SUFFIX_EQUIVALENCE"
+                    },
+                    "scenario": {
+                      "const": "MULTI_BOOK_SNAPSHOT_AND_SUFFIX_EQUIVALENCE"
+                    },
+                    "candidate": {
+                      "const": "DROP_SNAPSHOT_IDENTITY"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/candidate"
+            },
+            {
+              "properties": {
+                "id": {
+                  "const": "USE_SHARD_SEQUENCE_FOR_BOOK_CONTROL"
+                },
+                "scenario": {
+                  "const": "BOOK_LOCAL_RULES_MODES_AND_CONTROL_SEQUENCE"
+                },
+                "productionControl": {
+                  "properties": {
+                    "id": {
+                      "const": "BOOK_LOCAL_RULES_MODES_AND_CONTROL_SEQUENCE"
+                    },
+                    "scenario": {
+                      "const": "BOOK_LOCAL_RULES_MODES_AND_CONTROL_SEQUENCE"
+                    },
+                    "candidate": {
+                      "const": "PRODUCTION"
+                    }
+                  }
+                },
+                "candidateObservation": {
+                  "properties": {
+                    "id": {
+                      "const": "BOOK_LOCAL_RULES_MODES_AND_CONTROL_SEQUENCE"
+                    },
+                    "scenario": {
+                      "const": "BOOK_LOCAL_RULES_MODES_AND_CONTROL_SEQUENCE"
+                    },
+                    "candidate": {
+                      "const": "USE_SHARD_SEQUENCE_FOR_BOOK_CONTROL"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "throwingControl": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "classification",
+        "countedAsKill",
+        "observation"
+      ],
+      "properties": {
+        "classification": {
+          "enum": [
+            "PASS",
+            "STUDENT_FAILURE",
+            "SYSTEM_ERROR"
+          ]
+        },
+        "countedAsKill": {
+          "const": false
+        },
+        "observation": {
+          "$ref": "#/$defs/observation"
+        }
+      }
+    },
+    "executedCandidates": {
+      "const": 6
+    },
+    "killed": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 6
+    },
+    "status": {
+      "enum": [
+        "PASS",
+        "STUDENT_FAILURE",
+        "SYSTEM_ERROR"
+      ]
+    }
+  },
+  "$defs": {
+    "observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "id",
+        "scenario",
+        "candidate",
+        "status",
+        "executed",
+        "submissions",
+        "assertions",
+        "failure",
+        "rawFile",
+        "rawSha256"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "const": "matching.m13.semantic-observation.v1"
+        },
+        "id": {
+          "enum": [
+            "ROUTE_CANONICAL_HASH_AND_OWNER",
+            "WRONG_SHARD_AND_INSTRUMENT_NO_MUTATION",
+            "INDEPENDENT_BOOK_PRICE_TIME_AND_ORDER_IDS",
+            "BOOK_LOCAL_RULES_MODES_AND_CONTROL_SEQUENCE",
+            "SHARD_IDENTITY_CONFLICT_DUPLICATE_AND_PRODUCER_FENCE",
+            "APPEND_ONLY_ROUTE_ACTIVATION",
+            "MULTI_BOOK_SNAPSHOT_AND_SUFFIX_EQUIVALENCE",
+            "MALFORMED_CODEC_AND_SNAPSHOT_FAIL_CLOSED"
+          ]
+        },
+        "scenario": {
+          "enum": [
+            "ROUTE_CANONICAL_HASH_AND_OWNER",
+            "WRONG_SHARD_AND_INSTRUMENT_NO_MUTATION",
+            "INDEPENDENT_BOOK_PRICE_TIME_AND_ORDER_IDS",
+            "BOOK_LOCAL_RULES_MODES_AND_CONTROL_SEQUENCE",
+            "SHARD_IDENTITY_CONFLICT_DUPLICATE_AND_PRODUCER_FENCE",
+            "APPEND_ONLY_ROUTE_ACTIVATION",
+            "MULTI_BOOK_SNAPSHOT_AND_SUFFIX_EQUIVALENCE",
+            "MALFORMED_CODEC_AND_SNAPSHOT_FAIL_CLOSED"
+          ]
+        },
+        "candidate": {
+          "enum": [
+            "PRODUCTION",
+            "THROWING_CONTROL",
+            "IGNORE_SHARD_ROUTE",
+            "SHARE_BOOK_STATE",
+            "OMIT_INSTRUMENT_FROM_IDENTITY",
+            "ALLOW_EXISTING_ROUTE_MOVE",
+            "DROP_SNAPSHOT_IDENTITY",
+            "USE_SHARD_SEQUENCE_FOR_BOOK_CONTROL"
+          ]
+        },
+        "status": {
+          "enum": [
+            "PASS",
+            "STUDENT_FAILURE",
+            "SYSTEM_ERROR"
+          ]
+        },
+        "executed": {
+          "const": true
+        },
+        "submissions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "assertions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "failure": {
+          "type": "string"
+        },
+        "rawFile": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]+[.]jsonl$"
+        },
+        "rawSha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "PASS"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "assertions": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "failure": {
+                "const": ""
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "failure": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    "candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "classification",
+        "countedAsKill",
+        "scenario",
+        "productionControl",
+        "candidateObservation"
+      ],
+      "properties": {
+        "id": {
+          "enum": [
+            "IGNORE_SHARD_ROUTE",
+            "SHARE_BOOK_STATE",
+            "OMIT_INSTRUMENT_FROM_IDENTITY",
+            "ALLOW_EXISTING_ROUTE_MOVE",
+            "DROP_SNAPSHOT_IDENTITY",
+            "USE_SHARD_SEQUENCE_FOR_BOOK_CONTROL"
+          ]
+        },
+        "classification": {
+          "enum": [
+            "STUDENT_FAILURE",
+            "PASS",
+            "INVALID_CONTROL",
+            "SYSTEM_ERROR"
+          ]
+        },
+        "countedAsKill": {
+          "type": "boolean"
+        },
+        "scenario": {
+          "enum": [
+            "ROUTE_CANONICAL_HASH_AND_OWNER",
+            "WRONG_SHARD_AND_INSTRUMENT_NO_MUTATION",
+            "INDEPENDENT_BOOK_PRICE_TIME_AND_ORDER_IDS",
+            "BOOK_LOCAL_RULES_MODES_AND_CONTROL_SEQUENCE",
+            "SHARD_IDENTITY_CONFLICT_DUPLICATE_AND_PRODUCER_FENCE",
+            "APPEND_ONLY_ROUTE_ACTIVATION",
+            "MULTI_BOOK_SNAPSHOT_AND_SUFFIX_EQUIVALENCE",
+            "MALFORMED_CODEC_AND_SNAPSHOT_FAIL_CLOSED"
+          ]
+        },
+        "productionControl": {
+          "$ref": "#/$defs/observation"
+        },
+        "candidateObservation": {
+          "$ref": "#/$defs/observation"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "classification": {
+                "const": "STUDENT_FAILURE"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "countedAsKill": {
+                "const": true
+              },
+              "productionControl": {
+                "properties": {
+                  "status": {
+                    "const": "PASS"
+                  },
+                  "candidate": {
+                    "const": "PRODUCTION"
+                  }
+                }
+              },
+              "candidateObservation": {
+                "properties": {
+                  "status": {
+                    "const": "STUDENT_FAILURE"
+                  },
+                  "submissions": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
+                }
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "countedAsKill": {
+                "const": false
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "PASS"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "killed": {
+            "const": 6
+          },
+          "candidates": {
+            "items": {
+              "properties": {
+                "classification": {
+                  "const": "STUDENT_FAILURE"
+                }
+              }
+            }
+          },
+          "throwingControl": {
+            "properties": {
+              "classification": {
+                "const": "SYSTEM_ERROR"
+              },
+              "observation": {
+                "properties": {
+                  "candidate": {
+                    "const": "THROWING_CONTROL"
+                  },
+                  "status": {
+                    "const": "SYSTEM_ERROR"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {}
+      }
+    }
+  ]
+}

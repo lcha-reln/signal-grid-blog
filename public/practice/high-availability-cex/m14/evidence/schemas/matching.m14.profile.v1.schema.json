@@ -1,0 +1,271 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lcha-reln.github.io/signal-grid-blog/schemas/matching.m14.profile.v1.schema.json",
+  "title": "Frozen M14-Q1 output profile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "codecVersion",
+    "connectionIdleMillis",
+    "executionConsumerId",
+    "executionRetentionPolicy",
+    "genesisImportPolicy",
+    "initialAcknowledgedSequence",
+    "initialPublisherEpoch",
+    "initialStreamSequence",
+    "marketConsumerId",
+    "marketRetentionPolicy",
+    "marketSnapshotScope",
+    "maxAccountRefUtf8Bytes",
+    "maxBatchBytes",
+    "maxBooksPerShard",
+    "maxCommandEnvelopeBytes",
+    "maxCommandResponseBytes",
+    "maxConnectionsPerAdapter",
+    "maxControlRequestBytes",
+    "maxControlResponseBytes",
+    "maxFragmentAssemblyMillis",
+    "maxFrameBytes",
+    "maxFrameHeaderBytes",
+    "maxFramePayloadBytes",
+    "maxFramesPerWorkCycle",
+    "maxGenesisBytes",
+    "maxLegacyRequestBytes",
+    "maxLegacyResponseBytes",
+    "maxLegacySnapshotBytes",
+    "maxMarketSnapshotBytes",
+    "maxNewRequestBytes",
+    "maxProfileBytes",
+    "maxProtocolRequestMillis",
+    "maxPublisherQueuedBatches",
+    "maxPublisherQueuedBytes",
+    "maxReadBatches",
+    "maxReadBytes",
+    "maxReadMetadataBytes",
+    "maxReassembliesPerConnection",
+    "maxRecordsPerBatch",
+    "maxRestingOrdersPerBook",
+    "maxRetainedM14Operations",
+    "maxRuntimeSnapshotBytes",
+    "maxSinkConnections",
+    "maxSinkJournalRecordBytes",
+    "maxTypedStringUtf8Bytes",
+    "pendingExecutionBatchCount",
+    "pendingExecutionEncodedBytes",
+    "profileId",
+    "retainedMarketBatchCount",
+    "retainedMarketEncodedBytes",
+    "schemaVersion",
+    "streamScope"
+  ],
+  "properties": {
+    "codecVersion": {
+      "type": "integer",
+      "const": 1
+    },
+    "connectionIdleMillis": {
+      "type": "integer",
+      "const": 2000
+    },
+    "executionConsumerId": {
+      "type": "string",
+      "const": "execution-q1"
+    },
+    "executionRetentionPolicy": {
+      "type": "string",
+      "const": "ACKED_WHOLE_BATCH_ONLY"
+    },
+    "genesisImportPolicy": {
+      "type": "string",
+      "const": "M13_EMPTY_RESTING_BOOKS_ONLY"
+    },
+    "initialAcknowledgedSequence": {
+      "type": "integer",
+      "const": 0
+    },
+    "initialPublisherEpoch": {
+      "type": "integer",
+      "const": 0
+    },
+    "initialStreamSequence": {
+      "type": "integer",
+      "const": 1
+    },
+    "marketConsumerId": {
+      "type": "string",
+      "const": "market-q1"
+    },
+    "marketRetentionPolicy": {
+      "type": "string",
+      "const": "BOUNDED_WHOLE_BATCH_RING"
+    },
+    "marketSnapshotScope": {
+      "type": "string",
+      "const": "WHOLE_SHARD"
+    },
+    "maxAccountRefUtf8Bytes": {
+      "type": "integer",
+      "const": 64
+    },
+    "maxBatchBytes": {
+      "type": "integer",
+      "const": 65536
+    },
+    "maxBooksPerShard": {
+      "type": "integer",
+      "const": 16
+    },
+    "maxCommandEnvelopeBytes": {
+      "type": "integer",
+      "const": 2097265
+    },
+    "maxCommandResponseBytes": {
+      "type": "integer",
+      "const": 16778752
+    },
+    "maxConnectionsPerAdapter": {
+      "type": "integer",
+      "const": 2
+    },
+    "maxControlRequestBytes": {
+      "type": "integer",
+      "const": 8192
+    },
+    "maxControlResponseBytes": {
+      "type": "integer",
+      "const": 8192
+    },
+    "maxFragmentAssemblyMillis": {
+      "type": "integer",
+      "const": 5000
+    },
+    "maxFrameBytes": {
+      "type": "integer",
+      "const": 4096
+    },
+    "maxFrameHeaderBytes": {
+      "type": "integer",
+      "const": 512
+    },
+    "maxFramePayloadBytes": {
+      "type": "integer",
+      "const": 3584
+    },
+    "maxFramesPerWorkCycle": {
+      "type": "integer",
+      "const": 16
+    },
+    "maxGenesisBytes": {
+      "type": "integer",
+      "const": 1024
+    },
+    "maxLegacyRequestBytes": {
+      "type": "integer",
+      "const": 2097152
+    },
+    "maxLegacyResponseBytes": {
+      "type": "integer",
+      "const": 16778240
+    },
+    "maxLegacySnapshotBytes": {
+      "type": "integer",
+      "const": 268435456
+    },
+    "maxMarketSnapshotBytes": {
+      "type": "integer",
+      "const": 1048576
+    },
+    "maxNewRequestBytes": {
+      "type": "integer",
+      "const": 65536
+    },
+    "maxProfileBytes": {
+      "type": "integer",
+      "const": 8192
+    },
+    "maxProtocolRequestMillis": {
+      "type": "integer",
+      "const": 10000
+    },
+    "maxPublisherQueuedBatches": {
+      "type": "integer",
+      "const": 4
+    },
+    "maxPublisherQueuedBytes": {
+      "type": "integer",
+      "const": 262144
+    },
+    "maxReadBatches": {
+      "type": "integer",
+      "const": 4
+    },
+    "maxReadBytes": {
+      "type": "integer",
+      "const": 262144
+    },
+    "maxReadMetadataBytes": {
+      "type": "integer",
+      "const": 512
+    },
+    "maxReassembliesPerConnection": {
+      "type": "integer",
+      "const": 1
+    },
+    "maxRecordsPerBatch": {
+      "type": "integer",
+      "const": 256
+    },
+    "maxRestingOrdersPerBook": {
+      "type": "integer",
+      "const": 128
+    },
+    "maxRetainedM14Operations": {
+      "type": "integer",
+      "const": 2000000
+    },
+    "maxRuntimeSnapshotBytes": {
+      "type": "integer",
+      "const": 536870912
+    },
+    "maxSinkConnections": {
+      "type": "integer",
+      "const": 4
+    },
+    "maxSinkJournalRecordBytes": {
+      "type": "integer",
+      "const": 1049600
+    },
+    "maxTypedStringUtf8Bytes": {
+      "type": "integer",
+      "const": 512
+    },
+    "pendingExecutionBatchCount": {
+      "type": "integer",
+      "const": 32
+    },
+    "pendingExecutionEncodedBytes": {
+      "type": "integer",
+      "const": 262144
+    },
+    "profileId": {
+      "type": "string",
+      "const": "M14-Q1"
+    },
+    "retainedMarketBatchCount": {
+      "type": "integer",
+      "const": 16
+    },
+    "retainedMarketEncodedBytes": {
+      "type": "integer",
+      "const": 524288
+    },
+    "schemaVersion": {
+      "type": "string",
+      "const": "matching.m14.profile.v1"
+    },
+    "streamScope": {
+      "type": "string",
+      "const": "PER_SHARD"
+    }
+  }
+}
