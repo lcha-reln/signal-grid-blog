@@ -1,0 +1,463 @@
+{
+  "clockScope": "Independent read-only post-run sampling on this controller; not replayed as original stop observation times",
+  "originalDevelopmentRun": "operations-9b36a517-4ad6-4f97-8dc8-58356f1c360a",
+  "originalOverallM15Qualified": false,
+  "originalQualificationStatus": "SYSTEM_ERROR",
+  "pinnedBytecode": [
+    {
+      "bytecodePath": "provenance/io.aeron.archive.ArchiveMarkFile.javap.txt",
+      "bytecodeSha256": "d59ee7a0d017048757ea838f1b5f51bb2ff1a5b73e323ff022be68e02162d797",
+      "class": "io.aeron.archive.ArchiveMarkFile",
+      "jar": "aeron-archive-1.52.2.jar",
+      "jarSha256": "20856c5bc98611aec1328a1b3a37ea2d608f9cb0d6528948468a6db46cf520e9"
+    },
+    {
+      "bytecodePath": "provenance/io.aeron.archive.ArchiveConductor.javap.txt",
+      "bytecodeSha256": "999ce94a2c90ce490d318931733a2e1d5b8041cfc029ff79e97e2028de595a41",
+      "class": "io.aeron.archive.ArchiveConductor",
+      "jar": "aeron-archive-1.52.2.jar",
+      "jarSha256": "20856c5bc98611aec1328a1b3a37ea2d608f9cb0d6528948468a6db46cf520e9"
+    },
+    {
+      "bytecodePath": "provenance/io.aeron.cluster.service.ClusterMarkFile.javap.txt",
+      "bytecodeSha256": "db8db355acb2a67353d59c530da1b8f6d7412d6d1273e35ed51a5d25d7d2220e",
+      "class": "io.aeron.cluster.service.ClusterMarkFile",
+      "jar": "aeron-cluster-1.52.2.jar",
+      "jarSha256": "31df6b4dc6fbd862fab162a21ed2123d7ecc805cdee40a3c739d2f4eec00dedc"
+    },
+    {
+      "bytecodePath": "provenance/io.aeron.cluster.ConsensusModuleAgent.javap.txt",
+      "bytecodeSha256": "a1cca95144f2c430308e9ad57ba1c82e386e749f2c79811fd0de86c1fc2d29ff",
+      "class": "io.aeron.cluster.ConsensusModuleAgent",
+      "jar": "aeron-cluster-1.52.2.jar",
+      "jarSha256": "31df6b4dc6fbd862fab162a21ed2123d7ecc805cdee40a3c739d2f4eec00dedc"
+    },
+    {
+      "bytecodePath": "provenance/io.aeron.cluster.service.ClusteredServiceAgent.javap.txt",
+      "bytecodeSha256": "e93645713aae0ed8d41cce9ea68fd36c7adb85e49c23abae3964b15cc7f414c8",
+      "class": "io.aeron.cluster.service.ClusteredServiceAgent",
+      "jar": "aeron-cluster-1.52.2.jar",
+      "jarSha256": "31df6b4dc6fbd862fab162a21ed2123d7ecc805cdee40a3c739d2f4eec00dedc"
+    }
+  ],
+  "provenance": [
+    {
+      "bytes": 73288,
+      "path": "provenance/roles-66cf5513b374-000.jsonl.gz",
+      "sha256": "b505a568aee81747b1552002c92222e2a0d681733fb1107c244237b1e979ff49"
+    },
+    {
+      "bytes": 6972,
+      "path": "provenance/stop-6c45cb72a36e-000.jsonl.gz",
+      "sha256": "48a4060df1d83fa27105a8d992ca09684ee6aeb35f879043c89ccf970e4f1d7b"
+    },
+    {
+      "bytes": 11100,
+      "path": "provenance/diagnostic.json",
+      "sha256": "8c8aceb585f56c2904c498cd83f1c8f346f46e0b853958dea61e2b0864c0911d"
+    }
+  ],
+  "samples": [
+    {
+      "component": 0,
+      "firstControllerNanos": "37267541",
+      "firstWallMillis": 1788837333982,
+      "live": {
+        "bytes": 8192,
+        "path": "headers/s1-m0-c0-live.bin",
+        "sha256": "9a26572e231d09906a11dd77e87b60854c05014b8f16aa79047b92f4ac22504f"
+      },
+      "memberId": 0,
+      "pid": 54154,
+      "relativePath": "shard-1/node-0/archive/archive-mark.dat",
+      "secondControllerNanos": "154067666",
+      "secondSha256": "d98e59c3b79c95eaa99f19f8a4e78131b3483926d402aa97b0eaaaba6a143d86",
+      "secondWallMillis": 1788837334098,
+      "shardId": 1,
+      "stopped": {
+        "bytes": 8192,
+        "path": "headers/s1-m0-c0-stopped.bin",
+        "sha256": "d98e59c3b79c95eaa99f19f8a4e78131b3483926d402aa97b0eaaaba6a143d86"
+      }
+    },
+    {
+      "component": 1,
+      "firstControllerNanos": "154651666",
+      "firstWallMillis": 1788837334099,
+      "live": {
+        "bytes": 8192,
+        "path": "headers/s1-m0-c1-live.bin",
+        "sha256": "442c14cbd41f019b5a10ec4d0e23f46a962e21d6028daf6b26a2f7e93af43d59"
+      },
+      "memberId": 0,
+      "pid": 54154,
+      "relativePath": "shard-1/node-0/cluster/cluster-mark.dat",
+      "secondControllerNanos": "267041750",
+      "secondSha256": "274b31a90c7ac4cb38a70f5345611074583686794c45d2fd33f737d9c4b0e5f3",
+      "secondWallMillis": 1788837334211,
+      "shardId": 1,
+      "stopped": {
+        "bytes": 8192,
+        "path": "headers/s1-m0-c1-stopped.bin",
+        "sha256": "274b31a90c7ac4cb38a70f5345611074583686794c45d2fd33f737d9c4b0e5f3"
+      }
+    },
+    {
+      "component": 2,
+      "firstControllerNanos": "267791541",
+      "firstWallMillis": 1788837334212,
+      "live": {
+        "bytes": 8192,
+        "path": "headers/s1-m0-c2-live.bin",
+        "sha256": "cdd6a48bfeef7690e8c3d2c96a444fb840d9d7bb30bed35bf24dfdc0db35007f"
+      },
+      "memberId": 0,
+      "pid": 54154,
+      "relativePath": "shard-1/node-0/cluster/cluster-mark-service-0.dat",
+      "secondControllerNanos": "387610083",
+      "secondSha256": "bd3424605d9d8f32c927d4a099556a3f2aa066d705988da1fc897745c80d8c58",
+      "secondWallMillis": 1788837334332,
+      "shardId": 1,
+      "stopped": {
+        "bytes": 8192,
+        "path": "headers/s1-m0-c2-stopped.bin",
+        "sha256": "bd3424605d9d8f32c927d4a099556a3f2aa066d705988da1fc897745c80d8c58"
+      }
+    },
+    {
+      "component": 0,
+      "firstControllerNanos": "389237833",
+      "firstWallMillis": 1788837334334,
+      "live": {
+        "bytes": 8192,
+        "path": "headers/s1-m1-c0-live.bin",
+        "sha256": "244393f0f56841eacdae3a0733ef9b3e896b782f59b25c15613baadb7524b62b"
+      },
+      "memberId": 1,
+      "pid": 54155,
+      "relativePath": "shard-1/node-1/archive/archive-mark.dat",
+      "secondControllerNanos": "501238125",
+      "secondSha256": "65dbc1d7360555182e3026bd45254ac3c54577cb3b50ab60ae0813ebe2385a92",
+      "secondWallMillis": 1788837334446,
+      "shardId": 1,
+      "stopped": {
+        "bytes": 8192,
+        "path": "headers/s1-m1-c0-stopped.bin",
+        "sha256": "65dbc1d7360555182e3026bd45254ac3c54577cb3b50ab60ae0813ebe2385a92"
+      }
+    },
+    {
+      "component": 1,
+      "firstControllerNanos": "502818291",
+      "firstWallMillis": 1788837334447,
+      "live": {
+        "bytes": 8192,
+        "path": "headers/s1-m1-c1-live.bin",
+        "sha256": "38394fd0bf1664abc074d10b95a54d5fee067380732ea29263c433379618faa5"
+      },
+      "memberId": 1,
+      "pid": 54155,
+      "relativePath": "shard-1/node-1/cluster/cluster-mark.dat",
+      "secondControllerNanos": "621876666",
+      "secondSha256": "980de0e4d1082eb8c67edfd2b4333b4b3f14ad1c0c06d878e95678bc14556478",
+      "secondWallMillis": 1788837334566,
+      "shardId": 1,
+      "stopped": {
+        "bytes": 8192,
+        "path": "headers/s1-m1-c1-stopped.bin",
+        "sha256": "980de0e4d1082eb8c67edfd2b4333b4b3f14ad1c0c06d878e95678bc14556478"
+      }
+    },
+    {
+      "component": 2,
+      "firstControllerNanos": "623279791",
+      "firstWallMillis": 1788837334568,
+      "live": {
+        "bytes": 8192,
+        "path": "headers/s1-m1-c2-live.bin",
+        "sha256": "60295ce1f26a9e3e0a94407cc71b09aedfb1673b1791e75573009a6ddcd669e6"
+      },
+      "memberId": 1,
+      "pid": 54155,
+      "relativePath": "shard-1/node-1/cluster/cluster-mark-service-0.dat",
+      "secondControllerNanos": "743862083",
+      "secondSha256": "7f751accea66c781ef08d6c368e6d8a52a6221361b00443351237b6fe65ace12",
+      "secondWallMillis": 1788837334688,
+      "shardId": 1,
+      "stopped": {
+        "bytes": 8192,
+        "path": "headers/s1-m1-c2-stopped.bin",
+        "sha256": "7f751accea66c781ef08d6c368e6d8a52a6221361b00443351237b6fe65ace12"
+      }
+    },
+    {
+      "component": 0,
+      "firstControllerNanos": "745272583",
+      "firstWallMillis": 1788837334690,
+      "live": {
+        "bytes": 8192,
+        "path": "headers/s1-m2-c0-live.bin",
+        "sha256": "271f8dc83cb348a2ddc8bbef1ff783463f41235e275cdb525872ecfc82e5f458"
+      },
+      "memberId": 2,
+      "pid": 54153,
+      "relativePath": "shard-1/node-2/archive/archive-mark.dat",
+      "secondControllerNanos": "864170583",
+      "secondSha256": "5c40dd2867b1cc55914c4346e07f625d56de9a200e3f8468d82e8805c44bb69f",
+      "secondWallMillis": 1788837334809,
+      "shardId": 1,
+      "stopped": {
+        "bytes": 8192,
+        "path": "headers/s1-m2-c0-stopped.bin",
+        "sha256": "5c40dd2867b1cc55914c4346e07f625d56de9a200e3f8468d82e8805c44bb69f"
+      }
+    },
+    {
+      "component": 1,
+      "firstControllerNanos": "866669125",
+      "firstWallMillis": 1788837334811,
+      "live": {
+        "bytes": 8192,
+        "path": "headers/s1-m2-c1-live.bin",
+        "sha256": "b5000d5b108738c21163f69a063005c3f1c7e175af8cae081d6d51dd11da9c91"
+      },
+      "memberId": 2,
+      "pid": 54153,
+      "relativePath": "shard-1/node-2/cluster/cluster-mark.dat",
+      "secondControllerNanos": "982909750",
+      "secondSha256": "932e50701b0dcb8412d32b9d9c39db35da3b4d98cf40ff698d712d685ad00c53",
+      "secondWallMillis": 1788837334927,
+      "shardId": 1,
+      "stopped": {
+        "bytes": 8192,
+        "path": "headers/s1-m2-c1-stopped.bin",
+        "sha256": "932e50701b0dcb8412d32b9d9c39db35da3b4d98cf40ff698d712d685ad00c53"
+      }
+    },
+    {
+      "component": 2,
+      "firstControllerNanos": "985009458",
+      "firstWallMillis": 1788837334929,
+      "live": {
+        "bytes": 8192,
+        "path": "headers/s1-m2-c2-live.bin",
+        "sha256": "717e5b2692c2653c6e35fc77f1631f223c8b10ce33026e4b9893fe551a3ba015"
+      },
+      "memberId": 2,
+      "pid": 54153,
+      "relativePath": "shard-1/node-2/cluster/cluster-mark-service-0.dat",
+      "secondControllerNanos": "1097389791",
+      "secondSha256": "224136dabf4f5417ab64db3fc798f00cf8e03275c77514e8ee0f9aaef99e3c2e",
+      "secondWallMillis": 1788837335042,
+      "shardId": 1,
+      "stopped": {
+        "bytes": 8192,
+        "path": "headers/s1-m2-c2-stopped.bin",
+        "sha256": "224136dabf4f5417ab64db3fc798f00cf8e03275c77514e8ee0f9aaef99e3c2e"
+      }
+    },
+    {
+      "component": 0,
+      "firstControllerNanos": "1099441333",
+      "firstWallMillis": 1788837335044,
+      "live": {
+        "bytes": 8192,
+        "path": "headers/s2-m0-c0-live.bin",
+        "sha256": "03300521a08818b15de788f6f5b8425ca3a42d59df469bee53142f6805282954"
+      },
+      "memberId": 0,
+      "pid": 54157,
+      "relativePath": "shard-2/node-0/archive/archive-mark.dat",
+      "secondControllerNanos": "1216625041",
+      "secondSha256": "5336672fc10aa75791755be159df01ba094b1cff8b4837a7c44a37a9b53a5b57",
+      "secondWallMillis": 1788837335161,
+      "shardId": 2,
+      "stopped": {
+        "bytes": 8192,
+        "path": "headers/s2-m0-c0-stopped.bin",
+        "sha256": "5336672fc10aa75791755be159df01ba094b1cff8b4837a7c44a37a9b53a5b57"
+      }
+    },
+    {
+      "component": 1,
+      "firstControllerNanos": "1217167333",
+      "firstWallMillis": 1788837335162,
+      "live": {
+        "bytes": 8192,
+        "path": "headers/s2-m0-c1-live.bin",
+        "sha256": "0e4812c7144d497d529e82374c12823cdf7c8d3fdbee62cb7ad2cf6bc87d386e"
+      },
+      "memberId": 0,
+      "pid": 54157,
+      "relativePath": "shard-2/node-0/cluster/cluster-mark.dat",
+      "secondControllerNanos": "1329766166",
+      "secondSha256": "4c40623363db78531bd4e853b394526071a51dab08c1e57d0b2cbcbeda5eec79",
+      "secondWallMillis": 1788837335274,
+      "shardId": 2,
+      "stopped": {
+        "bytes": 8192,
+        "path": "headers/s2-m0-c1-stopped.bin",
+        "sha256": "4c40623363db78531bd4e853b394526071a51dab08c1e57d0b2cbcbeda5eec79"
+      }
+    },
+    {
+      "component": 2,
+      "firstControllerNanos": "1331219416",
+      "firstWallMillis": 1788837335276,
+      "live": {
+        "bytes": 8192,
+        "path": "headers/s2-m0-c2-live.bin",
+        "sha256": "4e034d4c5d9d5273c022f1abe75c2e264482274668d185fb8b07194ec7eafab3"
+      },
+      "memberId": 0,
+      "pid": 54157,
+      "relativePath": "shard-2/node-0/cluster/cluster-mark-service-0.dat",
+      "secondControllerNanos": "1447441833",
+      "secondSha256": "7b8a6ecf23c69f50a5fe52b087bfd1fca01446d218edd5431b9ae94dee0f7c33",
+      "secondWallMillis": 1788837335392,
+      "shardId": 2,
+      "stopped": {
+        "bytes": 8192,
+        "path": "headers/s2-m0-c2-stopped.bin",
+        "sha256": "7b8a6ecf23c69f50a5fe52b087bfd1fca01446d218edd5431b9ae94dee0f7c33"
+      }
+    },
+    {
+      "component": 0,
+      "firstControllerNanos": "1448988291",
+      "firstWallMillis": 1788837335393,
+      "live": {
+        "bytes": 8192,
+        "path": "headers/s2-m1-c0-live.bin",
+        "sha256": "65a6f281bb272fc26617d660bfe59eb5de4f40e86f0e3e625197489eb32ae54a"
+      },
+      "memberId": 1,
+      "pid": 54156,
+      "relativePath": "shard-2/node-1/archive/archive-mark.dat",
+      "secondControllerNanos": "1560979000",
+      "secondSha256": "a68a8f7754c9665b03817aa172022abd80ba69170e61f89ed14355ec117fed7c",
+      "secondWallMillis": 1788837335505,
+      "shardId": 2,
+      "stopped": {
+        "bytes": 8192,
+        "path": "headers/s2-m1-c0-stopped.bin",
+        "sha256": "a68a8f7754c9665b03817aa172022abd80ba69170e61f89ed14355ec117fed7c"
+      }
+    },
+    {
+      "component": 1,
+      "firstControllerNanos": "1562456708",
+      "firstWallMillis": 1788837335507,
+      "live": {
+        "bytes": 8192,
+        "path": "headers/s2-m1-c1-live.bin",
+        "sha256": "c4c741d494542eedb920789b0d26623712af988e010a6a3220dab5f02f6de4e3"
+      },
+      "memberId": 1,
+      "pid": 54156,
+      "relativePath": "shard-2/node-1/cluster/cluster-mark.dat",
+      "secondControllerNanos": "1681676166",
+      "secondSha256": "a14db21fd46acb4466e158ac8d27d2888df148f920ff98ed908a4c5ee0fe8add",
+      "secondWallMillis": 1788837335626,
+      "shardId": 2,
+      "stopped": {
+        "bytes": 8192,
+        "path": "headers/s2-m1-c1-stopped.bin",
+        "sha256": "a14db21fd46acb4466e158ac8d27d2888df148f920ff98ed908a4c5ee0fe8add"
+      }
+    },
+    {
+      "component": 2,
+      "firstControllerNanos": "1683997791",
+      "firstWallMillis": 1788837335628,
+      "live": {
+        "bytes": 8192,
+        "path": "headers/s2-m1-c2-live.bin",
+        "sha256": "89d1c39ad6f7aa2aa8e740b953230ca306fc5f0cb8b54d849d4fcddc674488e5"
+      },
+      "memberId": 1,
+      "pid": 54156,
+      "relativePath": "shard-2/node-1/cluster/cluster-mark-service-0.dat",
+      "secondControllerNanos": "1797198083",
+      "secondSha256": "098e1ece433617181b8cb5c5fe31d4655ca94d2bc1a66d8da1a1df4eb9f7a250",
+      "secondWallMillis": 1788837335742,
+      "shardId": 2,
+      "stopped": {
+        "bytes": 8192,
+        "path": "headers/s2-m1-c2-stopped.bin",
+        "sha256": "098e1ece433617181b8cb5c5fe31d4655ca94d2bc1a66d8da1a1df4eb9f7a250"
+      }
+    },
+    {
+      "component": 0,
+      "firstControllerNanos": "1799025791",
+      "firstWallMillis": 1788837335743,
+      "live": {
+        "bytes": 8192,
+        "path": "headers/s2-m2-c0-live.bin",
+        "sha256": "25bf25c003dcc3dd236dd2a2881ea3f1ced7a7931938e22253d829abda0cf0b9"
+      },
+      "memberId": 2,
+      "pid": 54159,
+      "relativePath": "shard-2/node-2/archive/archive-mark.dat",
+      "secondControllerNanos": "1914217541",
+      "secondSha256": "cfc2497628329227e67e981ba2d6dedeeb96b6f760b9fa02035a016fc6ec5527",
+      "secondWallMillis": 1788837335859,
+      "shardId": 2,
+      "stopped": {
+        "bytes": 8192,
+        "path": "headers/s2-m2-c0-stopped.bin",
+        "sha256": "cfc2497628329227e67e981ba2d6dedeeb96b6f760b9fa02035a016fc6ec5527"
+      }
+    },
+    {
+      "component": 1,
+      "firstControllerNanos": "1916785875",
+      "firstWallMillis": 1788837335861,
+      "live": {
+        "bytes": 8192,
+        "path": "headers/s2-m2-c1-live.bin",
+        "sha256": "c54cac6e92a3e99bf199e4d334f739f4fdc5d3d2c81f0f6d6c1b375983768259"
+      },
+      "memberId": 2,
+      "pid": 54159,
+      "relativePath": "shard-2/node-2/cluster/cluster-mark.dat",
+      "secondControllerNanos": "2033377750",
+      "secondSha256": "4504b8abf3eb2adaaaa74af4f32fac1499aa603a5e62fafd380c6d173fc3ccac",
+      "secondWallMillis": 1788837335978,
+      "shardId": 2,
+      "stopped": {
+        "bytes": 8192,
+        "path": "headers/s2-m2-c1-stopped.bin",
+        "sha256": "4504b8abf3eb2adaaaa74af4f32fac1499aa603a5e62fafd380c6d173fc3ccac"
+      }
+    },
+    {
+      "component": 2,
+      "firstControllerNanos": "2035451416",
+      "firstWallMillis": 1788837335980,
+      "live": {
+        "bytes": 8192,
+        "path": "headers/s2-m2-c2-live.bin",
+        "sha256": "997b00235b9095da677c8ae04c8e06202aba848bd9bdebbff14bc381eef3f703"
+      },
+      "memberId": 2,
+      "pid": 54159,
+      "relativePath": "shard-2/node-2/cluster/cluster-mark-service-0.dat",
+      "secondControllerNanos": "2154356708",
+      "secondSha256": "dea8f1797c521c48d327cbc5718c577bc55d67ce74f6274967b5f87da8f3abfa",
+      "secondWallMillis": 1788837336099,
+      "shardId": 2,
+      "stopped": {
+        "bytes": 8192,
+        "path": "headers/s2-m2-c2-stopped.bin",
+        "sha256": "dea8f1797c521c48d327cbc5718c577bc55d67ce74f6274967b5f87da8f3abfa"
+      }
+    }
+  ],
+  "schemaV1CanRepresentObservedStoppedTimestamp": false,
+  "schemaVersion": "matching.m15.mark-errata-observation.v1",
+  "sourceCommit": "6ece6a8101c85b75ef270c4f7b725ac3e73617f4",
+  "sourceReportSha256": "8c8aceb585f56c2904c498cd83f1c8f346f46e0b853958dea61e2b0864c0911d",
+  "sourceRolesTeardownComplete": true
+}

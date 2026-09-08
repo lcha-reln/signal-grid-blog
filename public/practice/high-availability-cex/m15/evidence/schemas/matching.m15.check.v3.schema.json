@@ -1,0 +1,438 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "unit",
+    "contractPlanVersion",
+    "originalInventorySha256",
+    "errataInventorySha256",
+    "declaredLogicalArrivals",
+    "publicationRevisionInventorySha256",
+    "releaseTarget",
+    "productRelease",
+    "status",
+    "executed"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "matching.m15.check.v3"
+    },
+    "unit": {
+      "const": "M15"
+    },
+    "contractPlanVersion": {
+      "const": "0.18"
+    },
+    "originalInventorySha256": {
+      "const": "3da3a614218e5da57326d648fe27b5e97f88466347962d4c3944b02596d1c104"
+    },
+    "errataInventorySha256": {
+      "const": "4c211d80d337c1713fea98f3cf2cdc94d7fac1b19073e96eb29ed46cd03ebd3d"
+    },
+    "declaredLogicalArrivals": {
+      "const": 6250
+    },
+    "releaseTarget": {
+      "const": "matching-1.0.1"
+    },
+    "productRelease": {
+      "type": "null"
+    },
+    "status": {
+      "enum": [
+        "PASS",
+        "STUDENT_FAILURE",
+        "SYSTEM_ERROR"
+      ]
+    },
+    "executed": {
+      "type": "boolean"
+    },
+    "sourceCommit": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{40}$"
+    },
+    "bundleManifestSha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "nMinusOneManifestSha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "observerSha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "sourceDirty": {
+      "const": false
+    },
+    "inheritedStatus": {
+      "const": "PASS"
+    },
+    "stoppedUpgradeQualified": {
+      "const": true
+    },
+    "coldRestoreQualified": {
+      "const": true
+    },
+    "capacityQualified": {
+      "const": true
+    },
+    "teardownComplete": {
+      "const": true
+    },
+    "clusterGroups": {
+      "const": 2
+    },
+    "memberProcesses": {
+      "const": 6
+    },
+    "sinkProcesses": {
+      "const": 1
+    },
+    "publisherProcesses": {
+      "const": 2
+    },
+    "executedVariants": {
+      "const": 109
+    },
+    "mandatoryProbes": {
+      "const": 118
+    },
+    "conditionalProbes": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 2
+    },
+    "rawParts": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "rawEvents": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "capacityTotals": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "logicalArrivals",
+        "actualAttempts",
+        "actualUnknown",
+        "queueRefusals",
+        "transportNotSubmitted",
+        "logicalTrades",
+        "newlyAppliedResponses",
+        "duplicateResponses",
+        "backpressureRefusals",
+        "profileRefusals"
+      ],
+      "properties": {
+        "logicalArrivals": {
+          "const": 6250
+        },
+        "actualAttempts": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "actualUnknown": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "queueRefusals": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "transportNotSubmitted": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "logicalTrades": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "newlyAppliedResponses": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "duplicateResponses": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "backpressureRefusals": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "profileRefusals": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "artifactBindings": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 512,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "bytes",
+          "sha256"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_][A-Za-z0-9._/-]*$"
+          },
+          "bytes": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 33554432
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        }
+      }
+    },
+    "error": {
+      "type": "string",
+      "minLength": 1
+    },
+    "qualifiedCases": {
+      "const": 22
+    },
+    "plannedArrivals": {
+      "const": 6250
+    },
+    "suffixPreservingRollbackQualified": {
+      "const": true
+    },
+    "failureStage": {
+      "type": "string",
+      "enum": [
+        "INPUT_VALIDATION",
+        "FRESH_INHERITED_M14",
+        "OPERATIONAL_PROGRAM",
+        "OPERATIONS_NEGATIVE_PROBES",
+        "CAPACITY_PROGRAM",
+        "INDEPENDENT_EVIDENCE_VALIDATION"
+      ]
+    },
+    "failedRunRawFiles": {
+      "type": "array",
+      "minItems": 0,
+      "maxItems": 512,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "bytes",
+          "sha256"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_][A-Za-z0-9._/-]*$"
+          },
+          "bytes": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 33554432
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        }
+      }
+    },
+    "rawInventoryError": {
+      "type": "string",
+      "minLength": 1
+    },
+    "publicationRevisionInventorySha256": {
+      "const": "8b1448232704113230a1ef006838dae643435b69f4998b0321e726df46ca5006"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "PASS"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "sourceCommit",
+          "bundleManifestSha256",
+          "nMinusOneManifestSha256",
+          "observerSha256",
+          "sourceDirty",
+          "inheritedStatus",
+          "stoppedUpgradeQualified",
+          "coldRestoreQualified",
+          "capacityQualified",
+          "teardownComplete",
+          "clusterGroups",
+          "memberProcesses",
+          "sinkProcesses",
+          "publisherProcesses",
+          "qualifiedCases",
+          "executedVariants",
+          "mandatoryProbes",
+          "conditionalProbes",
+          "rawParts",
+          "rawEvents",
+          "capacityTotals",
+          "artifactBindings",
+          "plannedArrivals",
+          "suffixPreservingRollbackQualified"
+        ],
+        "properties": {
+          "executed": {
+            "const": true
+          }
+        },
+        "not": {
+          "anyOf": [
+            {
+              "required": [
+                "error"
+              ]
+            },
+            {
+              "required": [
+                "failureStage"
+              ]
+            },
+            {
+              "required": [
+                "failedRunRawFiles"
+              ]
+            },
+            {
+              "required": [
+                "rawInventoryError"
+              ]
+            }
+          ]
+        }
+      },
+      "else": {
+        "required": [
+          "error",
+          "failureStage"
+        ],
+        "not": {
+          "anyOf": [
+            {
+              "required": [
+                "inheritedStatus"
+              ]
+            },
+            {
+              "required": [
+                "stoppedUpgradeQualified"
+              ]
+            },
+            {
+              "required": [
+                "coldRestoreQualified"
+              ]
+            },
+            {
+              "required": [
+                "capacityQualified"
+              ]
+            },
+            {
+              "required": [
+                "teardownComplete"
+              ]
+            },
+            {
+              "required": [
+                "clusterGroups"
+              ]
+            },
+            {
+              "required": [
+                "memberProcesses"
+              ]
+            },
+            {
+              "required": [
+                "sinkProcesses"
+              ]
+            },
+            {
+              "required": [
+                "publisherProcesses"
+              ]
+            },
+            {
+              "required": [
+                "qualifiedCases"
+              ]
+            },
+            {
+              "required": [
+                "executedVariants"
+              ]
+            },
+            {
+              "required": [
+                "mandatoryProbes"
+              ]
+            },
+            {
+              "required": [
+                "conditionalProbes"
+              ]
+            },
+            {
+              "required": [
+                "rawParts"
+              ]
+            },
+            {
+              "required": [
+                "rawEvents"
+              ]
+            },
+            {
+              "required": [
+                "capacityTotals"
+              ]
+            },
+            {
+              "required": [
+                "artifactBindings"
+              ]
+            },
+            {
+              "required": [
+                "plannedArrivals"
+              ]
+            },
+            {
+              "required": [
+                "suffixPreservingRollbackQualified"
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

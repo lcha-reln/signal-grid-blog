@@ -8,3 +8,8 @@ dist/
 .pagefind/
 .deploy*/
 _multiconfig.yml
+
+# Immutable M15 publication-correction provenance bound by the public manifest.
+!public/practice/high-availability-cex/m15/evidence/reports/check/inputs/matching-testkit/src/test/resources/m15-errata-2/provenance/course/job.log
+!public/practice/high-availability-cex/m15/evidence/reports/check/inputs/matching-testkit/src/test/resources/m15-errata-2/provenance/main/job.log
+!public/practice/high-availability-cex/m15/evidence/reports/check/inputs/matching-testkit/src/test/resources/m15-errata-2/provenance/product/job.log

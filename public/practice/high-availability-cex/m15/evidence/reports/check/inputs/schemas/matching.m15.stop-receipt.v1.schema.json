@@ -1,0 +1,945 @@
+{
+  "$defs": {
+    "cutId": {
+      "enum": [
+        "A_N_MINUS_ONE",
+        "B_N_CURRENT",
+        "C_ROLLBACK_CURRENT",
+        "D_COLD_RECONCILED",
+        "CAPACITY_HISTORY"
+      ]
+    },
+    "instant": {
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,9})?Z$",
+      "type": "string"
+    },
+    "inventory": {
+      "additionalProperties": false,
+      "properties": {
+        "completedAtControllerNanos": {
+          "$ref": "#/$defs/nanos"
+        },
+        "inventoryRef": {
+          "$ref": "#/$defs/refId"
+        },
+        "startedAtControllerNanos": {
+          "$ref": "#/$defs/nanos"
+        }
+      },
+      "required": [
+        "startedAtControllerNanos",
+        "completedAtControllerNanos",
+        "inventoryRef"
+      ],
+      "type": "object"
+    },
+    "mark": {
+      "additionalProperties": false,
+      "properties": {
+        "activityTimestamp": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "firstStoppedControllerNanos": {
+          "$ref": "#/$defs/nanos"
+        },
+        "firstStoppedHeaderRef": {
+          "$ref": "#/$defs/refId"
+        },
+        "firstStoppedWallMillis": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "liveHeaderRef": {
+          "$ref": "#/$defs/refId"
+        },
+        "memberId": {
+          "maximum": 2,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "pid": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "relativePath": {
+          "maxLength": 512,
+          "pattern": "^shard-[12]/node-[012]/(archive/archive-mark.dat|cluster/cluster-mark.dat|cluster/cluster-mark-service-0.dat)$",
+          "type": "string"
+        },
+        "secondStoppedControllerNanos": {
+          "$ref": "#/$defs/nanos"
+        },
+        "secondStoppedHeaderRef": {
+          "$ref": "#/$defs/refId"
+        },
+        "secondStoppedWallMillis": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "shardId": {
+          "maximum": 2,
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "shardId",
+        "memberId",
+        "relativePath",
+        "liveHeaderRef",
+        "firstStoppedHeaderRef",
+        "secondStoppedHeaderRef",
+        "firstStoppedWallMillis",
+        "secondStoppedWallMillis",
+        "firstStoppedControllerNanos",
+        "secondStoppedControllerNanos",
+        "activityTimestamp",
+        "pid"
+      ],
+      "type": "object"
+    },
+    "nanos": {
+      "pattern": "^(0|[1-9][0-9]{0,18})$",
+      "type": "string"
+    },
+    "rawRef": {
+      "additionalProperties": false,
+      "properties": {
+        "bytes": {
+          "maximum": 268435456,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "id": {
+          "$ref": "#/$defs/refId"
+        },
+        "logicalPath": {
+          "maxLength": 512,
+          "pattern": "^evidence/cut-artifacts/[A-Za-z0-9][A-Za-z0-9.-]*\\.(bin|json)$",
+          "type": "string"
+        },
+        "purpose": {
+          "enum": [
+            "MEMBER_STATE",
+            "EXPECTED_STATE",
+            "SNAPSHOT_WRITTEN",
+            "SNAPSHOT_RECEIPT",
+            "RETRY_LEDGER",
+            "OUTPUT_LEDGER",
+            "EXECUTION_PAYLOAD",
+            "MARKET_PAYLOAD",
+            "MARKET_SNAPSHOT",
+            "SINK_STATE",
+            "GRANT_RECEIPT",
+            "DURABLE_RECEIPT",
+            "MARKET_PROJECTION",
+            "LIFECYCLE",
+            "MARK_LIVE_HEADER",
+            "MARK_STOPPED_HEADER",
+            "TREE_INVENTORY"
+          ]
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      },
+      "required": [
+        "id",
+        "logicalPath",
+        "bytes",
+        "sha256",
+        "purpose"
+      ],
+      "type": "object"
+    },
+    "refId": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9.-]{0,127}$",
+      "type": "string"
+    },
+    "role": {
+      "additionalProperties": false,
+      "properties": {
+        "closeObservedAtControllerNanos": {
+          "$ref": "#/$defs/nanos"
+        },
+        "exitCode": {
+          "const": 0
+        },
+        "exitObservedAtControllerNanos": {
+          "$ref": "#/$defs/nanos"
+        },
+        "forceUsed": {
+          "const": false
+        },
+        "launchId": {
+          "$ref": "#/$defs/uuid"
+        },
+        "lifecycleRef": {
+          "$ref": "#/$defs/refId"
+        },
+        "memberId": {
+          "oneOf": [
+            {
+              "maximum": 2,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "pid": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "processStartInstant": {
+          "$ref": "#/$defs/instant"
+        },
+        "role": {
+          "enum": [
+            "MEMBER",
+            "PUBLISHER",
+            "SINK"
+          ]
+        },
+        "shardId": {
+          "oneOf": [
+            {
+              "maximum": 2,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "stopRequestedAtControllerNanos": {
+          "$ref": "#/$defs/nanos"
+        }
+      },
+      "required": [
+        "launchId",
+        "role",
+        "shardId",
+        "memberId",
+        "pid",
+        "processStartInstant",
+        "stopRequestedAtControllerNanos",
+        "closeObservedAtControllerNanos",
+        "exitObservedAtControllerNanos",
+        "exitCode",
+        "forceUsed",
+        "lifecycleRef"
+      ],
+      "type": "object"
+    },
+    "sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "toolRole": {
+      "additionalProperties": false,
+      "properties": {
+        "closeObservedAtControllerNanos": {
+          "$ref": "#/$defs/nanos"
+        },
+        "exitCode": {
+          "const": 0
+        },
+        "exitObservedAtControllerNanos": {
+          "$ref": "#/$defs/nanos"
+        },
+        "forceUsed": {
+          "const": false
+        },
+        "launchId": {
+          "$ref": "#/$defs/uuid"
+        },
+        "lifecycleRef": {
+          "$ref": "#/$defs/refId"
+        },
+        "memberId": {
+          "type": "null"
+        },
+        "operationalChildLaunchId": {
+          "$ref": "#/$defs/uuid"
+        },
+        "pid": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "processStartInstant": {
+          "$ref": "#/$defs/instant"
+        },
+        "role": {
+          "const": "TOOL"
+        },
+        "shardId": {
+          "type": "null"
+        },
+        "stopRequestedAtControllerNanos": {
+          "$ref": "#/$defs/nanos"
+        }
+      },
+      "required": [
+        "launchId",
+        "role",
+        "shardId",
+        "memberId",
+        "pid",
+        "processStartInstant",
+        "stopRequestedAtControllerNanos",
+        "closeObservedAtControllerNanos",
+        "exitObservedAtControllerNanos",
+        "exitCode",
+        "forceUsed",
+        "lifecycleRef",
+        "operationalChildLaunchId"
+      ],
+      "type": "object"
+    },
+    "uuid": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "type": "string"
+    }
+  },
+  "$id": "https://lcha-reln.github.io/signal-grid-blog/schemas/matching.m15.stop-receipt.v1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "allStopped": {
+      "const": true
+    },
+    "completedAtControllerNanos": {
+      "$ref": "#/$defs/nanos"
+    },
+    "cutId": {
+      "$ref": "#/$defs/cutId"
+    },
+    "cutSha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "deploymentSha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "forceCleanupUsed": {
+      "const": false
+    },
+    "inventories": {
+      "items": {
+        "$ref": "#/$defs/inventory"
+      },
+      "maxItems": 2,
+      "minItems": 2,
+      "type": "array"
+    },
+    "marks": {
+      "items": false,
+      "maxItems": 18,
+      "minItems": 18,
+      "prefixItems": [
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/mark"
+            },
+            {
+              "properties": {
+                "memberId": {
+                  "const": 0
+                },
+                "relativePath": {
+                  "const": "shard-1/node-0/archive/archive-mark.dat"
+                },
+                "shardId": {
+                  "const": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/mark"
+            },
+            {
+              "properties": {
+                "memberId": {
+                  "const": 0
+                },
+                "relativePath": {
+                  "const": "shard-1/node-0/cluster/cluster-mark.dat"
+                },
+                "shardId": {
+                  "const": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/mark"
+            },
+            {
+              "properties": {
+                "memberId": {
+                  "const": 0
+                },
+                "relativePath": {
+                  "const": "shard-1/node-0/cluster/cluster-mark-service-0.dat"
+                },
+                "shardId": {
+                  "const": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/mark"
+            },
+            {
+              "properties": {
+                "memberId": {
+                  "const": 1
+                },
+                "relativePath": {
+                  "const": "shard-1/node-1/archive/archive-mark.dat"
+                },
+                "shardId": {
+                  "const": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/mark"
+            },
+            {
+              "properties": {
+                "memberId": {
+                  "const": 1
+                },
+                "relativePath": {
+                  "const": "shard-1/node-1/cluster/cluster-mark.dat"
+                },
+                "shardId": {
+                  "const": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/mark"
+            },
+            {
+              "properties": {
+                "memberId": {
+                  "const": 1
+                },
+                "relativePath": {
+                  "const": "shard-1/node-1/cluster/cluster-mark-service-0.dat"
+                },
+                "shardId": {
+                  "const": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/mark"
+            },
+            {
+              "properties": {
+                "memberId": {
+                  "const": 2
+                },
+                "relativePath": {
+                  "const": "shard-1/node-2/archive/archive-mark.dat"
+                },
+                "shardId": {
+                  "const": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/mark"
+            },
+            {
+              "properties": {
+                "memberId": {
+                  "const": 2
+                },
+                "relativePath": {
+                  "const": "shard-1/node-2/cluster/cluster-mark.dat"
+                },
+                "shardId": {
+                  "const": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/mark"
+            },
+            {
+              "properties": {
+                "memberId": {
+                  "const": 2
+                },
+                "relativePath": {
+                  "const": "shard-1/node-2/cluster/cluster-mark-service-0.dat"
+                },
+                "shardId": {
+                  "const": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/mark"
+            },
+            {
+              "properties": {
+                "memberId": {
+                  "const": 0
+                },
+                "relativePath": {
+                  "const": "shard-2/node-0/archive/archive-mark.dat"
+                },
+                "shardId": {
+                  "const": 2
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/mark"
+            },
+            {
+              "properties": {
+                "memberId": {
+                  "const": 0
+                },
+                "relativePath": {
+                  "const": "shard-2/node-0/cluster/cluster-mark.dat"
+                },
+                "shardId": {
+                  "const": 2
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/mark"
+            },
+            {
+              "properties": {
+                "memberId": {
+                  "const": 0
+                },
+                "relativePath": {
+                  "const": "shard-2/node-0/cluster/cluster-mark-service-0.dat"
+                },
+                "shardId": {
+                  "const": 2
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/mark"
+            },
+            {
+              "properties": {
+                "memberId": {
+                  "const": 1
+                },
+                "relativePath": {
+                  "const": "shard-2/node-1/archive/archive-mark.dat"
+                },
+                "shardId": {
+                  "const": 2
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/mark"
+            },
+            {
+              "properties": {
+                "memberId": {
+                  "const": 1
+                },
+                "relativePath": {
+                  "const": "shard-2/node-1/cluster/cluster-mark.dat"
+                },
+                "shardId": {
+                  "const": 2
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/mark"
+            },
+            {
+              "properties": {
+                "memberId": {
+                  "const": 1
+                },
+                "relativePath": {
+                  "const": "shard-2/node-1/cluster/cluster-mark-service-0.dat"
+                },
+                "shardId": {
+                  "const": 2
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/mark"
+            },
+            {
+              "properties": {
+                "memberId": {
+                  "const": 2
+                },
+                "relativePath": {
+                  "const": "shard-2/node-2/archive/archive-mark.dat"
+                },
+                "shardId": {
+                  "const": 2
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/mark"
+            },
+            {
+              "properties": {
+                "memberId": {
+                  "const": 2
+                },
+                "relativePath": {
+                  "const": "shard-2/node-2/cluster/cluster-mark.dat"
+                },
+                "shardId": {
+                  "const": 2
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/mark"
+            },
+            {
+              "properties": {
+                "memberId": {
+                  "const": 2
+                },
+                "relativePath": {
+                  "const": "shard-2/node-2/cluster/cluster-mark-service-0.dat"
+                },
+                "shardId": {
+                  "const": 2
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "type": "array"
+    },
+    "refs": {
+      "items": {
+        "$ref": "#/$defs/rawRef"
+      },
+      "maxItems": 512,
+      "minItems": 1,
+      "type": "array"
+    },
+    "roles": {
+      "items": {
+        "$ref": "#/$defs/toolRole"
+      },
+      "maxItems": 18,
+      "minItems": 9,
+      "prefixItems": [
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/role"
+            },
+            {
+              "properties": {
+                "memberId": {
+                  "const": 0
+                },
+                "role": {
+                  "const": "MEMBER"
+                },
+                "shardId": {
+                  "const": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/role"
+            },
+            {
+              "properties": {
+                "memberId": {
+                  "const": 1
+                },
+                "role": {
+                  "const": "MEMBER"
+                },
+                "shardId": {
+                  "const": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/role"
+            },
+            {
+              "properties": {
+                "memberId": {
+                  "const": 2
+                },
+                "role": {
+                  "const": "MEMBER"
+                },
+                "shardId": {
+                  "const": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/role"
+            },
+            {
+              "properties": {
+                "memberId": {
+                  "const": 0
+                },
+                "role": {
+                  "const": "MEMBER"
+                },
+                "shardId": {
+                  "const": 2
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/role"
+            },
+            {
+              "properties": {
+                "memberId": {
+                  "const": 1
+                },
+                "role": {
+                  "const": "MEMBER"
+                },
+                "shardId": {
+                  "const": 2
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/role"
+            },
+            {
+              "properties": {
+                "memberId": {
+                  "const": 2
+                },
+                "role": {
+                  "const": "MEMBER"
+                },
+                "shardId": {
+                  "const": 2
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/role"
+            },
+            {
+              "properties": {
+                "memberId": {
+                  "type": "null"
+                },
+                "role": {
+                  "const": "PUBLISHER"
+                },
+                "shardId": {
+                  "const": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/role"
+            },
+            {
+              "properties": {
+                "memberId": {
+                  "type": "null"
+                },
+                "role": {
+                  "const": "PUBLISHER"
+                },
+                "shardId": {
+                  "const": 2
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/role"
+            },
+            {
+              "properties": {
+                "memberId": {
+                  "type": "null"
+                },
+                "role": {
+                  "const": "SINK"
+                },
+                "shardId": {
+                  "type": "null"
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "type": "array"
+    },
+    "root": {
+      "maxLength": 4096,
+      "minLength": 2,
+      "pattern": "^/[^\u0000\r\n]*$",
+      "type": "string"
+    },
+    "runId": {
+      "$ref": "#/$defs/uuid"
+    },
+    "schemaVersion": {
+      "const": "matching.m15.stop-receipt.v1"
+    },
+    "startedAtControllerNanos": {
+      "$ref": "#/$defs/nanos"
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "runId",
+    "cutId",
+    "cutSha256",
+    "deploymentSha256",
+    "root",
+    "startedAtControllerNanos",
+    "completedAtControllerNanos",
+    "allStopped",
+    "forceCleanupUsed",
+    "roles",
+    "marks",
+    "inventories",
+    "refs"
+  ],
+  "title": "M15 successful observed stopped vector; failed stops are separate raw outcomes",
+  "type": "object"
+}

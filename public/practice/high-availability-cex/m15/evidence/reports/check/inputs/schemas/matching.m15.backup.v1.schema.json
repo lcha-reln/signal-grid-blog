@@ -1,0 +1,407 @@
+{
+  "$defs": {
+    "commit": {
+      "pattern": "^[0-9a-f]{40}$",
+      "type": "string"
+    },
+    "file": {
+      "additionalProperties": false,
+      "properties": {
+        "compressedBytes": {
+          "maximum": 33554432,
+          "minimum": 20,
+          "type": "integer"
+        },
+        "compressedPath": {
+          "pattern": "^payload/[0-9]{4}\\.gz$",
+          "type": "string"
+        },
+        "compressedSha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "logicalBytes": {
+          "maximum": 268435456,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "logicalPath": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "logicalSha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      },
+      "required": [
+        "logicalPath",
+        "logicalBytes",
+        "logicalSha256",
+        "compressedPath",
+        "compressedBytes",
+        "compressedSha256"
+      ],
+      "type": "object"
+    },
+    "relativePath": {
+      "maxLength": 512,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9_][A-Za-z0-9._-]*(/[A-Za-z0-9_][A-Za-z0-9._-]*)*$",
+      "type": "string"
+    },
+    "sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    }
+  },
+  "$id": "https://lcha-reln.github.io/signal-grid-blog/schemas/matching.m15.backup.v1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "applicationVersion": {
+      "const": 262144
+    },
+    "backupId": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "cut": {
+      "additionalProperties": false,
+      "properties": {
+        "bytes": {
+          "maximum": 1048576,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "path": {
+          "const": "evidence/cut.json"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      },
+      "required": [
+        "path",
+        "bytes",
+        "sha256"
+      ],
+      "type": "object"
+    },
+    "deployment": {
+      "additionalProperties": false,
+      "properties": {
+        "bytes": {
+          "maximum": 65536,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "path": {
+          "const": "deployment.json"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      },
+      "required": [
+        "path",
+        "bytes",
+        "sha256"
+      ],
+      "type": "object"
+    },
+    "files": {
+      "items": {
+        "$ref": "#/$defs/file"
+      },
+      "maxItems": 512,
+      "minItems": 1,
+      "type": "array"
+    },
+    "members": {
+      "items": false,
+      "maxItems": 6,
+      "minItems": 6,
+      "prefixItems": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "clusterId": {
+              "const": 141
+            },
+            "memberId": {
+              "const": 0
+            },
+            "path": {
+              "const": "shard-1/node-0"
+            },
+            "shardId": {
+              "const": 1
+            }
+          },
+          "required": [
+            "shardId",
+            "clusterId",
+            "memberId",
+            "path"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "clusterId": {
+              "const": 141
+            },
+            "memberId": {
+              "const": 1
+            },
+            "path": {
+              "const": "shard-1/node-1"
+            },
+            "shardId": {
+              "const": 1
+            }
+          },
+          "required": [
+            "shardId",
+            "clusterId",
+            "memberId",
+            "path"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "clusterId": {
+              "const": 141
+            },
+            "memberId": {
+              "const": 2
+            },
+            "path": {
+              "const": "shard-1/node-2"
+            },
+            "shardId": {
+              "const": 1
+            }
+          },
+          "required": [
+            "shardId",
+            "clusterId",
+            "memberId",
+            "path"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "clusterId": {
+              "const": 142
+            },
+            "memberId": {
+              "const": 0
+            },
+            "path": {
+              "const": "shard-2/node-0"
+            },
+            "shardId": {
+              "const": 2
+            }
+          },
+          "required": [
+            "shardId",
+            "clusterId",
+            "memberId",
+            "path"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "clusterId": {
+              "const": 142
+            },
+            "memberId": {
+              "const": 1
+            },
+            "path": {
+              "const": "shard-2/node-1"
+            },
+            "shardId": {
+              "const": 2
+            }
+          },
+          "required": [
+            "shardId",
+            "clusterId",
+            "memberId",
+            "path"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "clusterId": {
+              "const": 142
+            },
+            "memberId": {
+              "const": 2
+            },
+            "path": {
+              "const": "shard-2/node-2"
+            },
+            "shardId": {
+              "const": 2
+            }
+          },
+          "required": [
+            "shardId",
+            "clusterId",
+            "memberId",
+            "path"
+          ],
+          "type": "object"
+        }
+      ],
+      "type": "array"
+    },
+    "profileId": {
+      "const": "M15-O1"
+    },
+    "representation": {
+      "const": "ONE_STRICT_GZIP_MEMBER_PER_LOGICAL_FILE"
+    },
+    "restoration": {
+      "additionalProperties": false,
+      "properties": {
+        "emptyTargetRequired": {
+          "const": true
+        },
+        "freshStart": {
+          "const": false
+        },
+        "powerLossQualified": {
+          "const": false
+        },
+        "samePortsRequired": {
+          "const": true
+        }
+      },
+      "required": [
+        "emptyTargetRequired",
+        "samePortsRequired",
+        "freshStart",
+        "powerLossQualified"
+      ],
+      "type": "object"
+    },
+    "schemaVersion": {
+      "const": "matching.m15.backup.v1"
+    },
+    "sourceBundle": {
+      "additionalProperties": false,
+      "properties": {
+        "manifest": {
+          "additionalProperties": false,
+          "properties": {
+            "bytes": {
+              "maximum": 1048576,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "path": {
+              "const": "evidence/source-bundle-manifest.json"
+            },
+            "sha256": {
+              "$ref": "#/$defs/sha256"
+            }
+          },
+          "required": [
+            "path",
+            "bytes",
+            "sha256"
+          ],
+          "type": "object"
+        },
+        "releaseId": {
+          "enum": [
+            "course/m14-complete",
+            "matching-1.0.0"
+          ]
+        },
+        "sourceCommit": {
+          "$ref": "#/$defs/commit"
+        }
+      },
+      "required": [
+        "releaseId",
+        "sourceCommit",
+        "manifest"
+      ],
+      "type": "object"
+    },
+    "sourceRoot": {
+      "maxLength": 4096,
+      "minLength": 2,
+      "pattern": "^/[^\u0000\r\n]*$",
+      "type": "string"
+    },
+    "stopReceipt": {
+      "additionalProperties": false,
+      "properties": {
+        "bytes": {
+          "maximum": 1048576,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "path": {
+          "const": "evidence/stop-receipt.json"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      },
+      "required": [
+        "path",
+        "bytes",
+        "sha256"
+      ],
+      "type": "object"
+    },
+    "streamBufferBytes": {
+      "const": 65536
+    },
+    "totalCompressedBytes": {
+      "maximum": 134217728,
+      "minimum": 1,
+      "type": "integer"
+    },
+    "totalLogicalBytes": {
+      "maximum": 17179869184,
+      "minimum": 1,
+      "type": "integer"
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "profileId",
+    "applicationVersion",
+    "representation",
+    "backupId",
+    "sourceRoot",
+    "sourceBundle",
+    "deployment",
+    "stopReceipt",
+    "cut",
+    "members",
+    "files",
+    "totalLogicalBytes",
+    "totalCompressedBytes",
+    "streamBufferBytes",
+    "restoration"
+  ],
+  "title": "M15 stopped complete-fleet backup manifest",
+  "type": "object"
+}

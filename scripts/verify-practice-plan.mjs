@@ -51,6 +51,31 @@ function assert(condition, message) {
   if (!condition) errors.push(message);
 }
 
+function expectedEvidenceArtifactStatus(key, artifact) {
+  // Exact immutable failure originals explain amendments; they are not current qualification.
+  const historicalFailures = {
+    "reports/check/inputs/matching-testkit/src/test/resources/m15-errata-1/provenance/diagnostic.json":
+      "8c8aceb585f56c2904c498cd83f1c8f346f46e0b853958dea61e2b0864c0911d",
+    "reports/check/inputs/matching-testkit/src/test/resources/m15-errata-2/provenance/course/reports/m15/check.json":
+      "78035431881751e8bb7d13ef40f70161d338dc16ad8c5d3d69d826d91491ed4e",
+    "reports/check/inputs/matching-testkit/src/test/resources/m15-errata-2/provenance/main/reports/m15/check.json":
+      "999f2b908e32adde1e8c172abb35efda679394e7bb75654b189c15d234583973",
+    "reports/check/inputs/matching-testkit/src/test/resources/m15-errata-2/provenance/main/reports/m15/operations-negatives.json":
+      "82608ca2853f467d4c1f19004b7b3aa8eede9e3a645508becf22e2a76480641d",
+    "reports/check/inputs/matching-testkit/src/test/resources/m15-errata-2/provenance/product/reports/m14/check.json":
+      "dce657944e6d6841c66be99955189647f5746a6ef56925e8fdf6891c047ac70e",
+    "reports/check/inputs/matching-testkit/src/test/resources/m15-errata-2/provenance/product/reports/m14/m14-cluster-faults.json":
+      "dc9e71a6cefe5f16445c260933660524af01691ab8c35a2176d35f094f73d252",
+    "reports/check/inputs/matching-testkit/src/test/resources/m15-errata-2/provenance/product/reports/m15/check.json":
+      "ab87f255c9b9b220303932b4f82b12e451f10c3cac77050928071609c2c39da0",
+  };
+  return key === "high-availability-cex/M15" &&
+    Object.hasOwn(historicalFailures, artifact.path) &&
+    historicalFailures[artifact.path] === artifact.sha256
+    ? "SYSTEM_ERROR"
+    : "PASS";
+}
+
 function isPublicHttpsUrl(value) {
   if (typeof value !== "string" || !value.trim()) return false;
   try {
@@ -110,6 +135,21 @@ function isAtLeast(lifecycle, minimum) {
 function isFixedCourseRef(value, suffix) {
   return new RegExp(`^course/[a-z][a-z0-9]*(?:\\.\\d+)?-${suffix}$`).test(
     value ?? "",
+  );
+}
+
+function isFrozenAmendmentSourceLink(unit, repositoryUrl, link) {
+  // Annotated errata-1 -> 808ffb8bf016007187a7f0918cb3877813209b26 (CI 34183917748).
+  // Annotated errata-2 -> 02e083a31953aa983d893af2222f4fde1197ea96 (CI 34210056216).
+  // Only these amendment documents are admitted; identities are checked before publication.
+  return (
+    unit?.projectSlug === "high-availability-cex" &&
+    unit?.code === "M15" &&
+    repositoryUrl === "https://github.com/lcha-reln/cex-matching" &&
+    [
+      "https://github.com/lcha-reln/cex-matching/blob/course/m15-errata-1/docs/operations/m15-mark-termination-errata-1.md",
+      "https://github.com/lcha-reln/cex-matching/blob/course/m15-errata-2/docs/operations/m15-publication-revision-1.md",
+    ].includes(link)
   );
 }
 
@@ -524,8 +564,9 @@ async function validatePublishedEvidence(unit, key) {
           parsedJsonArtifacts.set(artifactRelative, parsedArtifact);
           if (Object.hasOwn(parsedArtifact, "status")) {
             assert(
-              parsedArtifact.status === "PASS",
-              `${key}: JSON evidence artifact is not PASS ${artifactRelative}`,
+              parsedArtifact.status ===
+                expectedEvidenceArtifactStatus(key, artifact),
+              `${key}: JSON evidence artifact has unexpected status ${artifactRelative}`,
             );
           }
         }
@@ -2461,7 +2502,7 @@ for (const path of await listMarkdownFiles(lessonsRoot)) {
             link.startsWith(`${repositoryUrl}/tree/${ref}/`) ||
             link === `${repositoryUrl}/blob/${ref}` ||
             link.startsWith(`${repositoryUrl}/blob/${ref}/`),
-        ),
+        ) || isFrozenAmendmentSourceLink(unit, repositoryUrl, link),
         `${file}: floating or foreign source ref ${link}`,
       );
     }

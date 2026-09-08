@@ -1,0 +1,74 @@
+{
+  "schemaVersion": "matching.m15.validator-controls.v1",
+  "unit": "M15",
+  "contractPlanVersion": "0.18",
+  "sourceKind": "SYNTHETIC_ACCOUNTING_CONTROL",
+  "countsAsOperationalArrival": false,
+  "countsAsActualUnknownWitness": false,
+  "purpose": "Finite positive accounting controls and actual record mutations; no runtime or matching-semantic coverage claim.",
+  "controls": [
+    {
+      "id": "UNKNOWN_ACCOUNTING_CONTROL",
+      "logical": {
+        "ordinal": 1,
+        "initialOutcome": "UNKNOWN",
+        "finalOutcome": "NEW_APPLIED",
+        "attemptOrdinals": [
+          1,
+          2
+        ],
+        "newTradeCount": 1
+      },
+      "attempts": [
+        {
+          "ordinal": 1,
+          "logicalOrdinal": 1,
+          "invocationState": "UNKNOWN",
+          "acceptedPosition": 4096,
+          "applicationStatus": null,
+          "newTradeCount": 0
+        },
+        {
+          "ordinal": 2,
+          "logicalOrdinal": 1,
+          "invocationState": "ACKNOWLEDGED",
+          "acceptedPosition": 8192,
+          "applicationStatus": "NEW_APPLIED",
+          "newTradeCount": 1
+        }
+      ],
+      "mutation": {
+        "target": "logical.initialOutcome",
+        "replacement": "NOT_SUBMITTED",
+        "expectedClassification": "STUDENT_FAILURE"
+      }
+    },
+    {
+      "id": "PROFILE_REFUSAL_ACCOUNTING_CONTROL",
+      "logical": {
+        "ordinal": 1,
+        "initialOutcome": "OUTPUT_PROFILE_LIMIT",
+        "finalOutcome": "OUTPUT_PROFILE_LIMIT",
+        "attemptOrdinals": [
+          1
+        ],
+        "newTradeCount": 0
+      },
+      "attempts": [
+        {
+          "ordinal": 1,
+          "logicalOrdinal": 1,
+          "invocationState": "ACKNOWLEDGED",
+          "acceptedPosition": 4096,
+          "applicationStatus": "OUTPUT_PROFILE_LIMIT",
+          "newTradeCount": 0
+        }
+      ],
+      "mutation": {
+        "target": "logical.finalOutcome",
+        "replacement": "NEW_APPLIED",
+        "expectedClassification": "STUDENT_FAILURE"
+      }
+    }
+  ]
+}

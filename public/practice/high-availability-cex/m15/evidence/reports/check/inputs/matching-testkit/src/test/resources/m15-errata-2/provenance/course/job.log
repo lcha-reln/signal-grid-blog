@@ -1,0 +1,931 @@
+﻿2026-09-08T08:47:04.5837832Z Current runner version: '2.337.0'
+2026-09-08T08:47:04.5860476Z ##[group]Runner Image Provisioner
+2026-09-08T08:47:04.5861449Z Hosted Compute Agent
+2026-09-08T08:47:04.5862018Z Version: 20260828.587
+2026-09-08T08:47:04.5862561Z Commit: abac92662cab4cc7352de4f9f9d2e2419aad9c29
+2026-09-08T08:47:04.5863190Z Build Date: 2026-08-28T16:44:25Z
+2026-09-08T08:47:04.5863834Z Worker ID: {5376271e-563c-4d9e-8b4b-1dbbd295f706}
+2026-09-08T08:47:04.5864424Z Azure Region: westus3
+2026-09-08T08:47:04.5864917Z ##[endgroup]
+2026-09-08T08:47:04.5866185Z ##[group]Operating System
+2026-09-08T08:47:04.5866725Z Ubuntu
+2026-09-08T08:47:04.5867220Z 24.04.4
+2026-09-08T08:47:04.5867697Z LTS
+2026-09-08T08:47:04.5868153Z ##[endgroup]
+2026-09-08T08:47:04.5868631Z ##[group]Runner Image
+2026-09-08T08:47:04.5869167Z Image: ubuntu-24.04
+2026-09-08T08:47:04.5869683Z Version: 20260831.293.1
+2026-09-08T08:47:04.5870736Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260831.293/images/ubuntu/Ubuntu2404-Readme.md
+2026-09-08T08:47:04.5872201Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260831.293
+2026-09-08T08:47:04.5873007Z ##[endgroup]
+2026-09-08T08:47:04.5874273Z ##[group]GITHUB_TOKEN Permissions
+2026-09-08T08:47:04.5876008Z Contents: read
+2026-09-08T08:47:04.5876581Z Metadata: read
+2026-09-08T08:47:04.5877084Z ##[endgroup]
+2026-09-08T08:47:04.5878762Z Secret source: Actions
+2026-09-08T08:47:04.5879888Z Prepare workflow directory
+2026-09-08T08:47:04.6377888Z Prepare all required actions
+2026-09-08T08:47:04.6416262Z Getting action download info
+2026-09-08T08:47:04.9361700Z Download action repository 'actions/checkout@v6' (SHA:d23441a48e516b6c34aea4fa41551a30e30af803)
+2026-09-08T08:47:05.5055762Z Download action repository 'actions/setup-java@v5' (SHA:b6effb05e454b25005698d916606bdc6ffcbf961)
+2026-09-08T08:47:06.6488883Z Download action repository 'gradle/actions@v6' (SHA:9c971963bec38e04b3d30dcc455b5382be2fdbfb)
+2026-09-08T08:47:08.5037080Z Download action repository 'actions/upload-artifact@v7' (SHA:043fb46d1a93c77aae656e7c1c64a875d1fc6a0a)
+2026-09-08T08:47:08.6918035Z Complete job name: m15-qualification
+2026-09-08T08:47:08.7466179Z ##[group]Run actions/checkout@v6
+2026-09-08T08:47:08.7466606Z with:
+2026-09-08T08:47:08.7466784Z   fetch-depth: 0
+2026-09-08T08:47:08.7466995Z   repository: lcha-reln/cex-matching
+2026-09-08T08:47:08.7469211Z   token: ***
+2026-09-08T08:47:08.7469398Z   ssh-strict: true
+2026-09-08T08:47:08.7469572Z   ssh-user: git
+2026-09-08T08:47:08.7469755Z   persist-credentials: true
+2026-09-08T08:47:08.7469954Z   clean: true
+2026-09-08T08:47:08.7470147Z   sparse-checkout-cone-mode: true
+2026-09-08T08:47:08.7470366Z   fetch-tags: false
+2026-09-08T08:47:08.7470559Z   show-progress: true
+2026-09-08T08:47:08.7470739Z   lfs: false
+2026-09-08T08:47:08.7470901Z   submodules: false
+2026-09-08T08:47:08.7471225Z   set-safe-directory: true
+2026-09-08T08:47:08.7471435Z   allow-unsafe-pr-checkout: false
+2026-09-08T08:47:08.7471823Z ##[endgroup]
+2026-09-08T08:47:08.8274033Z Syncing repository: lcha-reln/cex-matching
+2026-09-08T08:47:08.8275148Z ##[group]Getting Git version info
+2026-09-08T08:47:08.8275529Z Working directory is '/home/runner/work/cex-matching/cex-matching'
+2026-09-08T08:47:08.8276035Z [command]/usr/bin/git version
+2026-09-08T08:47:08.8359929Z git version 2.55.0
+2026-09-08T08:47:08.8447791Z ##[endgroup]
+2026-09-08T08:47:08.8459955Z Temporarily overriding HOME='/home/runner/work/_temp/8ab92662-e8fd-4d67-b9b9-5bd99e46d406' before making global git config changes
+2026-09-08T08:47:08.8461287Z Adding repository directory to the temporary git global config as a safe directory
+2026-09-08T08:47:08.8462292Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/cex-matching/cex-matching
+2026-09-08T08:47:08.8464187Z Deleting the contents of '/home/runner/work/cex-matching/cex-matching'
+2026-09-08T08:47:08.8465038Z ##[group]Determining repository object format
+2026-09-08T08:47:08.8465630Z ##[endgroup]
+2026-09-08T08:47:08.8466107Z ##[group]Initializing the repository
+2026-09-08T08:47:08.8466853Z [command]/usr/bin/git init /home/runner/work/cex-matching/cex-matching
+2026-09-08T08:47:08.8537614Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-09-08T08:47:08.8538472Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-09-08T08:47:08.8539102Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-09-08T08:47:08.8539584Z hint: call:
+2026-09-08T08:47:08.8539836Z hint:
+2026-09-08T08:47:08.8540185Z hint: 	git config --global init.defaultBranch <name>
+2026-09-08T08:47:08.8540573Z hint:
+2026-09-08T08:47:08.8540936Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-09-08T08:47:08.8541701Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-09-08T08:47:08.8542176Z hint:
+2026-09-08T08:47:08.8542423Z hint: 	git branch -m <name>
+2026-09-08T08:47:08.8542664Z hint:
+2026-09-08T08:47:08.8542924Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-09-08T08:47:08.8543841Z Initialized empty Git repository in /home/runner/work/cex-matching/cex-matching/.git/
+2026-09-08T08:47:08.8553757Z [command]/usr/bin/git remote add origin https://github.com/lcha-reln/cex-matching
+2026-09-08T08:47:08.8594792Z ##[endgroup]
+2026-09-08T08:47:08.8595268Z ##[group]Disabling automatic garbage collection
+2026-09-08T08:47:08.8597888Z [command]/usr/bin/git config --local gc.auto 0
+2026-09-08T08:47:08.8623912Z ##[endgroup]
+2026-09-08T08:47:08.8624411Z ##[group]Setting up auth
+2026-09-08T08:47:08.8624745Z Removing SSH command configuration
+2026-09-08T08:47:08.8630080Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-09-08T08:47:08.8657381Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-09-08T08:47:08.8980724Z Removing HTTP extra header
+2026-09-08T08:47:08.8987087Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-09-08T08:47:08.9020494Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-09-08T08:47:08.9205694Z Removing includeIf entries pointing to credentials config files
+2026-09-08T08:47:08.9211816Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-09-08T08:47:08.9242305Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-09-08T08:47:08.9432561Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-81d3fe0d-7d38-415b-b218-f9a3d9eaba63.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-09-08T08:47:08.9465399Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/cex-matching/cex-matching/.git.path /home/runner/work/_temp/git-credentials-81d3fe0d-7d38-415b-b218-f9a3d9eaba63.config
+2026-09-08T08:47:08.9493884Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/cex-matching/cex-matching/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-81d3fe0d-7d38-415b-b218-f9a3d9eaba63.config
+2026-09-08T08:47:08.9524667Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-81d3fe0d-7d38-415b-b218-f9a3d9eaba63.config
+2026-09-08T08:47:08.9553814Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-81d3fe0d-7d38-415b-b218-f9a3d9eaba63.config
+2026-09-08T08:47:08.9580441Z ##[endgroup]
+2026-09-08T08:47:08.9580884Z ##[group]Fetching the repository
+2026-09-08T08:47:08.9586826Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/*
+2026-09-08T08:47:10.8647005Z From https://github.com/lcha-reln/cex-matching
+2026-09-08T08:47:10.8648254Z  * [new branch]      contract/m10-revision -> origin/contract/m10-revision
+2026-09-08T08:47:10.8648831Z  * [new branch]      contract/m11-revision -> origin/contract/m11-revision
+2026-09-08T08:47:10.8649373Z  * [new branch]      contract/m12-revision -> origin/contract/m12-revision
+2026-09-08T08:47:10.8649849Z  * [new branch]      main                  -> origin/main
+2026-09-08T08:47:10.8650241Z  * [new branch]      unit/m00              -> origin/unit/m00
+2026-09-08T08:47:10.8650628Z  * [new branch]      unit/m01              -> origin/unit/m01
+2026-09-08T08:47:10.8651031Z  * [new branch]      unit/m02              -> origin/unit/m02
+2026-09-08T08:47:10.8651623Z  * [new branch]      unit/m03              -> origin/unit/m03
+2026-09-08T08:47:10.8652080Z  * [new branch]      unit/m04              -> origin/unit/m04
+2026-09-08T08:47:10.8652505Z  * [new branch]      unit/m05              -> origin/unit/m05
+2026-09-08T08:47:10.8652991Z  * [new branch]      unit/m09              -> origin/unit/m09
+2026-09-08T08:47:10.8653444Z  * [new branch]      unit/m10              -> origin/unit/m10
+2026-09-08T08:47:10.8653852Z  * [new branch]      unit/m11              -> origin/unit/m11
+2026-09-08T08:47:10.8654343Z  * [new branch]      unit/m12              -> origin/unit/m12
+2026-09-08T08:47:10.8654811Z  * [new branch]      unit/m13              -> origin/unit/m13
+2026-09-08T08:47:10.8655235Z  * [new branch]      unit/m14              -> origin/unit/m14
+2026-09-08T08:47:10.8655660Z  * [new branch]      unit/m15              -> origin/unit/m15
+2026-09-08T08:47:10.8656111Z  * [new tag]         course/m00-complete   -> course/m00-complete
+2026-09-08T08:47:10.8656576Z  * [new tag]         course/m00-start      -> course/m00-start
+2026-09-08T08:47:10.8657010Z  * [new tag]         course/m00.1-start    -> course/m00.1-start
+2026-09-08T08:47:10.8657450Z  * [new tag]         course/m00.2-start    -> course/m00.2-start
+2026-09-08T08:47:10.8657932Z  * [new tag]         course/m01-complete   -> course/m01-complete
+2026-09-08T08:47:10.8658667Z  * [new tag]         course/m01-start      -> course/m01-start
+2026-09-08T08:47:10.8659205Z  * [new tag]         course/m02-complete   -> course/m02-complete
+2026-09-08T08:47:10.8659701Z  * [new tag]         course/m02-start      -> course/m02-start
+2026-09-08T08:47:10.8660164Z  * [new tag]         course/m03-complete   -> course/m03-complete
+2026-09-08T08:47:10.8660641Z  * [new tag]         course/m03-start      -> course/m03-start
+2026-09-08T08:47:10.8661257Z  * [new tag]         course/m04-complete   -> course/m04-complete
+2026-09-08T08:47:10.8661908Z  * [new tag]         course/m04-start      -> course/m04-start
+2026-09-08T08:47:10.8662392Z  * [new tag]         course/m05-complete   -> course/m05-complete
+2026-09-08T08:47:10.8662815Z  * [new tag]         course/m05-start      -> course/m05-start
+2026-09-08T08:47:10.8663275Z  * [new tag]         course/m06-complete   -> course/m06-complete
+2026-09-08T08:47:10.8663735Z  * [new tag]         course/m06-start      -> course/m06-start
+2026-09-08T08:47:10.8664204Z  * [new tag]         course/m07-complete   -> course/m07-complete
+2026-09-08T08:47:10.8664664Z  * [new tag]         course/m07-start      -> course/m07-start
+2026-09-08T08:47:10.8665088Z  * [new tag]         course/m08-complete   -> course/m08-complete
+2026-09-08T08:47:10.8665554Z  * [new tag]         course/m08-start      -> course/m08-start
+2026-09-08T08:47:10.8666007Z  * [new tag]         course/m09-complete   -> course/m09-complete
+2026-09-08T08:47:10.8666447Z  * [new tag]         course/m09-start      -> course/m09-start
+2026-09-08T08:47:10.8666879Z  * [new tag]         course/m10-complete   -> course/m10-complete
+2026-09-08T08:47:10.8667372Z  * [new tag]         course/m10-start      -> course/m10-start
+2026-09-08T08:47:10.8667981Z  * [new tag]         course/m11-complete   -> course/m11-complete
+2026-09-08T08:47:10.8668375Z  * [new tag]         course/m11-start      -> course/m11-start
+2026-09-08T08:47:10.8668854Z  * [new tag]         course/m12-complete   -> course/m12-complete
+2026-09-08T08:47:10.8669144Z  * [new tag]         course/m12-start      -> course/m12-start
+2026-09-08T08:47:10.8669443Z  * [new tag]         course/m13-complete   -> course/m13-complete
+2026-09-08T08:47:10.8669743Z  * [new tag]         course/m13-start      -> course/m13-start
+2026-09-08T08:47:10.8670060Z  * [new tag]         course/m14-complete   -> course/m14-complete
+2026-09-08T08:47:10.8670370Z  * [new tag]         course/m14-start      -> course/m14-start
+2026-09-08T08:47:10.8670653Z  * [new tag]         course/m15-complete   -> course/m15-complete
+2026-09-08T08:47:10.8670971Z  * [new tag]         course/m15-errata-1   -> course/m15-errata-1
+2026-09-08T08:47:10.8671447Z  * [new tag]         course/m15-start      -> course/m15-start
+2026-09-08T08:47:10.8671733Z  * [new tag]         matching-0.1.0        -> matching-0.1.0
+2026-09-08T08:47:10.8672006Z  * [new tag]         matching-0.5.0        -> matching-0.5.0
+2026-09-08T08:47:10.8672279Z  * [new tag]         matching-0.8.0        -> matching-0.8.0
+2026-09-08T08:47:10.8672550Z  * [new tag]         matching-1.0.0        -> matching-1.0.0
+2026-09-08T08:47:10.8673645Z [command]/usr/bin/git tag --list course/m15-complete
+2026-09-08T08:47:10.8712027Z course/m15-complete
+2026-09-08T08:47:10.8713704Z [command]/usr/bin/git rev-parse refs/tags/course/m15-complete^{commit}
+2026-09-08T08:47:10.8734780Z dc818a827a106e5d6117dcd50ef4ca8bcc268c6e
+2026-09-08T08:47:10.8738055Z ##[endgroup]
+2026-09-08T08:47:10.8738672Z ##[group]Determining the checkout info
+2026-09-08T08:47:10.8739240Z ##[endgroup]
+2026-09-08T08:47:10.8742777Z [command]/usr/bin/git sparse-checkout disable
+2026-09-08T08:47:10.8786874Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-09-08T08:47:10.8811652Z ##[group]Checking out the ref
+2026-09-08T08:47:10.8814330Z [command]/usr/bin/git checkout --progress --force refs/tags/course/m15-complete
+2026-09-08T08:47:10.9847125Z Note: switching to 'refs/tags/course/m15-complete'.
+2026-09-08T08:47:10.9847523Z 
+2026-09-08T08:47:10.9848048Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-09-08T08:47:10.9848450Z changes and commit them, and you can discard any commits you make in this
+2026-09-08T08:47:10.9848817Z state without impacting any branches by switching back to a branch.
+2026-09-08T08:47:10.9849027Z 
+2026-09-08T08:47:10.9849186Z If you want to create a new branch to retain commits you create, you may
+2026-09-08T08:47:10.9849532Z do so (now or later) by using -c with the switch command. Example:
+2026-09-08T08:47:10.9849727Z 
+2026-09-08T08:47:10.9849816Z   git switch -c <new-branch-name>
+2026-09-08T08:47:10.9849959Z 
+2026-09-08T08:47:10.9850044Z Or undo this operation with:
+2026-09-08T08:47:10.9850177Z 
+2026-09-08T08:47:10.9850250Z   git switch -
+2026-09-08T08:47:10.9850353Z 
+2026-09-08T08:47:10.9850526Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-09-08T08:47:10.9850768Z 
+2026-09-08T08:47:10.9850977Z HEAD is now at dc818a8 Complete M15 operational qualification and validate release manifest
+2026-09-08T08:47:10.9864992Z ##[endgroup]
+2026-09-08T08:47:10.9909357Z [command]/usr/bin/git log -1 --format=%H
+2026-09-08T08:47:10.9934695Z dc818a827a106e5d6117dcd50ef4ca8bcc268c6e
+2026-09-08T08:47:11.0163707Z ##[group]Run actions/setup-java@v5
+2026-09-08T08:47:11.0163925Z with:
+2026-09-08T08:47:11.0164092Z   distribution: temurin
+2026-09-08T08:47:11.0164272Z   java-version: 25
+2026-09-08T08:47:11.0164441Z   java-package: jdk
+2026-09-08T08:47:11.0164615Z   check-latest: false
+2026-09-08T08:47:11.0164788Z   set-default: true
+2026-09-08T08:47:11.0164960Z   verify-signature: false
+2026-09-08T08:47:11.0165144Z   server-id: github
+2026-09-08T08:47:11.0165317Z   server-username: GITHUB_ACTOR
+2026-09-08T08:47:11.0165522Z   server-password: GITHUB_TOKEN
+2026-09-08T08:47:11.0165722Z   overwrite-settings: true
+2026-09-08T08:47:11.0165911Z   job-status: success
+2026-09-08T08:47:11.0168179Z   token: ***
+2026-09-08T08:47:11.0168357Z   show-download-progress: false
+2026-09-08T08:47:11.0168559Z ##[endgroup]
+2026-09-08T08:47:11.1342183Z ##[group]Installed distributions
+2026-09-08T08:47:11.1397164Z Resolved Java 25.0.4+1 from tool-cache
+2026-09-08T08:47:11.1397465Z Setting Java 25.0.4+1 as the default
+2026-09-08T08:47:11.1405423Z Creating toolchains.xml for JDK version 25 from temurin
+2026-09-08T08:47:11.1459284Z Writing to /home/runner/.m2/toolchains.xml
+2026-09-08T08:47:11.1459757Z 
+2026-09-08T08:47:11.1459958Z Java configuration:
+2026-09-08T08:47:11.1460276Z   Distribution: temurin
+2026-09-08T08:47:11.1460616Z   Version: 25.0.4+1
+2026-09-08T08:47:11.1461022Z   Path: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/25.0.4-1/x64
+2026-09-08T08:47:11.1461561Z 
+2026-09-08T08:47:11.1461957Z ##[endgroup]
+2026-09-08T08:47:11.1493114Z Creating settings.xml with server-id: github
+2026-09-08T08:47:11.1493565Z Writing to /home/runner/.m2/settings.xml
+2026-09-08T08:47:11.1494445Z Configured MAVEN_ARGS to include -ntp to suppress Maven transfer progress logs. Set 'show-download-progress: true' to keep the download progress output.
+2026-09-08T08:47:11.1617742Z ##[group]Run gradle/actions/wrapper-validation@v6
+2026-09-08T08:47:11.1617998Z with:
+2026-09-08T08:47:11.1618164Z   min-wrapper-count: 1
+2026-09-08T08:47:11.1618358Z   allow-snapshots: false
+2026-09-08T08:47:11.1618534Z env:
+2026-09-08T08:47:11.1618830Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/25.0.4-1/x64
+2026-09-08T08:47:11.1619206Z   JAVA_HOME_25_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/25.0.4-1/x64
+2026-09-08T08:47:11.1619508Z   MAVEN_ARGS: -ntp
+2026-09-08T08:47:11.1619684Z ##[endgroup]
+2026-09-08T08:47:11.3452402Z ✓ Found known Gradle Wrapper JAR files:
+2026-09-08T08:47:11.3453590Z   7a9ce74cff467ca1bf60a4fcd9f05185acceda4d0f382434d393e17864262c5d gradle/wrapper/gradle-wrapper.jar
+2026-09-08T08:47:11.3742243Z ##[group]Run gradle/actions/setup-gradle@v6
+2026-09-08T08:47:11.3742491Z with:
+2026-09-08T08:47:11.3742671Z   cache-provider: enhanced
+2026-09-08T08:47:11.3742890Z   cache-disabled: false
+2026-09-08T08:47:11.3743077Z   cache-read-only: true
+2026-09-08T08:47:11.3743263Z   cache-write-only: false
+2026-09-08T08:47:11.3743465Z   cache-overwrite-existing: false
+2026-09-08T08:47:11.3743683Z   cache-cleanup: on-success
+2026-09-08T08:47:11.3743915Z   gradle-home-cache-includes: caches
+notifications
+
+2026-09-08T08:47:11.3744181Z   add-job-summary: always
+2026-09-08T08:47:11.3744390Z   add-job-summary-as-pr-comment: never
+2026-09-08T08:47:11.3744617Z   dependency-graph: disabled
+2026-09-08T08:47:11.3744867Z   dependency-graph-report-dir: dependency-graph-reports
+2026-09-08T08:47:11.3745156Z   dependency-graph-continue-on-failure: true
+2026-09-08T08:47:11.3763345Z   build-scan-publish: false
+2026-09-08T08:47:11.3763621Z   validate-wrappers: true
+2026-09-08T08:47:11.3763896Z   allow-snapshot-wrappers: false
+2026-09-08T08:47:11.3764141Z   gradle-home-cache-strict-match: false
+2026-09-08T08:47:11.3764381Z   workflow-job-context: null
+2026-09-08T08:47:11.3766579Z   github-token: ***
+2026-09-08T08:47:11.3766771Z env:
+2026-09-08T08:47:11.3767016Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/25.0.4-1/x64
+2026-09-08T08:47:11.3767395Z   JAVA_HOME_25_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/25.0.4-1/x64
+2026-09-08T08:47:11.3767694Z   MAVEN_ARGS: -ntp
+2026-09-08T08:47:11.3767909Z   GRADLE_ACTION_ID: gradle/actions/wrapper-validation
+2026-09-08T08:47:11.3768153Z ##[endgroup]
+2026-09-08T08:47:11.8382147Z Merged default JDK locations into /home/runner/.m2/toolchains.xml
+2026-09-08T08:47:11.8398059Z Enhanced Caching: This build is using the proprietary 'gradle-actions-caching' provider for optimized caching support. See https://github.com/gradle/actions/blob/main/DISTRIBUTION.md for terms of use and opt-out instructions.
+2026-09-08T08:47:11.9021556Z ##[group]Restore Gradle state from cache
+2026-09-08T08:47:12.1093458Z Cache hit for restore-key: gradle-home-v2|Linux-X64|m14-qualification[38288dd192e4dcff69e32d553212efb3]-56c4ec09ddf9fcf57f1cce763ae8b451ba7f394f
+2026-09-08T08:47:13.3176072Z Received 3043638 of 7237942 (42.1%), 2.9 MBs/sec
+2026-09-08T08:47:13.4157318Z Received 7237942 of 7237942 (100.0%), 6.3 MBs/sec
+2026-09-08T08:47:13.4157764Z Cache Size: ~7 MB (7237942 B)
+2026-09-08T08:47:13.4182118Z [command]/usr/bin/tar -xf /home/runner/work/_temp/57c71fff-2234-41f5-8b08-6f0fb49e12b2/cache.tzst -P -C /home/runner/work/cex-matching/cex-matching --use-compress-program unzstd
+2026-09-08T08:47:13.4831275Z Cache restored successfully
+2026-09-08T08:47:13.4838210Z Restored cache entry with key gradle-home-v2|Linux-X64|m15-qualification[54e5cf1f3a0a6023fcc66878229eb3f7]-dc818a827a106e5d6117dcd50ef4ca8bcc268c6e in 1581ms
+2026-09-08T08:47:13.6958918Z Cache hit for: gradle-generated-gradle-jars-v2-dc5a4650abbad0b0d866cf541e44abd4
+2026-09-08T08:47:13.6964469Z Cache hit for: gradle-instrumented-jars-v2-bb910fcacf708cb42c10c2b5b22b5d19
+2026-09-08T08:47:13.7006944Z Cache hit for: gradle-build-cache-v2-0a2f096282df32063b01aa8f667d25ee
+2026-09-08T08:47:13.7013862Z Cache hit for: gradle-dependencies-v2-ad5f07aec355ec4212bc1a20d3390d0c
+2026-09-08T08:47:13.7033593Z Cache hit for: gradle-groovy-dsl-v2-01d1fea437278632a1dad9dc7ba4c97d
+2026-09-08T08:47:13.7037047Z Cache hit for: gradle-wrapper-zips-v2-ef43a8e2ea38ce83c4462b7d7ca3782b
+2026-09-08T08:47:13.7045782Z Cache hit for: gradle-transforms-v2-62aff33425665a7fc88fc5358b1059d0
+2026-09-08T08:47:13.7101913Z Cache hit for: gradle-kotlin-dsl-v2-37a09738fb4452319e5ab6fd02a8865c
+2026-09-08T08:47:14.2047745Z Received 61074 of 61074 (100.0%), 0.2 MBs/sec
+2026-09-08T08:47:14.2048224Z Cache Size: ~0 MB (61074 B)
+2026-09-08T08:47:14.2065167Z [command]/usr/bin/tar -xf /home/runner/work/_temp/3c7d75de-15b0-4027-a8ad-ac4cf884f673/cache.tzst -P -C /home/runner/work/cex-matching/cex-matching --use-compress-program unzstd
+2026-09-08T08:47:14.2147042Z Cache restored successfully
+2026-09-08T08:47:14.2149655Z Restored cache entry with key gradle-instrumented-jars-v2-bb910fcacf708cb42c10c2b5b22b5d19 in 729ms
+2026-09-08T08:47:14.2225603Z Received 117801 of 117801 (100.0%), 0.4 MBs/sec
+2026-09-08T08:47:14.2226080Z Cache Size: ~0 MB (117801 B)
+2026-09-08T08:47:14.2248074Z [command]/usr/bin/tar -xf /home/runner/work/_temp/e2cfeb2d-11b9-46f6-8e08-6e9f92369e5c/cache.tzst -P -C /home/runner/work/cex-matching/cex-matching --use-compress-program unzstd
+2026-09-08T08:47:14.2416485Z Cache restored successfully
+2026-09-08T08:47:14.2417638Z Restored cache entry with key gradle-kotlin-dsl-v2-37a09738fb4452319e5ab6fd02a8865c in 756ms
+2026-09-08T08:47:14.2587208Z Received 89620 of 89620 (100.0%), 0.3 MBs/sec
+2026-09-08T08:47:14.2587657Z Cache Size: ~0 MB (89620 B)
+2026-09-08T08:47:14.2605546Z [command]/usr/bin/tar -xf /home/runner/work/_temp/1cebfadf-ddfd-4771-a264-fa6b00142f37/cache.tzst -P -C /home/runner/work/cex-matching/cex-matching --use-compress-program unzstd
+2026-09-08T08:47:14.2706420Z Cache restored successfully
+2026-09-08T08:47:14.2707667Z Restored cache entry with key gradle-groovy-dsl-v2-01d1fea437278632a1dad9dc7ba4c97d in 785ms
+2026-09-08T08:47:14.7310426Z Received 7552157 of 7552157 (100.0%), 9.0 MBs/sec
+2026-09-08T08:47:14.7310990Z Cache Size: ~7 MB (7552157 B)
+2026-09-08T08:47:14.7397445Z Received 4291860 of 4291860 (100.0%), 5.1 MBs/sec
+2026-09-08T08:47:14.7422039Z Cache Size: ~4 MB (4291860 B)
+2026-09-08T08:47:14.7434399Z [command]/usr/bin/tar -xf /home/runner/work/_temp/c02d7ec8-3f2d-41ea-b1f5-0a93b06ad267/cache.tzst -P -C /home/runner/work/cex-matching/cex-matching --use-compress-program unzstd
+2026-09-08T08:47:14.7653733Z [command]/usr/bin/tar -xf /home/runner/work/_temp/4fc8b886-64f9-4456-81ab-54e81045bc7c/cache.tzst -P -C /home/runner/work/cex-matching/cex-matching --use-compress-program unzstd
+2026-09-08T08:47:14.7887198Z Cache restored successfully
+2026-09-08T08:47:14.7942220Z Restored cache entry with key gradle-build-cache-v2-0a2f096282df32063b01aa8f667d25ee in 1304ms
+2026-09-08T08:47:14.8205187Z Cache restored successfully
+2026-09-08T08:47:14.8209239Z Restored cache entry with key gradle-transforms-v2-62aff33425665a7fc88fc5358b1059d0 in 1335ms
+2026-09-08T08:47:14.8766573Z Received 25070336 of 25070336 (100.0%), 24.5 MBs/sec
+2026-09-08T08:47:14.8767109Z Cache Size: ~24 MB (25070336 B)
+2026-09-08T08:47:14.9032734Z [command]/usr/bin/tar -xf /home/runner/work/_temp/45f87a62-cd5a-4086-931e-91d147b00d35/cache.tzst -P -C /home/runner/work/cex-matching/cex-matching --use-compress-program unzstd
+2026-09-08T08:47:14.9077577Z Received 29360128 of 150668462 (19.5%), 28.0 MBs/sec
+2026-09-08T08:47:14.9201519Z Received 20971520 of 43553697 (48.2%), 20.0 MBs/sec
+2026-09-08T08:47:14.9499066Z Cache restored successfully
+2026-09-08T08:47:14.9510620Z Restored cache entry with key gradle-dependencies-v2-ad5f07aec355ec4212bc1a20d3390d0c in 1465ms
+2026-09-08T08:47:15.1069458Z Received 43553697 of 43553697 (100.0%), 35.0 MBs/sec
+2026-09-08T08:47:15.1069946Z Cache Size: ~42 MB (43553697 B)
+2026-09-08T08:47:15.1147550Z [command]/usr/bin/tar -xf /home/runner/work/_temp/fa77b357-803c-4791-9fc0-1e9fb40d2057/cache.tzst -P -C /home/runner/work/cex-matching/cex-matching --use-compress-program unzstd
+2026-09-08T08:47:15.3651257Z Cache restored successfully
+2026-09-08T08:47:15.3675676Z Restored cache entry with key gradle-generated-gradle-jars-v2-dc5a4650abbad0b0d866cf541e44abd4 in 1883ms
+2026-09-08T08:47:15.9081194Z Received 130023424 of 150668462 (86.3%), 62.0 MBs/sec
+2026-09-08T08:47:16.6706998Z Received 150668462 of 150668462 (100.0%), 52.0 MBs/sec
+2026-09-08T08:47:16.6707825Z Cache Size: ~144 MB (150668462 B)
+2026-09-08T08:47:16.6829631Z [command]/usr/bin/tar -xf /home/runner/work/_temp/29df1e00-c301-4cec-b920-bc971cbb23ba/cache.tzst -P -C /home/runner/work/cex-matching/cex-matching --use-compress-program unzstd
+2026-09-08T08:47:16.8787968Z Cache restored successfully
+2026-09-08T08:47:16.8849646Z Restored cache entry with key gradle-wrapper-zips-v2-ef43a8e2ea38ce83c4462b7d7ca3782b in 3400ms
+2026-09-08T08:47:16.9162786Z ##[endgroup]
+2026-09-08T08:47:16.9354684Z ##[group]All Gradle Wrapper jars are valid
+2026-09-08T08:47:16.9355771Z ✓ Found known Gradle Wrapper JAR files:
+2026-09-08T08:47:16.9356530Z   7a9ce74cff467ca1bf60a4fcd9f05185acceda4d0f382434d393e17864262c5d gradle/wrapper/gradle-wrapper.jar
+2026-09-08T08:47:16.9357344Z ##[endgroup]
+2026-09-08T08:47:17.0522638Z ##[group]Run test "$(sed -n 's/^unit=//p' course.properties)" = M15
+2026-09-08T08:47:17.0523261Z [36;1mtest "$(sed -n 's/^unit=//p' course.properties)" = M15[0m
+2026-09-08T08:47:17.0523685Z [36;1mtest "$(sed -n 's/^planVersion=//p' course.properties)" = 0.18[0m
+2026-09-08T08:47:17.0524184Z [36;1mtest "$(sed -n 's/^startRef=//p' course.properties)" = course/m15-start[0m
+2026-09-08T08:47:17.0524901Z [36;1mtest "$(sed -n 's/^completeRef=//p' course.properties)" = course/m15-complete[0m
+2026-09-08T08:47:17.0525492Z [36;1mtest "$(sed -n 's/^productRelease=//p' course.properties)" = matching-1.0.0[0m
+2026-09-08T08:47:17.0525936Z [36;1mtest "$(git cat-file -t course/m14-complete)" = tag[0m
+2026-09-08T08:47:17.0526396Z [36;1mtest "$(git rev-parse 'course/m14-complete^{}')" = 56c4ec09ddf9fcf57f1cce763ae8b451ba7f394f[0m
+2026-09-08T08:47:17.0526901Z [36;1mgit merge-base --is-ancestor course/m14-complete HEAD[0m
+2026-09-08T08:47:17.0527305Z [36;1mtest "$(git cat-file -t course/m15-start)" = tag[0m
+2026-09-08T08:47:17.0527669Z [36;1mgit merge-base --is-ancestor course/m15-start HEAD[0m
+2026-09-08T08:47:17.0529720Z [36;1mgit diff --exit-code course/m15-start -- docs/specs/m15.md docs/specs/m15-process-protocol.md docs/specs/m15-bundle-backup-protocol.md matching-testkit/src/test/resources/m15 schemas/matching.m15.profile.v1.schema.json schemas/matching.m15.workload.v1.schema.json schemas/matching.m15.arrivals.v1.schema.json schemas/matching.m15.bundle.v1.schema.json schemas/matching.m15.backup.v1.schema.json schemas/matching.m15.deployment.v1.schema.json schemas/matching.m15.cut.v1.schema.json schemas/matching.m15.stop-receipt.v1.schema.json schemas/matching.m15.role-launch.v1.schema.json schemas/matching.m15.validator-controls.v1.schema.json schemas/matching.m15.check.v1.schema.json[0m
+2026-09-08T08:47:17.0532773Z [36;1mgit diff --exit-code course/m14-complete -- matching-core matching-local-runtime matching-cluster-runtime matching-reference matching-testkit/src/test/resources/m11 matching-testkit/src/test/resources/m12 matching-testkit/src/test/resources/m13 matching-testkit/src/test/resources/m14[0m
+2026-09-08T08:47:17.0533750Z [36;1mpython3 scripts/verify_m14_frozen.py[0m
+2026-09-08T08:47:17.0534054Z [36;1mpython3 scripts/verify_m15_frozen.py[0m
+2026-09-08T08:47:17.0534383Z [36;1mif [[ "${GITHUB_REF}" == refs/tags/course/m15-start ]]; then[0m
+2026-09-08T08:47:17.0534796Z [36;1m  test "$(git rev-parse 'course/m15-start^{}')" = "$(git rev-parse HEAD)"[0m
+2026-09-08T08:47:17.0535223Z [36;1m  test "$(sed -n 's/^lifecycle=//p' course.properties)" = READY[0m
+2026-09-08T08:47:17.0535617Z [36;1m  test "$(sed -n 's/^designDepth=//p' course.properties)" = CONTRACT[0m
+2026-09-08T08:47:17.0536089Z [36;1m  test "$(sed -n 's/^m15Check.expectedStatus=//p' course.properties)" = GOAL_NOT_IMPLEMENTED[0m
+2026-09-08T08:47:17.0536512Z [36;1m  test ! -d matching-operations[0m
+2026-09-08T08:47:17.0536840Z [36;1m  test -z "$(git tag --points-at HEAD --list 'matching-*')"[0m
+2026-09-08T08:47:17.0537159Z [36;1melse[0m
+2026-09-08T08:47:17.0537427Z [36;1m  test "$(git cat-file -t course/m15-errata-1)" = tag[0m
+2026-09-08T08:47:17.0537869Z [36;1m  test "$(git rev-parse 'course/m15-errata-1^{}')" = 808ffb8bf016007187a7f0918cb3877813209b26[0m
+2026-09-08T08:47:17.0538320Z [36;1m  git merge-base --is-ancestor course/m15-errata-1 HEAD[0m
+2026-09-08T08:47:17.0538666Z [36;1m  python3 scripts/verify_m15_errata_1.py[0m
+2026-09-08T08:47:17.0539048Z [36;1m  test "$(sed -n 's/^lifecycle=//p' course.properties)" = COMPLETE[0m
+2026-09-08T08:47:17.0539456Z [36;1m  test "$(sed -n 's/^designDepth=//p' course.properties)" = IMPLEMENTED[0m
+2026-09-08T08:47:17.0539906Z [36;1m  test "$(sed -n 's/^m15Check.expectedStatus=//p' course.properties)" = PASS[0m
+2026-09-08T08:47:17.0540263Z [36;1mfi[0m
+2026-09-08T08:47:17.0575194Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-09-08T08:47:17.0575527Z env:
+2026-09-08T08:47:17.0576003Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/25.0.4-1/x64
+2026-09-08T08:47:17.0576440Z   JAVA_HOME_25_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/25.0.4-1/x64
+2026-09-08T08:47:17.0576796Z   MAVEN_ARGS: -ntp
+2026-09-08T08:47:17.0577056Z   GRADLE_ACTION_ID: gradle/actions/setup-gradle
+2026-09-08T08:47:17.0577359Z   GRADLE_USER_HOME: /home/runner/.gradle
+2026-09-08T08:47:17.0577638Z   GRADLE_BUILD_ACTION_SETUP_COMPLETED: true
+2026-09-08T08:47:17.0578047Z   DEVELOCITY_INJECTION_INIT_SCRIPT_NAME: gradle-actions.inject-develocity.init.gradle
+2026-09-08T08:47:17.0578467Z   DEVELOCITY_INJECTION_CUSTOM_VALUE: gradle-actions
+2026-09-08T08:47:17.0578770Z   GITHUB_DEPENDENCY_GRAPH_ENABLED: false
+2026-09-08T08:47:17.0579032Z ##[endgroup]
+2026-09-08T08:47:17.1619322Z M14 frozen input inventory PASS: 8 files
+2026-09-08T08:47:17.2606772Z M15 frozen input inventory PASS: 31 files; 22 cases; 6250 exact arrivals
+2026-09-08T08:47:17.2962826Z M15 mark errata 1 immutable inventory PASS: 47 files; original 31-file M15 inventory unchanged
+2026-09-08T08:47:17.3064391Z ##[group]Run ./gradlew clean build --no-daemon --max-workers=1
+2026-09-08T08:47:17.3064860Z [36;1m./gradlew clean build --no-daemon --max-workers=1[0m
+2026-09-08T08:47:17.3065235Z [36;1mif [[ "${GITHUB_REF}" == refs/tags/course/m15-start ]]; then[0m
+2026-09-08T08:47:17.3065601Z [36;1m  ./gradlew m14Check --no-daemon --max-workers=1[0m
+2026-09-08T08:47:17.3066193Z [36;1m  jq -e --arg commit "$(git rev-parse HEAD)" '.status == "PASS" and .sourceCommit == $commit and .sourceDirty == false' build/reports/m14/check.json[0m
+2026-09-08T08:47:17.3066722Z [36;1mfi[0m
+2026-09-08T08:47:17.3066932Z [36;1mset +e[0m
+2026-09-08T08:47:17.3067193Z [36;1m./gradlew m15Check --no-daemon --max-workers=1[0m
+2026-09-08T08:47:17.3067498Z [36;1mcheck_exit=$?[0m
+2026-09-08T08:47:17.3067727Z [36;1mset -e[0m
+2026-09-08T08:47:17.3068153Z [36;1mif [[ "${GITHUB_REF}" == refs/tags/course/m15-start ]]; then[0m
+2026-09-08T08:47:17.3068480Z [36;1m  test "${check_exit}" = 1[0m
+2026-09-08T08:47:17.3069511Z [36;1m  jq -e '.schemaVersion == "matching.m15.check.v1" and .status == "GOAL_NOT_IMPLEMENTED" and .executed == false and .declaredCases == 22 and .declaredLogicalArrivals == 6250 and .clusterGroups == 0 and .memberProcesses == 0 and .sinkProcesses == 0 and .publisherProcesses == 0 and .productRelease == null' build/reports/m15/check.json[0m
+2026-09-08T08:47:17.3070469Z [36;1melse[0m
+2026-09-08T08:47:17.3070693Z [36;1m  test "${check_exit}" = 0[0m
+2026-09-08T08:47:17.3072389Z [36;1m  jq -e --arg commit "$(git rev-parse HEAD)" '.schemaVersion == "matching.m15.check.v2" and .status == "PASS" and .executed == true and .sourceCommit == $commit and .sourceDirty == false and .qualifiedCases == 22 and .executedVariants == 109 and .mandatoryProbes == 118 and .plannedArrivals == 6250 and .inheritedStatus == "PASS" and .stoppedUpgradeQualified == true and .suffixPreservingRollbackQualified == true and .coldRestoreQualified == true and .capacityQualified == true and .releaseTarget == "matching-1.0.0"' build/reports/m15/check.json[0m
+2026-09-08T08:47:17.3073876Z [36;1mfi[0m
+2026-09-08T08:47:17.3106004Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-09-08T08:47:17.3106324Z env:
+2026-09-08T08:47:17.3106618Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/25.0.4-1/x64
+2026-09-08T08:47:17.3107044Z   JAVA_HOME_25_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/25.0.4-1/x64
+2026-09-08T08:47:17.3107390Z   MAVEN_ARGS: -ntp
+2026-09-08T08:47:17.3107640Z   GRADLE_ACTION_ID: gradle/actions/setup-gradle
+2026-09-08T08:47:17.3107930Z   GRADLE_USER_HOME: /home/runner/.gradle
+2026-09-08T08:47:17.3108219Z   GRADLE_BUILD_ACTION_SETUP_COMPLETED: true
+2026-09-08T08:47:17.3108620Z   DEVELOCITY_INJECTION_INIT_SCRIPT_NAME: gradle-actions.inject-develocity.init.gradle
+2026-09-08T08:47:17.3109045Z   DEVELOCITY_INJECTION_CUSTOM_VALUE: gradle-actions
+2026-09-08T08:47:17.3109351Z   GITHUB_DEPENDENCY_GRAPH_ENABLED: false
+2026-09-08T08:47:17.3109609Z ##[endgroup]
+2026-09-08T08:47:18.9742874Z To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.7.1/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+2026-09-08T08:47:20.6736508Z Daemon will be stopped at the end of the build 
+2026-09-08T08:47:22.1736759Z Calculating task graph as no cached configuration is available for tasks: clean build
+2026-09-08T08:47:33.8746604Z 
+2026-09-08T08:47:33.8765049Z > Configure project :matching-operations
+2026-09-08T08:47:33.8813654Z w: file:///home/runner/work/cex-matching/cex-matching/matching-operations/build.gradle.kts:41:28: 'fun provideDelegate(thisRef: Any?, property: KProperty<*>): ExistingDomainObjectDelegate<SourceSet>' is deprecated. Use 'val element = create(name)' instead. See the Gradle 9.6 upgrading guide.
+2026-09-08T08:47:33.8828290Z w: file:///home/runner/work/cex-matching/cex-matching/matching-operations/build.gradle.kts:41:28: 'fun <T : Any> NamedDomainObjectContainer<T>.creating(configuration: T.() -> Unit): NamedDomainObjectContainerCreatingDelegateProvider<T>' is deprecated. Use 'val element = create(name) { }' instead. See the Gradle 9.6 upgrading guide.
+2026-09-08T08:47:33.8832011Z w: file:///home/runner/work/cex-matching/cex-matching/matching-operations/build.gradle.kts:41:28: 'fun <T> ExistingDomainObjectDelegate<out T>.getValue(receiver: Any?, property: KProperty<*>): T' is deprecated. Use the named() API instead. See the Gradle 9.6 upgrading guide.
+2026-09-08T08:47:33.8835600Z w: file:///home/runner/work/cex-matching/cex-matching/matching-operations/build.gradle.kts:55:26: 'fun <U : Task> RegisteringDomainObjectDelegateProviderWithTypeAndAction<out TaskContainer, U>.provideDelegate(receiver: Any?, property: KProperty<*>): ExistingDomainObjectDelegate<TaskProvider<U>>' is deprecated. Use 'val task = tasks.register<Type>(name) { }' instead. See the Gradle 9.6 upgrading guide.
+2026-09-08T08:47:33.8840573Z w: file:///home/runner/work/cex-matching/cex-matching/matching-operations/build.gradle.kts:55:26: 'fun <T : Any, C : PolymorphicDomainObjectContainer<T>, U : T> C.registering(type: KClass<U>, action: U.() -> Unit): RegisteringDomainObjectDelegateProviderWithTypeAndAction<out C, U>' is deprecated. Use 'val element = register<Type>(name) { }' instead. See the Gradle 9.6 upgrading guide.
+2026-09-08T08:47:33.8851560Z w: file:///home/runner/work/cex-matching/cex-matching/matching-operations/build.gradle.kts:55:26: 'fun <T> ExistingDomainObjectDelegate<out T>.getValue(receiver: Any?, property: KProperty<*>): T' is deprecated. Use the named() API instead. See the Gradle 9.6 upgrading guide.
+2026-09-08T08:47:33.8868141Z The 'val name by creating { }' property delegate syntax has been deprecated. This is scheduled to be removed in Gradle 10. Use 'val element = create(name) { }' instead. Consult the upgrading guide for further information: https://docs.gradle.org/9.7.1/userguide/upgrading_version_9.html#kotlin_dsl_delegated_properties
+2026-09-08T08:47:33.8887662Z 	at Build_gradle.<init>(build.gradle.kts:41)
+2026-09-08T08:47:33.8888523Z 	(Run with --stacktrace to get the full stack trace of this deprecation warning.)
+2026-09-08T08:47:33.8890807Z The 'val name by registering(Type::class) { }' property delegate syntax has been deprecated. This is scheduled to be removed in Gradle 10. Use 'val element = register<Type>(name) { }' instead. Consult the upgrading guide for further information: https://docs.gradle.org/9.7.1/userguide/upgrading_version_9.html#kotlin_dsl_delegated_properties
+2026-09-08T08:47:33.8892967Z 	at Build_gradle.<init>(build.gradle.kts:55)
+2026-09-08T08:47:33.8893767Z 	(Run with --stacktrace to get the full stack trace of this deprecation warning.)
+2026-09-08T08:47:37.9737605Z 
+2026-09-08T08:47:37.9738476Z > Task :clean
+2026-09-08T08:47:37.9739067Z > Task :matching-benchmarks:clean
+2026-09-08T08:47:37.9739704Z > Task :matching-cluster-runtime:clean
+2026-09-08T08:47:37.9740296Z > Task :matching-core:clean
+2026-09-08T08:47:37.9740843Z > Task :matching-local-runtime:clean
+2026-09-08T08:47:37.9751376Z > Task :matching-operations:clean
+2026-09-08T08:47:37.9752066Z > Task :matching-reference:clean
+2026-09-08T08:47:37.9752613Z > Task :matching-testkit:clean
+2026-09-08T08:47:38.0739055Z > Task :matching-core:compileJava FROM-CACHE
+2026-09-08T08:47:38.1736911Z > Task :matching-local-runtime:compileJava FROM-CACHE
+2026-09-08T08:47:38.1737798Z > Task :matching-benchmarks:compileJava FROM-CACHE
+2026-09-08T08:47:38.1739764Z > Task :matching-benchmarks:processResources NO-SOURCE
+2026-09-08T08:47:38.1740693Z > Task :matching-benchmarks:classes UP-TO-DATE
+2026-09-08T08:47:38.2752773Z > Task :matching-benchmarks:jar
+2026-09-08T08:47:38.2773382Z > Task :matching-core:processResources NO-SOURCE
+2026-09-08T08:47:38.2777801Z > Task :matching-core:classes UP-TO-DATE
+2026-09-08T08:47:38.2778409Z > Task :matching-core:jar
+2026-09-08T08:47:38.2779044Z > Task :matching-local-runtime:processResources NO-SOURCE
+2026-09-08T08:47:38.2779779Z > Task :matching-local-runtime:classes UP-TO-DATE
+2026-09-08T08:47:38.2780878Z > Task :matching-local-runtime:jar
+2026-09-08T08:47:38.6739322Z > Task :matching-benchmarks:startScripts
+2026-09-08T08:47:38.6742857Z > Task :matching-benchmarks:distTar
+2026-09-08T08:47:38.8736551Z > Task :matching-benchmarks:distZip
+2026-09-08T08:47:38.8743906Z > Task :matching-benchmarks:sourcesJar
+2026-09-08T08:47:38.8744438Z > Task :matching-benchmarks:assemble
+2026-09-08T08:47:38.9742310Z > Task :matching-cluster-runtime:compileJava FROM-CACHE
+2026-09-08T08:47:38.9762005Z > Task :matching-cluster-runtime:processResources NO-SOURCE
+2026-09-08T08:47:38.9781827Z > Task :matching-cluster-runtime:classes UP-TO-DATE
+2026-09-08T08:47:39.0752425Z > Task :matching-cluster-runtime:jar
+2026-09-08T08:47:39.0762244Z > Task :matching-cluster-runtime:sourcesJar
+2026-09-08T08:47:39.0762939Z > Task :matching-cluster-runtime:assemble
+2026-09-08T08:47:39.0764326Z > Task :matching-core:sourcesJar
+2026-09-08T08:47:39.0765024Z > Task :matching-core:assemble
+2026-09-08T08:47:39.0765692Z > Task :matching-local-runtime:sourcesJar
+2026-09-08T08:47:39.0766336Z > Task :matching-local-runtime:assemble
+2026-09-08T08:47:41.1752249Z > Task :matching-operations:compileJava
+2026-09-08T08:47:41.2745427Z > Task :matching-operations:processResources
+2026-09-08T08:47:41.2755538Z > Task :matching-operations:classes
+2026-09-08T08:47:41.2756308Z > Task :matching-operations:jar
+2026-09-08T08:47:41.2756933Z > Task :matching-operations:startScripts
+2026-09-08T08:47:41.3737216Z > Task :matching-operations:distTar
+2026-09-08T08:47:41.5743039Z > Task :matching-operations:distZip
+2026-09-08T08:47:41.6742689Z > Task :matching-operations:compileObserverJava
+2026-09-08T08:47:41.6743799Z > Task :matching-operations:processObserverResources NO-SOURCE
+2026-09-08T08:47:41.6744837Z > Task :matching-operations:observerClasses
+2026-09-08T08:47:41.7739185Z > Task :matching-operations:observerJar
+2026-09-08T08:47:41.7750245Z > Task :matching-operations:sourcesJar
+2026-09-08T08:47:41.7751806Z > Task :matching-operations:assemble
+2026-09-08T08:47:41.7752514Z > Task :matching-reference:compileJava FROM-CACHE
+2026-09-08T08:47:41.7753326Z > Task :matching-reference:processResources NO-SOURCE
+2026-09-08T08:47:41.7753909Z > Task :matching-reference:classes UP-TO-DATE
+2026-09-08T08:47:41.7754392Z > Task :matching-reference:jar
+2026-09-08T08:47:41.7754843Z > Task :matching-reference:sourcesJar
+2026-09-08T08:47:41.7755286Z > Task :matching-reference:assemble
+2026-09-08T08:47:48.5746512Z > Task :matching-testkit:compileJava
+2026-09-08T08:47:48.5747169Z > Task :matching-testkit:processResources NO-SOURCE
+2026-09-08T08:47:48.5747707Z > Task :matching-testkit:classes
+2026-09-08T08:47:48.8736262Z > Task :matching-testkit:jar
+2026-09-08T08:47:48.9736092Z > Task :matching-testkit:sourcesJar
+2026-09-08T08:47:48.9736627Z > Task :matching-testkit:assemble
+2026-09-08T08:47:48.9737128Z > Task :assemble
+2026-09-08T08:47:49.1736568Z > Task :spotlessRootMisc
+2026-09-08T08:47:49.1737100Z > Task :spotlessRootMiscCheck
+2026-09-08T08:47:49.1740161Z > Task :spotlessCheck
+2026-09-08T08:47:49.2753002Z > Task :matching-benchmarks:spotlessJava FROM-CACHE
+2026-09-08T08:47:49.2754045Z > Task :matching-benchmarks:spotlessJavaCheck UP-TO-DATE
+2026-09-08T08:47:49.2754944Z > Task :matching-benchmarks:spotlessCheck UP-TO-DATE
+2026-09-08T08:47:49.2755735Z > Task :matching-benchmarks:compileTestJava FROM-CACHE
+2026-09-08T08:47:49.2756862Z > Task :matching-benchmarks:processTestResources NO-SOURCE
+2026-09-08T08:47:49.2757641Z > Task :matching-benchmarks:testClasses UP-TO-DATE
+2026-09-08T08:47:49.2758339Z > Task :matching-benchmarks:test FROM-CACHE
+2026-09-08T08:47:49.2758995Z > Task :matching-benchmarks:check UP-TO-DATE
+2026-09-08T08:47:49.2759696Z > Task :matching-cluster-runtime:spotlessJava FROM-CACHE
+2026-09-08T08:47:49.2760499Z > Task :matching-cluster-runtime:spotlessJavaCheck UP-TO-DATE
+2026-09-08T08:47:49.2761511Z > Task :matching-cluster-runtime:spotlessCheck UP-TO-DATE
+2026-09-08T08:47:49.2762347Z > Task :matching-cluster-runtime:compileTestJava FROM-CACHE
+2026-09-08T08:47:49.2763428Z > Task :matching-cluster-runtime:processTestResources NO-SOURCE
+2026-09-08T08:47:49.2769340Z > Task :matching-cluster-runtime:testClasses UP-TO-DATE
+2026-09-08T08:47:49.2770137Z > Task :matching-cluster-runtime:test FROM-CACHE
+2026-09-08T08:47:49.2770829Z > Task :matching-cluster-runtime:check UP-TO-DATE
+2026-09-08T08:47:49.2771602Z > Task :matching-core:spotlessJava FROM-CACHE
+2026-09-08T08:47:49.2772578Z > Task :matching-core:spotlessJavaCheck UP-TO-DATE
+2026-09-08T08:47:49.2773267Z > Task :matching-core:spotlessCheck UP-TO-DATE
+2026-09-08T08:47:49.3772392Z > Task :matching-core:compileTestJava FROM-CACHE
+2026-09-08T08:47:49.3785916Z > Task :matching-core:processTestResources NO-SOURCE
+2026-09-08T08:47:49.3786790Z > Task :matching-core:testClasses UP-TO-DATE
+2026-09-08T08:47:49.3787453Z > Task :matching-core:test FROM-CACHE
+2026-09-08T08:47:49.3788066Z > Task :matching-core:check UP-TO-DATE
+2026-09-08T08:47:49.3789197Z > Task :matching-local-runtime:spotlessJava FROM-CACHE
+2026-09-08T08:47:49.3789967Z > Task :matching-local-runtime:spotlessJavaCheck UP-TO-DATE
+2026-09-08T08:47:49.3790731Z > Task :matching-local-runtime:spotlessCheck UP-TO-DATE
+2026-09-08T08:47:49.3791715Z > Task :matching-local-runtime:compileTestJava FROM-CACHE
+2026-09-08T08:47:49.3792471Z > Task :matching-local-runtime:processTestResources NO-SOURCE
+2026-09-08T08:47:49.3793239Z > Task :matching-local-runtime:testClasses UP-TO-DATE
+2026-09-08T08:47:49.3793972Z > Task :matching-local-runtime:test FROM-CACHE
+2026-09-08T08:47:49.3794631Z > Task :matching-local-runtime:check UP-TO-DATE
+2026-09-08T08:47:50.2764712Z > Task :matching-operations:spotlessJava
+2026-09-08T08:47:50.2792187Z > Task :matching-operations:spotlessJavaCheck
+2026-09-08T08:47:50.2822129Z > Task :matching-operations:spotlessCheck
+2026-09-08T08:47:50.8736021Z > Task :matching-operations:compileTestJava
+2026-09-08T08:47:50.8762268Z > Task :matching-operations:processTestResources NO-SOURCE
+2026-09-08T08:47:50.8791955Z > Task :matching-operations:testClasses
+2026-09-08T08:47:54.8745545Z > Task :matching-operations:test
+2026-09-08T08:47:54.8772269Z > Task :matching-operations:check
+2026-09-08T08:47:54.8802240Z > Task :matching-reference:spotlessJava FROM-CACHE
+2026-09-08T08:47:54.8832109Z > Task :matching-reference:spotlessJavaCheck UP-TO-DATE
+2026-09-08T08:47:54.8862143Z > Task :matching-reference:spotlessCheck UP-TO-DATE
+2026-09-08T08:47:54.8892123Z > Task :matching-reference:compileTestJava FROM-CACHE
+2026-09-08T08:47:54.8892883Z > Task :matching-reference:processTestResources NO-SOURCE
+2026-09-08T08:47:54.8893675Z > Task :matching-reference:testClasses UP-TO-DATE
+2026-09-08T08:47:54.8894417Z > Task :matching-reference:test FROM-CACHE
+2026-09-08T08:47:54.8895040Z > Task :matching-reference:check UP-TO-DATE
+2026-09-08T08:47:59.1758656Z > Task :matching-testkit:spotlessJava
+2026-09-08T08:47:59.2736198Z > Task :matching-testkit:spotlessJavaCheck
+2026-09-08T08:47:59.2737787Z > Task :matching-testkit:spotlessCheck
+2026-09-08T08:48:00.8735642Z > Task :matching-testkit:compileTestJava
+2026-09-08T08:48:00.9738312Z > Task :matching-testkit:processTestResources
+2026-09-08T08:48:00.9739281Z > Task :matching-testkit:testClasses
+2026-09-08T08:48:30.9736137Z > Task :matching-testkit:test
+2026-09-08T08:56:38.2735968Z > Task :matching-testkit:check
+2026-09-08T08:56:38.2736629Z > Task :check
+2026-09-08T08:56:38.2737169Z > Task :build
+2026-09-08T08:56:38.2737732Z > Task :matching-benchmarks:build
+2026-09-08T08:56:38.2738325Z > Task :matching-cluster-runtime:build
+2026-09-08T08:56:38.2739429Z > Task :matching-core:build
+2026-09-08T08:56:38.2740011Z > Task :matching-local-runtime:build
+2026-09-08T08:56:38.2740600Z > Task :matching-operations:build
+2026-09-08T08:56:38.2741308Z > Task :matching-reference:build
+2026-09-08T08:56:38.2741954Z > Task :matching-testkit:build
+2026-09-08T08:56:38.3648916Z gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_2-1788857243299.json
+2026-09-08T08:56:38.3655568Z 
+2026-09-08T08:56:38.3656708Z [Incubating] Problems report is available at: file:///home/runner/work/cex-matching/cex-matching/build/reports/problems/problems-report.html
+2026-09-08T08:56:38.3657653Z 
+2026-09-08T08:56:38.3657958Z BUILD SUCCESSFUL in 9m 20s
+2026-09-08T08:56:38.3658588Z 69 actionable tasks: 44 executed, 20 from cache, 5 up-to-date
+2026-09-08T08:56:38.3659247Z Configuration cache entry stored.
+2026-09-08T08:56:39.0163707Z To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.7.1/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+2026-09-08T08:56:39.9162473Z Daemon will be stopped at the end of the build 
+2026-09-08T08:56:41.0158233Z Calculating task graph as no cached configuration is available for tasks: m15Check
+2026-09-08T08:56:43.7160699Z 
+2026-09-08T08:56:43.7192313Z > Configure project :matching-operations
+2026-09-08T08:56:43.7207301Z The 'val name by creating { }' property delegate syntax has been deprecated. This is scheduled to be removed in Gradle 10. Use 'val element = create(name) { }' instead. Consult the upgrading guide for further information: https://docs.gradle.org/9.7.1/userguide/upgrading_version_9.html#kotlin_dsl_delegated_properties
+2026-09-08T08:56:43.7211453Z 	at Build_gradle.<init>(build.gradle.kts:41)
+2026-09-08T08:56:43.7212314Z 	(Run with --stacktrace to get the full stack trace of this deprecation warning.)
+2026-09-08T08:56:43.7214271Z The 'val name by registering(Type::class) { }' property delegate syntax has been deprecated. This is scheduled to be removed in Gradle 10. Use 'val element = register<Type>(name) { }' instead. Consult the upgrading guide for further information: https://docs.gradle.org/9.7.1/userguide/upgrading_version_9.html#kotlin_dsl_delegated_properties
+2026-09-08T08:56:43.7216109Z 	at Build_gradle.<init>(build.gradle.kts:55)
+2026-09-08T08:56:43.7216891Z 	(Run with --stacktrace to get the full stack trace of this deprecation warning.)
+2026-09-08T08:56:45.2161413Z 
+2026-09-08T08:56:45.2162374Z > Task :matching-core:compileJava UP-TO-DATE
+2026-09-08T08:56:45.3197075Z > Task :matching-local-runtime:compileJava UP-TO-DATE
+2026-09-08T08:56:45.3201827Z > Task :matching-benchmarks:compileJava UP-TO-DATE
+2026-09-08T08:56:45.3202707Z > Task :matching-benchmarks:processResources NO-SOURCE
+2026-09-08T08:56:45.3203369Z > Task :matching-benchmarks:classes UP-TO-DATE
+2026-09-08T08:56:45.3203838Z > Task :matching-benchmarks:jar UP-TO-DATE
+2026-09-08T08:56:45.4159987Z > Task :matching-cluster-runtime:compileJava UP-TO-DATE
+2026-09-08T08:56:45.4160651Z > Task :matching-cluster-runtime:processResources NO-SOURCE
+2026-09-08T08:56:45.4161373Z > Task :matching-cluster-runtime:classes UP-TO-DATE
+2026-09-08T08:56:45.4171978Z > Task :matching-cluster-runtime:jar UP-TO-DATE
+2026-09-08T08:56:45.4172859Z > Task :matching-cluster-runtime:compileTestJava UP-TO-DATE
+2026-09-08T08:56:45.4174200Z > Task :matching-cluster-runtime:processTestResources NO-SOURCE
+2026-09-08T08:56:45.4175814Z > Task :matching-cluster-runtime:testClasses UP-TO-DATE
+2026-09-08T08:56:45.4176459Z > Task :matching-core:processResources NO-SOURCE
+2026-09-08T08:56:45.4177038Z > Task :matching-core:classes UP-TO-DATE
+2026-09-08T08:56:45.4177471Z > Task :matching-core:jar UP-TO-DATE
+2026-09-08T08:56:45.4177966Z > Task :matching-local-runtime:processResources NO-SOURCE
+2026-09-08T08:56:45.4178319Z > Task :matching-local-runtime:classes UP-TO-DATE
+2026-09-08T08:56:45.4178629Z > Task :matching-local-runtime:jar UP-TO-DATE
+2026-09-08T08:56:45.4178928Z > Task :matching-cluster-runtime:test UP-TO-DATE
+2026-09-08T08:56:45.4179233Z > Task :matching-core:compileTestJava UP-TO-DATE
+2026-09-08T08:56:45.4179548Z > Task :matching-core:processTestResources NO-SOURCE
+2026-09-08T08:56:45.4179948Z > Task :matching-core:testClasses UP-TO-DATE
+2026-09-08T08:56:45.4180237Z > Task :matching-core:test UP-TO-DATE
+2026-09-08T08:56:45.4180550Z > Task :matching-local-runtime:compileTestJava UP-TO-DATE
+2026-09-08T08:56:45.4180922Z > Task :matching-local-runtime:processTestResources NO-SOURCE
+2026-09-08T08:56:45.4181701Z > Task :matching-local-runtime:testClasses UP-TO-DATE
+2026-09-08T08:56:45.4182020Z > Task :matching-local-runtime:test UP-TO-DATE
+2026-09-08T08:56:45.4182480Z > Task :matching-operations:compileJava UP-TO-DATE
+2026-09-08T08:56:45.5161267Z > Task :matching-operations:processResources UP-TO-DATE
+2026-09-08T08:56:45.5167905Z > Task :matching-operations:classes UP-TO-DATE
+2026-09-08T08:56:45.5168608Z > Task :matching-operations:jar UP-TO-DATE
+2026-09-08T08:56:45.5169250Z > Task :matching-operations:startScripts UP-TO-DATE
+2026-09-08T08:56:45.5169898Z > Task :matching-operations:installDist
+2026-09-08T08:56:46.1158910Z 
+2026-09-08T08:56:46.1173271Z > Task :matching-operations:m15Bundle
+2026-09-08T08:56:46.1174419Z M15 installDist original manifest: a8732ede0b3ad659895ac91b9e3a72bb6aa31b6abc740647ee1faae30ea9cdb4; sourceClean=true
+2026-09-08T08:56:46.1175596Z 
+2026-09-08T08:56:46.1176090Z > Task :matching-operations:compileObserverJava UP-TO-DATE
+2026-09-08T08:56:46.1176784Z > Task :matching-operations:processObserverResources NO-SOURCE
+2026-09-08T08:56:46.1177402Z > Task :matching-operations:observerClasses UP-TO-DATE
+2026-09-08T08:56:46.1177970Z > Task :matching-operations:observerJar UP-TO-DATE
+2026-09-08T08:56:46.1178510Z > Task :matching-operations:compileTestJava UP-TO-DATE
+2026-09-08T08:56:46.1179092Z > Task :matching-operations:processTestResources NO-SOURCE
+2026-09-08T08:56:46.1179667Z > Task :matching-operations:testClasses UP-TO-DATE
+2026-09-08T08:56:46.1180170Z > Task :matching-operations:test UP-TO-DATE
+2026-09-08T08:56:46.1180664Z > Task :matching-reference:spotlessJava UP-TO-DATE
+2026-09-08T08:56:46.1181386Z > Task :matching-reference:spotlessJavaCheck UP-TO-DATE
+2026-09-08T08:56:46.1181939Z > Task :matching-reference:spotlessCheck UP-TO-DATE
+2026-09-08T08:56:46.2158012Z > Task :matching-reference:compileJava UP-TO-DATE
+2026-09-08T08:56:46.2158947Z > Task :matching-reference:processResources NO-SOURCE
+2026-09-08T08:56:46.2159589Z > Task :matching-reference:classes UP-TO-DATE
+2026-09-08T08:56:46.2160190Z > Task :matching-reference:jar UP-TO-DATE
+2026-09-08T08:56:46.2160804Z > Task :matching-reference:compileTestJava UP-TO-DATE
+2026-09-08T08:56:46.2161633Z > Task :matching-reference:processTestResources NO-SOURCE
+2026-09-08T08:56:46.2162271Z > Task :matching-reference:testClasses UP-TO-DATE
+2026-09-08T08:56:46.2162854Z > Task :matching-reference:test UP-TO-DATE
+2026-09-08T08:56:46.2163401Z > Task :matching-reference:check UP-TO-DATE
+2026-09-08T08:56:46.3162155Z > Task :matching-testkit:compileJava UP-TO-DATE
+2026-09-08T08:56:46.3163954Z > Task :matching-testkit:processResources NO-SOURCE
+2026-09-08T08:56:46.3164490Z > Task :matching-testkit:classes UP-TO-DATE
+2026-09-08T08:56:46.3165522Z > Task :matching-testkit:compileTestJava UP-TO-DATE
+2026-09-08T08:56:46.3166257Z > Task :matching-testkit:processTestResources UP-TO-DATE
+2026-09-08T08:56:46.3166842Z > Task :matching-testkit:testClasses UP-TO-DATE
+2026-09-08T08:56:46.3167845Z > Task :matching-testkit:test UP-TO-DATE
+2026-09-08T08:56:48.3176476Z 
+2026-09-08T08:56:48.3202189Z > Task :matching-testkit:m15Check
+2026-09-08T08:56:48.3231782Z M15 qualification: fresh inherited M14
+2026-09-08T09:04:19.2160531Z M15 qualification: stopped upgrade, suffix rollback and relocated restore
+2026-09-08T09:08:38.0156941Z M15 qualification: original bundle and backup negative probes
+2026-09-08T09:11:59.9192578Z M15 qualification: 6250 actual capacity arrivals, fault and full-history restart
+2026-09-08T09:17:06.5164707Z java.nio.file.NoSuchFileException: /home/runner/work/cex-matching/cex-matching/build/m15-qualification/c382798e-2a15-40da-b765-38f35d401ef2/capacity/publishers/shard-1/aeron-20869/publications/3.logbuffer
+2026-09-08T09:17:06.5165661Z 	at java.base/sun.nio.fs.UnixException.translateToIOException(UnixException.java:92)
+2026-09-08T09:17:06.5166189Z 	at java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:106)
+2026-09-08T09:17:06.5166710Z 	at java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:111)
+2026-09-08T09:17:06.5167630Z 	at java.base/sun.nio.fs.UnixFileAttributeViews$Basic.readAttributes(UnixFileAttributeViews.java:57)
+2026-09-08T09:17:06.5168235Z 	at java.base/sun.nio.fs.UnixFileSystemProvider.readAttributes(UnixFileSystemProvider.java:161)
+2026-09-08T09:17:06.5168812Z 	at java.base/sun.nio.fs.LinuxFileSystemProvider.readAttributes(LinuxFileSystemProvider.java:99)
+2026-09-08T09:17:06.5169327Z 	at java.base/java.nio.file.Files.readAttributes(Files.java:1702)
+2026-09-08T09:17:06.5169695Z 	at java.base/java.nio.file.Files.size(Files.java:2242)
+2026-09-08T09:17:06.5170156Z 	at io.github.lchareln.cex.matching.testkit.M15CapacitySuite.sizes(M15CapacitySuite.java:600)
+2026-09-08T09:17:06.5170728Z 	at io.github.lchareln.cex.matching.testkit.M15CapacitySuite.execute(M15CapacitySuite.java:188)
+2026-09-08T09:17:06.5171524Z 	at io.github.lchareln.cex.matching.testkit.M15CapacitySuite.run(M15CapacitySuite.java:65)
+2026-09-08T09:17:06.5172226Z 	at io.github.lchareln.cex.matching.testkit.M15CheckRunner.run(M15CheckRunner.java:124)
+2026-09-08T09:17:06.5172750Z 	at io.github.lchareln.cex.matching.testkit.M15CheckMain.main(M15CheckMain.java:16)
+2026-09-08T09:17:06.6164399Z M15 check status: SYSTEM_ERROR
+2026-09-08T09:17:06.6178172Z 
+2026-09-08T09:17:06.6178379Z 
+2026-09-08T09:17:06.6178646Z > Task :matching-testkit:m15Check FAILED
+2026-09-08T09:17:06.6179511Z gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_2-1788857801585.json
+2026-09-08T09:17:06.6180175Z 
+2026-09-08T09:17:06.6180826Z [Incubating] Problems report is available at: file:///home/runner/work/cex-matching/cex-matching/build/reports/problems/problems-report.html
+2026-09-08T09:17:06.6181977Z 35 actionable tasks: 3 executed, 32 up-to-date
+2026-09-08T09:17:06.6182458Z FAILURE: Build failed with an exception.
+2026-09-08T09:17:06.6182903Z 
+2026-09-08T09:17:06.6183052Z * What went wrong:
+2026-09-08T09:17:06.6183824Z Execution failed for task ':matching-testkit:m15Check' (registered in build file 'matching-testkit/build.gradle.kts').
+2026-09-08T09:17:06.6184928Z > Process 'command '/usr/lib/jvm/temurin-25-jdk-amd64/bin/java'' finished with non-zero exit value 1
+2026-09-08T09:17:06.6185468Z 
+2026-09-08T09:17:06.6185597Z * Try:
+2026-09-08T09:17:06.6185983Z > Run with --stacktrace option to get the stack trace.
+2026-09-08T09:17:06.6186573Z > Run with --info or --debug option to get more log output.
+2026-09-08T09:17:06.6187243Z > Run with --scan to get full insights from a Build Scan (powered by Develocity).
+2026-09-08T09:17:06.6187862Z > Get more help at https://help.gradle.org.
+2026-09-08T09:17:06.6188172Z 
+2026-09-08T09:17:06.6188322Z BUILD FAILED in 20m 28s
+2026-09-08T09:17:06.6859803Z Configuration cache entry stored.
+2026-09-08T09:17:06.8420526Z ##[error]Process completed with exit code 1.
+2026-09-08T09:17:06.8526923Z ##[group]Run actions/upload-artifact@v7
+2026-09-08T09:17:06.8527221Z with:
+2026-09-08T09:17:06.8527433Z   name: matching-m15-qualification
+2026-09-08T09:17:06.8527773Z   path: build/reports/m14/
+build/reports/m15/
+build/lab-evidence/M15/
+
+2026-09-08T09:17:06.8528111Z   if-no-files-found: error
+2026-09-08T09:17:06.8528349Z   compression-level: 6
+2026-09-08T09:17:06.8528571Z   overwrite: false
+2026-09-08T09:17:06.8528791Z   include-hidden-files: false
+2026-09-08T09:17:06.8529028Z   archive: true
+2026-09-08T09:17:06.8529231Z env:
+2026-09-08T09:17:06.8529509Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/25.0.4-1/x64
+2026-09-08T09:17:06.8529926Z   JAVA_HOME_25_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/25.0.4-1/x64
+2026-09-08T09:17:06.8530271Z   MAVEN_ARGS: -ntp
+2026-09-08T09:17:06.8530508Z   GRADLE_ACTION_ID: gradle/actions/setup-gradle
+2026-09-08T09:17:06.8530794Z   GRADLE_USER_HOME: /home/runner/.gradle
+2026-09-08T09:17:06.8531243Z   GRADLE_BUILD_ACTION_SETUP_COMPLETED: true
+2026-09-08T09:17:06.8531650Z   DEVELOCITY_INJECTION_INIT_SCRIPT_NAME: gradle-actions.inject-develocity.init.gradle
+2026-09-08T09:17:06.8532064Z   DEVELOCITY_INJECTION_CUSTOM_VALUE: gradle-actions
+2026-09-08T09:17:06.8532360Z   GITHUB_DEPENDENCY_GRAPH_ENABLED: false
+2026-09-08T09:17:06.8532621Z ##[endgroup]
+2026-09-08T09:17:07.4139224Z Multiple search paths detected. Calculating the least common ancestor of all paths
+2026-09-08T09:17:07.4142376Z The least common ancestor is /home/runner/work/cex-matching/cex-matching/build. This will be the root directory of the artifact
+2026-09-08T09:17:07.4143077Z With the provided path, there will be 443 files uploaded
+2026-09-08T09:17:07.4147342Z Artifact name is valid!
+2026-09-08T09:17:07.4147844Z Root directory input is valid!
+2026-09-08T09:17:07.7565308Z Uploading artifact: matching-m15-qualification.zip
+2026-09-08T09:17:07.7596374Z Beginning upload of artifact content to blob storage
+2026-09-08T09:17:08.8541001Z Uploaded bytes 8388608
+2026-09-08T09:17:09.1079614Z Uploaded bytes 16777216
+2026-09-08T09:17:09.2216102Z Uploaded bytes 25165824
+2026-09-08T09:17:09.2434106Z Uploaded bytes 33554432
+2026-09-08T09:17:09.4568351Z Uploaded bytes 41943040
+2026-09-08T09:17:09.4703890Z Uploaded bytes 50331648
+2026-09-08T09:17:09.9082195Z Uploaded bytes 58720256
+2026-09-08T09:17:10.3196915Z Uploaded bytes 67108864
+2026-09-08T09:17:10.5794804Z Uploaded bytes 75497472
+2026-09-08T09:17:10.7841377Z Uploaded bytes 83886080
+2026-09-08T09:17:11.0056936Z Uploaded bytes 92274688
+2026-09-08T09:17:11.3576145Z Uploaded bytes 100663296
+2026-09-08T09:17:11.5928489Z Uploaded bytes 109051904
+2026-09-08T09:17:11.8721586Z Uploaded bytes 117440512
+2026-09-08T09:17:12.3734874Z Uploaded bytes 125829120
+2026-09-08T09:17:12.9234735Z Uploaded bytes 134217728
+2026-09-08T09:17:13.1554132Z Uploaded bytes 142606336
+2026-09-08T09:17:13.3823368Z Uploaded bytes 150994944
+2026-09-08T09:17:13.6110768Z Uploaded bytes 159383552
+2026-09-08T09:17:13.9482983Z Uploaded bytes 167772160
+2026-09-08T09:17:14.3808342Z Uploaded bytes 176160768
+2026-09-08T09:17:14.4408429Z Uploaded bytes 184549376
+2026-09-08T09:17:14.6841249Z Uploaded bytes 192937984
+2026-09-08T09:17:14.9327282Z Uploaded bytes 201326592
+2026-09-08T09:17:15.2142565Z Uploaded bytes 209715200
+2026-09-08T09:17:15.4535452Z Uploaded bytes 218103808
+2026-09-08T09:17:15.7277907Z Uploaded bytes 225930745
+2026-09-08T09:17:15.7861695Z Finished uploading artifact content to blob storage!
+2026-09-08T09:17:15.7864058Z SHA256 digest of uploaded artifact is d266b07f873fd6b31b0e9c200e41c646e65cf1b44147b5feadf9b2b3ff3e6b92
+2026-09-08T09:17:15.7865475Z Finalizing artifact upload
+2026-09-08T09:17:16.1628351Z Artifact matching-m15-qualification successfully finalized. Artifact ID 10049036696
+2026-09-08T09:17:16.1629372Z Artifact matching-m15-qualification has been successfully uploaded! Final size is 225930745 bytes. Artifact ID is 10049036696
+2026-09-08T09:17:16.1633987Z Artifact download URL: https://github.com/lcha-reln/cex-matching/actions/runs/34206375039/artifacts/10049036696
+2026-09-08T09:17:16.1852680Z Post job cleanup.
+2026-09-08T09:17:16.4045371Z In post-action step
+2026-09-08T09:17:16.4055727Z Enhanced Caching: This build is using the proprietary 'gradle-actions-caching' provider for optimized caching support. See https://github.com/gradle/actions/blob/main/DISTRIBUTION.md for terms of use and opt-out instructions.
+2026-09-08T09:17:16.4682992Z Cache is read-only: will not save state for use in subsequent builds.
+2026-09-08T09:17:16.4686487Z ##[group]Generating Job Summary
+2026-09-08T09:17:16.4690406Z 
+2026-09-08T09:17:16.4690416Z 
+2026-09-08T09:17:16.4690632Z <table>
+2026-09-08T09:17:16.4690924Z     <tr>
+2026-09-08T09:17:16.4691353Z         <th>Gradle Root Project</th>
+2026-09-08T09:17:16.4691762Z         <th>Requested Tasks</th>
+2026-09-08T09:17:16.4692059Z         <th>Gradle Version</th>
+2026-09-08T09:17:16.4692304Z         <th>Build Outcome</th>
+2026-09-08T09:17:16.4692945Z         <th>Build&nbsp;Scan®</th>
+2026-09-08T09:17:16.4693268Z     </tr>
+2026-09-08T09:17:16.4693602Z     <tr>
+2026-09-08T09:17:16.4693882Z         <td>cex-matching</td>
+2026-09-08T09:17:16.4694237Z         <td>clean build</td>
+2026-09-08T09:17:16.4694584Z         <td align='center'>9.7.1</td>
+2026-09-08T09:17:16.4695002Z         <td align='center'>:white_check_mark:</td>
+2026-09-08T09:17:16.4696003Z         <td><a href="https://scans.gradle.com" rel="nofollow" target="_blank"><img src="https://img.shields.io/badge/Not%20published-lightgrey" alt="Build Scan not published" /></a></td>
+2026-09-08T09:17:16.4696886Z     </tr>
+2026-09-08T09:17:16.4697120Z     <tr>
+2026-09-08T09:17:16.4697327Z         <td>cex-matching</td>
+2026-09-08T09:17:16.4697586Z         <td>m15Check</td>
+2026-09-08T09:17:16.4697833Z         <td align='center'>9.7.1</td>
+2026-09-08T09:17:16.4698098Z         <td align='center'>:x:</td>
+2026-09-08T09:17:16.4698736Z         <td><a href="https://scans.gradle.com" rel="nofollow" target="_blank"><img src="https://img.shields.io/badge/Not%20published-lightgrey" alt="Build Scan not published" /></a></td>
+2026-09-08T09:17:16.4699360Z     </tr>
+2026-09-08T09:17:16.4699646Z </table>
+2026-09-08T09:17:16.4700297Z     
+2026-09-08T09:17:16.4700590Z ============================
+2026-09-08T09:17:16.4701248Z <h4>Gradle State Caching - ⚡ Enhanced (read-only)</h4>
+2026-09-08T09:17:16.4701534Z 
+2026-09-08T09:17:16.4702751Z **[Enhanced Caching](https://github.com/gradle/actions/blob/main/docs/setup-gradle.md#enhanced-caching)** uses the proprietary `gradle-actions-caching` provider. See [DISTRIBUTION.md](https://github.com/gradle/actions/blob/main/DISTRIBUTION.md) for terms of use and opt-out instructions.
+2026-09-08T09:17:16.4704170Z 
+2026-09-08T09:17:16.4704299Z <details>
+2026-09-08T09:17:16.4704798Z <summary>Entries: 9 restored (228Mb), 0 saved (0Mb) - Expand for more details</summary>
+2026-09-08T09:17:16.4705227Z 
+2026-09-08T09:17:16.4706086Z [Cache was read-only](https://github.com/gradle/actions/blob/main/docs/setup-gradle.md#using-the-cache-read-only) — by default, the action only writes to the cache for jobs running on the default branch.
+2026-09-08T09:17:16.4706690Z 
+2026-09-08T09:17:16.4706843Z <table>
+2026-09-08T09:17:16.4707275Z     <tr><td></td><th>Count</th><th>Total Size (Mb)</th><th>Total Time (ms)</th></tr>
+2026-09-08T09:17:16.4707815Z     <tr><td>Entries Restored</td>
+2026-09-08T09:17:16.4708098Z         <td>9</td>
+2026-09-08T09:17:16.4708309Z         <td>228</td>
+2026-09-08T09:17:16.4708623Z         <td>13238</td>
+2026-09-08T09:17:16.4708830Z     </tr>
+2026-09-08T09:17:16.4709123Z     <tr><td>Entries Saved</td>
+2026-09-08T09:17:16.4709489Z         <td>0</td>
+2026-09-08T09:17:16.4709832Z         <td>0</td>
+2026-09-08T09:17:16.4710155Z         <td>0</td>
+2026-09-08T09:17:16.4710449Z     </tr>
+2026-09-08T09:17:16.4710717Z </table>
+2026-09-08T09:17:16.4710870Z 
+2026-09-08T09:17:16.4710997Z <pre>
+2026-09-08T09:17:16.4711339Z Entry: Gradle User Home
+2026-09-08T09:17:16.4712037Z     Requested Key : gradle-home-v2|Linux-X64|m15-qualification[54e5cf1f3a0a6023fcc66878229eb3f7]-dc818a827a106e5d6117dcd50ef4ca8bcc268c6e
+2026-09-08T09:17:16.4712801Z     Restored  Key : gradle-home-v2|Linux-X64|m14-qualification[38288dd192e4dcff69e32d553212efb3]-56c4ec09ddf9fcf57f1cce763ae8b451ba7f394f
+2026-09-08T09:17:16.4713309Z               Size: 7 MB (7237942 B)
+2026-09-08T09:17:16.4713568Z               Time: 1581 ms
+2026-09-08T09:17:16.4713830Z               (Entry restored: partial match found)
+2026-09-08T09:17:16.4714104Z     Saved     Key : 
+2026-09-08T09:17:16.4714318Z               Size: 
+2026-09-08T09:17:16.4714519Z               Time: 
+2026-09-08T09:17:16.4714754Z               (Entry not saved: cache is read-only)
+2026-09-08T09:17:16.4715008Z ---
+2026-09-08T09:17:16.4715303Z Entry: caches/9.7.1/generated-gradle-jars/gradle-api-9.7.1.jar
+2026-09-08T09:17:16.4715760Z     Requested Key : gradle-generated-gradle-jars-v2-dc5a4650abbad0b0d866cf541e44abd4
+2026-09-08T09:17:16.4716385Z     Restored  Key : gradle-generated-gradle-jars-v2-dc5a4650abbad0b0d866cf541e44abd4
+2026-09-08T09:17:16.4716803Z               Size: 42 MB (43553697 B)
+2026-09-08T09:17:16.4717059Z               Time: 1883 ms
+2026-09-08T09:17:16.4717325Z               (Entry restored: exact match found)
+2026-09-08T09:17:16.4717594Z     Saved     Key : 
+2026-09-08T09:17:16.4717820Z               Size: 
+2026-09-08T09:17:16.4718027Z               Time: 
+2026-09-08T09:17:16.4718263Z               (Entry not saved: cache is read-only)
+2026-09-08T09:17:16.4718531Z ---
+2026-09-08T09:17:16.4718806Z Entry: wrapper/dists/gradle-9.7.1-bin/1w1c7tv4s851m17nbqdsro2tv
+2026-09-08T09:17:16.4719237Z     Requested Key : gradle-wrapper-zips-v2-ef43a8e2ea38ce83c4462b7d7ca3782b
+2026-09-08T09:17:16.4719687Z     Restored  Key : gradle-wrapper-zips-v2-ef43a8e2ea38ce83c4462b7d7ca3782b
+2026-09-08T09:17:16.4720037Z               Size: 144 MB (150668462 B)
+2026-09-08T09:17:16.4720298Z               Time: 3400 ms
+2026-09-08T09:17:16.4720548Z               (Entry restored: exact match found)
+2026-09-08T09:17:16.4721059Z     Saved     Key : 
+2026-09-08T09:17:16.4733550Z               Size: 
+2026-09-08T09:17:16.4734055Z               Time: 
+2026-09-08T09:17:16.4734326Z               (Entry not saved: cache is read-only)
+2026-09-08T09:17:16.4735202Z ---
+2026-09-08T09:17:16.4735533Z Entry: dependencies
+2026-09-08T09:17:16.4736029Z     Requested Key : gradle-dependencies-v2-ad5f07aec355ec4212bc1a20d3390d0c
+2026-09-08T09:17:16.4736760Z     Restored  Key : gradle-dependencies-v2-ad5f07aec355ec4212bc1a20d3390d0c
+2026-09-08T09:17:16.4737354Z               Size: 24 MB (25070336 B)
+2026-09-08T09:17:16.4737752Z               Time: 1465 ms
+2026-09-08T09:17:16.4738133Z               (Entry restored: exact match found)
+2026-09-08T09:17:16.4738409Z     Saved     Key : 
+2026-09-08T09:17:16.4738629Z               Size: 
+2026-09-08T09:17:16.4738827Z               Time: 
+2026-09-08T09:17:16.4739058Z               (Entry not saved: cache is read-only)
+2026-09-08T09:17:16.4739329Z ---
+2026-09-08T09:17:16.4739648Z Entry: instrumented-jars
+2026-09-08T09:17:16.4740021Z     Requested Key : gradle-instrumented-jars-v2-bb910fcacf708cb42c10c2b5b22b5d19
+2026-09-08T09:17:16.4740512Z     Restored  Key : gradle-instrumented-jars-v2-bb910fcacf708cb42c10c2b5b22b5d19
+2026-09-08T09:17:16.4740872Z               Size: 0 MB (61074 B)
+2026-09-08T09:17:16.4741279Z               Time: 729 ms
+2026-09-08T09:17:16.4741562Z               (Entry restored: exact match found)
+2026-09-08T09:17:16.4741835Z     Saved     Key : 
+2026-09-08T09:17:16.4742040Z               Size: 
+2026-09-08T09:17:16.4742232Z               Time: 
+2026-09-08T09:17:16.4742533Z               (Entry not saved: cache is read-only)
+2026-09-08T09:17:16.4742922Z ---
+2026-09-08T09:17:16.4743132Z Entry: build-cache
+2026-09-08T09:17:16.4743635Z     Requested Key : gradle-build-cache-v2-0a2f096282df32063b01aa8f667d25ee
+2026-09-08T09:17:16.4744346Z     Restored  Key : gradle-build-cache-v2-0a2f096282df32063b01aa8f667d25ee
+2026-09-08T09:17:16.4744890Z               Size: 4 MB (4291860 B)
+2026-09-08T09:17:16.4745152Z               Time: 1304 ms
+2026-09-08T09:17:16.4745575Z               (Entry restored: exact match found)
+2026-09-08T09:17:16.4745854Z     Saved     Key : 
+2026-09-08T09:17:16.4746064Z               Size: 
+2026-09-08T09:17:16.4746264Z               Time: 
+2026-09-08T09:17:16.4746488Z               (Entry not saved: cache is read-only)
+2026-09-08T09:17:16.4746751Z ---
+2026-09-08T09:17:16.4746940Z Entry: kotlin-dsl
+2026-09-08T09:17:16.4747244Z     Requested Key : gradle-kotlin-dsl-v2-37a09738fb4452319e5ab6fd02a8865c
+2026-09-08T09:17:16.4747682Z     Restored  Key : gradle-kotlin-dsl-v2-37a09738fb4452319e5ab6fd02a8865c
+2026-09-08T09:17:16.4748037Z               Size: 0 MB (117801 B)
+2026-09-08T09:17:16.4748286Z               Time: 756 ms
+2026-09-08T09:17:16.4748544Z               (Entry restored: exact match found)
+2026-09-08T09:17:16.4748811Z     Saved     Key : 
+2026-09-08T09:17:16.4749024Z               Size: 
+2026-09-08T09:17:16.4749216Z               Time: 
+2026-09-08T09:17:16.4749443Z               (Entry not saved: cache is read-only)
+2026-09-08T09:17:16.4749700Z ---
+2026-09-08T09:17:16.4749896Z Entry: groovy-dsl
+2026-09-08T09:17:16.4750198Z     Requested Key : gradle-groovy-dsl-v2-01d1fea437278632a1dad9dc7ba4c97d
+2026-09-08T09:17:16.4750617Z     Restored  Key : gradle-groovy-dsl-v2-01d1fea437278632a1dad9dc7ba4c97d
+2026-09-08T09:17:16.4750945Z               Size: 0 MB (89620 B)
+2026-09-08T09:17:16.4751387Z               Time: 785 ms
+2026-09-08T09:17:16.4751730Z               (Entry restored: exact match found)
+2026-09-08T09:17:16.4752148Z     Saved     Key : 
+2026-09-08T09:17:16.4752473Z               Size: 
+2026-09-08T09:17:16.4752781Z               Time: 
+2026-09-08T09:17:16.4753128Z               (Entry not saved: cache is read-only)
+2026-09-08T09:17:16.4753528Z ---
+2026-09-08T09:17:16.4753810Z Entry: transforms
+2026-09-08T09:17:16.4754280Z     Requested Key : gradle-transforms-v2-62aff33425665a7fc88fc5358b1059d0
+2026-09-08T09:17:16.4754946Z     Restored  Key : gradle-transforms-v2-62aff33425665a7fc88fc5358b1059d0
+2026-09-08T09:17:16.4755286Z               Size: 7 MB (7552157 B)
+2026-09-08T09:17:16.4755551Z               Time: 1335 ms
+2026-09-08T09:17:16.4756016Z               (Entry restored: exact match found)
+2026-09-08T09:17:16.4756284Z     Saved     Key : 
+2026-09-08T09:17:16.4756550Z               Size: 
+2026-09-08T09:17:16.4756782Z               Time: 
+2026-09-08T09:17:16.4757010Z               (Entry not saved: cache is read-only)
+2026-09-08T09:17:16.4757324Z </pre>
+2026-09-08T09:17:16.4757546Z </details>
+2026-09-08T09:17:16.4757662Z 
+2026-09-08T09:17:16.4760164Z ##[endgroup]
+2026-09-08T09:17:16.4760437Z Completed post-action step
+2026-09-08T09:17:16.4854315Z Post job cleanup.
+2026-09-08T09:17:16.6133406Z Post job cleanup.
+2026-09-08T09:17:16.6923223Z [command]/usr/bin/git version
+2026-09-08T09:17:16.6962946Z git version 2.55.0
+2026-09-08T09:17:16.6995834Z Temporarily overriding HOME='/home/runner/work/_temp/7ea97ad1-18ae-4120-854c-7c2638d33728' before making global git config changes
+2026-09-08T09:17:16.6997219Z Adding repository directory to the temporary git global config as a safe directory
+2026-09-08T09:17:16.7003043Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/cex-matching/cex-matching
+2026-09-08T09:17:16.7034844Z Removing SSH command configuration
+2026-09-08T09:17:16.7039085Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-09-08T09:17:16.7083406Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-09-08T09:17:16.7335045Z Removing HTTP extra header
+2026-09-08T09:17:16.7340749Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-09-08T09:17:16.7374724Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-09-08T09:17:16.7586288Z Removing includeIf entries pointing to credentials config files
+2026-09-08T09:17:16.7600968Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-09-08T09:17:16.7627566Z includeif.gitdir:/home/runner/work/cex-matching/cex-matching/.git.path
+2026-09-08T09:17:16.7632262Z includeif.gitdir:/home/runner/work/cex-matching/cex-matching/.git/worktrees/*.path
+2026-09-08T09:17:16.7633127Z includeif.gitdir:/github/workspace/.git.path
+2026-09-08T09:17:16.7633830Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-09-08T09:17:16.7639411Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/cex-matching/cex-matching/.git.path
+2026-09-08T09:17:16.7661012Z /home/runner/work/_temp/git-credentials-81d3fe0d-7d38-415b-b218-f9a3d9eaba63.config
+2026-09-08T09:17:16.7673346Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/cex-matching/cex-matching/.git.path /home/runner/work/_temp/git-credentials-81d3fe0d-7d38-415b-b218-f9a3d9eaba63.config
+2026-09-08T09:17:16.7705775Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/cex-matching/cex-matching/.git/worktrees/*.path
+2026-09-08T09:17:16.7728009Z /home/runner/work/_temp/git-credentials-81d3fe0d-7d38-415b-b218-f9a3d9eaba63.config
+2026-09-08T09:17:16.7736978Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/cex-matching/cex-matching/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-81d3fe0d-7d38-415b-b218-f9a3d9eaba63.config
+2026-09-08T09:17:16.7768334Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-09-08T09:17:16.7791649Z /github/runner_temp/git-credentials-81d3fe0d-7d38-415b-b218-f9a3d9eaba63.config
+2026-09-08T09:17:16.7802993Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-81d3fe0d-7d38-415b-b218-f9a3d9eaba63.config
+2026-09-08T09:17:16.7834746Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-09-08T09:17:16.7864941Z /github/runner_temp/git-credentials-81d3fe0d-7d38-415b-b218-f9a3d9eaba63.config
+2026-09-08T09:17:16.7873021Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-81d3fe0d-7d38-415b-b218-f9a3d9eaba63.config
+2026-09-08T09:17:16.7906768Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-09-08T09:17:16.8107472Z Removing credentials config '/home/runner/work/_temp/git-credentials-81d3fe0d-7d38-415b-b218-f9a3d9eaba63.config'
+2026-09-08T09:17:16.8242239Z Cleaning up orphan processes

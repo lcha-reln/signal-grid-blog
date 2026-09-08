@@ -1,0 +1,75 @@
+{
+  "schemaVersion": "matching.m15.errata2.inventory.v1",
+  "files": [
+    {
+      "path": "docs/operations/m15-publication-revision-1.md",
+      "bytes": 5048,
+      "sha256": "1e3ba2e208721c1d7a153b0205f03b02b5c5a1bc1b5a31b150e855eb7a8d0638"
+    },
+    {
+      "path": "matching-testkit/src/test/resources/m15-errata-2/observation.json",
+      "bytes": 1214,
+      "sha256": "ec053a5612439d03ed09bf8a952c536b879a68b91b564b0b85708add526fbf53"
+    },
+    {
+      "path": "matching-testkit/src/test/resources/m15-errata-2/provenance/course/job.log",
+      "bytes": 78509,
+      "sha256": "58508685f138b8094cfeb08666dcb99adfbc2ca4a40bc6d248667a982e3854fc"
+    },
+    {
+      "path": "matching-testkit/src/test/resources/m15-errata-2/provenance/course/reports/m15/check.json",
+      "bytes": 8465,
+      "sha256": "78035431881751e8bb7d13ef40f70161d338dc16ad8c5d3d69d826d91491ed4e"
+    },
+    {
+      "path": "matching-testkit/src/test/resources/m15-errata-2/provenance/main/job.log",
+      "bytes": 79124,
+      "sha256": "2287df888307da3091149c33c30319901c5b5c3aa4a15dbc40f53b4a4b51fae7"
+    },
+    {
+      "path": "matching-testkit/src/test/resources/m15-errata-2/provenance/main/reports/m15/check.json",
+      "bytes": 4530,
+      "sha256": "999f2b908e32adde1e8c172abb35efda679394e7bb75654b189c15d234583973"
+    },
+    {
+      "path": "matching-testkit/src/test/resources/m15-errata-2/provenance/main/reports/m15/operations-negatives.json",
+      "bytes": 98281,
+      "sha256": "82608ca2853f467d4c1f19004b7b3aa8eede9e3a645508becf22e2a76480641d"
+    },
+    {
+      "path": "matching-testkit/src/test/resources/m15-errata-2/provenance/main/reports/m15/raw/m15/M15-B05-a9754027a06e-000.jsonl.gz",
+      "bytes": 40873,
+      "sha256": "af05aa1e525179ad68bd62a069bcf5e0125f334cd72676625f8cbbf4b97d3a70"
+    },
+    {
+      "path": "matching-testkit/src/test/resources/m15-errata-2/provenance/product/job.log",
+      "bytes": 76180,
+      "sha256": "b1fb758341c57a87f197a72a55f9a654e5bb44aa12055bab7ce4d4b566cd5e52"
+    },
+    {
+      "path": "matching-testkit/src/test/resources/m15-errata-2/provenance/product/reports/m14/check.json",
+      "bytes": 508,
+      "sha256": "dce657944e6d6841c66be99955189647f5746a6ef56925e8fdf6891c047ac70e"
+    },
+    {
+      "path": "matching-testkit/src/test/resources/m15-errata-2/provenance/product/reports/m14/m14-cluster-faults.json",
+      "bytes": 4772,
+      "sha256": "dc9e71a6cefe5f16445c260933660524af01691ab8c35a2176d35f094f73d252"
+    },
+    {
+      "path": "matching-testkit/src/test/resources/m15-errata-2/provenance/product/reports/m14/raw/m14/bundles/M14-C06-SNAPSHOT-ALL-MEMBERS-AND-SINK-RESTART.jsonl.gz",
+      "bytes": 472810,
+      "sha256": "1abd3fa753c3c415da90a47f9b1c0f6ac8d393131fa78e21d4643ecef14e42af"
+    },
+    {
+      "path": "matching-testkit/src/test/resources/m15-errata-2/provenance/product/reports/m14/raw/m14/bundles/teardown.jsonl.gz",
+      "bytes": 413113,
+      "sha256": "1189172358ee00524cd015308b2b75fd092ca13c15182553e399cff3f63eae6d"
+    },
+    {
+      "path": "matching-testkit/src/test/resources/m15-errata-2/provenance/product/reports/m15/check.json",
+      "bytes": 857,
+      "sha256": "ab87f255c9b9b220303932b4f82b12e451f10c3cac77050928071609c2c39da0"
+    }
+  ]
+}

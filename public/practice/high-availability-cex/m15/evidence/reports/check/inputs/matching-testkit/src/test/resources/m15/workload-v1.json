@@ -1,0 +1,277 @@
+{
+  "arrivalsSha256": "8ec7c36b43347ae1cd20956038df280c0c83bb1fbc6e158f32fde041ad131331",
+  "baselineArrivals": 6000,
+  "caseCount": 22,
+  "cases": [
+    {
+      "id": "M15-V01",
+      "obligation": "FIXED_BUNDLE_ROLE_IDENTITY",
+      "variants": [
+        "N_MINUS_ONE_COMPLETE_VECTOR",
+        "N_COMPLETE_VECTOR",
+        "ACTUAL_CODE_SOURCE_AND_OBSERVER_BINDING"
+      ]
+    },
+    {
+      "id": "M15-V02",
+      "obligation": "STOPPED_UPGRADE_PRESERVES_OLD_CUT",
+      "variants": [
+        "FULL_STATE_IDENTITY_OWNERSHIP",
+        "OLD_REQUEST_RESPONSE_BYTES",
+        "PENDING_EXECUTION_AND_MARKET_STREAMS"
+      ]
+    },
+    {
+      "id": "M15-V03",
+      "obligation": "ROLLBACK_READS_N_WRITES",
+      "variants": [
+        "CURRENT_ROOTS_NOT_OLD_BACKUP",
+        "N_SNAPSHOT_AND_SUFFIX",
+        "N_REQUEST_EXACT_RETRY",
+        "POST_ROLLBACK_NEW_TRADES"
+      ]
+    },
+    {
+      "id": "M15-V04",
+      "obligation": "SUPPORTED_SWITCH_WINDOW",
+      "variants": [
+        "MATRIX_REJECTION_BEFORE_MUTATION",
+        "ALL_STOPPED_BARRIER",
+        "FORCE_MAKES_SWITCH_FAIL"
+      ]
+    },
+    {
+      "id": "M15-B01",
+      "obligation": "COMPLETE_BINARY_MEMBERSHIP",
+      "variants": [
+        "MISSING_JAR",
+        "EXTRA_JAR",
+        "REORDERED_CLASSPATH",
+        "SAME_LENGTH_BYTE_CHANGE"
+      ]
+    },
+    {
+      "id": "M15-B02",
+      "obligation": "EXTERNAL_TRUST_BINDING",
+      "variants": [
+        "SELF_CONSISTENT_TAMPERED_INTERNAL_MANIFEST"
+      ]
+    },
+    {
+      "id": "M15-B03",
+      "obligation": "SAFE_FILE_IDENTITIES",
+      "variants": [
+        "DUPLICATE_PATH",
+        "ABSOLUTE_PATH",
+        "PARENT_TRAVERSAL",
+        "SYMLINK_FILE",
+        "SYMLINK_PARENT",
+        "EXTERNAL_DEPENDENCY"
+      ]
+    },
+    {
+      "id": "M15-B04",
+      "obligation": "SUPPORTED_CONFIGURATION",
+      "variants": [
+        "WRONG_SOURCE",
+        "WRONG_RELEASE",
+        "WRONG_ROLE",
+        "WRONG_APP",
+        "WRONG_PROFILE",
+        "WRONG_GENESIS",
+        "WRONG_JAVA",
+        "RESTORE_FRESH_START_TRUE"
+      ]
+    },
+    {
+      "id": "M15-B05",
+      "obligation": "BOUND_BYTES_AT_USE",
+      "variants": [
+        "SOURCE_REPLACED_AFTER_CHECK",
+        "ISOLATED_COPY_REVALIDATED",
+        "OBSERVER_CANNOT_SHADOW_BUSINESS_CLASS"
+      ]
+    },
+    {
+      "id": "M15-B06",
+      "obligation": "FAILED_STAGING_PRESERVES_TARGET",
+      "variants": [
+        "COPY_IO_FAILURE",
+        "NONEMPTY_TARGET",
+        "NO_HALF_INSTALL"
+      ]
+    },
+    {
+      "id": "M15-R01",
+      "obligation": "COMPLETE_STOPPED_BACKUP",
+      "variants": [
+        "NONTRIVIAL_CUT_VECTOR",
+        "CLOSE_COMPLETED_AND_EXIT_ZERO",
+        "DOUBLE_INVENTORY_STABLE",
+        "ALL_DURABLE_BYTES_RETAINED"
+      ]
+    },
+    {
+      "id": "M15-R02",
+      "obligation": "RELOCATED_INDEPENDENT_RESTORE",
+      "variants": [
+        "SOURCE_ROOT_UNAVAILABLE",
+        "EMPTY_NEW_ROOT",
+        "SIX_ACTUAL_MEMBERS_AND_SINK",
+        "PRE_CONTROL_CUT_EQUIVALENCE",
+        "PATH_REBIND_AND_MARK_INACTIVITY"
+      ]
+    },
+    {
+      "id": "M15-R03",
+      "obligation": "RESTORED_OUTPUT_RECONCILIATION",
+      "variants": [
+        "JOURNAL_RECOVERY",
+        "TRUSTED_ADMIN_RECONCILE",
+        "PENDING_REPLAY_AND_DUPLICATE",
+        "STALE_GRANT_REJECTION",
+        "MARKET_GAP_SNAPSHOT_SUFFIX",
+        "CURSOR_CONVERGENCE"
+      ]
+    },
+    {
+      "id": "M15-R04",
+      "obligation": "BACKUP_MEMBERSHIP_NEGATIVES",
+      "variants": [
+        "MISSING_CATALOG",
+        "MISSING_SEGMENT",
+        "MISSING_RECORDING_LOG",
+        "MISSING_JOURNAL",
+        "MISSING_BOOTSTRAP",
+        "SWAPPED_MEMBER",
+        "MIXED_CUT",
+        "MIXED_PROFILE",
+        "EXTRA_PATH"
+      ]
+    },
+    {
+      "id": "M15-R05",
+      "obligation": "STRICT_ARCHIVE_NEGATIVES",
+      "variants": [
+        "WRONG_MAGIC",
+        "TRUNCATED_GZIP",
+        "BAD_CRC",
+        "BAD_ISIZE",
+        "TRAILING_DATA",
+        "SECOND_GZIP_MEMBER",
+        "DUPLICATE_ENTRY",
+        "FILE_LENGTH_LIMIT",
+        "FILE_COUNT_LIMIT",
+        "TOTAL_EXPANSION_LIMIT",
+        "PATH_TRAVERSAL",
+        "SYMLINK",
+        "LEGAL_EMPTY_FILE",
+        "LOSSLESS_SPARSE_LOGICAL_BYTES"
+      ]
+    },
+    {
+      "id": "M15-R06",
+      "obligation": "ATOMIC_RESTORE_FAILURE",
+      "variants": [
+        "STAGING_WRITE_FAILURE",
+        "PRE_INSTALL_FAILURE",
+        "EXISTING_TARGET",
+        "START_FAILURE_NOT_RESTORE_PASS"
+      ]
+    },
+    {
+      "id": "M15-C01",
+      "obligation": "FROZEN_ARRIVALS_AND_RESOURCES",
+      "variants": [
+        "6250_PLANNED_IDENTITIES",
+        "COMPLETE_TWO_LEVEL_ACCOUNTING",
+        "ACTUAL_CROSS_ACCOUNT_TRADES",
+        "DURABLE_OUTPUT",
+        "ALL_NINE_CHILD_RESOURCE_SAMPLES"
+      ]
+    },
+    {
+      "id": "M15-C02",
+      "obligation": "BOUNDED_QUEUE_BURST",
+      "variants": [
+        "GATED_2000_ITEM_BURST",
+        "QUEUE_64_HIGH_WATER",
+        "QUEUE_FULL_REJECTION",
+        "WORKER_HELD_ITEM_ACCOUNTED"
+      ]
+    },
+    {
+      "id": "M15-C03",
+      "obligation": "REAL_OUTPUT_BACKPRESSURE_ISOLATION",
+      "variants": [
+        "SHARD1_PENDING_32",
+        "UNCHANGED_REFUSAL",
+        "SHARD2_FOUR_DURABLE_TRADES",
+        "DRAIN",
+        "SAME_ID_FIRST_APPLY_AND_EXACT_RETRY"
+      ]
+    },
+    {
+      "id": "M15-C04",
+      "obligation": "LEADER_FAILURE_RUNBOOK",
+      "variants": [
+        "50_PER_SECOND_250_ARRIVALS",
+        "KILL_OBSERVED_LEADER_AFTER_20_NEW_RESPONSES",
+        "INDEPENDENT_ARRIVALS_CONTINUE",
+        "UNKNOWN_ACTUAL_COUNT_AND_SAME_ID_RESOLUTION",
+        "MEASURED_RECOVERY_NOT_RTO_CLAIM"
+      ]
+    },
+    {
+      "id": "M15-C05",
+      "obligation": "RETAINED_HISTORY_RECOVERY",
+      "variants": [
+        "FULL_HISTORY_RETAINED",
+        "SNAPSHOT_AND_REAL_RESTART",
+        "FULL_CUT_AND_OLD_NEW_RETRIES",
+        "ACTUAL_SIZE_AND_RECOVERY_MEASUREMENTS"
+      ]
+    },
+    {
+      "id": "M15-C06",
+      "obligation": "RAW_LEDGER_NEGATIVES",
+      "variants": [
+        "MISSING_PLANNED_ORDINAL",
+        "MISSING_ATTEMPT",
+        "UNKNOWN_RELABELLED_NOT_SUBMITTED",
+        "PROFILE_REFUSAL_RELABELLED_TRADE",
+        "RETRY_AS_NEW_LOGICAL_ID",
+        "WRONG_RESOURCE_ROLE_OR_PID"
+      ]
+    }
+  ],
+  "completeExpectedStatus": "PASS",
+  "contractPlanVersion": "0.18",
+  "evidenceEntry": "./gradlew m15Evidence",
+  "faultArrivals": 250,
+  "inheritedQualification": "FRESH_CURRENT_SOURCE_M14_CHECK_INCLUDING_M13",
+  "logicalArrivals": 6250,
+  "nMinusOne": {
+    "fixturePath": "matching-testkit/src/test/resources/m15/n-minus-one",
+    "jarBytes": 6350332,
+    "jarCount": 11,
+    "sourceCommit": "56c4ec09ddf9fcf57f1cce763ae8b451ba7f394f",
+    "sourceRef": "course/m14-complete"
+  },
+  "normativeProtocols": [
+    "docs/specs/m15.md",
+    "docs/specs/m15-process-protocol.md",
+    "docs/specs/m15-bundle-backup-protocol.md"
+  ],
+  "productRelease": "matching-1.0.0",
+  "profileId": "M15-O1",
+  "profileSha256": "513a0fb31c5ccc5b4fa3619e64438a32c38f6981666fc396dab1f0b36fe2a334",
+  "qualificationEntry": "./gradlew m15Check",
+  "schemaVersion": "matching.m15.workload.v1",
+  "seed": 6515,
+  "startExecutesOperationalProcesses": false,
+  "startExpectedStatus": "GOAL_NOT_IMPLEMENTED",
+  "systemErrorsCountAsExpectedNegative": false,
+  "unit": "M15",
+  "warmupArrivals": 250
+}

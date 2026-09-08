@@ -1,0 +1,227 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lcha-reln.github.io/signal-grid-blog/schemas/matching.m15.role-launch.v1.schema.json",
+  "title": "M15 isolated role launch",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "runId",
+    "launchId",
+    "role",
+    "shardId",
+    "memberId",
+    "root",
+    "freshStart",
+    "deploymentSha256",
+    "bundleManifestSha256",
+    "observerSha256",
+    "roleMainClass",
+    "roleArguments",
+    "classpath",
+    "resourceSampleIntervalMillis"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "matching.m15.role-launch.v1"
+    },
+    "runId": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "launchId": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "role": {
+      "enum": [
+        "MEMBER",
+        "PUBLISHER",
+        "SINK"
+      ]
+    },
+    "shardId": {
+      "enum": [
+        1,
+        2,
+        null
+      ]
+    },
+    "memberId": {
+      "enum": [
+        0,
+        1,
+        2,
+        null
+      ]
+    },
+    "root": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 4096,
+      "pattern": "^/[^\\u0000]*$"
+    },
+    "freshStart": {
+      "type": "boolean"
+    },
+    "deploymentSha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "bundleManifestSha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "observerSha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "roleMainClass": {
+      "enum": [
+        "io.github.lchareln.cex.matching.cluster.M14ClusterMember",
+        "io.github.lchareln.cex.matching.cluster.M14PublisherProcessMain",
+        "io.github.lchareln.cex.matching.cluster.M14SinkProcessMain"
+      ]
+    },
+    "roleArguments": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 42,
+      "items": {
+        "type": "string",
+        "maxLength": 4096,
+        "pattern": "^[^\\u0000]*$"
+      }
+    },
+    "classpath": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 65,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "bytes",
+          "sha256"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 4096,
+            "pattern": "^/[^\\u0000]*$"
+          },
+          "bytes": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 33554432
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      }
+    },
+    "resourceSampleIntervalMillis": {
+      "const": 1000
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "role": {
+            "const": "MEMBER"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "shardId": {
+            "enum": [
+              1,
+              2
+            ]
+          },
+          "memberId": {
+            "enum": [
+              0,
+              1,
+              2
+            ]
+          },
+          "roleMainClass": {
+            "const": "io.github.lchareln.cex.matching.cluster.M14ClusterMember"
+          },
+          "roleArguments": {
+            "minItems": 42,
+            "maxItems": 42
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "role": {
+            "const": "PUBLISHER"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "shardId": {
+            "enum": [
+              1,
+              2
+            ]
+          },
+          "memberId": {
+            "type": "null"
+          },
+          "freshStart": {
+            "const": false
+          },
+          "roleMainClass": {
+            "const": "io.github.lchareln.cex.matching.cluster.M14PublisherProcessMain"
+          },
+          "roleArguments": {
+            "minItems": 8,
+            "maxItems": 8
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "role": {
+            "const": "SINK"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "shardId": {
+            "type": "null"
+          },
+          "memberId": {
+            "type": "null"
+          },
+          "freshStart": {
+            "const": false
+          },
+          "roleMainClass": {
+            "const": "io.github.lchareln.cex.matching.cluster.M14SinkProcessMain"
+          },
+          "roleArguments": {
+            "minItems": 5,
+            "maxItems": 5
+          }
+        }
+      }
+    }
+  ]
+}

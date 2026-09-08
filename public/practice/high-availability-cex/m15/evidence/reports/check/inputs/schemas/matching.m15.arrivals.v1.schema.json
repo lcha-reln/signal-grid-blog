@@ -1,0 +1,191 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "arrivals": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "accountRef": {
+            "enum": [
+              "m15-load-taker-1",
+              "m15-load-taker-2"
+            ]
+          },
+          "commandId": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "executionPolicy": {
+            "const": "IOC"
+          },
+          "instrumentId": {
+            "enum": [
+              "BTC-USDT",
+              "SOL-USDT"
+            ]
+          },
+          "orderId": {
+            "maximum": 1006250,
+            "minimum": 1000001,
+            "type": "integer"
+          },
+          "ordinal": {
+            "minimum": 1,
+            "type": "integer"
+          },
+          "plannedOffsetNanos": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "price": {
+            "const": 100
+          },
+          "producerEpoch": {
+            "const": 1
+          },
+          "producerId": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "producerSequence": {
+            "const": 1
+          },
+          "quantity": {
+            "const": 1
+          },
+          "shardId": {
+            "enum": [
+              1,
+              2
+            ]
+          },
+          "side": {
+            "const": "BUY"
+          },
+          "stage": {
+            "enum": [
+              "WARMUP",
+              "RATE_25",
+              "RATE_100",
+              "RATE_250",
+              "BURST_2000",
+              "LEADER_FAULT"
+            ]
+          },
+          "stageIndex": {
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "ordinal",
+          "stage",
+          "stageIndex",
+          "plannedOffsetNanos",
+          "shardId",
+          "instrumentId",
+          "commandId",
+          "producerId",
+          "producerEpoch",
+          "producerSequence",
+          "orderId",
+          "accountRef",
+          "side",
+          "executionPolicy",
+          "price",
+          "quantity"
+        ],
+        "type": "object"
+      },
+      "maxItems": 6250,
+      "minItems": 6250,
+      "type": "array"
+    },
+    "commandNameTemplate": {
+      "const": "command:6515:<ordinal>"
+    },
+    "globalShardSchedule": {
+      "const": "ODD_ORDINAL_SHARD_1_EVEN_ORDINAL_SHARD_2"
+    },
+    "identityDerivation": {
+      "const": "FROZEN_UUID_V5_RFC4122_SHA1_NAMESPACE_AND_UTF8_NAME"
+    },
+    "namespace": {
+      "const": "b3ea6515-0816-4074-9581-a897adfd4669"
+    },
+    "producerNameTemplate": {
+      "const": "producer:6515:<ordinal>"
+    },
+    "schemaVersion": {
+      "const": "matching.m15.arrivals.v1"
+    },
+    "seed": {
+      "const": 6515
+    },
+    "stages": {
+      "const": [
+        {
+          "arrivals": 250,
+          "durationSeconds": 10,
+          "globalRatePerSecond": 25,
+          "id": "WARMUP",
+          "measured": false,
+          "workerGate": "OPEN"
+        },
+        {
+          "arrivals": 250,
+          "durationSeconds": 10,
+          "globalRatePerSecond": 25,
+          "id": "RATE_25",
+          "measured": true,
+          "workerGate": "OPEN"
+        },
+        {
+          "arrivals": 1000,
+          "durationSeconds": 10,
+          "globalRatePerSecond": 100,
+          "id": "RATE_100",
+          "measured": true,
+          "workerGate": "OPEN"
+        },
+        {
+          "arrivals": 2500,
+          "durationSeconds": 10,
+          "globalRatePerSecond": 250,
+          "id": "RATE_250",
+          "measured": true,
+          "workerGate": "OPEN"
+        },
+        {
+          "arrivals": 2000,
+          "durationSeconds": 0,
+          "globalRatePerSecond": 0,
+          "id": "BURST_2000",
+          "measured": true,
+          "workerGate": "HOLD_UNTIL_ALL_BURST_ARRIVALS_OFFERED"
+        },
+        {
+          "arrivals": 250,
+          "durationSeconds": 5,
+          "globalRatePerSecond": 50,
+          "id": "LEADER_FAULT",
+          "measured": true,
+          "workerGate": "OPEN"
+        }
+      ]
+    }
+  },
+  "required": [
+    "arrivals",
+    "commandNameTemplate",
+    "globalShardSchedule",
+    "identityDerivation",
+    "namespace",
+    "producerNameTemplate",
+    "schemaVersion",
+    "seed",
+    "stages"
+  ],
+  "type": "object"
+}

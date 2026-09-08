@@ -1,0 +1,287 @@
+{
+  "$defs": {
+    "relativePath": {
+      "maxLength": 512,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9_][A-Za-z0-9._-]*(/[A-Za-z0-9_][A-Za-z0-9._-]*)*$",
+      "type": "string"
+    },
+    "sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    }
+  },
+  "$id": "https://lcha-reln.github.io/signal-grid-blog/schemas/matching.m15.deployment.v1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "applicationVersion": {
+      "const": 262144
+    },
+    "layout": {
+      "const": "M15_TWO_SHARD_ROOT_V1"
+    },
+    "outputProfile": {
+      "additionalProperties": false,
+      "properties": {
+        "bytes": {
+          "maximum": 8192,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "path": {
+          "const": "bootstrap/profile-q1.json"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      },
+      "required": [
+        "path",
+        "bytes",
+        "sha256"
+      ],
+      "type": "object"
+    },
+    "profileId": {
+      "const": "M15-O1"
+    },
+    "schemaVersion": {
+      "const": "matching.m15.deployment.v1"
+    },
+    "shards": {
+      "items": false,
+      "maxItems": 2,
+      "minItems": 2,
+      "prefixItems": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "clusterId": {
+              "const": 141
+            },
+            "genesis": {
+              "additionalProperties": false,
+              "properties": {
+                "bytes": {
+                  "maximum": 1024,
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "path": {
+                  "const": "bootstrap/shard-1/genesis.bin"
+                },
+                "sha256": {
+                  "$ref": "#/$defs/sha256"
+                }
+              },
+              "required": [
+                "path",
+                "bytes",
+                "sha256"
+              ],
+              "type": "object"
+            },
+            "importedSnapshot": {
+              "additionalProperties": false,
+              "properties": {
+                "bytes": {
+                  "maximum": 268435456,
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "path": {
+                  "const": "bootstrap/shard-1/imported-m13.bin"
+                },
+                "sha256": {
+                  "$ref": "#/$defs/sha256"
+                }
+              },
+              "required": [
+                "path",
+                "bytes",
+                "sha256"
+              ],
+              "type": "object"
+            },
+            "instrument": {
+              "const": "BTC-USDT"
+            },
+            "portBase": {
+              "maximum": 65509,
+              "minimum": 1024,
+              "type": "integer"
+            },
+            "route": {
+              "additionalProperties": false,
+              "properties": {
+                "bytes": {
+                  "maximum": 1048576,
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "path": {
+                  "const": "bootstrap/shard-1/route.bin"
+                },
+                "sha256": {
+                  "$ref": "#/$defs/sha256"
+                }
+              },
+              "required": [
+                "path",
+                "bytes",
+                "sha256"
+              ],
+              "type": "object"
+            },
+            "shardId": {
+              "const": 1
+            }
+          },
+          "required": [
+            "shardId",
+            "clusterId",
+            "instrument",
+            "portBase",
+            "route",
+            "genesis",
+            "importedSnapshot"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "clusterId": {
+              "const": 142
+            },
+            "genesis": {
+              "additionalProperties": false,
+              "properties": {
+                "bytes": {
+                  "maximum": 1024,
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "path": {
+                  "const": "bootstrap/shard-2/genesis.bin"
+                },
+                "sha256": {
+                  "$ref": "#/$defs/sha256"
+                }
+              },
+              "required": [
+                "path",
+                "bytes",
+                "sha256"
+              ],
+              "type": "object"
+            },
+            "importedSnapshot": {
+              "additionalProperties": false,
+              "properties": {
+                "bytes": {
+                  "maximum": 268435456,
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "path": {
+                  "const": "bootstrap/shard-2/imported-m13.bin"
+                },
+                "sha256": {
+                  "$ref": "#/$defs/sha256"
+                }
+              },
+              "required": [
+                "path",
+                "bytes",
+                "sha256"
+              ],
+              "type": "object"
+            },
+            "instrument": {
+              "const": "SOL-USDT"
+            },
+            "portBase": {
+              "maximum": 65509,
+              "minimum": 1024,
+              "type": "integer"
+            },
+            "route": {
+              "additionalProperties": false,
+              "properties": {
+                "bytes": {
+                  "maximum": 1048576,
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "path": {
+                  "const": "bootstrap/shard-2/route.bin"
+                },
+                "sha256": {
+                  "$ref": "#/$defs/sha256"
+                }
+              },
+              "required": [
+                "path",
+                "bytes",
+                "sha256"
+              ],
+              "type": "object"
+            },
+            "shardId": {
+              "const": 2
+            }
+          },
+          "required": [
+            "shardId",
+            "clusterId",
+            "instrument",
+            "portBase",
+            "route",
+            "genesis",
+            "importedSnapshot"
+          ],
+          "type": "object"
+        }
+      ],
+      "type": "array"
+    },
+    "sink": {
+      "additionalProperties": false,
+      "properties": {
+        "instanceId": {
+          "const": "m15-sink-o1"
+        },
+        "port": {
+          "maximum": 65535,
+          "minimum": 1024,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "instanceId",
+        "port"
+      ],
+      "type": "object"
+    },
+    "socketReceiveBuffer": {
+      "enum": [
+        "JDK_DEFAULT",
+        "OS_DEFAULT"
+      ]
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "profileId",
+    "applicationVersion",
+    "layout",
+    "outputProfile",
+    "shards",
+    "sink",
+    "socketReceiveBuffer"
+  ],
+  "title": "M15 root-independent deployment and exact original bootstrap inputs",
+  "type": "object"
+}

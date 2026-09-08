@@ -61,14 +61,14 @@ export const PRACTICE_CASES: readonly PracticeCase[] = [
   {
     slug: "high-availability-cex",
     designDocument: "docs/HIGH_AVAILABILITY_CEX_PRACTICE_PLAN.md",
-    planVersion: "0.17",
+    planVersion: "0.18",
     index: "01",
     eyebrow: "FLAGSHIP BUILD / EXCHANGE SYSTEMS",
     title: "高可用 CEX 交易核心",
     summary:
       "从单交易对限价撮合起步，先交付高可用现货核心，再按门禁演进到杠杆、永续、交割与期权。",
     status: "BUILDING",
-    statusLabel: "SPOT · M14 已发布",
+    statusLabel: "SPOT · M15 / Matching 已发布",
     totalUnits: 33,
     plannedRepositories: 3,
     stack: ["Java", "Aeron Cluster", "Gradle", "Docker", "Astro Labs"],
@@ -90,10 +90,11 @@ export const PRACTICE_CASES: readonly PracticeCase[] = [
       "M12",
       "M13",
       "M14",
+      "M15",
     ],
-    currentUnitCode: "M14",
+    currentUnitCode: "M15",
     currentAction:
-      "M00～M14 已发布。M14 的 12 个固定场景、48×80 个生成动作、8 项语义 mutant 和 7 个真实进程窗口均通过。五篇教程与公开 evidence 已一起登记，可从本单元入口复验 course/m14-complete。M14 无产品 release；M15 仍为候选，完成运营资格后再发布 matching-1.0.0。",
+      "Matching 的 M00～M15 已发布，matching-1.0.1 交付固定制品、全停服升级回滚、切点 A 冷备新根恢复和 M15-O1 有限运行资格。可从完成标签、五篇教程与原始证据复验；本轮停止于撮合，Counter/Rest 仍为候选。",
     profileRoadmapTitle: "现货是第一份完整交付，不是专题终点",
     profileRoadmapDescription:
       "只有当前 Profile 展开单元、仓库与实施设计；LOCKED 只冻结产品方向和解锁门禁，不代表已经创建单元、仓库或服务；后续优先复用已发布的 Matching、Counter 与 Rest 边界，具体仓库拓扑在解锁时评审。",
@@ -185,10 +186,10 @@ export const PRACTICE_CASES: readonly PracticeCase[] = [
           "Aeron Cluster、切主、重试、结果未知和 fencing 通过故障门禁。",
       },
       {
-        version: "matching-1.0.0",
+        version: "matching-1.0.1",
         title: "可运营的撮合项目",
         description:
-          "M15 完成静态分片、可续接输出、受控升级回滚、冷备恢复和环境绑定运行资格闭环。",
+          "为静态分片和可续接输出补齐全停服升级回滚、冷备新根恢复与有限 O1 运行资格。",
       },
       {
         version: "SPOT-CEX-1.0",

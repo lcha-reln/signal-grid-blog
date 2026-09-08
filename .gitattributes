@@ -1,0 +1,6 @@
+# Manifest-bound evidence must preserve original bytes, including CRLF scripts.
+public/practice/high-availability-cex/m15/evidence/** -text
+public/practice/high-availability-cex/m15/evidence/reports/check/releases/n/bin/matching-operations.bat whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+
+# Preserve the separately frozen original CI job logs byte for byte.
+public/practice/high-availability-cex/m15/evidence/reports/check/inputs/matching-testkit/src/test/resources/m15-errata-2/provenance/*/job.log binary

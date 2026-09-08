@@ -1,0 +1,837 @@
+Compiled from "ArchiveMarkFile.java"
+public class io.aeron.archive.ArchiveMarkFile implements java.lang.AutoCloseable {
+  public static final int MAJOR_VERSION;
+
+  public static final int MINOR_VERSION;
+
+  public static final int PATCH_VERSION;
+
+  public static final int SEMANTIC_VERSION;
+
+  public static final int HEADER_LENGTH;
+
+  public static final java.lang.String FILENAME;
+
+  public static final java.lang.String LINK_FILENAME;
+
+  private static final org.agrona.concurrent.UnsafeBuffer EMPTY_BUFFER;
+
+  private static final int HEADER_OFFSET;
+
+  private final io.aeron.archive.codecs.mark.MarkFileHeaderDecoder headerDecoder;
+
+  private final io.aeron.archive.codecs.mark.MarkFileHeaderEncoder headerEncoder;
+
+  private final org.agrona.MarkFile markFile;
+
+  private final org.agrona.concurrent.UnsafeBuffer buffer;
+
+  private final org.agrona.concurrent.UnsafeBuffer errorBuffer;
+
+  io.aeron.archive.ArchiveMarkFile(io.aeron.archive.Archive$Context);
+    Code:
+         0: aload_0
+         1: new           #5                  // class java/io/File
+         4: dup
+         5: aload_1
+         6: invokevirtual #7                  // Method io/aeron/archive/Archive$Context.markFileDir:()Ljava/io/File;
+         9: ldc           #15                 // String archive-mark.dat
+        11: invokespecial #17                 // Method java/io/File."<init>":(Ljava/io/File;Ljava/lang/String;)V
+        14: aload_1
+        15: invokestatic  #21                 // Method alignedTotalFileLength:(Lio/aeron/archive/Archive$Context;)I
+        18: aload_1
+        19: invokevirtual #25                 // Method io/aeron/archive/Archive$Context.errorBufferLength:()I
+        22: aload_1
+        23: invokevirtual #29                 // Method io/aeron/archive/Archive$Context.epochClock:()Lorg/agrona/concurrent/EpochClock;
+        26: getstatic     #33                 // Field io/aeron/archive/Archive$Configuration.LIVENESS_TIMEOUT_MS:J
+        29: invokespecial #39                 // Method "<init>":(Ljava/io/File;IILorg/agrona/concurrent/EpochClock;J)V
+        32: aload_0
+        33: aload_1
+        34: invokevirtual #42                 // Method encode:(Lio/aeron/archive/Archive$Context;)V
+        37: return
+
+  io.aeron.archive.ArchiveMarkFile(java.io.File, int, int, org.agrona.concurrent.EpochClock, long);
+    Code:
+         0: aload_0
+         1: invokespecial #46                 // Method java/lang/Object."<init>":()V
+         4: aload_0
+         5: new           #51                 // class io/aeron/archive/codecs/mark/MarkFileHeaderDecoder
+         8: dup
+         9: invokespecial #53                 // Method io/aeron/archive/codecs/mark/MarkFileHeaderDecoder."<init>":()V
+        12: putfield      #54                 // Field headerDecoder:Lio/aeron/archive/codecs/mark/MarkFileHeaderDecoder;
+        15: aload_0
+        16: new           #58                 // class io/aeron/archive/codecs/mark/MarkFileHeaderEncoder
+        19: dup
+        20: invokespecial #60                 // Method io/aeron/archive/codecs/mark/MarkFileHeaderEncoder."<init>":()V
+        23: putfield      #61                 // Field headerEncoder:Lio/aeron/archive/codecs/mark/MarkFileHeaderEncoder;
+        26: new           #1                  // class io/aeron/archive/codecs/mark/MessageHeaderDecoder
+        29: dup
+        30: invokespecial #65                 // Method io/aeron/archive/codecs/mark/MessageHeaderDecoder."<init>":()V
+        33: astore        7
+        35: aload_1
+        36: invokevirtual #66                 // Method java/io/File.exists:()Z
+        39: ifeq          285
+        42: aload_1
+        43: invokestatic  #70                 // Method headerOffset:(Ljava/io/File;)I
+        46: istore        8
+        48: new           #74                 // class org/agrona/MarkFile
+        51: dup
+        52: aload_1
+        53: iconst_1
+        54: iload         8
+        56: invokestatic  #76                 // Method io/aeron/archive/codecs/mark/MarkFileHeaderDecoder.versionEncodingOffset:()I
+        59: iadd
+        60: iload         8
+        62: invokestatic  #79                 // Method io/aeron/archive/codecs/mark/MarkFileHeaderDecoder.activityTimestampEncodingOffset:()I
+        65: iadd
+        66: iload_2
+        67: lload         5
+        69: aload         4
+        71: aload_1
+        72: invokedynamic #82,  0             // InvokeDynamic #0:accept:(Ljava/io/File;)Ljava/util/function/IntConsumer;
+        77: aconst_null
+        78: invokespecial #86                 // Method org/agrona/MarkFile."<init>":(Ljava/io/File;ZIIIJLorg/agrona/concurrent/EpochClock;Ljava/util/function/IntConsumer;Ljava/util/function/Consumer;)V
+        81: astore        9
+        83: aload         9
+        85: invokevirtual #89                 // Method org/agrona/MarkFile.buffer:()Lorg/agrona/concurrent/UnsafeBuffer;
+        88: astore        10
+        90: iconst_0
+        91: iload         8
+        93: if_icmpeq     112
+        96: aload_0
+        97: getfield      #54                 // Field headerDecoder:Lio/aeron/archive/codecs/mark/MarkFileHeaderDecoder;
+       100: aload         10
+       102: iconst_0
+       103: aload         7
+       105: invokevirtual #93                 // Method io/aeron/archive/codecs/mark/MarkFileHeaderDecoder.wrapAndApplyHeader:(Lorg/agrona/DirectBuffer;ILio/aeron/archive/codecs/mark/MessageHeaderDecoder;)Lio/aeron/archive/codecs/mark/MarkFileHeaderDecoder;
+       108: pop
+       109: goto          127
+       112: aload_0
+       113: getfield      #54                 // Field headerDecoder:Lio/aeron/archive/codecs/mark/MarkFileHeaderDecoder;
+       116: aload         10
+       118: iconst_0
+       119: sipush        128
+       122: iconst_2
+       123: invokevirtual #97                 // Method io/aeron/archive/codecs/mark/MarkFileHeaderDecoder.wrap:(Lorg/agrona/DirectBuffer;III)Lio/aeron/archive/codecs/mark/MarkFileHeaderDecoder;
+       126: pop
+       127: aload_0
+       128: getfield      #54                 // Field headerDecoder:Lio/aeron/archive/codecs/mark/MarkFileHeaderDecoder;
+       131: invokevirtual #101                // Method io/aeron/archive/codecs/mark/MarkFileHeaderDecoder.errorBufferLength:()I
+       134: istore        11
+       136: iload         11
+       138: ifle          179
+       141: new           #102                // class org/agrona/concurrent/UnsafeBuffer
+       144: dup
+       145: aload         10
+       147: aload_0
+       148: getfield      #54                 // Field headerDecoder:Lio/aeron/archive/codecs/mark/MarkFileHeaderDecoder;
+       151: invokevirtual #104                // Method io/aeron/archive/codecs/mark/MarkFileHeaderDecoder.headerLength:()I
+       154: iload         11
+       156: invokespecial #107                // Method org/agrona/concurrent/UnsafeBuffer."<init>":(Lorg/agrona/DirectBuffer;II)V
+       159: astore        12
+       161: aload_1
+       162: aload         12
+       164: invokestatic  #110                // Method io/aeron/CommonContext.fallbackLogger:()Ljava/io/PrintStream;
+       167: invokestatic  #116                // Method saveExistingErrors:(Ljava/io/File;Lorg/agrona/concurrent/AtomicBuffer;Ljava/io/PrintStream;)V
+       170: aload         12
+       172: iconst_0
+       173: iload         11
+       175: iconst_0
+       176: invokevirtual #120                // Method org/agrona/concurrent/UnsafeBuffer.setMemory:(IIB)V
+       179: iconst_0
+       180: iload         8
+       182: if_icmpeq     200
+       185: aload_0
+       186: aload         9
+       188: putfield      #124                // Field markFile:Lorg/agrona/MarkFile;
+       191: aload_0
+       192: aload         10
+       194: putfield      #128                // Field buffer:Lorg/agrona/concurrent/UnsafeBuffer;
+       197: goto          282
+       200: aload_0
+       201: getfield      #54                 // Field headerDecoder:Lio/aeron/archive/codecs/mark/MarkFileHeaderDecoder;
+       204: getstatic     #131                // Field EMPTY_BUFFER:Lorg/agrona/concurrent/UnsafeBuffer;
+       207: iconst_0
+       208: iconst_0
+       209: iconst_0
+       210: invokevirtual #97                 // Method io/aeron/archive/codecs/mark/MarkFileHeaderDecoder.wrap:(Lorg/agrona/DirectBuffer;III)Lio/aeron/archive/codecs/mark/MarkFileHeaderDecoder;
+       213: pop
+       214: aload         9
+       216: invokestatic  #134                // Method org/agrona/CloseHelper.close:(Ljava/lang/AutoCloseable;)V
+       219: aload_0
+       220: new           #74                 // class org/agrona/MarkFile
+       223: dup
+       224: aload_1
+       225: iconst_1
+       226: bipush        8
+       228: invokestatic  #76                 // Method io/aeron/archive/codecs/mark/MarkFileHeaderDecoder.versionEncodingOffset:()I
+       231: iadd
+       232: bipush        8
+       234: invokestatic  #79                 // Method io/aeron/archive/codecs/mark/MarkFileHeaderDecoder.activityTimestampEncodingOffset:()I
+       237: iadd
+       238: iload_2
+       239: lload         5
+       241: aload         4
+       243: invokedynamic #140,  0            // InvokeDynamic #1:accept:()Ljava/util/function/IntConsumer;
+       248: aconst_null
+       249: invokespecial #86                 // Method org/agrona/MarkFile."<init>":(Ljava/io/File;ZIIIJLorg/agrona/concurrent/EpochClock;Ljava/util/function/IntConsumer;Ljava/util/function/Consumer;)V
+       252: putfield      #124                // Field markFile:Lorg/agrona/MarkFile;
+       255: aload_0
+       256: aload_0
+       257: getfield      #124                // Field markFile:Lorg/agrona/MarkFile;
+       260: invokevirtual #89                 // Method org/agrona/MarkFile.buffer:()Lorg/agrona/concurrent/UnsafeBuffer;
+       263: putfield      #128                // Field buffer:Lorg/agrona/concurrent/UnsafeBuffer;
+       266: aload_0
+       267: getfield      #128                // Field buffer:Lorg/agrona/concurrent/UnsafeBuffer;
+       270: iconst_0
+       271: aload_0
+       272: getfield      #128                // Field buffer:Lorg/agrona/concurrent/UnsafeBuffer;
+       275: invokevirtual #143                // Method org/agrona/concurrent/UnsafeBuffer.capacity:()I
+       278: iconst_0
+       279: invokevirtual #120                // Method org/agrona/concurrent/UnsafeBuffer.setMemory:(IIB)V
+       282: goto          332
+       285: aload_0
+       286: new           #74                 // class org/agrona/MarkFile
+       289: dup
+       290: aload_1
+       291: iconst_0
+       292: bipush        8
+       294: invokestatic  #76                 // Method io/aeron/archive/codecs/mark/MarkFileHeaderDecoder.versionEncodingOffset:()I
+       297: iadd
+       298: bipush        8
+       300: invokestatic  #79                 // Method io/aeron/archive/codecs/mark/MarkFileHeaderDecoder.activityTimestampEncodingOffset:()I
+       303: iadd
+       304: iload_2
+       305: lload         5
+       307: aload         4
+       309: invokedynamic #146,  0            // InvokeDynamic #2:accept:()Ljava/util/function/IntConsumer;
+       314: aconst_null
+       315: invokespecial #86                 // Method org/agrona/MarkFile."<init>":(Ljava/io/File;ZIIIJLorg/agrona/concurrent/EpochClock;Ljava/util/function/IntConsumer;Ljava/util/function/Consumer;)V
+       318: putfield      #124                // Field markFile:Lorg/agrona/MarkFile;
+       321: aload_0
+       322: aload_0
+       323: getfield      #124                // Field markFile:Lorg/agrona/MarkFile;
+       326: invokevirtual #89                 // Method org/agrona/MarkFile.buffer:()Lorg/agrona/concurrent/UnsafeBuffer;
+       329: putfield      #128                // Field buffer:Lorg/agrona/concurrent/UnsafeBuffer;
+       332: aload_0
+       333: getfield      #61                 // Field headerEncoder:Lio/aeron/archive/codecs/mark/MarkFileHeaderEncoder;
+       336: aload_0
+       337: getfield      #128                // Field buffer:Lorg/agrona/concurrent/UnsafeBuffer;
+       340: iconst_0
+       341: new           #147                // class io/aeron/archive/codecs/mark/MessageHeaderEncoder
+       344: dup
+       345: invokespecial #149                // Method io/aeron/archive/codecs/mark/MessageHeaderEncoder."<init>":()V
+       348: invokevirtual #150                // Method io/aeron/archive/codecs/mark/MarkFileHeaderEncoder.wrapAndApplyHeader:(Lorg/agrona/MutableDirectBuffer;ILio/aeron/archive/codecs/mark/MessageHeaderEncoder;)Lio/aeron/archive/codecs/mark/MarkFileHeaderEncoder;
+       351: invokestatic  #153                // Method org/agrona/SystemUtil.getPid:()J
+       354: invokevirtual #159                // Method io/aeron/archive/codecs/mark/MarkFileHeaderEncoder.pid:(J)Lio/aeron/archive/codecs/mark/MarkFileHeaderEncoder;
+       357: pop
+       358: aload_0
+       359: getfield      #54                 // Field headerDecoder:Lio/aeron/archive/codecs/mark/MarkFileHeaderDecoder;
+       362: aload_0
+       363: getfield      #128                // Field buffer:Lorg/agrona/concurrent/UnsafeBuffer;
+       366: iconst_0
+       367: aload         7
+       369: invokevirtual #93                 // Method io/aeron/archive/codecs/mark/MarkFileHeaderDecoder.wrapAndApplyHeader:(Lorg/agrona/DirectBuffer;ILio/aeron/archive/codecs/mark/MessageHeaderDecoder;)Lio/aeron/archive/codecs/mark/MarkFileHeaderDecoder;
+       372: pop
+       373: aload_0
+       374: new           #102                // class org/agrona/concurrent/UnsafeBuffer
+       377: dup
+       378: aload_0
+       379: getfield      #128                // Field buffer:Lorg/agrona/concurrent/UnsafeBuffer;
+       382: sipush        8192
+       385: iload_3
+       386: invokespecial #107                // Method org/agrona/concurrent/UnsafeBuffer."<init>":(Lorg/agrona/DirectBuffer;II)V
+       389: putfield      #163                // Field errorBuffer:Lorg/agrona/concurrent/UnsafeBuffer;
+       392: return
+
+  public io.aeron.archive.ArchiveMarkFile(java.io.File, java.lang.String, org.agrona.concurrent.EpochClock, long, java.util.function.Consumer<java.lang.String>);
+    Code:
+         0: aload_0
+         1: aload_1
+         2: aload_2
+         3: aload_3
+         4: lload         4
+         6: aload_1
+         7: aload_2
+         8: invokedynamic #166,  0            // InvokeDynamic #3:accept:(Ljava/io/File;Ljava/lang/String;)Ljava/util/function/IntConsumer;
+        13: aload         6
+        15: invokespecial #169                // Method "<init>":(Ljava/io/File;Ljava/lang/String;Lorg/agrona/concurrent/EpochClock;JLjava/util/function/IntConsumer;Ljava/util/function/Consumer;)V
+        18: return
+
+  public io.aeron.archive.ArchiveMarkFile(java.io.File, java.lang.String, org.agrona.concurrent.EpochClock, long, java.util.function.IntConsumer, java.util.function.Consumer<java.lang.String>);
+    Code:
+         0: aload_0
+         1: aload_1
+         2: aload_2
+         3: aload_3
+         4: lload         4
+         6: aload         6
+         8: aload         7
+        10: invokestatic  #172                // Method openExistingMarkFile:(Ljava/io/File;Ljava/lang/String;Lorg/agrona/concurrent/EpochClock;JLjava/util/function/IntConsumer;Ljava/util/function/Consumer;)Lorg/agrona/MarkFile;
+        13: invokespecial #176                // Method "<init>":(Lorg/agrona/MarkFile;)V
+        16: return
+
+  io.aeron.archive.ArchiveMarkFile(org.agrona.MarkFile);
+    Code:
+         0: aload_0
+         1: invokespecial #46                 // Method java/lang/Object."<init>":()V
+         4: aload_0
+         5: new           #51                 // class io/aeron/archive/codecs/mark/MarkFileHeaderDecoder
+         8: dup
+         9: invokespecial #53                 // Method io/aeron/archive/codecs/mark/MarkFileHeaderDecoder."<init>":()V
+        12: putfield      #54                 // Field headerDecoder:Lio/aeron/archive/codecs/mark/MarkFileHeaderDecoder;
+        15: aload_0
+        16: new           #58                 // class io/aeron/archive/codecs/mark/MarkFileHeaderEncoder
+        19: dup
+        20: invokespecial #60                 // Method io/aeron/archive/codecs/mark/MarkFileHeaderEncoder."<init>":()V
+        23: putfield      #61                 // Field headerEncoder:Lio/aeron/archive/codecs/mark/MarkFileHeaderEncoder;
+        26: aload_0
+        27: aload_1
+        28: putfield      #124                // Field markFile:Lorg/agrona/MarkFile;
+        31: aload_0
+        32: aload_1
+        33: invokevirtual #89                 // Method org/agrona/MarkFile.buffer:()Lorg/agrona/concurrent/UnsafeBuffer;
+        36: putfield      #128                // Field buffer:Lorg/agrona/concurrent/UnsafeBuffer;
+        39: iconst_0
+        40: aload_0
+        41: getfield      #128                // Field buffer:Lorg/agrona/concurrent/UnsafeBuffer;
+        44: invokestatic  #179                // Method headerOffset:(Lorg/agrona/concurrent/UnsafeBuffer;)I
+        47: if_icmpeq     87
+        50: aload_0
+        51: getfield      #61                 // Field headerEncoder:Lio/aeron/archive/codecs/mark/MarkFileHeaderEncoder;
+        54: aload_0
+        55: getfield      #128                // Field buffer:Lorg/agrona/concurrent/UnsafeBuffer;
+        58: bipush        8
+        60: invokevirtual #182                // Method io/aeron/archive/codecs/mark/MarkFileHeaderEncoder.wrap:(Lorg/agrona/MutableDirectBuffer;I)Lio/aeron/archive/codecs/mark/MarkFileHeaderEncoder;
+        63: pop
+        64: aload_0
+        65: getfield      #54                 // Field headerDecoder:Lio/aeron/archive/codecs/mark/MarkFileHeaderDecoder;
+        68: aload_0
+        69: getfield      #128                // Field buffer:Lorg/agrona/concurrent/UnsafeBuffer;
+        72: iconst_0
+        73: new           #1                  // class io/aeron/archive/codecs/mark/MessageHeaderDecoder
+        76: dup
+        77: invokespecial #65                 // Method io/aeron/archive/codecs/mark/MessageHeaderDecoder."<init>":()V
+        80: invokevirtual #93                 // Method io/aeron/archive/codecs/mark/MarkFileHeaderDecoder.wrapAndApplyHeader:(Lorg/agrona/DirectBuffer;ILio/aeron/archive/codecs/mark/MessageHeaderDecoder;)Lio/aeron/archive/codecs/mark/MarkFileHeaderDecoder;
+        83: pop
+        84: goto          154
+        87: aload_0
+        88: getfield      #54                 // Field headerDecoder:Lio/aeron/archive/codecs/mark/MarkFileHeaderDecoder;
+        91: aload_0
+        92: getfield      #128                // Field buffer:Lorg/agrona/concurrent/UnsafeBuffer;
+        95: iconst_0
+        96: sipush        128
+        99: iconst_2
+       100: invokevirtual #97                 // Method io/aeron/archive/codecs/mark/MarkFileHeaderDecoder.wrap:(Lorg/agrona/DirectBuffer;III)Lio/aeron/archive/codecs/mark/MarkFileHeaderDecoder;
+       103: pop
+       104: sipush        128
+       107: istore_2
+       108: aload_0
+       109: getfield      #54                 // Field headerDecoder:Lio/aeron/archive/codecs/mark/MarkFileHeaderDecoder;
+       112: invokevirtual #104                // Method io/aeron/archive/codecs/mark/MarkFileHeaderDecoder.headerLength:()I
+       115: ifle          122
+       118: iconst_1
+       119: goto          123
+       122: iconst_0
+       123: istore_3
+       124: aload_0
+       125: getfield      #54                 // Field headerDecoder:Lio/aeron/archive/codecs/mark/MarkFileHeaderDecoder;
+       128: aload_0
+       129: getfield      #128                // Field buffer:Lorg/agrona/concurrent/UnsafeBuffer;
+       132: iconst_0
+       133: sipush        128
+       136: iload_3
+       137: invokevirtual #97                 // Method io/aeron/archive/codecs/mark/MarkFileHeaderDecoder.wrap:(Lorg/agrona/DirectBuffer;III)Lio/aeron/archive/codecs/mark/MarkFileHeaderDecoder;
+       140: pop
+       141: aload_0
+       142: getfield      #61                 // Field headerEncoder:Lio/aeron/archive/codecs/mark/MarkFileHeaderEncoder;
+       145: aload_0
+       146: getfield      #128                // Field buffer:Lorg/agrona/concurrent/UnsafeBuffer;
+       149: iconst_0
+       150: invokevirtual #182                // Method io/aeron/archive/codecs/mark/MarkFileHeaderEncoder.wrap:(Lorg/agrona/MutableDirectBuffer;I)Lio/aeron/archive/codecs/mark/MarkFileHeaderEncoder;
+       153: pop
+       154: aload_0
+       155: aload_0
+       156: getfield      #54                 // Field headerDecoder:Lio/aeron/archive/codecs/mark/MarkFileHeaderDecoder;
+       159: invokevirtual #104                // Method io/aeron/archive/codecs/mark/MarkFileHeaderDecoder.headerLength:()I
+       162: ifle          193
+       165: new           #102                // class org/agrona/concurrent/UnsafeBuffer
+       168: dup
+       169: aload_0
+       170: getfield      #128                // Field buffer:Lorg/agrona/concurrent/UnsafeBuffer;
+       173: aload_0
+       174: getfield      #54                 // Field headerDecoder:Lio/aeron/archive/codecs/mark/MarkFileHeaderDecoder;
+       177: invokevirtual #104                // Method io/aeron/archive/codecs/mark/MarkFileHeaderDecoder.headerLength:()I
+       180: aload_0
+       181: getfield      #54                 // Field headerDecoder:Lio/aeron/archive/codecs/mark/MarkFileHeaderDecoder;
+       184: invokevirtual #101                // Method io/aeron/archive/codecs/mark/MarkFileHeaderDecoder.errorBufferLength:()I
+       187: invokespecial #107                // Method org/agrona/concurrent/UnsafeBuffer."<init>":(Lorg/agrona/DirectBuffer;II)V
+       190: goto          206
+       193: new           #102                // class org/agrona/concurrent/UnsafeBuffer
+       196: dup
+       197: aload_0
+       198: getfield      #128                // Field buffer:Lorg/agrona/concurrent/UnsafeBuffer;
+       201: iconst_0
+       202: iconst_0
+       203: invokespecial #107                // Method org/agrona/concurrent/UnsafeBuffer."<init>":(Lorg/agrona/DirectBuffer;II)V
+       206: putfield      #163                // Field errorBuffer:Lorg/agrona/concurrent/UnsafeBuffer;
+       209: return
+
+  public void close();
+    Code:
+         0: aload_0
+         1: getfield      #124                // Field markFile:Lorg/agrona/MarkFile;
+         4: invokevirtual #185                // Method org/agrona/MarkFile.isClosed:()Z
+         7: ifne          52
+        10: aload_0
+        11: getfield      #61                 // Field headerEncoder:Lio/aeron/archive/codecs/mark/MarkFileHeaderEncoder;
+        14: getstatic     #131                // Field EMPTY_BUFFER:Lorg/agrona/concurrent/UnsafeBuffer;
+        17: iconst_0
+        18: invokevirtual #182                // Method io/aeron/archive/codecs/mark/MarkFileHeaderEncoder.wrap:(Lorg/agrona/MutableDirectBuffer;I)Lio/aeron/archive/codecs/mark/MarkFileHeaderEncoder;
+        21: pop
+        22: aload_0
+        23: getfield      #54                 // Field headerDecoder:Lio/aeron/archive/codecs/mark/MarkFileHeaderDecoder;
+        26: getstatic     #131                // Field EMPTY_BUFFER:Lorg/agrona/concurrent/UnsafeBuffer;
+        29: iconst_0
+        30: iconst_0
+        31: iconst_0
+        32: invokevirtual #97                 // Method io/aeron/archive/codecs/mark/MarkFileHeaderDecoder.wrap:(Lorg/agrona/DirectBuffer;III)Lio/aeron/archive/codecs/mark/MarkFileHeaderDecoder;
+        35: pop
+        36: aload_0
+        37: getfield      #163                // Field errorBuffer:Lorg/agrona/concurrent/UnsafeBuffer;
+        40: lconst_0
+        41: iconst_0
+        42: invokevirtual #188                // Method org/agrona/concurrent/UnsafeBuffer.wrap:(JI)V
+        45: aload_0
+        46: getfield      #124                // Field markFile:Lorg/agrona/MarkFile;
+        49: invokestatic  #134                // Method org/agrona/CloseHelper.close:(Ljava/lang/AutoCloseable;)V
+        52: return
+
+  public boolean isClosed();
+    Code:
+         0: aload_0
+         1: getfield      #124                // Field markFile:Lorg/agrona/MarkFile;
+         4: invokevirtual #185                // Method org/agrona/MarkFile.isClosed:()Z
+         7: ireturn
+
+  public long archiveId();
+    Code:
+         0: aload_0
+         1: getfield      #124                // Field markFile:Lorg/agrona/MarkFile;
+         4: invokevirtual #185                // Method org/agrona/MarkFile.isClosed:()Z
+         7: ifeq          16
+        10: ldc2_w        #191                // long -1l
+        13: goto          23
+        16: aload_0
+        17: getfield      #54                 // Field headerDecoder:Lio/aeron/archive/codecs/mark/MarkFileHeaderDecoder;
+        20: invokevirtual #193                // Method io/aeron/archive/codecs/mark/MarkFileHeaderDecoder.archiveId:()J
+        23: lreturn
+
+  public void signalReady();
+    Code:
+         0: aload_0
+         1: getfield      #124                // Field markFile:Lorg/agrona/MarkFile;
+         4: invokevirtual #185                // Method org/agrona/MarkFile.isClosed:()Z
+         7: ifne          20
+        10: aload_0
+        11: getfield      #124                // Field markFile:Lorg/agrona/MarkFile;
+        14: getstatic     #196                // Field SEMANTIC_VERSION:I
+        17: invokevirtual #200                // Method org/agrona/MarkFile.signalReady:(I)V
+        20: return
+
+  public void signalReady(long);
+    Code:
+         0: aload_0
+         1: getfield      #124                // Field markFile:Lorg/agrona/MarkFile;
+         4: invokevirtual #185                // Method org/agrona/MarkFile.isClosed:()Z
+         7: ifne          32
+        10: aload_0
+        11: getfield      #124                // Field markFile:Lorg/agrona/MarkFile;
+        14: lload_1
+        15: invokevirtual #204                // Method org/agrona/MarkFile.timestampRelease:(J)V
+        18: aload_0
+        19: getfield      #124                // Field markFile:Lorg/agrona/MarkFile;
+        22: getstatic     #196                // Field SEMANTIC_VERSION:I
+        25: invokevirtual #200                // Method org/agrona/MarkFile.signalReady:(I)V
+        28: aload_0
+        29: invokevirtual #208                // Method force:()V
+        32: return
+
+  public void signalTerminated();
+    Code:
+         0: aload_0
+         1: ldc2_w        #191                // long -1l
+         4: invokevirtual #211                // Method signalReady:(J)V
+         7: return
+
+  public void updateActivityTimestamp(long);
+    Code:
+         0: aload_0
+         1: getfield      #124                // Field markFile:Lorg/agrona/MarkFile;
+         4: invokevirtual #185                // Method org/agrona/MarkFile.isClosed:()Z
+         7: ifne          18
+        10: aload_0
+        11: getfield      #124                // Field markFile:Lorg/agrona/MarkFile;
+        14: lload_1
+        15: invokevirtual #204                // Method org/agrona/MarkFile.timestampRelease:(J)V
+        18: return
+
+  public long activityTimestampVolatile();
+    Code:
+         0: aload_0
+         1: getfield      #124                // Field markFile:Lorg/agrona/MarkFile;
+         4: invokevirtual #185                // Method org/agrona/MarkFile.isClosed:()Z
+         7: ifeq          16
+        10: ldc2_w        #191                // long -1l
+        13: goto          23
+        16: aload_0
+        17: getfield      #124                // Field markFile:Lorg/agrona/MarkFile;
+        20: invokevirtual #213                // Method org/agrona/MarkFile.timestampVolatile:()J
+        23: lreturn
+
+  public io.aeron.archive.codecs.mark.MarkFileHeaderEncoder encoder();
+    Code:
+         0: aload_0
+         1: getfield      #61                 // Field headerEncoder:Lio/aeron/archive/codecs/mark/MarkFileHeaderEncoder;
+         4: areturn
+
+  public io.aeron.archive.codecs.mark.MarkFileHeaderDecoder decoder();
+    Code:
+         0: aload_0
+         1: getfield      #54                 // Field headerDecoder:Lio/aeron/archive/codecs/mark/MarkFileHeaderDecoder;
+         4: areturn
+
+  public org.agrona.concurrent.AtomicBuffer errorBuffer();
+    Code:
+         0: aload_0
+         1: getfield      #163                // Field errorBuffer:Lorg/agrona/concurrent/UnsafeBuffer;
+         4: areturn
+
+  public static void saveExistingErrors(java.io.File, org.agrona.concurrent.AtomicBuffer, java.io.PrintStream);
+    Code:
+         0: aload_0
+         1: aload_1
+         2: aload_2
+         3: ldc           #216                // String archive
+         5: invokestatic  #218                // Method io/aeron/CommonContext.saveExistingErrors:(Ljava/io/File;Lorg/agrona/concurrent/AtomicBuffer;Ljava/io/PrintStream;Ljava/lang/String;)V
+         8: return
+
+  public static boolean isArchiveMarkFile(java.nio.file.Path, java.nio.file.attribute.BasicFileAttributes);
+    Code:
+         0: ldc           #15                 // String archive-mark.dat
+         2: aload_0
+         3: invokeinterface #221,  1          // InterfaceMethod java/nio/file/Path.getFileName:()Ljava/nio/file/Path;
+         8: invokeinterface #227,  1          // InterfaceMethod java/nio/file/Path.toString:()Ljava/lang/String;
+        13: invokevirtual #231                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+        16: ireturn
+
+  public java.io.File parentDirectory();
+    Code:
+         0: aload_0
+         1: getfield      #124                // Field markFile:Lorg/agrona/MarkFile;
+         4: invokevirtual #237                // Method org/agrona/MarkFile.parentDirectory:()Ljava/io/File;
+         7: areturn
+
+  public void force();
+    Code:
+         0: aload_0
+         1: getfield      #124                // Field markFile:Lorg/agrona/MarkFile;
+         4: invokevirtual #185                // Method org/agrona/MarkFile.isClosed:()Z
+         7: ifne          21
+        10: aload_0
+        11: getfield      #124                // Field markFile:Lorg/agrona/MarkFile;
+        14: invokevirtual #240                // Method org/agrona/MarkFile.mappedByteBuffer:()Ljava/nio/MappedByteBuffer;
+        17: invokevirtual #244                // Method java/nio/MappedByteBuffer.force:()Ljava/nio/MappedByteBuffer;
+        20: pop
+        21: return
+
+  private static int alignedTotalFileLength(io.aeron.archive.Archive$Context);
+    Code:
+         0: sipush        136
+         3: iconst_4
+         4: invokestatic  #248                // Method io/aeron/archive/codecs/mark/VarAsciiEncodingEncoder.lengthEncodingLength:()I
+         7: imul
+         8: iadd
+         9: aconst_null
+        10: aload_0
+        11: invokevirtual #253                // Method io/aeron/archive/Archive$Context.controlChannel:()Ljava/lang/String;
+        14: if_acmpeq     27
+        17: aload_0
+        18: invokevirtual #253                // Method io/aeron/archive/Archive$Context.controlChannel:()Ljava/lang/String;
+        21: invokevirtual #256                // Method java/lang/String.length:()I
+        24: goto          28
+        27: iconst_0
+        28: iadd
+        29: aload_0
+        30: invokevirtual #259                // Method io/aeron/archive/Archive$Context.localControlChannel:()Ljava/lang/String;
+        33: invokevirtual #256                // Method java/lang/String.length:()I
+        36: iadd
+        37: aconst_null
+        38: aload_0
+        39: invokevirtual #262                // Method io/aeron/archive/Archive$Context.recordingEventsChannel:()Ljava/lang/String;
+        42: if_acmpeq     55
+        45: aload_0
+        46: invokevirtual #262                // Method io/aeron/archive/Archive$Context.recordingEventsChannel:()Ljava/lang/String;
+        49: invokevirtual #256                // Method java/lang/String.length:()I
+        52: goto          56
+        55: iconst_0
+        56: iadd
+        57: aload_0
+        58: invokevirtual #265                // Method io/aeron/archive/Archive$Context.aeronDirectoryName:()Ljava/lang/String;
+        61: invokevirtual #256                // Method java/lang/String.length:()I
+        64: iadd
+        65: istore_1
+        66: iload_1
+        67: sipush        8192
+        70: if_icmple     87
+        73: new           #268                // class io/aeron/archive/client/ArchiveException
+        76: dup
+        77: iload_1
+        78: invokedynamic #270,  0            // InvokeDynamic #4:makeConcatWithConstants:(I)Ljava/lang/String;
+        83: invokespecial #274                // Method io/aeron/archive/client/ArchiveException."<init>":(Ljava/lang/String;)V
+        86: athrow
+        87: aconst_null
+        88: aload_0
+        89: invokevirtual #277                // Method io/aeron/archive/Archive$Context.aeron:()Lio/aeron/Aeron;
+        92: if_acmpeq     108
+        95: aload_0
+        96: invokevirtual #277                // Method io/aeron/archive/Archive$Context.aeron:()Lio/aeron/Aeron;
+        99: invokevirtual #281                // Method io/aeron/Aeron.context:()Lio/aeron/Aeron$Context;
+       102: invokevirtual #285                // Method io/aeron/Aeron$Context.filePageSize:()I
+       105: goto          136
+       108: new           #5                  // class java/io/File
+       111: dup
+       112: aload_0
+       113: invokevirtual #265                // Method io/aeron/archive/Archive$Context.aeronDirectoryName:()Ljava/lang/String;
+       116: invokespecial #290                // Method java/io/File."<init>":(Ljava/lang/String;)V
+       119: aload_0
+       120: invokevirtual #29                 // Method io/aeron/archive/Archive$Context.epochClock:()Lorg/agrona/concurrent/EpochClock;
+       123: new           #111                // class io/aeron/CommonContext
+       126: dup
+       127: invokespecial #291                // Method io/aeron/CommonContext."<init>":()V
+       130: invokevirtual #292                // Method io/aeron/CommonContext.driverTimeoutMs:()J
+       133: invokestatic  #295                // Method io/aeron/CommonContext.driverFilePageSize:(Ljava/io/File;Lorg/agrona/concurrent/EpochClock;J)I
+       136: istore_2
+       137: iload_2
+       138: invokestatic  #299                // Method io/aeron/logbuffer/LogBufferDescriptor.checkPageSize:(I)V
+       141: sipush        8192
+       144: aload_0
+       145: invokevirtual #25                 // Method io/aeron/archive/Archive$Context.errorBufferLength:()I
+       148: iadd
+       149: iload_2
+       150: invokestatic  #304                // Method org/agrona/BitUtil.align:(II)I
+       153: ireturn
+
+  java.lang.String aeronDirectory();
+    Code:
+         0: aload_0
+         1: getfield      #54                 // Field headerDecoder:Lio/aeron/archive/codecs/mark/MarkFileHeaderDecoder;
+         4: invokevirtual #310                // Method io/aeron/archive/codecs/mark/MarkFileHeaderDecoder.sbeRewind:()Lio/aeron/archive/codecs/mark/MarkFileHeaderDecoder;
+         7: pop
+         8: aload_0
+         9: getfield      #54                 // Field headerDecoder:Lio/aeron/archive/codecs/mark/MarkFileHeaderDecoder;
+        12: invokevirtual #314                // Method io/aeron/archive/codecs/mark/MarkFileHeaderDecoder.skipControlChannel:()I
+        15: pop
+        16: aload_0
+        17: getfield      #54                 // Field headerDecoder:Lio/aeron/archive/codecs/mark/MarkFileHeaderDecoder;
+        20: invokevirtual #317                // Method io/aeron/archive/codecs/mark/MarkFileHeaderDecoder.skipLocalControlChannel:()I
+        23: pop
+        24: aload_0
+        25: getfield      #54                 // Field headerDecoder:Lio/aeron/archive/codecs/mark/MarkFileHeaderDecoder;
+        28: invokevirtual #320                // Method io/aeron/archive/codecs/mark/MarkFileHeaderDecoder.skipEventsChannel:()I
+        31: pop
+        32: aload_0
+        33: getfield      #54                 // Field headerDecoder:Lio/aeron/archive/codecs/mark/MarkFileHeaderDecoder;
+        36: invokevirtual #323                // Method io/aeron/archive/codecs/mark/MarkFileHeaderDecoder.aeronDirectory:()Ljava/lang/String;
+        39: areturn
+
+  org.agrona.concurrent.UnsafeBuffer buffer();
+    Code:
+         0: aload_0
+         1: getfield      #128                // Field buffer:Lorg/agrona/concurrent/UnsafeBuffer;
+         4: areturn
+
+  private void encode(io.aeron.archive.Archive$Context);
+    Code:
+         0: aload_0
+         1: getfield      #61                 // Field headerEncoder:Lio/aeron/archive/codecs/mark/MarkFileHeaderEncoder;
+         4: aload_1
+         5: invokevirtual #29                 // Method io/aeron/archive/Archive$Context.epochClock:()Lorg/agrona/concurrent/EpochClock;
+         8: invokeinterface #326,  1          // InterfaceMethod org/agrona/concurrent/EpochClock.time:()J
+        13: invokevirtual #331                // Method io/aeron/archive/codecs/mark/MarkFileHeaderEncoder.startTimestamp:(J)Lio/aeron/archive/codecs/mark/MarkFileHeaderEncoder;
+        16: aload_1
+        17: invokevirtual #334                // Method io/aeron/archive/Archive$Context.controlStreamId:()I
+        20: invokevirtual #337                // Method io/aeron/archive/codecs/mark/MarkFileHeaderEncoder.controlStreamId:(I)Lio/aeron/archive/codecs/mark/MarkFileHeaderEncoder;
+        23: aload_1
+        24: invokevirtual #340                // Method io/aeron/archive/Archive$Context.localControlStreamId:()I
+        27: invokevirtual #343                // Method io/aeron/archive/codecs/mark/MarkFileHeaderEncoder.localControlStreamId:(I)Lio/aeron/archive/codecs/mark/MarkFileHeaderEncoder;
+        30: aload_1
+        31: invokevirtual #345                // Method io/aeron/archive/Archive$Context.recordingEventsStreamId:()I
+        34: invokevirtual #348                // Method io/aeron/archive/codecs/mark/MarkFileHeaderEncoder.eventsStreamId:(I)Lio/aeron/archive/codecs/mark/MarkFileHeaderEncoder;
+        37: sipush        8192
+        40: invokevirtual #351                // Method io/aeron/archive/codecs/mark/MarkFileHeaderEncoder.headerLength:(I)Lio/aeron/archive/codecs/mark/MarkFileHeaderEncoder;
+        43: aload_1
+        44: invokevirtual #25                 // Method io/aeron/archive/Archive$Context.errorBufferLength:()I
+        47: invokevirtual #353                // Method io/aeron/archive/codecs/mark/MarkFileHeaderEncoder.errorBufferLength:(I)Lio/aeron/archive/codecs/mark/MarkFileHeaderEncoder;
+        50: aload_1
+        51: invokevirtual #355                // Method io/aeron/archive/Archive$Context.archiveId:()J
+        54: invokevirtual #356                // Method io/aeron/archive/codecs/mark/MarkFileHeaderEncoder.archiveId:(J)Lio/aeron/archive/codecs/mark/MarkFileHeaderEncoder;
+        57: aload_1
+        58: invokevirtual #253                // Method io/aeron/archive/Archive$Context.controlChannel:()Ljava/lang/String;
+        61: invokevirtual #358                // Method io/aeron/archive/codecs/mark/MarkFileHeaderEncoder.controlChannel:(Ljava/lang/String;)Lio/aeron/archive/codecs/mark/MarkFileHeaderEncoder;
+        64: aload_1
+        65: invokevirtual #259                // Method io/aeron/archive/Archive$Context.localControlChannel:()Ljava/lang/String;
+        68: invokevirtual #361                // Method io/aeron/archive/codecs/mark/MarkFileHeaderEncoder.localControlChannel:(Ljava/lang/String;)Lio/aeron/archive/codecs/mark/MarkFileHeaderEncoder;
+        71: aload_1
+        72: invokevirtual #262                // Method io/aeron/archive/Archive$Context.recordingEventsChannel:()Ljava/lang/String;
+        75: invokevirtual #363                // Method io/aeron/archive/codecs/mark/MarkFileHeaderEncoder.eventsChannel:(Ljava/lang/String;)Lio/aeron/archive/codecs/mark/MarkFileHeaderEncoder;
+        78: aload_1
+        79: invokevirtual #265                // Method io/aeron/archive/Archive$Context.aeronDirectoryName:()Ljava/lang/String;
+        82: invokevirtual #366                // Method io/aeron/archive/codecs/mark/MarkFileHeaderEncoder.aeronDirectory:(Ljava/lang/String;)Lio/aeron/archive/codecs/mark/MarkFileHeaderEncoder;
+        85: pop
+        86: return
+
+  private static void validateVersion(java.io.File, int);
+    Code:
+         0: iload_1
+         1: invokestatic  #368                // Method org/agrona/SemanticVersion.major:(I)I
+         4: iconst_3
+         5: if_icmpeq     29
+         8: new           #374                // class java/lang/IllegalArgumentException
+        11: dup
+        12: aload_0
+        13: invokevirtual #376                // Method java/io/File.getAbsolutePath:()Ljava/lang/String;
+        16: iload_1
+        17: invokestatic  #368                // Method org/agrona/SemanticVersion.major:(I)I
+        20: invokedynamic #379,  0            // InvokeDynamic #5:makeConcatWithConstants:(Ljava/lang/String;I)Ljava/lang/String;
+        25: invokespecial #382                // Method java/lang/IllegalArgumentException."<init>":(Ljava/lang/String;)V
+        28: athrow
+        29: return
+
+  private static int headerOffset(java.io.File);
+    Code:
+         0: aload_0
+         1: ldc           #15                 // String archive-mark.dat
+         3: invokestatic  #383                // Method org/agrona/IoUtil.mapExistingFile:(Ljava/io/File;Ljava/lang/String;)Ljava/nio/MappedByteBuffer;
+         6: astore_1
+         7: new           #102                // class org/agrona/concurrent/UnsafeBuffer
+        10: dup
+        11: aload_1
+        12: iconst_0
+        13: bipush        8
+        15: invokespecial #389                // Method org/agrona/concurrent/UnsafeBuffer."<init>":(Ljava/nio/ByteBuffer;II)V
+        18: astore_2
+        19: aload_2
+        20: invokestatic  #179                // Method headerOffset:(Lorg/agrona/concurrent/UnsafeBuffer;)I
+        23: istore_3
+        24: aload_1
+        25: invokestatic  #392                // Method org/agrona/IoUtil.unmap:(Ljava/nio/MappedByteBuffer;)V
+        28: iload_3
+        29: ireturn
+        30: astore        4
+        32: aload_1
+        33: invokestatic  #392                // Method org/agrona/IoUtil.unmap:(Ljava/nio/MappedByteBuffer;)V
+        36: aload         4
+        38: athrow
+      Exception table:
+         from    to  target type
+             7    24    30   any
+            30    32    30   any
+
+  private static int headerOffset(org.agrona.concurrent.UnsafeBuffer);
+    Code:
+         0: new           #1                  // class io/aeron/archive/codecs/mark/MessageHeaderDecoder
+         3: dup
+         4: invokespecial #65                 // Method io/aeron/archive/codecs/mark/MessageHeaderDecoder."<init>":()V
+         7: astore_1
+         8: aload_1
+         9: aload_0
+        10: iconst_0
+        11: invokevirtual #396                // Method io/aeron/archive/codecs/mark/MessageHeaderDecoder.wrap:(Lorg/agrona/DirectBuffer;I)Lio/aeron/archive/codecs/mark/MessageHeaderDecoder;
+        14: pop
+        15: sipush        200
+        18: aload_1
+        19: invokevirtual #399                // Method io/aeron/archive/codecs/mark/MessageHeaderDecoder.templateId:()I
+        22: if_icmpne     39
+        25: bipush        100
+        27: aload_1
+        28: invokevirtual #402                // Method io/aeron/archive/codecs/mark/MessageHeaderDecoder.schemaId:()I
+        31: if_icmpne     39
+        34: bipush        8
+        36: goto          40
+        39: iconst_0
+        40: ireturn
+
+  private static org.agrona.MarkFile openExistingMarkFile(java.io.File, java.lang.String, org.agrona.concurrent.EpochClock, long, java.util.function.IntConsumer, java.util.function.Consumer<java.lang.String>);
+    Code:
+         0: new           #5                  // class java/io/File
+         3: dup
+         4: aload_0
+         5: aload_1
+         6: invokespecial #17                 // Method java/io/File."<init>":(Ljava/io/File;Ljava/lang/String;)V
+         9: invokestatic  #70                 // Method headerOffset:(Ljava/io/File;)I
+        12: istore        7
+        14: new           #74                 // class org/agrona/MarkFile
+        17: dup
+        18: aload_0
+        19: aload_1
+        20: iload         7
+        22: invokestatic  #76                 // Method io/aeron/archive/codecs/mark/MarkFileHeaderDecoder.versionEncodingOffset:()I
+        25: iadd
+        26: iload         7
+        28: invokestatic  #79                 // Method io/aeron/archive/codecs/mark/MarkFileHeaderDecoder.activityTimestampEncodingOffset:()I
+        31: iadd
+        32: lload_3
+        33: aload_2
+        34: aload         5
+        36: aload         6
+        38: invokespecial #405                // Method org/agrona/MarkFile."<init>":(Ljava/io/File;Ljava/lang/String;IIJLorg/agrona/concurrent/EpochClock;Ljava/util/function/IntConsumer;Ljava/util/function/Consumer;)V
+        41: areturn
+
+  public java.lang.String toString();
+    Code:
+         0: aload_0
+         1: getfield      #124                // Field markFile:Lorg/agrona/MarkFile;
+         4: invokestatic  #408                // Method java/lang/String.valueOf:(Ljava/lang/Object;)Ljava/lang/String;
+         7: invokedynamic #412,  0            // InvokeDynamic #6:makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;
+        12: areturn
+
+  private static void lambda$new$3(java.io.File, java.lang.String, int);
+    Code:
+         0: new           #5                  // class java/io/File
+         3: dup
+         4: aload_0
+         5: aload_1
+         6: invokespecial #17                 // Method java/io/File."<init>":(Ljava/io/File;Ljava/lang/String;)V
+         9: iload_2
+        10: invokestatic  #415                // Method validateVersion:(Ljava/io/File;I)V
+        13: return
+
+  private static void lambda$new$2(int);
+    Code:
+         0: return
+
+  private static void lambda$new$1(int);
+    Code:
+         0: return
+
+  private static void lambda$new$0(java.io.File, int);
+    Code:
+         0: aload_0
+         1: iload_1
+         2: invokestatic  #415                // Method validateVersion:(Ljava/io/File;I)V
+         5: return
+
+  static {};
+    Code:
+         0: iconst_3
+         1: iconst_1
+         2: iconst_0
+         3: invokestatic  #419                // Method org/agrona/SemanticVersion.compose:(III)I
+         6: putstatic     #196                // Field SEMANTIC_VERSION:I
+         9: new           #102                // class org/agrona/concurrent/UnsafeBuffer
+        12: dup
+        13: invokespecial #423                // Method org/agrona/concurrent/UnsafeBuffer."<init>":()V
+        16: putstatic     #131                // Field EMPTY_BUFFER:Lorg/agrona/concurrent/UnsafeBuffer;
+        19: return
+}

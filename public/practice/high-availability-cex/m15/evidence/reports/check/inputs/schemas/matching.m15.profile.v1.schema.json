@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "const": {
+    "allStoppedDeadlineMillis": 90000,
+    "applicationVersion": 262144,
+    "backup": {
+      "atomicInstall": "EMPTY_TARGET_SAME_FILESYSTEM_STAGING_RENAME",
+      "changedPortsQualified": false,
+      "maximumFileCompressedBytes": 33554432,
+      "maximumFileLogicalBytes": 268435456,
+      "maximumFiles": 512,
+      "maximumTotalCompressedBytes": 134217728,
+      "maximumTotalLogicalBytes": 17179869184,
+      "powerLossQualified": false,
+      "representation": "ONE_STRICT_GZIP_MEMBER_PER_LOGICAL_FILE",
+      "streamBufferBytes": 65536
+    },
+    "capacity": {
+      "baselineArrivalCount": 6000,
+      "clusterGroups": 2,
+      "faultArrivalCount": 250,
+      "fullStateDiagnosticsEnabled": true,
+      "leaderFaultAfterCorrelatedNewResponses": 20,
+      "logicalArrivalCount": 6250,
+      "makerPrice": 100,
+      "makerQuantity": 1000000,
+      "maximumRetainedHistoryOperations": 2000000,
+      "maximumThroughputClaim": false,
+      "maximumUnknownReconciliationAttempts": 3,
+      "maximumWorkerHeldPerShard": 1,
+      "memberProcesses": 6,
+      "minimumNominalStageDurableOutputsPerShard": 10,
+      "minimumNominalStageTradesPerShard": 10,
+      "minimumOtherShardOverloadTrades": 4,
+      "minimumResourceSamplesPerRole": 3,
+      "primaryLatency": "PLANNED_ARRIVAL_TO_CORRELATED_RESPONSE",
+      "publisherProcesses": 2,
+      "queueCapacityPerShard": 64,
+      "rawAttemptsIncludeRetries": true,
+      "resourceSampleIntervalMillis": 1000,
+      "seed": 6515,
+      "sinkProcesses": 1,
+      "stageDrainDeadlineMillis": 120000,
+      "warmupArrivalCount": 250,
+      "workersPerShard": 1
+    },
+    "childJvmArguments": [
+      "-Xms32m",
+      "-Xmx512m",
+      "--add-opens=java.base/jdk.internal.misc=ALL-UNNAMED"
+    ],
+    "evidence": {
+      "maximumArtifactBytes": 33554432,
+      "maximumPayloadArtifacts": 512,
+      "maximumTotalPayloadBytes": 402653184,
+      "requiresCleanSourceAndTwoAnnotatedTags": true,
+      "requiresOriginalBytes": true
+    },
+    "excluded": [
+      "NEW_MATCHING_BUSINESS",
+      "COUNTER_OR_REST",
+      "ROLLING_MIXED_VERSION",
+      "WIRE_OR_STATE_MIGRATION",
+      "CROSS_HOST_OR_CHANGED_PORT_RESTORE",
+      "POWER_LOSS_DURABILITY",
+      "UNIVERSAL_TPS_RTO_RPO_SLO",
+      "HISTORY_PRUNING_OR_CONSTANT_MEMORY"
+    ],
+    "javaFeature": 25,
+    "minimumPhysicalMemoryBytes": 8589934592,
+    "minimumProcessors": 4,
+    "operations": {
+      "maximumBackupManifestBytes": 1048576,
+      "maximumBundleFileBytes": 33554432,
+      "maximumBundleFiles": 64,
+      "maximumBundleManifestBytes": 1048576,
+      "maximumBundleTotalBytes": 67108864,
+      "maximumCliResultBytes": 65536,
+      "maximumCutDescriptorBytes": 1048576,
+      "maximumDeploymentBytes": 65536,
+      "maximumLifecycleRecordBytes": 65536,
+      "maximumRelativePathUtf8Bytes": 512,
+      "maximumStopReceiptBytes": 1048576
+    },
+    "outputProfile": "M14-Q1",
+    "planVersion": "0.18",
+    "profileId": "M15-O1",
+    "roleStopDeadlineMillis": 30000,
+    "scenarioDeadlineMillis": 600000,
+    "schemaVersion": "matching.m15.profile.v1",
+    "singleHost": true,
+    "socketReceiveBufferPolicy": "EXPLICIT_OS_DEFAULT_OVERRIDE_ALLOWED_AND_RECORDED",
+    "startupDeadlineMillis": 60000,
+    "supportedPlatforms": [
+      {
+        "architecture": "aarch64",
+        "os": "Mac OS X"
+      },
+      {
+        "architecture": "amd64",
+        "os": "Linux"
+      }
+    ],
+    "unit": "M15"
+  },
+  "title": "Frozen M15-O1 operational profile"
+}

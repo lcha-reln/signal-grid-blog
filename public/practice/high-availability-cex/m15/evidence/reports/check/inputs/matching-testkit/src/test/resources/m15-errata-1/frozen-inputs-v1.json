@@ -1,0 +1,244 @@
+{
+  "contractRef": "course/m15-errata-1",
+  "errata": 1,
+  "files": [
+    {
+      "bytes": 4569,
+      "path": "docs/operations/m15-mark-termination-errata-1.md",
+      "sha256": "3a44d4886fbc23b3ada3f7bf49cff293925e19e2d9513383009c1451c2000d0c"
+    },
+    {
+      "bytes": 8192,
+      "path": "matching-testkit/src/test/resources/m15-errata-1/headers/s1-m0-c0-live.bin",
+      "sha256": "9a26572e231d09906a11dd77e87b60854c05014b8f16aa79047b92f4ac22504f"
+    },
+    {
+      "bytes": 8192,
+      "path": "matching-testkit/src/test/resources/m15-errata-1/headers/s1-m0-c0-stopped.bin",
+      "sha256": "d98e59c3b79c95eaa99f19f8a4e78131b3483926d402aa97b0eaaaba6a143d86"
+    },
+    {
+      "bytes": 8192,
+      "path": "matching-testkit/src/test/resources/m15-errata-1/headers/s1-m0-c1-live.bin",
+      "sha256": "442c14cbd41f019b5a10ec4d0e23f46a962e21d6028daf6b26a2f7e93af43d59"
+    },
+    {
+      "bytes": 8192,
+      "path": "matching-testkit/src/test/resources/m15-errata-1/headers/s1-m0-c1-stopped.bin",
+      "sha256": "274b31a90c7ac4cb38a70f5345611074583686794c45d2fd33f737d9c4b0e5f3"
+    },
+    {
+      "bytes": 8192,
+      "path": "matching-testkit/src/test/resources/m15-errata-1/headers/s1-m0-c2-live.bin",
+      "sha256": "cdd6a48bfeef7690e8c3d2c96a444fb840d9d7bb30bed35bf24dfdc0db35007f"
+    },
+    {
+      "bytes": 8192,
+      "path": "matching-testkit/src/test/resources/m15-errata-1/headers/s1-m0-c2-stopped.bin",
+      "sha256": "bd3424605d9d8f32c927d4a099556a3f2aa066d705988da1fc897745c80d8c58"
+    },
+    {
+      "bytes": 8192,
+      "path": "matching-testkit/src/test/resources/m15-errata-1/headers/s1-m1-c0-live.bin",
+      "sha256": "244393f0f56841eacdae3a0733ef9b3e896b782f59b25c15613baadb7524b62b"
+    },
+    {
+      "bytes": 8192,
+      "path": "matching-testkit/src/test/resources/m15-errata-1/headers/s1-m1-c0-stopped.bin",
+      "sha256": "65dbc1d7360555182e3026bd45254ac3c54577cb3b50ab60ae0813ebe2385a92"
+    },
+    {
+      "bytes": 8192,
+      "path": "matching-testkit/src/test/resources/m15-errata-1/headers/s1-m1-c1-live.bin",
+      "sha256": "38394fd0bf1664abc074d10b95a54d5fee067380732ea29263c433379618faa5"
+    },
+    {
+      "bytes": 8192,
+      "path": "matching-testkit/src/test/resources/m15-errata-1/headers/s1-m1-c1-stopped.bin",
+      "sha256": "980de0e4d1082eb8c67edfd2b4333b4b3f14ad1c0c06d878e95678bc14556478"
+    },
+    {
+      "bytes": 8192,
+      "path": "matching-testkit/src/test/resources/m15-errata-1/headers/s1-m1-c2-live.bin",
+      "sha256": "60295ce1f26a9e3e0a94407cc71b09aedfb1673b1791e75573009a6ddcd669e6"
+    },
+    {
+      "bytes": 8192,
+      "path": "matching-testkit/src/test/resources/m15-errata-1/headers/s1-m1-c2-stopped.bin",
+      "sha256": "7f751accea66c781ef08d6c368e6d8a52a6221361b00443351237b6fe65ace12"
+    },
+    {
+      "bytes": 8192,
+      "path": "matching-testkit/src/test/resources/m15-errata-1/headers/s1-m2-c0-live.bin",
+      "sha256": "271f8dc83cb348a2ddc8bbef1ff783463f41235e275cdb525872ecfc82e5f458"
+    },
+    {
+      "bytes": 8192,
+      "path": "matching-testkit/src/test/resources/m15-errata-1/headers/s1-m2-c0-stopped.bin",
+      "sha256": "5c40dd2867b1cc55914c4346e07f625d56de9a200e3f8468d82e8805c44bb69f"
+    },
+    {
+      "bytes": 8192,
+      "path": "matching-testkit/src/test/resources/m15-errata-1/headers/s1-m2-c1-live.bin",
+      "sha256": "b5000d5b108738c21163f69a063005c3f1c7e175af8cae081d6d51dd11da9c91"
+    },
+    {
+      "bytes": 8192,
+      "path": "matching-testkit/src/test/resources/m15-errata-1/headers/s1-m2-c1-stopped.bin",
+      "sha256": "932e50701b0dcb8412d32b9d9c39db35da3b4d98cf40ff698d712d685ad00c53"
+    },
+    {
+      "bytes": 8192,
+      "path": "matching-testkit/src/test/resources/m15-errata-1/headers/s1-m2-c2-live.bin",
+      "sha256": "717e5b2692c2653c6e35fc77f1631f223c8b10ce33026e4b9893fe551a3ba015"
+    },
+    {
+      "bytes": 8192,
+      "path": "matching-testkit/src/test/resources/m15-errata-1/headers/s1-m2-c2-stopped.bin",
+      "sha256": "224136dabf4f5417ab64db3fc798f00cf8e03275c77514e8ee0f9aaef99e3c2e"
+    },
+    {
+      "bytes": 8192,
+      "path": "matching-testkit/src/test/resources/m15-errata-1/headers/s2-m0-c0-live.bin",
+      "sha256": "03300521a08818b15de788f6f5b8425ca3a42d59df469bee53142f6805282954"
+    },
+    {
+      "bytes": 8192,
+      "path": "matching-testkit/src/test/resources/m15-errata-1/headers/s2-m0-c0-stopped.bin",
+      "sha256": "5336672fc10aa75791755be159df01ba094b1cff8b4837a7c44a37a9b53a5b57"
+    },
+    {
+      "bytes": 8192,
+      "path": "matching-testkit/src/test/resources/m15-errata-1/headers/s2-m0-c1-live.bin",
+      "sha256": "0e4812c7144d497d529e82374c12823cdf7c8d3fdbee62cb7ad2cf6bc87d386e"
+    },
+    {
+      "bytes": 8192,
+      "path": "matching-testkit/src/test/resources/m15-errata-1/headers/s2-m0-c1-stopped.bin",
+      "sha256": "4c40623363db78531bd4e853b394526071a51dab08c1e57d0b2cbcbeda5eec79"
+    },
+    {
+      "bytes": 8192,
+      "path": "matching-testkit/src/test/resources/m15-errata-1/headers/s2-m0-c2-live.bin",
+      "sha256": "4e034d4c5d9d5273c022f1abe75c2e264482274668d185fb8b07194ec7eafab3"
+    },
+    {
+      "bytes": 8192,
+      "path": "matching-testkit/src/test/resources/m15-errata-1/headers/s2-m0-c2-stopped.bin",
+      "sha256": "7b8a6ecf23c69f50a5fe52b087bfd1fca01446d218edd5431b9ae94dee0f7c33"
+    },
+    {
+      "bytes": 8192,
+      "path": "matching-testkit/src/test/resources/m15-errata-1/headers/s2-m1-c0-live.bin",
+      "sha256": "65a6f281bb272fc26617d660bfe59eb5de4f40e86f0e3e625197489eb32ae54a"
+    },
+    {
+      "bytes": 8192,
+      "path": "matching-testkit/src/test/resources/m15-errata-1/headers/s2-m1-c0-stopped.bin",
+      "sha256": "a68a8f7754c9665b03817aa172022abd80ba69170e61f89ed14355ec117fed7c"
+    },
+    {
+      "bytes": 8192,
+      "path": "matching-testkit/src/test/resources/m15-errata-1/headers/s2-m1-c1-live.bin",
+      "sha256": "c4c741d494542eedb920789b0d26623712af988e010a6a3220dab5f02f6de4e3"
+    },
+    {
+      "bytes": 8192,
+      "path": "matching-testkit/src/test/resources/m15-errata-1/headers/s2-m1-c1-stopped.bin",
+      "sha256": "a14db21fd46acb4466e158ac8d27d2888df148f920ff98ed908a4c5ee0fe8add"
+    },
+    {
+      "bytes": 8192,
+      "path": "matching-testkit/src/test/resources/m15-errata-1/headers/s2-m1-c2-live.bin",
+      "sha256": "89d1c39ad6f7aa2aa8e740b953230ca306fc5f0cb8b54d849d4fcddc674488e5"
+    },
+    {
+      "bytes": 8192,
+      "path": "matching-testkit/src/test/resources/m15-errata-1/headers/s2-m1-c2-stopped.bin",
+      "sha256": "098e1ece433617181b8cb5c5fe31d4655ca94d2bc1a66d8da1a1df4eb9f7a250"
+    },
+    {
+      "bytes": 8192,
+      "path": "matching-testkit/src/test/resources/m15-errata-1/headers/s2-m2-c0-live.bin",
+      "sha256": "25bf25c003dcc3dd236dd2a2881ea3f1ced7a7931938e22253d829abda0cf0b9"
+    },
+    {
+      "bytes": 8192,
+      "path": "matching-testkit/src/test/resources/m15-errata-1/headers/s2-m2-c0-stopped.bin",
+      "sha256": "cfc2497628329227e67e981ba2d6dedeeb96b6f760b9fa02035a016fc6ec5527"
+    },
+    {
+      "bytes": 8192,
+      "path": "matching-testkit/src/test/resources/m15-errata-1/headers/s2-m2-c1-live.bin",
+      "sha256": "c54cac6e92a3e99bf199e4d334f739f4fdc5d3d2c81f0f6d6c1b375983768259"
+    },
+    {
+      "bytes": 8192,
+      "path": "matching-testkit/src/test/resources/m15-errata-1/headers/s2-m2-c1-stopped.bin",
+      "sha256": "4504b8abf3eb2adaaaa74af4f32fac1499aa603a5e62fafd380c6d173fc3ccac"
+    },
+    {
+      "bytes": 8192,
+      "path": "matching-testkit/src/test/resources/m15-errata-1/headers/s2-m2-c2-live.bin",
+      "sha256": "997b00235b9095da677c8ae04c8e06202aba848bd9bdebbff14bc381eef3f703"
+    },
+    {
+      "bytes": 8192,
+      "path": "matching-testkit/src/test/resources/m15-errata-1/headers/s2-m2-c2-stopped.bin",
+      "sha256": "dea8f1797c521c48d327cbc5718c577bc55d67ce74f6274967b5f87da8f3abfa"
+    },
+    {
+      "bytes": 17177,
+      "path": "matching-testkit/src/test/resources/m15-errata-1/observation.json",
+      "sha256": "4f038e4eb0e4b09d7fd036852a08a72ee92164bc5720bd302c708933d6e2d260"
+    },
+    {
+      "bytes": 11100,
+      "path": "matching-testkit/src/test/resources/m15-errata-1/provenance/diagnostic.json",
+      "sha256": "8c8aceb585f56c2904c498cd83f1c8f346f46e0b853958dea61e2b0864c0911d"
+    },
+    {
+      "bytes": 279811,
+      "path": "matching-testkit/src/test/resources/m15-errata-1/provenance/io.aeron.archive.ArchiveConductor.javap.txt",
+      "sha256": "999ce94a2c90ce490d318931733a2e1d5b8041cfc029ff79e97e2028de595a41"
+    },
+    {
+      "bytes": 46440,
+      "path": "matching-testkit/src/test/resources/m15-errata-1/provenance/io.aeron.archive.ArchiveMarkFile.javap.txt",
+      "sha256": "d59ee7a0d017048757ea838f1b5f51bb2ff1a5b73e323ff022be68e02162d797"
+    },
+    {
+      "bytes": 400303,
+      "path": "matching-testkit/src/test/resources/m15-errata-1/provenance/io.aeron.cluster.ConsensusModuleAgent.javap.txt",
+      "sha256": "a1cca95144f2c430308e9ad57ba1c82e386e749f2c79811fd0de86c1fc2d29ff"
+    },
+    {
+      "bytes": 48168,
+      "path": "matching-testkit/src/test/resources/m15-errata-1/provenance/io.aeron.cluster.service.ClusterMarkFile.javap.txt",
+      "sha256": "db8db355acb2a67353d59c530da1b8f6d7412d6d1273e35ed51a5d25d7d2220e"
+    },
+    {
+      "bytes": 133149,
+      "path": "matching-testkit/src/test/resources/m15-errata-1/provenance/io.aeron.cluster.service.ClusteredServiceAgent.javap.txt",
+      "sha256": "e93645713aae0ed8d41cce9ea68fd36c7adb85e49c23abae3964b15cc7f414c8"
+    },
+    {
+      "bytes": 73288,
+      "path": "matching-testkit/src/test/resources/m15-errata-1/provenance/roles-66cf5513b374-000.jsonl.gz",
+      "sha256": "b505a568aee81747b1552002c92222e2a0d681733fb1107c244237b1e979ff49"
+    },
+    {
+      "bytes": 6972,
+      "path": "matching-testkit/src/test/resources/m15-errata-1/provenance/stop-6c45cb72a36e-000.jsonl.gz",
+      "sha256": "48a4060df1d83fa27105a8d992ca09684ee6aeb35f879043c89ccf970e4f1d7b"
+    },
+    {
+      "bytes": 22344,
+      "path": "schemas/matching.m15.stop-receipt.v2.schema.json",
+      "sha256": "1c9a4b1e70edb64eb1055f3c6c81d13426d66bbd458fe1eea730823e9dca56f5"
+    }
+  ],
+  "planVersion": "0.18",
+  "schemaVersion": "matching.m15.errata-1.frozen-inputs.v1",
+  "unit": "M15"
+}

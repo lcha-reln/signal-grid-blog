@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "matching.m15.publication-revision.v1",
+  "unit": "M15",
+  "planVersion": "0.18",
+  "revision": 1,
+  "failedSource": "dc818a827a106e5d6117dcd50ef4ca8bcc268c6e",
+  "historicalCourseTag": {
+    "ref": "course/m15-complete",
+    "object": "74ff6c2946d61fd7642f1d0300d6bea2086b9a41"
+  },
+  "historicalProductTag": {
+    "ref": "matching-1.0.0",
+    "object": "848908deee63256a2132886f8799c4b1e0c0144d"
+  },
+  "newCompleteRef": "course/m15.1-complete",
+  "newProductRelease": "matching-1.0.1",
+  "failures": [
+    {
+      "runId": 34206374337,
+      "artifactId": 10048654164,
+      "stage": "FRESH_INHERITED_M14",
+      "status": "SYSTEM_ERROR"
+    },
+    {
+      "runId": 34206375130,
+      "artifactId": 10048781800,
+      "stage": "OPERATIONS_NEGATIVE_PROBES",
+      "status": "SYSTEM_ERROR"
+    },
+    {
+      "runId": 34206375039,
+      "artifactId": 10049036696,
+      "stage": "CAPACITY_PROGRAM",
+      "status": "SYSTEM_ERROR"
+    }
+  ],
+  "originalLocalManifestSha256": "9351ab0aa8c37cbb03d86212bc5e5b5e4aa182b4e19df3b6fb979c4502e33632",
+  "oldExportPublished": false,
+  "scope": "Selected original failure records only, not complete failed-run artifact or new qualification evidence."
+}
